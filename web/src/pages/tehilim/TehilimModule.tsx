@@ -134,22 +134,28 @@ export const TehilimModule: React.FC<TehilimModuleProps> = ({ user, onBackToHub 
 
     // Animación visual de celebración
     setAnimatingSuccess(true);
-    setTimeout(() => setAnimatingSuccess(false), 1200);
 
     // Persistir en Supabase
     if (user?.id) {
-      try {
-        await supabase.from('tehilim_progress').upsert({
-          user_id: user.id,
-          psalm_number: psalmNum,
-          completed_count: newCount,
-          is_completed: true,
-          last_read_at: now,
-        });
-      } catch (err) {
-        console.error('Error sincronizando con Supabase:', err);
-      }
+      supabase.from('tehilim_progress').upsert({
+        user_id: user.id,
+        psalm_number: psalmNum,
+        completed_count: newCount,
+        is_completed: true,
+        last_read_at: now,
+      }).then();
     }
+
+    // Auto-avance al siguiente salmo después de marcarlo
+    setTimeout(() => {
+      setAnimatingSuccess(false);
+      if (psalmNum < 150) {
+        setSelectedPsalmNumber(psalmNum + 1);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        alert('🎉 ¡Felicitaciones! Has completado el Salmo 150 y finalizado una vuelta completa a todo el libro de Tehilim.');
+      }
+    }, 700);
   };
 
   // Reiniciar lectura individual de un salmo a no leído (opcional)
@@ -177,23 +183,32 @@ export const TehilimModule: React.FC<TehilimModuleProps> = ({ user, onBackToHub 
     }
   };
 
-  // Estadísticas globales
+  // Estadísticas globales multi-vuelta (ciclos continuos infinitos)
   const stats = useMemo(() => {
-    let completedCount = 0;
     let totalReadings = 0;
+    const counts: number[] = [];
 
     for (let i = 1; i <= 150; i++) {
       const p = progressMap[i];
-      if (p && p.completed_count > 0) {
-        completedCount++;
-        totalReadings += p.completed_count;
-      }
+      const count = p?.completed_count || 0;
+      counts.push(count);
+      totalReadings += count;
     }
 
-    const percentage = Math.round((completedCount / 150) * 100);
+    const minCount = counts.length ? Math.min(...counts) : 0;
+    const completedCycles = minCount; // Vueltas completas a los 150 salmos terminadas
+    const currentCycle = completedCycles + 1; // Vuelta en curso (1, 2, 3...)
+
+    // Salmos leídos en la vuelta actual
+    const readInCurrentCycle = counts.filter((c) => c >= currentCycle).length;
+    const unreadInCurrentCycle = 150 - readInCurrentCycle;
+    const percentage = Math.round((readInCurrentCycle / 150) * 100);
+
     return {
-      completedCount,
-      unreadCount: 150 - completedCount,
+      completedCycles,
+      currentCycle,
+      completedCount: readInCurrentCycle,
+      unreadCount: unreadInCurrentCycle,
       percentage,
       totalReadings,
     };
@@ -203,11 +218,12 @@ export const TehilimModule: React.FC<TehilimModuleProps> = ({ user, onBackToHub 
   const filteredPsalms = useMemo(() => {
     return TEHILIM_PSALMS.filter((psalm) => {
       const p = progressMap[psalm.number];
-      const isRead = !!(p && p.completed_count > 0);
+      const count = p?.completed_count || 0;
+      const isReadInCurrentCycle = count >= stats.currentCycle;
 
       // Filtro de estado
-      if (statusFilter === 'unread' && isRead) return false;
-      if (statusFilter === 'completed' && !isRead) return false;
+      if (statusFilter === 'unread' && isReadInCurrentCycle) return false;
+      if (statusFilter === 'completed' && !isReadInCurrentCycle) return false;
 
       // Filtro de libro / categoría
       if (bookFilter === 'tikkun') {
@@ -326,7 +342,7 @@ export const TehilimModule: React.FC<TehilimModuleProps> = ({ user, onBackToHub 
           VISTA 1: LECTOR DEL SALMO ACTIVO
          ========================================================================= */}
       {currentPsalm ? (
-        <div className="flex-1 flex flex-col max-w-4xl w-full mx-auto p-4 sm:p-6 pb-28">
+        <div className="flex-1 flex flex-col max-w-4xl w-full mx-auto p-4 sm:p-6 pb-48">
           {/* Barra de herramientas del lector */}
           <div className="bg-white dark:bg-slate-900 rounded-2xl p-4 mb-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-wrap items-center justify-between gap-4">
             <div>
@@ -448,6 +464,9 @@ export const TehilimModule: React.FC<TehilimModuleProps> = ({ user, onBackToHub 
                 )}
               </div>
             ))}
+
+            {/* Espaciador para asegurar visibilidad total del último versículo por encima de la barra fija */}
+            <div className="h-36 w-full shrink-0" />
           </div>
 
           {/* BARRA INFERIOR PERSISTENTE PARA MARCAR COMPLETADO Y NAVEGACIÓN */}
@@ -531,17 +550,24 @@ export const TehilimModule: React.FC<TehilimModuleProps> = ({ user, onBackToHub 
           <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-600 via-teal-700 to-cyan-800 text-white p-6 sm:p-8 mb-8 shadow-xl shadow-emerald-900/10">
             <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
               <div>
-                <div className="flex items-center gap-2 mb-2">
+                <div className="flex flex-wrap items-center gap-2 mb-2">
                   <span className="text-xs font-bold uppercase tracking-wider bg-white/20 backdrop-blur-md px-3 py-1 rounded-full">
-                    Lectura Diaria de Tehilim
+                    Vuelta #{stats.currentCycle} en curso
                   </span>
+                  {stats.completedCycles > 0 && (
+                    <span className="text-xs font-bold bg-amber-400 text-slate-950 px-3 py-1 rounded-full flex items-center gap-1 shadow-sm">
+                      🏆 {stats.completedCycles} {stats.completedCycles === 1 ? 'Vuelta Completa' : 'Vueltas Completas'}
+                    </span>
+                  )}
                   <span className="text-xs font-semibold text-emerald-200">150 Capítulos</span>
                 </div>
                 <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
                   Tu progreso en el Libro de los Salmos
                 </h2>
                 <p className="text-emerald-100 text-sm mt-1 max-w-xl">
-                  Lee cada salmo en hebreo con su fonética y significado en español. Marca cada lectura para registrar tus vueltas completadas.
+                  {stats.completedCycles > 0
+                    ? `¡Llevas ${stats.completedCycles} ${stats.completedCycles === 1 ? 'vuelta completa' : 'vueltas completas'}! Estás completando la Vuelta #${stats.currentCycle}. Cada lectura suma a tu récord histórico.`
+                    : 'Lee cada salmo en hebreo con su fonética y significado en español. Marca cada lectura para completar tus 150 salmos y sumar nuevas vueltas.'}
                 </p>
               </div>
 
@@ -549,15 +575,15 @@ export const TehilimModule: React.FC<TehilimModuleProps> = ({ user, onBackToHub 
               <div className="flex items-center gap-4 bg-black/20 backdrop-blur-md p-4 rounded-2xl border border-white/10">
                 <div className="text-center px-3 border-r border-white/10">
                   <div className="text-2xl font-black">{stats.completedCount}</div>
-                  <div className="text-[10px] uppercase font-medium text-emerald-200">Leídos</div>
+                  <div className="text-[10px] uppercase font-medium text-emerald-200">Leídos (V#{stats.currentCycle})</div>
                 </div>
                 <div className="text-center px-3 border-r border-white/10">
                   <div className="text-2xl font-black">{stats.unreadCount}</div>
-                  <div className="text-[10px] uppercase font-medium text-amber-200">No leídos</div>
+                  <div className="text-[10px] uppercase font-medium text-amber-200">Pendientes</div>
                 </div>
                 <div className="text-center px-3">
                   <div className="text-2xl font-black">{stats.totalReadings}</div>
-                  <div className="text-[10px] uppercase font-medium text-cyan-200">Lecturas tot.</div>
+                  <div className="text-[10px] uppercase font-medium text-cyan-200">Total leídos</div>
                 </div>
               </div>
             </div>
@@ -565,7 +591,7 @@ export const TehilimModule: React.FC<TehilimModuleProps> = ({ user, onBackToHub 
             {/* Barra de progreso lineal */}
             <div className="mt-6 pt-4 border-t border-white/15">
               <div className="flex justify-between text-xs font-semibold mb-1.5 text-emerald-100">
-                <span>Avance de la vuelta actual: {stats.completedCount} de 150</span>
+                <span>Avance Vuelta #{stats.currentCycle}: {stats.completedCount} de 150</span>
                 <span>{stats.percentage}%</span>
               </div>
               <div className="w-full h-3 bg-black/30 rounded-full overflow-hidden p-0.5 border border-white/10">

@@ -49,17 +49,28 @@ jobs:
         run: |
           npx expo prebuild --platform android --clean
 
-      - name: 🔨 Compilar APK con Gradle
+      - name: 🔧 Configurar firma release para APK Standalone
+        working-directory: mobile/android
+        run: |
+          # Asegurar que el build type release use la firma debug para que el APK sea autónomo e instalable directamente
+          sed -i 's/signingConfig signingConfigs.release/signingConfig signingConfigs.debug/g' app/build.gradle || true
+
+      - name: 🔨 Compilar APK Release Autónomo con Gradle
         working-directory: mobile/android
         run: |
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon
+          ./gradlew assembleRelease --no-daemon
 
       - name: 📋 Preparar artefacto APK final
         run: |
           mkdir -p build-output
-          find mobile/android/app/build/outputs/apk -name "*.apk" -exec cp {} build-output/PersonalTools.apk \;
-          ls -la build-output/
+          APK_PATH=$(find mobile/android/app/build/outputs/apk -name "*release*.apk" | head -n 1)
+          if [ -z "$APK_PATH" ]; then
+            APK_PATH=$(find mobile/android/app/build/outputs/apk -name "*.apk" | head -n 1)
+          fi
+          echo "Copiando APK: $APK_PATH"
+          cp "$APK_PATH" build-output/PersonalTools.apk
+          ls -lh build-output/
 
       - name: 🚀 Publicar y Reemplazar APK en GitHub Releases (Etiqueta 'latest')
         uses: softprops/action-gh-release@v2

@@ -42,7 +42,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 6,
  "hebrew": "כִּי יוֹדֵעַ יְהֹוָה דֶּרֶךְ צַדִּיקִים וְדֶרֶךְ רְשָׁעִים תֹּאבֵד׃ ",
- "transliteration": "kiyoode'a Adonai dereje tsadikim vedereje resha'im toved {f}",
+ "transliteration": "kiyoode'a Adonai dereje tsadikim vedereje resha'im toved ",
  "spanish": "Porque Jehová conoce el camino de los justos; Mas la senda de los malos perecerá."
  }
  ]
@@ -123,7 +123,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 12,
  "hebrew": "נַשְּׁקוּ בַר פֶּן יֶאֱנַף וְתֹאבְדוּ דֶרֶךְ כִּי יִבְעַר כִּמְעַט אַפּוֹ אַשְׁרֵי כׇּל חוֹסֵי בוֹ׃ ",
- "transliteration": "nashekvvar penyeenaf vetovedu dereje kiive'ar kime'at apoo asherey kljoosey vuo {f}",
+ "transliteration": "nashekvvar penyeenaf vetovedu dereje kiive'ar kime'at apoo asherey kljoosey vuo ",
  "spanish": "Besad al Hijo, porque no se enoje, y perezcáis en el camino, Cuando se encendiere un poco su furor. Bienaventurados todos los que en él confían."
  }
  ]
@@ -186,7 +186,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 9,
  "hebrew": "לַיהֹוָה הַיְשׁוּעָה עַל עַמְּךָ בִרְכָתֶךָ סֶּלָה׃ ",
- "transliteration": "layhovah hayeshu'ah 'al'ameja virejateja selah {f}",
+ "transliteration": "layhovah hayeshu'ah 'al'ameja virejateja selah ",
  "spanish": "..."
  }
  ]
@@ -249,7 +249,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 9,
  "hebrew": "בְּשָׁלוֹם יַחְדָּו אֶשְׁכְּבָה וְאִישָׁן כִּי אַתָּה יְהֹוָה לְבָדָד לָבֶטַח תּוֹשִׁיבֵנִי׃ ",
- "transliteration": "beshaloom yajedav eshekevah veishan kiatah Adonai levadad lavetaj tooshiveni {f}",
+ "transliteration": "beshaloom yajedav eshekevah veishan kiatah Adonai levadad lavetaj tooshiveni ",
  "spanish": "..."
  }
  ]
@@ -336,7 +336,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 13,
  "hebrew": "כִּי אַתָּה תְּבָרֵךְ צַדִּיק יְהֹוָה כַּצִּנָּה רָצוֹן תַּעְטְרֶנּוּ׃ ",
- "transliteration": "kiatah tevareje tsadik Adonai katsinah ratsoon ta'eterenv {f}",
+ "transliteration": "kiatah tevareje tsadik Adonai katsinah ratsoon ta'eterenv ",
  "spanish": "..."
  }
  ]
@@ -411,7 +411,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 11,
  "hebrew": "יֵבֹשׁוּ וְיִבָּהֲלוּ מְאֹד כׇּל אֹיְבָי יָשֻׁבוּ יֵבֹשׁוּ רָגַע׃ ",
- "transliteration": "yevushu veibahalu meod kloyevay yashuvu yevushu raga' {f}",
+ "transliteration": "yevushu veibahalu meod kloyevay yashuvu yevushu raga' ",
  "spanish": "..."
  }
  ]
@@ -528,7 +528,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 18,
  "hebrew": "אוֹדֶה יְהֹוָה כְּצִדְקוֹ וַאֲזַמְּרָה שֵׁם יְהֹוָה עֶלְיוֹן׃ ",
- "transliteration": "oodeh Adonai ketsidekoo vaazamerah shemAdonai 'eleyoon {f}",
+ "transliteration": "oodeh Adonai ketsidekoo vaazamerah shemAdonai 'eleyoon ",
  "spanish": "..."
  }
  ]
@@ -597,7 +597,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 10,
  "hebrew": "יְהֹוָה אֲדֹנֵינוּ מָה אַדִּיר שִׁמְךָ בְּכׇל הָאָרֶץ׃ ",
- "transliteration": "Adonai adoneynu mahadir shimeja bejlhaarets {f}",
+ "transliteration": "Adonai adoneynu mahadir shimeja bejlhaarets ",
  "spanish": "..."
  }
  ]
@@ -732,7 +732,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 21,
  "hebrew": "שִׁיתָה יְהֹוָה מוֹרָה לָהֶם יֵדְעוּ גוֹיִם אֱנוֹשׁ הֵמָּה סֶּלָה׃ ",
- "transliteration": "shitah Adonai moorah lahem yede'u gooim enoosh hemah selah {f}",
+ "transliteration": "shitah Adonai moorah lahem yede'u gooim enoosh hemah selah ",
  "spanish": "..."
  }
  ]
@@ -849,7 +849,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 18,
  "hebrew": "לִשְׁפֹּט יָתוֹם וָדָךְ בַּל יוֹסִיף עוֹד לַעֲרֹץ אֱנוֹשׁ מִן הָאָרֶץ׃ ",
- "transliteration": "lishepot yatoom vadaje balyoosif 'ood la'arots enoosh minhaarets {f}",
+ "transliteration": "lishepot yatoom vadaje balyoosif 'ood la'arots enoosh minhaarets ",
  "spanish": "Para juzgar al huérfano y al pobre, A fin de que no vuelva más á hacer violencia el hombre de la tierra."
  }
  ]
@@ -900,7 +900,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 7,
  "hebrew": "כִּי צַדִּיק יְהֹוָה צְדָקוֹת אָהֵב יָשָׁר יֶחֱזוּ פָנֵימוֹ׃ ",
- "transliteration": "kitsadik Adonai tsedakoot ahev yashar yejezu faneymoo {f}",
+ "transliteration": "kitsadik Adonai tsedakoot ahev yashar yejezu faneymoo ",
  "spanish": "Porque el justo Jehová ama la justicia: Al recto mirará su rostro."
  }
  ]
@@ -963,7 +963,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 9,
  "hebrew": "סָבִיב רְשָׁעִים יִתְהַלָּכוּן כְּרֻם זֻלּוּת לִבְנֵי אָדָם׃ ",
- "transliteration": "saviv resha'im itehalajun kerum zulut liveney adam {f}",
+ "transliteration": "saviv resha'im itehalajun kerum zulut liveney adam ",
  "spanish": "..."
  }
  ]
@@ -1008,7 +1008,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 6,
  "hebrew": "וַאֲנִי בְּחַסְדְּךָ בָטַחְתִּי יָגֵל לִבִּי בִּישׁוּעָתֶךָ אָשִׁירָה לַיהֹוָה כִּי גָמַל עָלָי׃ ",
- "transliteration": "vaani bejasedeja vatajeti yagel libi bishu'ateja ashirah layhovah ki gamal 'alay {f}",
+ "transliteration": "vaani bejasedeja vatajeti yagel libi bishu'ateja ashirah layhovah ki gamal 'alay ",
  "spanish": "Cantaré á Jehová, Porque me ha hecho bien."
  }
  ]
@@ -1059,7 +1059,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 7,
  "hebrew": "מִי יִתֵּן מִצִּיּוֹן יְשׁוּעַת יִשְׂרָאֵל בְּשׁוּב יְהֹוָה שְׁבוּת עַמּוֹ יָגֵל יַעֲקֹב יִשְׂמַח יִשְׂרָאֵל׃ ",
- "transliteration": "miiten mitsioon yeshu'at iserael beshuv Adonai shevut 'amoo yagel ya'akov isemaj iserael {f}",
+ "transliteration": "miiten mitsioon yeshu'at iserael beshuv Adonai shevut 'amoo yagel ya'akov isemaj iserael ",
  "spanish": "¡Quién diese de Sión la salud de Israel! En tornando Jehová la cautividad de su pueblo, Se gozará Jacob, y alegraráse Israel."
  }
  ]
@@ -1098,7 +1098,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 5,
  "hebrew": "כַּסְפּוֹ לֹא נָתַן בְּנֶשֶׁךְ וְשֹׁחַד עַל נָקִי לֹא לָקָח עֹשֵׂה אֵלֶּה לֹא יִמּוֹט לְעוֹלָם׃ ",
- "transliteration": "kasepoo lonatan benesheje veshojad 'alnaki lolakaj 'oseheleh lo imoot le'oolam {f}",
+ "transliteration": "kasepoo lonatan benesheje veshojad 'alnaki lolakaj 'oseheleh lo imoot le'oolam ",
  "spanish": "Quien su dinero no dió á usura, Ni contra el inocente tomó cohecho. El que hace estas cosas, no resbalará para siempre."
  }
  ]
@@ -1174,7 +1174,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 11,
  "hebrew": "תּוֹדִיעֵנִי אֹרַח חַיִּים שֹׂבַע שְׂמָחוֹת אֶת פָּנֶיךָ נְעִמוֹת בִּימִינְךָ נֶצַח׃ ",
- "transliteration": "toodi'eni oraj jaim sova' semajoot etpaneyja ne'imoot bimineja netsaj {f}",
+ "transliteration": "toodi'eni oraj jaim sova' semajoot etpaneyja ne'imoot bimineja netsaj ",
  "spanish": "Me mostrarás la senda de la vida: Hartura de alegrías hay con tu rostro; Deleites en tu diestra para siempre."
  }
  ]
@@ -1273,7 +1273,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 15,
  "hebrew": "אֲנִי בְּצֶדֶק אֶחֱזֶה פָנֶיךָ אֶשְׂבְּעָה בְהָקִיץ תְּמוּנָתֶךָ׃ ",
- "transliteration": "ani betsedek ejezeh faneyja esebe'ah vehakits temunateja {f}",
+ "transliteration": "ani betsedek ejezeh faneyja esebe'ah vehakits temunateja ",
  "spanish": "Yo en justicia veré tu rostro: Seré saciado cuando despertare á tu semejanza."
  }
  ]
@@ -1588,7 +1588,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 51,
  "hebrew": "מַגְדִּל יְשׁוּעוֹת מַלְכּוֹ וְעֹשֶׂה חֶסֶד לִמְשִׁיחוֹ לְדָוִד וּלְזַרְעוֹ עַד עוֹלָם׃ ",
- "transliteration": "magedil yeshu'oot malekoo ve'oseh jesed limeshijoo ledavid ulezare'oo 'ad'oolam {f}",
+ "transliteration": "magedil yeshu'oot malekoo ve'oseh jesed limeshijoo ledavid ulezare'oo 'ad'oolam ",
  "spanish": "..."
  }
  ]
@@ -1687,7 +1687,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 15,
  "hebrew": "יִהְיוּ לְרָצוֹן אִמְרֵי פִי וְהֶגְיוֹן לִבִּי לְפָנֶיךָ יְהֹוָה צוּרִי וְגֹאֲלִי׃ ",
- "transliteration": "iheyvleratsoon imereyfi vehegeyoon libi lefaneyja Adonai tsuri vegoali {f}",
+ "transliteration": "iheyvleratsoon imereyfi vehegeyoon libi lefaneyja Adonai tsuri vegoali ",
  "spanish": "..."
  }
  ]
@@ -1756,7 +1756,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 10,
  "hebrew": "יְהֹוָה הוֹשִׁיעָה הַמֶּלֶךְ יַעֲנֵנוּ בְיוֹם קׇרְאֵנוּ׃ ",
- "transliteration": "Adonai hooshi'ah hameleje ya'anenu veyoomkreenv {f}",
+ "transliteration": "Adonai hooshi'ah hameleje ya'anenu veyoomkreenv ",
  "spanish": "..."
  }
  ]
@@ -1849,7 +1849,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 14,
  "hebrew": "רוּמָה יְהֹוָה בְּעֻזֶּךָ נָשִׁירָה וּנְזַמְּרָה גְּבוּרָתֶךָ׃ ",
- "transliteration": "rumah Adonai be'uzeja nashirah unezamerah gevurateja {f}",
+ "transliteration": "rumah Adonai be'uzeja nashirah unezamerah gevurateja ",
  "spanish": "..."
  }
  ]
@@ -2050,7 +2050,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 32,
  "hebrew": "יָבֹאוּ וְיַגִּידוּ צִדְקָתוֹ לְעַם נוֹלָד כִּי עָשָׂה׃ ",
- "transliteration": "yavuu veyagidu tsidekatoo le'am noolad ki 'asah {f}",
+ "transliteration": "yavuu veyagidu tsidekatoo le'am noolad ki 'asah ",
  "spanish": "..."
  }
  ]
@@ -2096,7 +2096,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 6,
  "hebrew": "אַךְ טוֹב וָחֶסֶד יִרְדְּפוּנִי כׇּל יְמֵי חַיָּי וְשַׁבְתִּי בְּבֵית יְהֹוָה לְאֹרֶךְ יָמִים׃ ",
- "transliteration": "aje toov vajesed iredefuni klyemey jayay veshaveti beveytAdonai leoreje yamim {f}",
+ "transliteration": "aje toov vajesed iredefuni klyemey jayay veshaveti beveytAdonai leoreje yamim ",
  "spanish": "Ciertamente el bien y la misericordia me seguirán todos los días de mi vida: Y en la casa de Jehová moraré por largos días."
  }
  ]
@@ -2165,7 +2165,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 10,
  "hebrew": "מִי הוּא זֶה מֶלֶךְ הַכָּבוֹד יְהֹוָה צְבָאוֹת הוּא מֶלֶךְ הַכָּבוֹד סֶלָה׃ ",
- "transliteration": "mihu zeh meleje hakavuod Adonai tsevaoot hu meleje hakavuod selah {f}",
+ "transliteration": "mihu zeh meleje hakavuod Adonai tsevaoot hu meleje hakavuod selah ",
  "spanish": "¿Quién es este Rey de gloria? Jehová de los ejércitos, El es el Rey de la gloria. (Selah.)"
  }
  ]
@@ -2306,7 +2306,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 22,
  "hebrew": "פְּדֵה אֱלֹהִים אֶת יִשְׂרָאֵל מִכֹּל צָרוֹתָיו׃ ",
- "transliteration": "pedeh Elohim etiserael mikol tsarootayv {f}",
+ "transliteration": "pedeh Elohim etiserael mikol tsarootayv ",
  "spanish": "Redime, oh Dios, á Israel De todas sus angustias."
  }
  ]
@@ -2387,7 +2387,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 12,
  "hebrew": "רַגְלִי עָמְדָה בְמִישׁוֹר בְּמַקְהֵלִים אֲבָרֵךְ יְהֹוָה׃ ",
- "transliteration": "rageli 'amedah vemishoor bemakehelim avareje Adonai {f}",
+ "transliteration": "rageli 'amedah vemishoor bemakehelim avareje Adonai ",
  "spanish": "Mi pie ha estado en rectitud: En las congregaciones bendeciré á Jehová."
  }
  ]
@@ -2481,7 +2481,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 14,
  "hebrew": "קַוֵּה אֶל יְהֹוָה חֲזַק וְיַאֲמֵץ לִבֶּךָ וְקַוֵּה אֶל יְהֹוָה׃ ",
- "transliteration": "kaveh elAdonai jazak veyaamets libeja vekaveh elAdonai {f}",
+ "transliteration": "kaveh elAdonai jazak veyaamets libeja vekaveh elAdonai ",
  "spanish": "Aguarda á Jehová; Esfuérzate, y aliéntese tu corazón: Sí, espera á Jehová."
  }
  ]
@@ -2544,7 +2544,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 9,
  "hebrew": "הוֹשִׁיעָה אֶת עַמֶּךָ וּבָרֵךְ אֶת נַחֲלָתֶךָ וּרְעֵם וְנַשְּׂאֵם עַד הָעוֹלָם׃ ",
- "transliteration": "hooshi'ah et'ameja uvareje etnajalateja ure'em venaseem 'adha'oolam {f}",
+ "transliteration": "hooshi'ah et'ameja uvareje etnajalateja ure'em venaseem 'adha'oolam ",
  "spanish": "Salva á tu pueblo, y bendice á tu heredad; Y pastoréalos y ensálzalos para siempre."
  }
  ]
@@ -2619,7 +2619,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 11,
  "hebrew": "יְהֹוָה עֹז לְעַמּוֹ יִתֵּן יְהֹוָה יְבָרֵךְ אֶת עַמּוֹ בַשָּׁלוֹם׃ ",
- "transliteration": "Adonai 'oz le'amoo iten Adonai yevareje et'amoo vashaloom {f}",
+ "transliteration": "Adonai 'oz le'amoo iten Adonai yevareje et'amoo vashaloom ",
  "spanish": "Jehová dará fortaleza á su pueblo: Jehová bendecirá á su pueblo en paz. Salmo de David."
  }
  ]
@@ -2706,7 +2706,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 13,
  "hebrew": "לְמַעַן יְזַמֶּרְךָ כָבוֹד וְלֹא יִדֹּם יְהֹוָה אֱלֹהַי לְעוֹלָם אוֹדֶךָּ׃ ",
- "transliteration": "lema'an yezamereja javuod velo idom Adonai elohay le'oolam oodeka {f}",
+ "transliteration": "lema'an yezamereja javuod velo idom Adonai elohay le'oolam oodeka ",
  "spanish": "..."
  }
  ]
@@ -2865,7 +2865,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 25,
  "hebrew": "חִזְקוּ וְיַאֲמֵץ לְבַבְכֶם כׇּל הַמְיַחֲלִים לַיהֹוָה׃ ",
- "transliteration": "jizeku veyaamets levavejem klhameyajalim layhovah {f}",
+ "transliteration": "jizeku veyaamets levavejem klhameyajalim layhovah ",
  "spanish": "..."
  }
  ]
@@ -2941,7 +2941,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 11,
  "hebrew": "שִׂמְחוּ בַיהֹוָה וְגִילוּ צַדִּיקִים וְהַרְנִינוּ כׇּל יִשְׁרֵי לֵב׃ ",
- "transliteration": "simeju vayhovah vegilu tsadikim vehareninu klishereylev {f}",
+ "transliteration": "simeju vayhovah vegilu tsadikim vehareninu klishereylev ",
  "spanish": "Alegraos en Jehová, y gozaos, justos: Y cantad todos vosotros los rectos de corazón."
  }
  ]
@@ -3082,7 +3082,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 22,
  "hebrew": "יְהִי חַסְדְּךָ יְהֹוָה עָלֵינוּ כַּאֲשֶׁר יִחַלְנוּ לָךְ׃ ",
- "transliteration": "yehijasedeja Adonai 'aleynu kaasher ijalenu laje {f}",
+ "transliteration": "yehijasedeja Adonai 'aleynu kaasher ijalenu laje ",
  "spanish": "Sea tu misericordia, oh Jehová, sobre nosotros, Como esperamos en ti."
  }
  ]
@@ -3229,7 +3229,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 23,
  "hebrew": "פֹּדֶה יְהֹוָה נֶפֶשׁ עֲבָדָיו וְלֹא יֶאְשְׁמוּ כׇּל הַחֹסִים בּוֹ׃ ",
- "transliteration": "podeh Adonai nefesh 'avadayv velo yeeshemu klhajosim boo {f}",
+ "transliteration": "podeh Adonai nefesh 'avadayv velo yeeshemu klhajosim boo ",
  "spanish": "..."
  }
  ]
@@ -3406,7 +3406,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 28,
  "hebrew": "וּלְשׁוֹנִי תֶּהְגֶּה צִדְקֶךָ כׇּל הַיּוֹם תְּהִלָּתֶךָ׃ ",
- "transliteration": "uleshooni tehegeh tsidekeja klhayoom tehilateja {f}",
+ "transliteration": "uleshooni tehegeh tsidekeja klhayoom tehilateja ",
  "spanish": "Y mi lengua hablará de tu justicia, Y de tu loor todo el día."
  }
  ]
@@ -3493,7 +3493,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 13,
  "hebrew": "שָׁם נָפְלוּ פֹּעֲלֵי אָוֶן דֹּחוּ וְלֹא יָכְלוּ קוּם׃ ",
- "transliteration": "sham nafelu po'aley aven doju veloyajelu kum {f}",
+ "transliteration": "sham nafelu po'aley aven doju veloyajelu kum ",
  "spanish": "..."
  }
  ]
@@ -3742,7 +3742,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 40,
  "hebrew": "וַיַּעְזְרֵם יְהֹוָה וַיְפַלְּטֵם יְפַלְּטֵם מֵרְשָׁעִים וְיוֹשִׁיעֵם כִּי חָסוּ בוֹ׃ ",
- "transliteration": "vaya'ezerem Adonai vayefaletem yefaletem meresha'im veyooshi'em kijasu vuo {f}",
+ "transliteration": "vaya'ezerem Adonai vayefaletem yefaletem meresha'im veyooshi'em kijasu vuo ",
  "spanish": "Y Jehová los ayudará, Y los librará: y libertarálos de los impíos, y los salvará, Por cuanto en él esperaron."
  }
  ]
@@ -3889,7 +3889,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 23,
  "hebrew": "חוּשָׁה לְעֶזְרָתִי אֲדֹנָי תְּשׁוּעָתִי׃ ",
- "transliteration": "jushah le'ezerati adonay teshu'ati {f}",
+ "transliteration": "jushah le'ezerati adonay teshu'ati ",
  "spanish": "..."
  }
  ]
@@ -3982,7 +3982,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 14,
  "hebrew": "הָשַׁע מִמֶּנִּי וְאַבְלִיגָה בְּטֶרֶם אֵלֵךְ וְאֵינֶנִּי׃ ",
- "transliteration": "hasha' mimeni veaveligah beterem eleje veeyneni {f}",
+ "transliteration": "hasha' mimeni veaveligah beterem eleje veeyneni ",
  "spanish": "..."
  }
  ]
@@ -4099,7 +4099,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 18,
  "hebrew": "וַאֲנִי עָנִי וְאֶבְיוֹן אֲדֹנָי יַחֲשׇׁב לִי עֶזְרָתִי וּמְפַלְטִי אַתָּה אֱלֹהַי אַל תְּאַחַר׃ ",
- "transliteration": "vaani 'ani veeveyoon adonay yajashvli 'ezerati umefaleti atah elohay alteajar {f}",
+ "transliteration": "vaani 'ani veeveyoon adonay yajashvli 'ezerati umefaleti atah elohay alteajar ",
  "spanish": "..."
  }
  ]
@@ -4275,7 +4275,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 12,
  "hebrew": "מַה תִּשְׁתּוֹחֲחִי נַפְשִׁי וּמַה תֶּהֱמִי עָלָי הוֹחִילִי לֵאלֹהִים כִּי עוֹד אוֹדֶנּוּ יְשׁוּעֹת פָּנַי וֵאלֹהָי׃ ",
- "transliteration": "mahtishetoojaji nafeshi umahtehemi 'alay hoojili lelohim ki'ood oodenu yeshu'ot panay velohay {f}",
+ "transliteration": "mahtishetoojaji nafeshi umahtehemi 'alay hoojili lelohim ki'ood oodenu yeshu'ot panay velohay ",
  "spanish": "..."
  }
  ]
@@ -4314,7 +4314,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 5,
  "hebrew": "מַה תִּשְׁתּוֹחֲחִי נַפְשִׁי וּמַה תֶּהֱמִי עָלָי הוֹחִילִי לֵאלֹהִים כִּי עוֹד אוֹדֶנּוּ יְשׁוּעֹת פָּנַי וֵאלֹהָי׃ ",
- "transliteration": "mahtishetoojaji nafeshi umahtehemi 'alay hoojili lelohim ki'ood oodenu yeshu'ot panay velohay {f}",
+ "transliteration": "mahtishetoojaji nafeshi umahtehemi 'alay hoojili lelohim ki'ood oodenu yeshu'ot panay velohay ",
  "spanish": "¿Por qué te abates, oh alma mía, Y por qué te conturbes en mí? Espera á Dios; porque aun le tengo de alabar; Es él salvamento delante de mí, y el Dios mío."
  }
  ]
@@ -4485,7 +4485,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 27,
  "hebrew": "קוּמָה עֶזְרָתָה לָּנוּ וּפְדֵנוּ לְמַעַן חַסְדֶּךָ׃ ",
- "transliteration": "kumah 'ezeratah lanu ufedenu lema'an jasedeja {f}",
+ "transliteration": "kumah 'ezeratah lanu ufedenu lema'an jasedeja ",
  "spanish": "..."
  }
  ]
@@ -4602,7 +4602,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 18,
  "hebrew": "אַזְכִּירָה שִׁמְךָ בְּכׇל דֹּר וָדֹר עַל כֵּן עַמִּים יְהוֹדוּךָ לְעֹלָם וָעֶד׃ ",
- "transliteration": "azekirah shimeja bejldor vador 'alken 'amim yehooduja le'olam va'ed {f}",
+ "transliteration": "azekirah shimeja bejldor vador 'alken 'amim yehooduja le'olam va'ed ",
  "spanish": "..."
  }
  ]
@@ -4683,7 +4683,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 12,
  "hebrew": "יְהֹוָה צְבָאוֹת עִמָּנוּ מִשְׂגָּב לָנוּ אֱלֹהֵי יַעֲקֹב סֶלָה׃ ",
- "transliteration": "Adonai tsevaoot 'imanu misegavlanu elohey ya'akov selah {f}",
+ "transliteration": "Adonai tsevaoot 'imanu misegavlanu elohey ya'akov selah ",
  "spanish": "..."
  }
  ]
@@ -4752,7 +4752,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 10,
  "hebrew": "נְדִיבֵי עַמִּים נֶאֱסָפוּ עַם אֱלֹהֵי אַבְרָהָם כִּי לֵאלֹהִים מָגִנֵּי אֶרֶץ מְאֹד נַעֲלָה׃ ",
- "transliteration": "nedivey 'amim neesafu 'am elohey averaham ki lelohim magineyerets meod na'alah {f}",
+ "transliteration": "nedivey 'amim neesafu 'am elohey averaham ki lelohim magineyerets meod na'alah ",
  "spanish": "..."
  }
  ]
@@ -4851,7 +4851,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 15,
  "hebrew": "כִּי זֶה אֱלֹהִים אֱלֹהֵינוּ עוֹלָם וָעֶד הוּא יְנַהֲגֵנוּ עַל מוּת׃ ",
- "transliteration": "ki zeh Elohim Eloheinu 'oolam va'ed hu yenahagenu 'almut {f}",
+ "transliteration": "ki zeh Elohim Eloheinu 'oolam va'ed hu yenahagenu 'almut ",
  "spanish": "..."
  }
  ]
@@ -4986,7 +4986,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 21,
  "hebrew": "אָדָם בִּיקָר וְלֹא יָבִין נִמְשַׁל כַּבְּהֵמוֹת נִדְמוּ׃ ",
- "transliteration": "adam bikar velo yavin nimeshal kabehemoot nidemv {f}",
+ "transliteration": "adam bikar velo yavin nimeshal kabehemoot nidemv ",
  "spanish": "..."
  }
  ]
@@ -5133,7 +5133,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 23,
  "hebrew": "זֹבֵחַ תּוֹדָה יְכַבְּדָנְנִי וְשָׂם דֶּרֶךְ אַרְאֶנּוּ בְּיֵשַׁע אֱלֹהִים׃ ",
- "transliteration": "zoveja toodah yejabedaneni vesam dereje areenu beyesha' Elohim {f}",
+ "transliteration": "zoveja toodah yejabedaneni vesam dereje areenu beyesha' Elohim ",
  "spanish": "El que sacrifica alabanza me honrará: Y al que ordenare su camino, Le mostraré la salud de Dios."
  }
  ]
@@ -5268,7 +5268,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 21,
  "hebrew": "אָז תַּחְפֹּץ זִבְחֵי צֶדֶק עוֹלָה וְכָלִיל אָז יַעֲלוּ עַל מִזְבַּחֲךָ פָרִים׃ ",
- "transliteration": "az tajepots zivejeytsedek 'oolah vejalil az ya'alu 'almizebajaja farim {f}",
+ "transliteration": "az tajepots zivejeytsedek 'oolah vejalil az ya'alu 'almizebajaja farim ",
  "spanish": "..."
  }
  ]
@@ -5343,7 +5343,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 11,
  "hebrew": "אוֹדְךָ לְעוֹלָם כִּי עָשִׂיתָ וַאֲקַוֶּה שִׁמְךָ כִי טוֹב נֶגֶד חֲסִידֶיךָ׃ ",
- "transliteration": "oodeja le'oolam ki 'asita vaakaveh shimeja jitoov neged jasideyja {f}",
+ "transliteration": "oodeja le'oolam ki 'asita vaakaveh shimeja jitoov neged jasideyja ",
  "spanish": "..."
  }
  ]
@@ -5394,7 +5394,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 7,
  "hebrew": "מִי יִתֵּן מִצִּיּוֹן יְשֻׁעוֹת יִשְׂרָאֵל בְּשׁוּב אֱלֹהִים שְׁבוּת עַמּוֹ יָגֵל יַעֲקֹב יִשְׂמַח יִשְׂרָאֵל׃ ",
- "transliteration": "miiten mitsioon yeshu'oot iserael beshuv Elohim shevut 'amoo yagel ya'akov isemaj iserael {f}",
+ "transliteration": "miiten mitsioon yeshu'oot iserael beshuv Elohim shevut 'amoo yagel ya'akov isemaj iserael ",
  "spanish": "..."
  }
  ]
@@ -5457,7 +5457,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 9,
  "hebrew": "כִּי מִכׇּל צָרָה הִצִּילָנִי וּבְאֹיְבַי רָאֲתָה עֵינִי׃ ",
- "transliteration": "ki mikltsarah hitsilani uveoyevay raatah 'eyni {f}",
+ "transliteration": "ki mikltsarah hitsilani uveoyevay raatah 'eyni ",
  "spanish": "..."
  }
  ]
@@ -5610,7 +5610,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 24,
  "hebrew": "וְאַתָּה אֱלֹהִים תּוֹרִדֵם לִבְאֵר שַׁחַת אַנְשֵׁי דָמִים וּמִרְמָה לֹא יֶחֱצוּ יְמֵיהֶם וַאֲנִי אֶבְטַח בָּךְ׃ ",
- "transliteration": "veatah Elohim tooridem liveer shajat aneshey damim umiremah loyejetsu yemeyhem vaani evetajbaje {f}",
+ "transliteration": "veatah Elohim tooridem liveer shajat aneshey damim umiremah loyejetsu yemeyhem vaani evetajbaje ",
  "spanish": "..."
  }
  ]
@@ -5703,7 +5703,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 14,
  "hebrew": "כִּי הִצַּלְתָּ נַפְשִׁי מִמָּוֶת הֲלֹא רַגְלַי מִדֶּחִי לְהִתְהַלֵּךְ לִפְנֵי אֱלֹהִים בְּאוֹר הַחַיִּים׃ ",
- "transliteration": "ki hitsaleta nafeshi mimavet halo ragelay mideji lehitehaleje lifeney Elohim beoor hajaim {f}",
+ "transliteration": "ki hitsaleta nafeshi mimavet halo ragelay mideji lehitehaleje lifeney Elohim beoor hajaim ",
  "spanish": "..."
  }
  ]
@@ -5784,7 +5784,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 12,
  "hebrew": "רוּמָה עַל שָׁמַיִם אֱלֹהִים עַל כׇּל הָאָרֶץ כְּבוֹדֶךָ׃ ",
- "transliteration": "rumah 'alshamaim Elohim 'al klhaarets kevuodeja {f}",
+ "transliteration": "rumah 'alshamaim Elohim 'al klhaarets kevuodeja ",
  "spanish": "..."
  }
  ]
@@ -5865,7 +5865,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 12,
  "hebrew": "וְיֹאמַר אָדָם אַךְ פְּרִי לַצַּדִּיק אַךְ יֵשׁ אֱלֹהִים שֹׁפְטִים בָּאָרֶץ׃ ",
- "transliteration": "veyomar adam ajeperi latsadik aje yeshElohim shofetim baarets {f}",
+ "transliteration": "veyomar adam ajeperi latsadik aje yeshElohim shofetim baarets ",
  "spanish": "..."
  }
  ]
@@ -5983,7 +5983,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 18,
  "hebrew": "עֻזִּי אֵלֶיךָ אֲזַמֵּרָה כִּי אֱלֹהִים מִשְׂגַּבִּי אֱלֹהֵי חַסְדִּי׃ ",
- "transliteration": "'uzi eleyja azamerah kiElohim misegabi elohey jasedi {f}",
+ "transliteration": "'uzi eleyja azamerah kiElohim misegabi elohey jasedi ",
  "spanish": "..."
  }
  ]
@@ -6076,7 +6076,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 14,
  "hebrew": "בֵּאלֹהִים נַעֲשֶׂה חָיִל וְהוּא יָבוּס צָרֵינוּ׃ ",
- "transliteration": "belohim na'asehjail vehu yavus tsareynv {f}",
+ "transliteration": "belohim na'asehjail vehu yavus tsareynv ",
  "spanish": "..."
  }
  ]
@@ -6139,7 +6139,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 9,
  "hebrew": "כֵּן אֲזַמְּרָה שִׁמְךָ לָעַד לְשַׁלְּמִי נְדָרַי יוֹם יוֹם׃ ",
- "transliteration": "ken azamerah shimeja la'ad leshalemi nedaray yoom yoom {f}",
+ "transliteration": "ken azamerah shimeja la'ad leshalemi nedaray yoom yoom ",
  "spanish": "..."
  }
  ]
@@ -6226,7 +6226,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 13,
  "hebrew": "וּלְךָ אֲדֹנָי חָסֶד כִּי אַתָּה תְשַׁלֵּם לְאִישׁ כְּמַעֲשֵׂהוּ׃ ",
- "transliteration": "ulejaadonay jased kiatah teshalem leish kema'asehv {f}",
+ "transliteration": "ulejaadonay jased kiatah teshalem leish kema'asehv ",
  "spanish": "..."
  }
  ]
@@ -6307,7 +6307,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 12,
  "hebrew": "וְהַמֶּלֶךְ יִשְׂמַח בֵּאלֹהִים יִתְהַלֵּל כׇּל הַנִּשְׁבָּע בּוֹ כִּי יִסָּכֵר פִּי דוֹבְרֵי שָׁקֶר׃ ",
- "transliteration": "vehameleje isemaj belohim itehalel klhanisheba' boo ki isajer pi doovereyshaker {f}",
+ "transliteration": "vehameleje isemaj belohim itehalel klhanisheba' boo ki isajer pi doovereyshaker ",
  "spanish": "..."
  }
  ]
@@ -6382,7 +6382,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 11,
  "hebrew": "יִשְׂמַח צַדִּיק בַּיהֹוָה וְחָסָה בוֹ וְיִתְהַלְלוּ כׇּל יִשְׁרֵי לֵב׃ ",
- "transliteration": "isemaj tsadik bayhovah vejasah vuo veitehalelu klishereylev {f}",
+ "transliteration": "isemaj tsadik bayhovah vejasah vuo veitehalelu klishereylev ",
  "spanish": "..."
  }
  ]
@@ -6475,7 +6475,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 14,
  "hebrew": "לָבְשׁוּ כָרִים הַצֹּאן וַעֲמָקִים יַעַטְפוּ בָר יִתְרוֹעֲעוּ אַף יָשִׁירוּ׃ ",
- "transliteration": "laveshu jarim hatson va'amakim ya'atefvvar iteroo'a'u afyashirv {f}",
+ "transliteration": "laveshu jarim hatson va'amakim ya'atefvvar iteroo'a'u afyashirv ",
  "spanish": "..."
  }
  ]
@@ -6604,7 +6604,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 20,
  "hebrew": "בָּרוּךְ אֱלֹהִים אֲשֶׁר לֹא הֵסִיר תְּפִלָּתִי וְחַסְדּוֹ מֵאִתִּי׃ ",
- "transliteration": "baruje Elohim asher lohesirtefilati vejasedoo meiti {f}",
+ "transliteration": "baruje Elohim asher lohesirtefilati vejasedoo meiti ",
  "spanish": "Bendito Dios, Que no echó de sí mi oración, ni de mí su misericordia."
  }
  ]
@@ -6661,7 +6661,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 8,
  "hebrew": "יְבָרְכֵנוּ אֱלֹהִים וְיִירְאוּ אוֹתוֹ כׇּל אַפְסֵי אָרֶץ׃ ",
- "transliteration": "yevarejenu Elohim veireu ootoo klafeseyarets {f}",
+ "transliteration": "yevarejenu Elohim veireu ootoo klafeseyarets ",
  "spanish": "..."
  }
  ]
@@ -6886,7 +6886,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 36,
  "hebrew": "נוֹרָא אֱלֹהִים מִמִּקְדָּשֶׁיךָ אֵל יִשְׂרָאֵל הוּא נֹתֵן עֹז וְתַעֲצֻמוֹת לָעָם בָּרוּךְ אֱלֹהִים׃ ",
- "transliteration": "noora Elohim mimikedasheyja el iserael hu noten 'oz veta'atsumoot la'am baruje Elohim {f}",
+ "transliteration": "noora Elohim mimikedasheyja el iserael hu noten 'oz veta'atsumoot la'am baruje Elohim ",
  "spanish": "..."
  }
  ]
@@ -7117,7 +7117,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 37,
  "hebrew": "וְזֶרַע עֲבָדָיו יִנְחָלוּהָ וְאֹהֲבֵי שְׁמוֹ יִשְׁכְּנוּ בָהּ׃ ",
- "transliteration": "vezera' 'avadayv inejaluha veohavey shemoo ishekenvvah {f}",
+ "transliteration": "vezera' 'avadayv inejaluha veohavey shemoo ishekenvvah ",
  "spanish": "..."
  }
  ]
@@ -7162,7 +7162,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 6,
  "hebrew": "וַאֲנִי עָנִי וְאֶבְיוֹן אֱלֹהִים חוּשָׁה לִּי עֶזְרִי וּמְפַלְטִי אַתָּה יְהֹוָה אַל תְּאַחַר׃ ",
- "transliteration": "vaani 'ani veeveyoon Elohim jushahli 'ezeri umefaleti atah Adonai alteajar {f}",
+ "transliteration": "vaani 'ani veeveyoon Elohim jushahli 'ezeri umefaleti atah Adonai alteajar ",
  "spanish": "..."
  }
  ]
@@ -7315,7 +7315,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 24,
  "hebrew": "גַּם לְשׁוֹנִי כׇּל הַיּוֹם תֶּהְגֶּה צִדְקָתֶךָ כִּי בֹשׁוּ כִי חָפְרוּ מְבַקְשֵׁי רָעָתִי׃ ",
- "transliteration": "gamleshooni klhayoom tehegeh tsidekateja kivushu jijaferu mevakeshey ra'ati {f}",
+ "transliteration": "gamleshooni klhayoom tehegeh tsidekateja kivushu jijaferu mevakeshey ra'ati ",
  "spanish": "Mi lengua hablará también de tu justicia todo el día: Por cuanto fueron avergonzados, porque fueron confusos los que mi mal procuraban."
  }
  ]
@@ -7621,7 +7621,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 28,
  "hebrew": "וַאֲנִי קִרְבַת אֱלֹהִים לִי טוֹב שַׁתִּי בַּאדֹנָי יֱהֹוִה מַחְסִי לְסַפֵּר כׇּל מַלְאֲכוֹתֶיךָ׃ ",
- "transliteration": "vaani kirevat Elohim litoov shati badonay yehovih majesi lesaper klmaleajooteyja {f}",
+ "transliteration": "vaani kirevat Elohim litoov shati badonay yehovih majesi lesaper klmaleajooteyja ",
  "spanish": "Y en cuanto á mí, el acercarme á Dios es el bien: He puesto en el Señor Jehová mi esperanza, Para contar todas tus obras."
  }
  ]
@@ -7768,7 +7768,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 23,
  "hebrew": "אַל תִּשְׁכַּח קוֹל צֹרְרֶיךָ שְׁאוֹן קָמֶיךָ עֹלֶה תָמִיד׃ ",
- "transliteration": "altishekaj kool tsorereyja sheoon kameyja 'oleh tamid {f}",
+ "transliteration": "altishekaj kool tsorereyja sheoon kameyja 'oleh tamid ",
  "spanish": "No olvides las voces de tus enemigos: El alboroto de los que se levantan contra ti sube continuamente."
  }
  ]
@@ -7843,7 +7843,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 11,
  "hebrew": "וְכׇל קַרְנֵי רְשָׁעִים אֲגַדֵּעַ תְּרוֹמַמְנָה קַרְנוֹת צַדִּיק׃ ",
- "transliteration": "vejlkareney resha'im agade'a teroomamenah karenoot tsadik {f}",
+ "transliteration": "vejlkareney resha'im agade'a teroomamenah karenoot tsadik ",
  "spanish": "..."
  }
  ]
@@ -7930,7 +7930,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 13,
  "hebrew": "יִבְצֹר רוּחַ נְגִידִים נוֹרָא לְמַלְכֵי אָרֶץ׃ ",
- "transliteration": "ivetsor ruja negidim noora lemalejeyarets {f}",
+ "transliteration": "ivetsor ruja negidim noora lemalejeyarets ",
  "spanish": "..."
  }
  ]
@@ -8066,7 +8066,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 21,
  "hebrew": "נָחִיתָ כַצֹּאן עַמֶּךָ בְּיַד מֹשֶׁה וְאַהֲרֹן׃ ",
- "transliteration": "najita jatson 'ameja beyadmosheh veaharon {f}",
+ "transliteration": "najita jatson 'ameja beyadmosheh veaharon ",
  "spanish": "..."
  }
  ]
@@ -8507,7 +8507,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 72,
  "hebrew": "וַיִּרְעֵם כְּתֹם לְבָבוֹ וּבִתְבוּנוֹת כַּפָּיו יַנְחֵם׃ ",
- "transliteration": "vaire'em ketom levavuo uvitevunoot kapayv yanejem {f}",
+ "transliteration": "vaire'em ketom levavuo uvitevunoot kapayv yanejem ",
  "spanish": "Y apacentólos con entereza de su corazón; Y pastoreólos con la pericia de sus manos."
  }
  ]
@@ -8594,7 +8594,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 13,
  "hebrew": "וַאֲנַחְנוּ עַמְּךָ וְצֹאן מַרְעִיתֶךָ נוֹדֶה לְּךָ לְעוֹלָם לְדוֹר וָדֹר נְסַפֵּר תְּהִלָּתֶךָ׃ ",
- "transliteration": "vaanajenu 'ameja vetson mare'iteja noodeh leja le'oolam ledoor vador nesaper tehilateja {f}",
+ "transliteration": "vaanajenu 'ameja vetson mare'iteja noodeh leja le'oolam ledoor vador nesaper tehilateja ",
  "spanish": "Y nosotros, pueblo tuyo, y ovejas de tu dehesa, Te alabaremos para siempre: Por generación y generación cantaremos tus alabanzas."
  }
  ]
@@ -8723,7 +8723,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 20,
  "hebrew": "יְהֹוָה אֱלֹהִים צְבָאוֹת הֲשִׁיבֵנוּ הָאֵר פָּנֶיךָ וְנִוָּשֵׁעָה׃ ",
- "transliteration": "Adonai Elohim tsevaoot hashivenu haer paneyja venivashe'ah {f}",
+ "transliteration": "Adonai Elohim tsevaoot hashivenu haer paneyja venivashe'ah ",
  "spanish": "..."
  }
  ]
@@ -8834,7 +8834,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 17,
  "hebrew": "וַיַּאֲכִילֵהוּ מֵחֵלֶב חִטָּה וּמִצּוּר דְּבַשׁ אַשְׂבִּיעֶךָ׃ ",
- "transliteration": "vayaajilehu mejelev jitah umitsur devash asebi'eja {f}",
+ "transliteration": "vayaajilehu mejelev jitah umitsur devash asebi'eja ",
  "spanish": "..."
  }
  ]
@@ -8891,7 +8891,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 8,
  "hebrew": "קוּמָה אֱלֹהִים שׇׁפְטָה הָאָרֶץ כִּי אַתָּה תִנְחַל בְּכׇל הַגּוֹיִם׃ ",
- "transliteration": "kumah Elohim shfetah haarets kiatah tinejal bejlhagooim {f}",
+ "transliteration": "kumah Elohim shfetah haarets kiatah tinejal bejlhagooim ",
  "spanish": "Levántate, oh Dios, juzga la tierra: Porque tú heredarás en todas las gentes."
  }
  ]
@@ -9014,7 +9014,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 19,
  "hebrew": "וְיֵדְעוּ כִּי אַתָּה שִׁמְךָ יְהֹוָה לְבַדֶּךָ עֶלְיוֹן עַל כׇּל הָאָרֶץ׃ ",
- "transliteration": "veyede'u kiatah shimeja Adonai levadeja 'eleyoon 'alklhaarets {f}",
+ "transliteration": "veyede'u kiatah shimeja Adonai levadeja 'eleyoon 'alklhaarets ",
  "spanish": "..."
  }
  ]
@@ -9101,7 +9101,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 13,
  "hebrew": "יְהֹוָה צְבָאוֹת אַשְׁרֵי אָדָם בֹּטֵחַ בָּךְ׃ ",
- "transliteration": "Adonai tsevaoot asherey adam boteja baje {f}",
+ "transliteration": "Adonai tsevaoot asherey adam boteja baje ",
  "spanish": "..."
  }
  ]
@@ -9194,7 +9194,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 14,
  "hebrew": "צֶדֶק לְפָנָיו יְהַלֵּךְ וְיָשֵׂם לְדֶרֶךְ פְּעָמָיו׃ ",
- "transliteration": "tsedek lefanayv yehaleje veyasem ledereje pe'amayv {f}",
+ "transliteration": "tsedek lefanayv yehaleje veyasem ledereje pe'amayv ",
  "spanish": "..."
  }
  ]
@@ -9305,7 +9305,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 17,
  "hebrew": "עֲשֵׂה עִמִּי אוֹת לְטוֹבָה וְיִרְאוּ שֹׂנְאַי וְיֵבֹשׁוּ כִּי אַתָּה יְהֹוָה עֲזַרְתַּנִי וְנִחַמְתָּנִי׃ ",
- "transliteration": "'aseh'imi oot letoovah veireu soneay veyevushu kiatah Adonai 'azaretani venijametani {f}",
+ "transliteration": "'aseh'imi oot letoovah veireu soneay veyevushu kiatah Adonai 'azaretani venijametani ",
  "spanish": "Haz conmigo señal para bien, Y veánla los que me aborrecen, y sean avergonzados; Porque tú, Jehová, me ayudaste, y me consolaste."
  }
  ]
@@ -9356,7 +9356,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 7,
  "hebrew": "וְשָׁרִים כְּחֹלְלִים כׇּל מַעְיָנַי בָּךְ׃ ",
- "transliteration": "vesharim kejolelim klma'eyanay baje {f}",
+ "transliteration": "vesharim kejolelim klma'eyanay baje ",
  "spanish": "Y cantores y tañedores en ella dirán: Todas mis fuentes estarán en ti."
  }
  ]
@@ -9479,7 +9479,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 19,
  "hebrew": "הִרְחַקְתָּ מִמֶּנִּי אֹהֵב וָרֵעַ מְיֻדָּעַי מַחְשָׁךְ׃ ",
- "transliteration": "hirejaketa mimeni ohev vare'a meyuda'ay majeshaje {f}",
+ "transliteration": "hirejaketa mimeni ohev vare'a meyuda'ay majeshaje ",
  "spanish": "..."
  }
  ]
@@ -9918,7 +9918,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 17,
  "hebrew": "וִיהִי נֹעַם אֲדֹנָי אֱלֹהֵינוּ עָלֵינוּ וּמַעֲשֵׂה יָדֵינוּ כּוֹנְנָה עָלֵינוּ וּמַעֲשֵׂה יָדֵינוּ כּוֹנְנֵהוּ׃ ",
- "transliteration": "vihi no'am adonay Eloheinu 'aleynu uma'aseh yadeynu koonenah 'aleynu uma'aseh yadeynu koonenehv {f}",
+ "transliteration": "vihi no'am adonay Eloheinu 'aleynu uma'aseh yadeynu koonenah 'aleynu uma'aseh yadeynu koonenehv ",
  "spanish": "Y sea la luz de Jehová nuestro Dios sobre nosotros: Y ordena en nosotros la obra de nuestras manos, La obra de nuestras manos confirma."
  }
  ]
@@ -10024,7 +10024,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 16,
  "hebrew": "אֹרֶךְ יָמִים אַשְׂבִּיעֵהוּ וְאַרְאֵהוּ בִּישׁוּעָתִי׃ ",
- "transliteration": "oreje yamim asebi'ehu veareehu bishu'ati {f}",
+ "transliteration": "oreje yamim asebi'ehu veareehu bishu'ati ",
  "spanish": "Saciarélo de larga vida, Y mostraréle mi salud."
  }
  ]
@@ -10129,7 +10129,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 16,
  "hebrew": "לְהַגִּיד כִּי יָשָׁר יְהֹוָה צוּרִי וְלֹא [עַוְלָתָה] (עלתה) בּוֹ׃ ",
- "transliteration": "lehagid kiyashar Adonai tsuri velo['avelatah] ('lth) boo {f}",
+ "transliteration": "lehagid kiyashar Adonai tsuri velo['avelatah] ('lth) boo ",
  "spanish": "..."
  }
  ]
@@ -10168,7 +10168,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 5,
  "hebrew": "עֵדֹתֶיךָ נֶאֶמְנוּ מְאֹד לְבֵיתְךָ נַאֲוָה קֹדֶשׁ יְהֹוָה לְאֹרֶךְ יָמִים׃ ",
- "transliteration": "'edoteyja neemenu meod leveyteja naavahkodesh Adonai leoreje yamim {f}",
+ "transliteration": "'edoteyja neemenu meod leveyteja naavahkodesh Adonai leoreje yamim ",
  "spanish": "Tus testimonios son muy firmes: La santidad conviene á tu casa, Oh Jehová, por los siglos y para siempre."
  }
  ]
@@ -10315,7 +10315,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 23,
  "hebrew": "וַיָּשֶׁב עֲלֵיהֶם אֶת אוֹנָם וּבְרָעָתָם יַצְמִיתֵם יַצְמִיתֵם יְהֹוָה אֱלֹהֵינוּ׃ ",
- "transliteration": "vayashev 'aleyhem etoonam uvera'atam yatsemitem yatsemitem Adonai Eloheinu {f}",
+ "transliteration": "vayashev 'aleyhem etoonam uvera'atam yatsemitem yatsemitem Adonai Eloheinu ",
  "spanish": "Y él hará tornar sobre ellos su iniquidad, Y los destruirá por su propia maldad; Los talará Jehová nuestro Dios."
  }
  ]
@@ -10390,7 +10390,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 11,
  "hebrew": "אֲשֶׁר נִשְׁבַּעְתִּי בְאַפִּי אִם יְבֹאוּן אֶל מְנוּחָתִי׃ ",
- "transliteration": "ashernisheba'eti veapi imyevuun elmenujati {f}",
+ "transliteration": "ashernisheba'eti veapi imyevuun elmenujati ",
  "spanish": "Por tanto juré en mi furor Que no entrarían en mi reposo."
  }
  ]
@@ -10477,7 +10477,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 13,
  "hebrew": "לִפְנֵי יְהֹוָה כִּי בָא כִּי בָא לִשְׁפֹּט הָאָרֶץ יִשְׁפֹּט תֵּבֵל בְּצֶדֶק וְעַמִּים בֶּאֱמוּנָתוֹ׃ ",
- "transliteration": "lifeney Adonai ki va ki va lishepot haarets ishepottevel betsedek ve'amim beemunatoo {f}",
+ "transliteration": "lifeney Adonai ki va ki va lishepot haarets ishepottevel betsedek ve'amim beemunatoo ",
  "spanish": "Delante de Jehová que vino: Porque vino á juzgar la tierra. Juzgará al mundo con justicia, Y á los pueblos con su verdad."
  }
  ]
@@ -10558,7 +10558,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 12,
  "hebrew": "שִׂמְחוּ צַדִּיקִים בַּיהֹוָה וְהוֹדוּ לְזֵכֶר קׇדְשׁוֹ׃ ",
- "transliteration": "simeju tsadikim bayhovah vehoodu lezejer kdeshoo {f}",
+ "transliteration": "simeju tsadikim bayhovah vehoodu lezejer kdeshoo ",
  "spanish": "Alegraos, justos, en Jehová: Y alabad la memoria de su santidad."
  }
  ]
@@ -10621,7 +10621,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 9,
  "hebrew": "לִפְנֵי יְהֹוָה כִּי בָא לִשְׁפֹּט הָאָרֶץ יִשְׁפֹּט תֵּבֵל בְּצֶדֶק וְעַמִּים בְּמֵישָׁרִים׃ ",
- "transliteration": "lifeneyAdonai ki va lishepot haarets ishepottevel betsedek ve'amim bemeysharim {f}",
+ "transliteration": "lifeneyAdonai ki va lishepot haarets ishepottevel betsedek ve'amim bemeysharim ",
  "spanish": "Delante de Jehová; porque vino á juzgar la tierra: Juzgará al mundo con justicia, Y á los pueblos con rectitud."
  }
  ]
@@ -10684,7 +10684,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 9,
  "hebrew": "רוֹמְמוּ יְהֹוָה אֱלֹהֵינוּ וְהִשְׁתַּחֲווּ לְהַר קׇדְשׁוֹ כִּי קָדוֹשׁ יְהֹוָה אֱלֹהֵינוּ׃ ",
- "transliteration": "roomemu Adonai Eloheinu vehishetajavu lehar kdeshoo kikadoosh Adonai Eloheinu {f}",
+ "transliteration": "roomemu Adonai Eloheinu vehishetajavu lehar kdeshoo kikadoosh Adonai Eloheinu ",
  "spanish": "Ensalzad á Jehová nuestro Dios, Y encorvaos al monte de su santidad; Porque Jehová nuestro Dios es santo."
  }
  ]
@@ -10724,7 +10724,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 5,
  "hebrew": "כִּי טוֹב יְהֹוָה לְעוֹלָם חַסְדּוֹ וְעַד דֹּר וָדֹר אֱמוּנָתוֹ׃ ",
- "transliteration": "kitoov Adonai le'oolam jasedoo ve'addor vador emunatoo {f}",
+ "transliteration": "kitoov Adonai le'oolam jasedoo ve'addor vador emunatoo ",
  "spanish": "Porque Jehová es bueno: para siempre es su misericordia, Y su verdad por todas las generaciones."
  }
  ]
@@ -10781,7 +10781,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 8,
  "hebrew": "לַבְּקָרִים אַצְמִית כׇּל רִשְׁעֵי אָרֶץ לְהַכְרִית מֵעִיר יְהֹוָה כׇּל פֹּעֲלֵי אָוֶן׃ ",
- "transliteration": "labekarim atsemit klrishe'eyarets lehajerit me'irAdonai klpo'aley aven {f}",
+ "transliteration": "labekarim atsemit klrishe'eyarets lehajerit me'irAdonai klpo'aley aven ",
  "spanish": "Por las mañanas cortaré á todos los impíos de la tierra; Para extirpar de la ciudad de Jehová á todos los que obraren iniquidad."
  }
  ]
@@ -10964,7 +10964,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 29,
  "hebrew": "בְּנֵי עֲבָדֶיךָ יִשְׁכּוֹנוּ וְזַרְעָם לְפָנֶיךָ יִכּוֹן׃ ",
- "transliteration": "beney'avadeyja ishekoonu vezare'am lefaneyja ikoon {f}",
+ "transliteration": "beney'avadeyja ishekoonu vezare'am lefaneyja ikoon ",
  "spanish": "..."
  }
  ]
@@ -11105,7 +11105,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 22,
  "hebrew": "בָּרְכוּ יְהֹוָה כׇּל מַעֲשָׂיו בְּכׇל מְקֹמוֹת מֶמְשַׁלְתּוֹ בָּרְכִי נַפְשִׁי אֶת יְהֹוָה׃ ",
- "transliteration": "bareju Adonai klma'asayv bejlmekomoot memeshaletoo bareji nafeshi etAdonai {f}",
+ "transliteration": "bareju Adonai klma'asayv bejlmekomoot memeshaletoo bareji nafeshi etAdonai ",
  "spanish": "Bendecid á Jehová, vosotras todas sus obras, En todos los lugares de su señorío. Bendice, alma mía á Jehová."
  }
  ]
@@ -11324,7 +11324,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 35,
  "hebrew": "יִתַּמּוּ חַטָּאִים מִן הָאָרֶץ וּרְשָׁעִים עוֹד אֵינָם בָּרְכִי נַפְשִׁי אֶת יְהֹוָה הַלְלוּ יָהּ׃ ",
- "transliteration": "itamu jataim minhaarets uresha'im 'ood eynam bareji nafeshi etAdonai halelvyah {f}",
+ "transliteration": "itamu jataim minhaarets uresha'im 'ood eynam bareji nafeshi etAdonai halelvyah ",
  "spanish": "Sean consumidos de la tierra los pecadores, Y los impíos dejen de ser. Bendice, alma mía, á Jehová. Aleluya."
  }
  ]
@@ -11604,7 +11604,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 45,
  "hebrew": "בַּעֲבוּר יִשְׁמְרוּ חֻקָּיו וְתוֹרֹתָיו יִנְצֹרוּ הַלְלוּ יָהּ׃ ",
- "transliteration": "ba'avur ishemeru jukayv vetoorotayv inetsoru halelvyah {f}",
+ "transliteration": "ba'avur ishemeru jukayv vetoorotayv inetsoru halelvyah ",
  "spanish": "Para que guardasen sus estatutos, Y observasen sus leyes. Aleluya."
  }
  ]
@@ -12168,7 +12168,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 43,
  "hebrew": "מִי חָכָם וְיִשְׁמׇר אֵלֶּה וְיִתְבּוֹנְנוּ חַסְדֵי יְהֹוָה׃ ",
- "transliteration": "mijajam veishemreleh veiteboonenu jasedey Adonai {f}",
+ "transliteration": "mijajam veishemreleh veiteboonenu jasedey Adonai ",
  "spanish": "¿Quién es sabio y guardará estas cosas, Y entenderá las misericordias de Jehová?"
  }
  ]
@@ -12261,7 +12261,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 14,
  "hebrew": "בֵּאלֹהִים נַעֲשֶׂה חָיִל וְהוּא יָבוּס צָרֵינוּ׃ ",
- "transliteration": "belohim na'asehjail vehu yavus tsareynv {f}",
+ "transliteration": "belohim na'asehjail vehu yavus tsareynv ",
  "spanish": "..."
  }
  ]
@@ -12456,7 +12456,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 31,
  "hebrew": "כִּי יַעֲמֹד לִימִין אֶבְיוֹן לְהוֹשִׁיעַ מִשֹּׁפְטֵי נַפְשׁוֹ׃ ",
- "transliteration": "kiya'amod limin eveyoon lehooshi'a mishofetey nafeshoo {f}",
+ "transliteration": "kiya'amod limin eveyoon lehooshi'a mishofetey nafeshoo ",
  "spanish": "Porque él se pondrá á la diestra del pobre, Para librar su alma de los que le juzgan."
  }
  ]
@@ -12507,7 +12507,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 7,
  "hebrew": "מִנַּחַל בַּדֶּרֶךְ יִשְׁתֶּה עַל כֵּן יָרִים רֹאשׁ׃ ",
- "transliteration": "minajal badereje isheteh 'alken yarim rosh {f}",
+ "transliteration": "minajal badereje isheteh 'alken yarim rosh ",
  "spanish": "Del arroyo beberá en el camino: Por lo cual levantará cabeza."
  }
  ]
@@ -12576,7 +12576,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 10,
  "hebrew": "רֵאשִׁית חׇכְמָה יִרְאַת יְהֹוָה שֵׂכֶל טוֹב לְכׇל עֹשֵׂיהֶם תְּהִלָּתוֹ עֹמֶדֶת לָעַד׃ ",
- "transliteration": "reshit jjemah ireat Adonai sejel toov lejl'oseyhem tehilatoo 'omedet la'ad {f}",
+ "transliteration": "reshit jjemah ireat Adonai sejel toov lejl'oseyhem tehilatoo 'omedet la'ad ",
  "spanish": "El principio de la sabiduría es el temor de Jehová: Buen entendimiento tienen cuantos ponen aquéllos por obra: Su loor permanece para siempre."
  }
  ]
@@ -12645,7 +12645,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 10,
  "hebrew": "רָשָׁע יִרְאֶה וְכָעָס שִׁנָּיו יַחֲרֹק וְנָמָס תַּאֲוַת רְשָׁעִים תֹּאבֵד׃ ",
- "transliteration": "rasha' ireeh veja'as shinayv yajarok venamas taavat resha'im toved {f}",
+ "transliteration": "rasha' ireeh veja'as shinayv yajarok venamas taavat resha'im toved ",
  "spanish": "Verálo el impío, y se despechará; Crujirá los dientes, y se repudrirá: Perecerá el deseo de los impíos."
  }
  ]
@@ -12708,7 +12708,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 9,
  "hebrew": "מוֹשִׁיבִי עֲקֶרֶת הַבַּיִת אֵם הַבָּנִים שְׂמֵחָה הַלְלוּ יָהּ׃ ",
- "transliteration": "mooshivi 'akeret habait emhabanim semejah halelvyah {f}",
+ "transliteration": "mooshivi 'akeret habait emhabanim semejah halelvyah ",
  "spanish": "El hace habitar en familia á la estéril, Gozosa en ser madre de hijos. Aleluya."
  }
  ]
@@ -12882,7 +12882,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 18,
  "hebrew": "וַאֲנַחְנוּ נְבָרֵךְ יָהּ מֵעַתָּה וְעַד עוֹלָם הַלְלוּ יָהּ׃ ",
- "transliteration": "vaanajenu nevareje yah me'atah ve'ad'oolam halelvyah {f}",
+ "transliteration": "vaanajenu nevareje yah me'atah ve'ad'oolam halelvyah ",
  "spanish": "Mas nosotros bendeciremos á JAH, Desde ahora para siempre. Aleluya."
  }
  ]
@@ -13005,7 +13005,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 19,
  "hebrew": "בְּחַצְרוֹת בֵּית יְהֹוָה בְּתוֹכֵכִי יְרוּשָׁלָ͏ִם הַלְלוּ יָהּ׃ ",
- "transliteration": "bejatseroot beyt Adonai betoojeji yerushala͏im halelvyah {f}",
+ "transliteration": "bejatseroot beyt Adonai betoojeji yerushala͏im halelvyah ",
  "spanish": "En los atrios de la casa de Jehová, En medio de ti, oh Jerusalem. Aleluya."
  }
  ]
@@ -13026,7 +13026,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 2,
  "hebrew": "כִּי גָבַר עָלֵינוּ חַסְדּוֹ וֶאֱמֶת יְהֹוָה לְעוֹלָם הַלְלוּ יָהּ׃ ",
- "transliteration": "kigavar 'aleynu jasedoo veemetAdonai le'oolam halelvyah {f}",
+ "transliteration": "kigavar 'aleynu jasedoo veemetAdonai le'oolam halelvyah ",
  "spanish": "Porque ha engrandecido sobre nosotros su misericordia; Y la verdad de Jehová es para siempre. Aleluya."
  }
  ]
@@ -13209,7 +13209,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 29,
  "hebrew": "הוֹדוּ לַיהֹוָה כִּי טוֹב כִּי לְעוֹלָם חַסְדּוֹ׃ ",
- "transliteration": "hoodu layhovah kitoov ki le'oolam jasedoo {f}",
+ "transliteration": "hoodu layhovah kitoov ki le'oolam jasedoo ",
  "spanish": "Alabad á Jehová porque es bueno; Porque para siempre es su misericordia."
  }
  ]
@@ -13266,7 +13266,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 8,
  "hebrew": "אֶת חֻקֶּיךָ אֶשְׁמֹר אַל תַּעַזְבֵנִי עַד מְאֹד׃ ",
- "transliteration": "etjukeyja eshemor alta'azeveni 'admeod {f}",
+ "transliteration": "etjukeyja eshemor alta'azeveni 'admeod ",
  "spanish": "Tus estatutos guardaré: No me dejes enteramente."
  },
  {
@@ -13314,7 +13314,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 16,
  "hebrew": "בְּחֻקֹּתֶיךָ אֶשְׁתַּעֲשָׁע לֹא אֶשְׁכַּח דְּבָרֶךָ׃ ",
- "transliteration": "bejukoteyja esheta'asha' lo eshekaj devareja {f}",
+ "transliteration": "bejukoteyja esheta'asha' lo eshekaj devareja ",
  "spanish": "Recrearéme en tus estatutos: No me olvidaré de tus palabras."
  },
  {
@@ -13362,7 +13362,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 24,
  "hebrew": "גַּם עֵדֹתֶיךָ שַׁעֲשֻׁעָי אַנְשֵׁי עֲצָתִי׃ ",
- "transliteration": "gam'edoteyja sha'ashu'ay aneshey 'atsati {f}",
+ "transliteration": "gam'edoteyja sha'ashu'ay aneshey 'atsati ",
  "spanish": "Pues tus testimonios son mis deleites, Y mis consejeros."
  },
  {
@@ -13410,7 +13410,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 32,
  "hebrew": "דֶּרֶךְ מִצְוֺתֶיךָ אָרוּץ כִּי תַרְחִיב לִבִּי׃ ",
- "transliteration": "derejemitsevteyja aruts ki tarejiv libi {f}",
+ "transliteration": "derejemitsevteyja aruts ki tarejiv libi ",
  "spanish": "Por el camino de tus mandamientos correré, Cuando ensanchares mi corazón."
  },
  {
@@ -13458,7 +13458,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 40,
  "hebrew": "הִנֵּה תָּאַבְתִּי לְפִקֻּדֶיךָ בְּצִדְקָתְךָ חַיֵּנִי׃ ",
- "transliteration": "hineh taaveti lefikudeyja betsidekateja jayeni {f}",
+ "transliteration": "hineh taaveti lefikudeyja betsidekateja jayeni ",
  "spanish": "He aquí yo he codiciado tus mandamientos: Vivifícame en tu justicia."
  },
  {
@@ -13506,7 +13506,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 48,
  "hebrew": "וְאֶשָּׂא כַפַּי אֶל מִצְוֺתֶיךָ אֲשֶׁר אָהָבְתִּי וְאָשִׂיחָה בְחֻקֶּיךָ׃ ",
- "transliteration": "veesajapay elmitsevteyja asher ahaveti veasijah vejukeyja {f}",
+ "transliteration": "veesajapay elmitsevteyja asher ahaveti veasijah vejukeyja ",
  "spanish": "Alzaré asimismo mis manos á tus mandamientos que amé; Y meditaré en tus estatutos."
  },
  {
@@ -13554,7 +13554,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 56,
  "hebrew": "זֹאת הָיְתָה לִּי כִּי פִקֻּדֶיךָ נָצָרְתִּי׃ ",
- "transliteration": "zot hayetahli ki fikudeyja natsareti {f}",
+ "transliteration": "zot hayetahli ki fikudeyja natsareti ",
  "spanish": "Esto tuve, Porque guardaba tus mandamientos."
  },
  {
@@ -13602,7 +13602,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 64,
  "hebrew": "חַסְדְּךָ יְהֹוָה מָלְאָה הָאָרֶץ חֻקֶּיךָ לַמְּדֵנִי׃ ",
- "transliteration": "jasedeja Adonai maleah haarets jukeyja lamedeni {f}",
+ "transliteration": "jasedeja Adonai maleah haarets jukeyja lamedeni ",
  "spanish": "De tu misericordia, oh Jehová, está llena la tierra: Enséñame tus estatutos."
  },
  {
@@ -13650,7 +13650,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 72,
  "hebrew": "טוֹב לִי תוֹרַת פִּיךָ מֵאַלְפֵי זָהָב וָכָסֶף׃ ",
- "transliteration": "toovli tooratpija mealefey zahav vajasef {f}",
+ "transliteration": "toovli tooratpija mealefey zahav vajasef ",
  "spanish": "Mejor me es la ley de tu boca, Que millares de oro y plata."
  },
  {
@@ -13698,7 +13698,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 80,
  "hebrew": "יְהִי לִבִּי תָמִים בְּחֻקֶּיךָ לְמַעַן לֹא אֵבוֹשׁ׃ ",
- "transliteration": "yehilibi tamim bejukeyja lema'an lo evuosh {f}",
+ "transliteration": "yehilibi tamim bejukeyja lema'an lo evuosh ",
  "spanish": "Sea mi corazón íntegro en tus estatutos; Porque no sea yo avergonzado."
  },
  {
@@ -13746,7 +13746,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 88,
  "hebrew": "כְּחַסְדְּךָ חַיֵּנִי וְאֶשְׁמְרָה עֵדוּת פִּיךָ׃ ",
- "transliteration": "kejasedeja jayeni veeshemerah 'edut pija {f}",
+ "transliteration": "kejasedeja jayeni veeshemerah 'edut pija ",
  "spanish": "Vivifícame conforme á tu misericordia; Y guardaré los testimonios de tu boca."
  },
  {
@@ -13794,7 +13794,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 96,
  "hebrew": "לְכׇל תִּכְלָה רָאִיתִי קֵץ רְחָבָה מִצְוָתְךָ מְאֹד׃ ",
- "transliteration": "lejltijelah raiti kets rejavah mitsevateja meod {f}",
+ "transliteration": "lejltijelah raiti kets rejavah mitsevateja meod ",
  "spanish": "A toda perfección he visto fin: Ancho sobremanera es tu mandamiento."
  },
  {
@@ -13842,7 +13842,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 104,
  "hebrew": "מִפִּקּוּדֶיךָ אֶתְבּוֹנָן עַל כֵּן שָׂנֵאתִי כׇּל אֹרַח שָׁקֶר׃ ",
- "transliteration": "mipikudeyja eteboonan 'alken saneti kloraj shaker {f}",
+ "transliteration": "mipikudeyja eteboonan 'alken saneti kloraj shaker ",
  "spanish": "De tus mandamientos he adquirido inteligencia: Por tanto he aborrecido todo camino de mentira."
  },
  {
@@ -13890,7 +13890,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 112,
  "hebrew": "נָטִיתִי לִבִּי לַעֲשׂוֹת חֻקֶּיךָ לְעוֹלָם עֵקֶב׃ ",
- "transliteration": "natiti libi la'asoot jukeyja le'oolam 'ekev {f}",
+ "transliteration": "natiti libi la'asoot jukeyja le'oolam 'ekev ",
  "spanish": "Mi corazón incliné á poner por obra tus estatutos De continuo, hasta el fin."
  },
  {
@@ -13938,7 +13938,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 120,
  "hebrew": "סָמַר מִפַּחְדְּךָ בְשָׂרִי וּמִמִּשְׁפָּטֶיךָ יָרֵאתִי׃ ",
- "transliteration": "samar mipajedeja vesari umimishepateyja yareti {f}",
+ "transliteration": "samar mipajedeja vesari umimishepateyja yareti ",
  "spanish": "Mi carne se ha extremecido por temor de ti; Y de tus juicios tengo miedo."
  },
  {
@@ -13986,7 +13986,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 128,
  "hebrew": "עַל כֵּן כׇּל פִּקּוּדֵי כֹל יִשָּׁרְתִּי כׇּל אֹרַח שֶׁקֶר שָׂנֵאתִי׃ ",
- "transliteration": "'alken klpikudey jol ishareti kloraj sheker saneti {f}",
+ "transliteration": "'alken klpikudey jol ishareti kloraj sheker saneti ",
  "spanish": "Por eso todos los mandamientos de todas las cosas estimé rectos: Aborrecí todo camino de mentira."
  },
  {
@@ -14034,7 +14034,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 136,
  "hebrew": "פַּלְגֵי מַיִם יָרְדוּ עֵינָי עַל לֹא שָׁמְרוּ תוֹרָתֶךָ׃ ",
- "transliteration": "palegeymaim yaredu 'eynay 'al loshameru toorateja {f}",
+ "transliteration": "palegeymaim yaredu 'eynay 'al loshameru toorateja ",
  "spanish": "Ríos de agua descendieron de mis ojos, Porque no guardaban tu ley."
  },
  {
@@ -14082,7 +14082,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 144,
  "hebrew": "צֶדֶק עֵדְוֺתֶיךָ לְעוֹלָם הֲבִינֵנִי וְאֶחְיֶה׃ ",
- "transliteration": "tsedek 'edevteyja le'oolam havineni veejeyeh {f}",
+ "transliteration": "tsedek 'edevteyja le'oolam havineni veejeyeh ",
  "spanish": "Justicia eterna son tus testimonios; Dame entendimiento, y viviré."
  },
  {
@@ -14130,7 +14130,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 152,
  "hebrew": "קֶדֶם יָדַעְתִּי מֵעֵדֹתֶיךָ כִּי לְעוֹלָם יְסַדְתָּם׃ ",
- "transliteration": "kedem yada'eti me'edoteyja ki le'oolam yesadetam {f}",
+ "transliteration": "kedem yada'eti me'edoteyja ki le'oolam yesadetam ",
  "spanish": "Ya ha mucho que he entendido de tus mandamientos, Que para siempre los fundaste."
  },
  {
@@ -14178,7 +14178,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 160,
  "hebrew": "רֹאשׁ דְּבָרְךָ אֱמֶת וּלְעוֹלָם כׇּל מִשְׁפַּט צִדְקֶךָ׃ ",
- "transliteration": "roshdevareja emet ule'oolam klmishepat tsidekeja {f}",
+ "transliteration": "roshdevareja emet ule'oolam klmishepat tsidekeja ",
  "spanish": "El principio de tu palabra es verdad; Y eterno es todo juicio de tu justicia."
  },
  {
@@ -14226,7 +14226,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 168,
  "hebrew": "שָׁמַרְתִּי פִקּוּדֶיךָ וְעֵדֹתֶיךָ כִּי כׇל דְּרָכַי נֶגְדֶּךָ׃ ",
- "transliteration": "shamareti fikudeyja ve'edoteyja ki jlderajay negedeja {f}",
+ "transliteration": "shamareti fikudeyja ve'edoteyja ki jlderajay negedeja ",
  "spanish": "Guardado he tus mandamientos y tus testimonios; Porque todos mis caminos están delante de ti."
  },
  {
@@ -14274,7 +14274,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 176,
  "hebrew": "תָּעִיתִי כְּשֶׂה אֹבֵד בַּקֵּשׁ עַבְדֶּךָ כִּי מִצְוֺתֶיךָ לֹא שָׁכָחְתִּי׃ ",
- "transliteration": "ta'iti keseh oved bakesh 'avedeja ki mitsevteyja lo shajajeti {f}",
+ "transliteration": "ta'iti keseh oved bakesh 'avedeja ki mitsevteyja lo shajajeti ",
  "spanish": "Yo anduve errante como oveja extraviada; busca á tu siervo; Porque no me he olvidado de tus mandamientos."
  }
  ]
@@ -14326,7 +14326,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 7,
  "hebrew": "אֲנִי שָׁלוֹם וְכִי אֲדַבֵּר הֵמָּה לַמִּלְחָמָה׃ ",
- "transliteration": "anishaloom veji adaber hemah lamilejamah {f}",
+ "transliteration": "anishaloom veji adaber hemah lamilejamah ",
  "spanish": "Yo soy pacífico: Mas ellos, así que hablo, me hacen guerra."
  }
  ]
@@ -14384,7 +14384,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 8,
  "hebrew": "יְהֹוָה יִשְׁמׇר צֵאתְךָ וּבוֹאֶךָ מֵעַתָּה וְעַד עוֹלָם׃ ",
- "transliteration": "Adonai ishemrtseteja uvuoeja me'atah ve'ad'oolam {f}",
+ "transliteration": "Adonai ishemrtseteja uvuoeja me'atah ve'ad'oolam ",
  "spanish": "Jehová guardará tu salida y tu entrada, Desde ahora y para siempre."
  }
  ]
@@ -14448,7 +14448,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 9,
  "hebrew": "לְמַעַן בֵּית יְהֹוָה אֱלֹהֵינוּ אֲבַקְשָׁה טוֹב לָךְ׃ ",
- "transliteration": "lema'an beytAdonai Eloheinu avakeshah toov laje {f}",
+ "transliteration": "lema'an beytAdonai Eloheinu avakeshah toov laje ",
  "spanish": "A causa de la casa de Jehová nuestro Dios, Buscaré bien para ti."
  }
  ]
@@ -14482,7 +14482,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 4,
  "hebrew": "רַבַּת שָׂבְעָה לָּהּ נַפְשֵׁנוּ הַלַּעַג הַשַּׁאֲנַנִּים הַבּוּז (לגאיונים) [לִגְאֵי יוֹנִים]׃ ",
- "transliteration": "rabat save'ahlah nafeshenu hala'ag hashaananim habuz (lgyvnym) [ligeey yoonim] {f}",
+ "transliteration": "rabat save'ahlah nafeshenu hala'ag hashaananim habuz (lgyvnym) [ligeey yoonim] ",
  "spanish": "Muy harta está nuestra alma Del escarnio de los holgados, Y del menosprecio de los soberbios."
  }
  ]
@@ -14540,7 +14540,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 8,
  "hebrew": "עֶזְרֵנוּ בְּשֵׁם יְהֹוָה עֹשֵׂה שָׁמַיִם וָאָרֶץ׃ ",
- "transliteration": "'ezerenu beshem Adonai 'oseh shamaim vaarets {f}",
+ "transliteration": "'ezerenu beshem Adonai 'oseh shamaim vaarets ",
  "spanish": "Nuestro socorro es en el nombre de Jehová, Que hizo el cielo y la tierra."
  }
  ]
@@ -14580,7 +14580,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 5,
  "hebrew": "וְהַמַּטִּים עֲקַלְקַלּוֹתָם יוֹלִיכֵם יְהֹוָה אֶת פֹּעֲלֵי הָאָוֶן שָׁלוֹם עַל יִשְׂרָאֵל׃ ",
- "transliteration": "vehamatim 'akalekalootam yoolijem Adonai etpo'aley haaven shaloom 'aliserael {f}",
+ "transliteration": "vehamatim 'akalekalootam yoolijem Adonai etpo'aley haaven shaloom 'aliserael ",
  "spanish": "Mas á los que se apartan tras sus perversidades, Jehová los llevará con los que obran iniquidad: Y paz sea sobre Israel."
  }
  ]
@@ -14626,7 +14626,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 6,
  "hebrew": "הָלוֹךְ יֵלֵךְ וּבָכֹה נֹשֵׂא מֶשֶׁךְ הַזָּרַע בֹּא יָבֹא בְרִנָּה נֹשֵׂא אֲלֻמֹּתָיו׃ ",
- "transliteration": "halooje yeleje uvajoh nose meshejehazara' boyavu verinah nose alumotayv {f}",
+ "transliteration": "halooje yeleje uvajoh nose meshejehazara' boyavu verinah nose alumotayv ",
  "spanish": "Irá andando y llorando el que lleva la preciosa simiente; Mas volverá á venir con regocijo, trayendo sus gavillas."
  }
  ]
@@ -14666,7 +14666,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 5,
  "hebrew": "אַשְׁרֵי הַגֶּבֶר אֲשֶׁר מִלֵּא אֶת אַשְׁפָּתוֹ מֵהֶם לֹא יֵבֹשׁוּ כִּי יְדַבְּרוּ אֶת אוֹיְבִים בַּשָּׁעַר׃ ",
- "transliteration": "asherey hagever asher mile etashepatoo mehem loyevushu kiyedaberu etooyevim basha'ar {f}",
+ "transliteration": "asherey hagever asher mile etashepatoo mehem loyevushu kiyedaberu etooyevim basha'ar ",
  "spanish": "Bienaventurado el hombre que hinchió su aljaba de ellos: No será avergonzado Cuando hablare con los enemigos en la puerta."
  }
  ]
@@ -14712,7 +14712,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 6,
  "hebrew": "וּרְאֵה בָנִים לְבָנֶיךָ שָׁלוֹם עַל יִשְׂרָאֵל׃ ",
- "transliteration": "ureehvanim levaneyja shaloom 'aliserael {f}",
+ "transliteration": "ureehvanim levaneyja shaloom 'aliserael ",
  "spanish": "Y veas los hijos de tus hijos, Y la paz sobre Israel."
  }
  ]
@@ -14770,7 +14770,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 8,
  "hebrew": "וְלֹא אָמְרוּ הָעֹבְרִים בִּרְכַּת יְהֹוָה אֲלֵיכֶם בֵּרַכְנוּ אֶתְכֶם בְּשֵׁם יְהֹוָה׃ ",
- "transliteration": "velo ameru ha'overim birekatAdonai aleyjem berajenu etejem beshem Adonai {f}",
+ "transliteration": "velo ameru ha'overim birekatAdonai aleyjem berajenu etejem beshem Adonai ",
  "spanish": "Ni dijeron los que pasaban: Bendición de Jehová sea sobre vosotros; Os bendecimos en el nombre de Jehová."
  }
  ]
@@ -14828,7 +14828,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 8,
  "hebrew": "וְהוּא יִפְדֶּה אֶת יִשְׂרָאֵל מִכֹּל עֲוֺנֹתָיו׃ ",
- "transliteration": "vehu ifedeh etiserael mikol 'avnotayv {f}",
+ "transliteration": "vehu ifedeh etiserael mikol 'avnotayv ",
  "spanish": "Y él redimirá á Israel De todos sus pecados."
  }
  ]
@@ -14856,7 +14856,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 3,
  "hebrew": "יַחֵל יִשְׂרָאֵל אֶל יְהֹוָה מֵעַתָּה וְעַד עוֹלָם׃ ",
- "transliteration": "yajel iserael elAdonai me'atah ve'ad'oolam {f}",
+ "transliteration": "yajel iserael elAdonai me'atah ve'ad'oolam ",
  "spanish": "Espera, oh Israel, en Jehová Desde ahora y para siempre."
  }
  ]
@@ -14974,7 +14974,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 18,
  "hebrew": "אוֹיְבָיו אַלְבִּישׁ בֹּשֶׁת וְעָלָיו יָצִיץ נִזְרוֹ׃ ",
- "transliteration": "ooyevayv alebish boshet ve'alayv yatsits nizeroo {f}",
+ "transliteration": "ooyevayv alebish boshet ve'alayv yatsits nizeroo ",
  "spanish": "A sus enemigos vestiré de confusión: Mas sobre él florecerá su corona."
  }
  ]
@@ -15002,7 +15002,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 3,
  "hebrew": "כְּטַל חֶרְמוֹן שֶׁיֹּרֵד עַל הַרְרֵי צִיּוֹן כִּי שָׁם צִוָּה יְהֹוָה אֶת הַבְּרָכָה חַיִּים עַד הָעוֹלָם׃ ",
- "transliteration": "ketaljeremoon sheyored 'alharerey tsioon ki sham tsivah Adonai ethaberajah jaim 'adha'oolam {f}",
+ "transliteration": "ketaljeremoon sheyored 'alharerey tsioon ki sham tsivah Adonai ethaberajah jaim 'adha'oolam ",
  "spanish": "Como el rocío de Hermón, Que desciende sobre los montes de Sión: Porque allí envía Jehová bendición, Y vida eterna."
  }
  ]
@@ -15030,7 +15030,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 3,
  "hebrew": "יְבָרֶכְךָ יְהֹוָה מִצִּיּוֹן עֹשֵׂה שָׁמַיִם וָאָרֶץ׃ ",
- "transliteration": "yevarejeja Adonai mitsioon 'oseh shamaim vaarets {f}",
+ "transliteration": "yevarejeja Adonai mitsioon 'oseh shamaim vaarets ",
  "spanish": "Bendígate Jehová desde Sión, El cual ha hecho los cielos y la tierra."
  }
  ]
@@ -15165,7 +15165,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 21,
  "hebrew": "בָּרוּךְ יְהֹוָה מִצִּיּוֹן שֹׁכֵן יְרוּשָׁלָ͏ִם הַלְלוּ יָהּ׃ ",
- "transliteration": "baruje Adonai mitsioon shojen yerushala͏im halelvyah {f}",
+ "transliteration": "baruje Adonai mitsioon shojen yerushala͏im halelvyah ",
  "spanish": "Bendito de Sión Jehová, Que mora en Jerusalem. Aleluya."
  }
  ]
@@ -15330,7 +15330,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 26,
  "hebrew": "הוֹדוּ לְאֵל הַשָּׁמָיִם כִּי לְעוֹלָם חַסְדּוֹ׃ ",
- "transliteration": "hoodu leel hashamaim ki le'oolam jasedoo {f}",
+ "transliteration": "hoodu leel hashamaim ki le'oolam jasedoo ",
  "spanish": "Alabad al Dios de los cielos: Porque para siempre es su misericordia."
  }
  ]
@@ -15394,7 +15394,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 9,
  "hebrew": "אַשְׁרֵי שֶׁיֹּאחֵז וְנִפֵּץ אֶת עֹלָלַיִךְ אֶל הַסָּלַע׃ ",
- "transliteration": "asherey sheyojez venipets et'olalaije elhasala' {f}",
+ "transliteration": "asherey sheyojez venipets et'olalaije elhasala' ",
  "spanish": "Bienaventurado el que tomará y estrellará tus niños Contra las piedras."
  }
  ]
@@ -15451,7 +15451,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 8,
  "hebrew": "יְהֹוָה יִגְמֹר בַּעֲדִי יְהֹוָה חַסְדְּךָ לְעוֹלָם מַעֲשֵׂי יָדֶיךָ אַל תֶּרֶף׃ ",
- "transliteration": "Adonai igemor ba'adi Adonai jasedeja le'oolam ma'asey yadeyja alteref {f}",
+ "transliteration": "Adonai igemor ba'adi Adonai jasedeja le'oolam ma'asey yadeyja alteref ",
  "spanish": "Jehová cumplirá por mí: Tu misericordia, oh Jehová, es para siempre; No dejarás la obra de tus manos."
  }
  ]
@@ -15604,7 +15604,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 24,
  "hebrew": "וּרְאֵה אִם דֶּרֶךְ עֹצֶב בִּי וּנְחֵנִי בְּדֶרֶךְ עוֹלָם׃ ",
- "transliteration": "ureeh imdereje'otsev bi unejeni bedereje 'oolam {f}",
+ "transliteration": "ureeh imdereje'otsev bi unejeni bedereje 'oolam ",
  "spanish": "Y ve si hay en mí camino de perversidad, Y guíame en el camino eterno."
  }
  ]
@@ -15697,7 +15697,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 14,
  "hebrew": "אַךְ צַדִּיקִים יוֹדוּ לִשְׁמֶךָ יֵשְׁבוּ יְשָׁרִים אֶת פָּנֶיךָ׃ ",
- "transliteration": "aje tsadikim yoodu lishemeja yeshevu yesharim etpaneyja {f}",
+ "transliteration": "aje tsadikim yoodu lishemeja yeshevu yesharim etpaneyja ",
  "spanish": "..."
  }
  ]
@@ -15766,7 +15766,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 10,
  "hebrew": "יִפְּלוּ בְמַכְמֹרָיו רְשָׁעִים יַחַד אָנֹכִי עַד אֶעֱבוֹר׃ ",
- "transliteration": "ipelu vemajemorayv resha'im yajad anoji 'ade'evuor {f}",
+ "transliteration": "ipelu vemajemorayv resha'im yajad anoji 'ade'evuor ",
  "spanish": "Caigan los impíos á una en sus redes, Mientras yo pasaré adelante."
  }
  ]
@@ -15823,7 +15823,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 8,
  "hebrew": "הוֹצִיאָה מִמַּסְגֵּר נַפְשִׁי לְהוֹדוֹת אֶת שְׁמֶךָ בִּי יַכְתִּרוּ צַדִּיקִים כִּי תִגְמֹל עָלָי׃ ",
- "transliteration": "hootsiah mimaseger nafeshi lehoodoot etshemeja bi yajetiru tsadikim ki tigemol 'alay {f}",
+ "transliteration": "hootsiah mimaseger nafeshi lehoodoot etshemeja bi yajetiru tsadikim ki tigemol 'alay ",
  "spanish": "..."
  }
  ]
@@ -15904,7 +15904,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 12,
  "hebrew": "וּבְחַסְדְּךָ תַּצְמִית אֹיְבָי וְהַאֲבַדְתָּ כׇּל צֹרְרֵי נַפְשִׁי כִּי אֲנִי עַבְדֶּךָ׃ ",
- "transliteration": "uvejasedeja tatsemit oyevay vehaavadeta kltsorerey nafeshi ki ani 'avedeja {f}",
+ "transliteration": "uvejasedeja tatsemit oyevay vehaavadeta kltsorerey nafeshi ki ani 'avedeja ",
  "spanish": "Y por tu misericordia disiparás mis enemigos, Y destruirás todos los adversarios de mi alma: Porque yo soy tu siervo."
  }
  ]
@@ -16003,7 +16003,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 15,
  "hebrew": "אַשְׁרֵי הָעָם שֶׁכָּכָה לּוֹ אַשְׁרֵי הָעָם שֱׁיְהֹוָה אֱלֹהָיו׃ ",
- "transliteration": "asherey ha'am shekajah loo asherey ha'am sheAdonai elohayv {f}",
+ "transliteration": "asherey ha'am shekajah loo asherey ha'am sheAdonai elohayv ",
  "spanish": "Bienaventurado el pueblo que tiene esto: Bienaventurado el pueblo cuyo Dios es Jehová."
  }
  ]
@@ -16139,7 +16139,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 21,
  "hebrew": "תְּהִלַּת יְהֹוָה יְדַבֶּר פִּי וִיבָרֵךְ כׇּל בָּשָׂר שֵׁם קׇדְשׁוֹ לְעוֹלָם וָעֶד׃ ",
- "transliteration": "tehilat Adonai yedaberpi vivareje klbasar shem kdeshoo le'oolam va'ed {f}",
+ "transliteration": "tehilat Adonai yedaberpi vivareje klbasar shem kdeshoo le'oolam va'ed ",
  "spanish": "La alabanza de Jehová hablará mi boca; Y bendiga toda carne su santo nombre por siglo y para siempre."
  }
  ]
@@ -16208,7 +16208,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 10,
  "hebrew": "יִמְלֹךְ יְהֹוָה לְעוֹלָם אֱלֹהַיִךְ צִיּוֹן לְדֹר וָדֹר הַלְלוּ יָהּ׃ ",
- "transliteration": "imeloje Adonai le'oolam elohaije tsioon ledor vador halelvyah {f}",
+ "transliteration": "imeloje Adonai le'oolam elohaije tsioon ledor vador halelvyah ",
  "spanish": "Reinará Jehová para siempre; Tu Dios, oh Sión, por generación y generación. Aleluya."
  }
  ]
@@ -16337,7 +16337,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 20,
  "hebrew": "לֹא עָשָׂה כֵן לְכׇל גּוֹי וּמִשְׁפָּטִים בַּל יְדָעוּם הַלְלוּ יָהּ׃ ",
- "transliteration": "lo'asah jen lejlgooy umishepatim balyeda'um halelvyah {f}",
+ "transliteration": "lo'asah jen lejlgooy umishepatim balyeda'um halelvyah ",
  "spanish": "No ha hecho esto con toda gente; Y no conocieron sus juicios. Aleluya."
  }
  ]
@@ -16430,7 +16430,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 14,
  "hebrew": "וַיָּרֶם קֶרֶן לְעַמּוֹ תְּהִלָּה לְכׇל חֲסִידָיו לִבְנֵי יִשְׂרָאֵל עַם קְרֹבוֹ הַלְלוּ יָהּ׃ ",
- "transliteration": "vayarem keren le'amoo tehilah lejljasidayv liveney iserael 'am kerovuo halelvyah {f}",
+ "transliteration": "vayarem keren le'amoo tehilah lejljasidayv liveney iserael 'am kerovuo halelvyah ",
  "spanish": "El ensalzó el cuerno de su pueblo; Aláben le todos sus santos, los hijos de Israel, El pueblo á él cercano. Aleluya."
  }
  ]
@@ -16493,7 +16493,7 @@ export const TEHILIM_PSALMS: Psalm[] = [
  {
  "verse": 9,
  "hebrew": "לַעֲשׂוֹת בָּהֶם מִשְׁפָּט כָּתוּב הָדָר הוּא לְכׇל חֲסִידָיו הַלְלוּ יָהּ׃ ",
- "transliteration": "la'asoot bahem mishepat katuv hadar hu lejljasidayv halelvyah {f}",
+ "transliteration": "la'asoot bahem mishepat katuv hadar hu lejljasidayv halelvyah ",
  "spanish": "Para ejecutar en ellos el juicio escrito: Gloria será esta para todos sus santos. Aleluya."
  }
  ]

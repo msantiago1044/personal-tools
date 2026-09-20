@@ -25,7 +25,10 @@ import {
   Crosshair,
   Info,
   Compass,
-  FileText
+  FileText,
+  AlertCircle,
+  FolderOpen,
+  Sparkles
 } from 'lucide-react';
 
 interface DwgViewerModuleProps {
@@ -33,8 +36,8 @@ interface DwgViewerModuleProps {
 }
 
 export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub }) => {
-  // Estado del dibujo cargado
-  const [drawing, setDrawing] = useState<CadDrawing>(getSampleCivil3DDrawing());
+  // Estado del dibujo cargado: Inicialmente null (sin plano demo por defecto)
+  const [drawing, setDrawing] = useState<CadDrawing | null>(null);
   const [layersState, setLayersState] = useState<Record<string, boolean>>({});
   const [isDarkCanvas, setIsDarkCanvas] = useState<boolean>(true);
   const [layersPanelOpen, setLayersPanelOpen] = useState<boolean>(true);
@@ -42,7 +45,13 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
   const [measurePoints, setMeasurePoints] = useState<CadPoint[]>([]);
   const [activeCursorPos, setActiveCursorPos] = useState<CadPoint>({ x: 0, y: 0 });
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
-  const [statusMessage, setStatusMessage] = useState<string>('Plano cargado correctamente');
+  const [statusMessage, setStatusMessage] = useState<string>('');
+
+  // Estados de carga interactiva
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [loadingProgress, setLoadingProgress] = useState<number>(0);
+  const [loadingStage, setLoadingStage] = useState<string>('');
+  const [isDragOver, setIsDragOver] = useState<boolean>(false);
 
   // Transformación del Viewport: escala y desplazamiento
   const [scale, setScale] = useState<number>(1);
@@ -53,17 +62,6 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // Inicializar estado de capas al cambiar de dibujo
-  useEffect(() => {
-    const initialLayers: Record<string, boolean> = {};
-    Object.keys(drawing.layers).forEach((lKey) => {
-      initialLayers[lKey] = drawing.layers[lKey].visible !== false;
-    });
-    setLayersState(initialLayers);
-    fitToScreen(drawing);
-    setMeasurePoints([]);
-  }, [drawing]);
 
   // Ajustar plano a la pantalla (Zoom Extents)
   const fitToScreen = useCallback((dwg: CadDrawing) => {
@@ -96,7 +94,19 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
     setStatusMessage('Vista ajustada a los límites del plano (Zoom Extents)');
   }, []);
 
-  // Conversión de coordenadas de mundo a pantalla (Y invertida de CAD a Canvas)
+  // Inicializar capas al cambiar de dibujo
+  useEffect(() => {
+    if (!drawing) return;
+    const initialLayers: Record<string, boolean> = {};
+    Object.keys(drawing.layers).forEach((lKey) => {
+      initialLayers[lKey] = drawing.layers[lKey].visible !== false;
+    });
+    setLayersState(initialLayers);
+    setTimeout(() => fitToScreen(drawing), 50);
+    setMeasurePoints([]);
+  }, [drawing, fitToScreen]);
+
+  // Conversión de coordenadas
   const worldToScreen = useCallback(
     (wx: number, wy: number) => {
       return {
@@ -107,7 +117,6 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
     [offset, scale]
   );
 
-  // Conversión de coordenadas de pantalla a mundo CAD
   const screenToWorld = useCallback(
     (sx: number, sy: number): CadPoint => {
       return {
@@ -121,11 +130,10 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
   // RENDERIZADO EN EL CANVAS
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas || !drawing) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Adaptar a pantalla de alta resolución (Retina / 4K)
     const dpr = window.devicePixelRatio || 1;
     const width = canvas.clientWidth;
     const height = canvas.clientHeight;
@@ -134,12 +142,12 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
     canvas.height = height * dpr;
     ctx.scale(dpr, dpr);
 
-    // Fondo del espacio de trabajo CAD (Modelo Oscuro vs Papel Claro)
+    // Fondo del espacio de trabajo CAD
     const bgColor = isDarkCanvas ? '#0b0f19' : '#f8fafc';
     ctx.fillStyle = bgColor;
     ctx.fillRect(0, 0, width, height);
 
-    // 1. Dibujar Rejilla de Fondo (Grid CAD)
+    // 1. Dibujar Rejilla CAD (Grid)
     const gridSizeWorld = 50;
     const gridSizeScreen = gridSizeWorld * scale;
 
@@ -162,25 +170,23 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
       ctx.stroke();
     }
 
-    // 2. Dibujar Ejes de Origen (0,0) - X en Rojo, Y en Verde
+    // 2. Ejes de Origen (0,0)
     const origin = worldToScreen(0, 0);
     ctx.lineWidth = 1.5;
-    // Eje X
     ctx.strokeStyle = '#ef4444';
     ctx.beginPath();
     ctx.moveTo(origin.sx, origin.sy);
     ctx.lineTo(origin.sx + 40, origin.sy);
     ctx.stroke();
-    // Eje Y
+
     ctx.strokeStyle = '#22c55e';
     ctx.beginPath();
     ctx.moveTo(origin.sx, origin.sy);
     ctx.lineTo(origin.sx, origin.sy - 40);
     ctx.stroke();
 
-    // 3. Renderizar Entidades del Plano por Capa
+    // 3. Renderizar Entidades CAD
     drawing.entities.forEach((ent: CadEntity) => {
-      // Verificar si la capa está visible
       if (layersState[ent.layer] === false) return;
 
       const layerColor = drawing.layers[ent.layer]?.color || '#38bdf8';
@@ -233,7 +239,6 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
           if (ent.center && ent.radius && ent.startAngle !== undefined && ent.endAngle !== undefined) {
             const c = worldToScreen(ent.center.x, ent.center.y);
             const rScreen = ent.radius * scale;
-            // En Canvas Y va invertido respecto a CAD
             ctx.beginPath();
             ctx.arc(c.sx, c.sy, rScreen, -ent.endAngle, -ent.startAngle, false);
             ctx.stroke();
@@ -254,7 +259,7 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
       }
     });
 
-    // 4. Dibujar Línea de Medición Activa
+    // 4. Medición
     if (measurePoints.length > 0) {
       ctx.strokeStyle = '#f59e0b';
       ctx.fillStyle = '#f59e0b';
@@ -287,7 +292,6 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
       ctx.arc(p2Screen.sx, p2Screen.sy, 5, 0, Math.PI * 2);
       ctx.fill();
 
-      // Cálculo de distancia
       const dx = p2World.x - measurePoints[0].x;
       const dy = p2World.y - measurePoints[0].y;
       const dist = Math.sqrt(dx * dx + dy * dy);
@@ -322,32 +326,96 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
       ctx.lineTo(c.sx, height);
       ctx.stroke();
 
-      // Cuadrado del pickbox central
       ctx.strokeRect(c.sx - 4, c.sy - 4, 8, 8);
     }
   }, [drawing, layersState, isDarkCanvas, offset, scale, isPanning, activeCursorPos, measurePoints, worldToScreen]);
 
-  // Manejadores de Interacción del Ratón
+  // Procesamiento con barra de carga paso a paso
+  const processFileWithProgress = async (file: File) => {
+    setIsLoading(true);
+    setLoadingProgress(10);
+    setLoadingStage(`Leyendo archivo '${file.name}' (${(file.size / 1024).toFixed(1)} KB)...`);
+
+    const ext = file.name.split('.').pop()?.toLowerCase();
+
+    try {
+      await new Promise((r) => setTimeout(r, 150));
+      setLoadingProgress(35);
+      setLoadingStage('Analizando cabecera y tablas CAD (Capas, Bloques, Estilos)...');
+
+      let parsed: CadDrawing;
+
+      if (ext === 'dxf') {
+        const text = await file.text();
+        setLoadingProgress(65);
+        setLoadingStage('Extrayendo entidades vectoriales DXF (Líneas, Polilíneas, Cotas)...');
+        await new Promise((r) => setTimeout(r, 150));
+        parsed = parseDxfContent(text, file.name);
+      } else if (ext === 'dwg') {
+        const buffer = await file.arrayBuffer();
+        setLoadingProgress(65);
+        setLoadingStage('Decodificando binario DWG con motor WebAssembly...');
+        await new Promise((r) => setTimeout(r, 200));
+        parsed = await parseDwgBinary(buffer, file.name);
+      } else {
+        throw new Error('Por favor selecciona un archivo válido con extensión .dwg o .dxf');
+      }
+
+      setLoadingProgress(90);
+      setLoadingStage(`Procesando ${parsed.entities.length} entidades en ${Object.keys(parsed.layers).length} capas...`);
+      await new Promise((r) => setTimeout(r, 150));
+
+      setLoadingProgress(100);
+      setLoadingStage('¡Plano listo para visualización!');
+      await new Promise((r) => setTimeout(r, 250));
+
+      setDrawing(parsed);
+      setIsLoading(false);
+      setStatusMessage(`Plano '${file.name}' cargado con éxito.`);
+    } catch (err: any) {
+      console.error('Error cargando CAD:', err);
+      setIsLoading(false);
+      alert(`Error al procesar el archivo: ${err?.message || 'Formato no soportado o archivo dañado.'}`);
+    }
+  };
+
+  // Manejador de archivo seleccionado por input
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      processFileWithProgress(file);
+    }
+  };
+
+  // Manejador de Drag and Drop
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      processFileWithProgress(file);
+    }
+  };
+
+  // Manejo de Interacción del Ratón
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    // Si está en modo medición
     if (measureMode) {
       const rect = e.currentTarget.getBoundingClientRect();
       const pt = screenToWorld(e.clientX - rect.left, e.clientY - rect.top);
 
       if (measurePoints.length === 0 || measurePoints.length >= 2) {
         setMeasurePoints([pt]);
-        setStatusMessage('Punto 1 seleccionado. Haz clic en el segundo punto para medir.');
+        setStatusMessage('Punto 1 seleccionado. Haz clic en el segundo punto.');
       } else {
         setMeasurePoints([measurePoints[0], pt]);
         const dx = pt.x - measurePoints[0].x;
         const dy = pt.y - measurePoints[0].y;
         const dist = Math.sqrt(dx * dx + dy * dy);
-        setStatusMessage(`Distancia medida: ${dist.toFixed(3)} m (ΔX: ${dx.toFixed(2)}, ΔY: ${dy.toFixed(2)})`);
+        setStatusMessage(`Distancia: ${dist.toFixed(3)} m (ΔX: ${dx.toFixed(2)}, ΔY: ${dy.toFixed(2)})`);
       }
       return;
     }
 
-    // Paneo con botón izquierdo o central
     setIsPanning(true);
     setDragStart({ x: e.clientX - offset.x, y: e.clientY - offset.y });
   };
@@ -371,7 +439,6 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
     setIsPanning(false);
   };
 
-  // Zoom con Rueda del Ratón anclado en el cursor
   const handleWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
     e.preventDefault();
     const rect = e.currentTarget.getBoundingClientRect();
@@ -381,7 +448,6 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
     const zoomFactor = e.deltaY < 0 ? 1.15 : 0.85;
     const newScale = Math.max(Math.min(scale * zoomFactor, 80), 0.05);
 
-    // Mantener la posición del punto bajo el cursor
     setOffset({
       x: cursorX - (cursorX - offset.x) * (newScale / scale),
       y: cursorY - (cursorY - offset.y) * (newScale / scale),
@@ -389,7 +455,6 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
     setScale(newScale);
   };
 
-  // Botones de Zoom
   const zoomIn = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -416,36 +481,6 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
     setScale(newScale);
   };
 
-  // Carga de archivos DWG y DXF por el usuario
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setStatusMessage(`Cargando archivo ${file.name}...`);
-    const ext = file.name.split('.').pop()?.toLowerCase();
-
-    try {
-      if (ext === 'dxf') {
-        const text = await file.text();
-        const parsed = parseDxfContent(text, file.name);
-        setDrawing(parsed);
-        setStatusMessage(`Archivo DXF '${file.name}' cargado con éxito (${parsed.entities.length} entidades).`);
-      } else if (ext === 'dwg') {
-        const buffer = await file.arrayBuffer();
-        const parsed = await parseDwgBinary(buffer, file.name);
-        setDrawing(parsed);
-        setStatusMessage(`Archivo DWG '${file.name}' cargado con éxito (${parsed.entities.length} entidades).`);
-      } else {
-        alert('Por favor selecciona un archivo con extensión .dwg o .dxf');
-      }
-    } catch (err: any) {
-      console.error('Error al abrir plano:', err);
-      alert(`No se pudo procesar el archivo: ${err?.message || 'Formato no soportado'}`);
-      setStatusMessage('Error al abrir el archivo CAD');
-    }
-  };
-
-  // Alternar visibilidad de una capa
   const toggleLayer = (layerName: string) => {
     setLayersState((prev) => ({
       ...prev,
@@ -453,8 +488,8 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
     }));
   };
 
-  // Alternar todas las capas
   const toggleAllLayers = (visible: boolean) => {
+    if (!drawing) return;
     const updated: Record<string, boolean> = {};
     Object.keys(drawing.layers).forEach((k) => {
       updated[k] = visible;
@@ -462,7 +497,6 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
     setLayersState(updated);
   };
 
-  // Alternar pantalla completa
   const toggleFullscreen = () => {
     if (!containerRef.current) return;
     if (!document.fullscreenElement) {
@@ -475,7 +509,13 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
   return (
     <div
       ref={containerRef}
-      className="flex flex-col h-screen w-screen bg-slate-900 text-slate-100 select-none overflow-hidden"
+      onDragOver={(e) => {
+        e.preventDefault();
+        setIsDragOver(true);
+      }}
+      onDragLeave={() => setIsDragOver(false)}
+      onDrop={handleDrop}
+      className="flex flex-col h-screen w-screen bg-slate-900 text-slate-100 select-none overflow-hidden relative font-sans"
     >
       {/* 1. BARRA SUPERIOR DE HERRAMIENTAS Y ARCHIVO */}
       <header className="h-14 bg-slate-950 border-b border-slate-800 px-4 flex items-center justify-between z-20 shrink-0">
@@ -485,7 +525,7 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
             className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 transition"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="hidden sm:inline">Launcher Hub</span>
+            <span>Launcher Hub</span>
           </button>
 
           <div className="h-4 w-px bg-slate-800" />
@@ -494,222 +534,262 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
             <span className="text-xl">📐</span>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-bold text-sm text-white tracking-wide">{drawing.filename}</span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-blue-900/60 text-blue-300 border border-blue-700/50">
-                  {drawing.version || drawing.fileFormat}
+                <span className="font-bold text-sm text-white tracking-wide">
+                  {drawing ? drawing.filename : 'Visor de Planos DWG / CAD'}
                 </span>
+                {drawing && (
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-blue-900/60 text-blue-300 border border-blue-700/50">
+                    {drawing.version || drawing.fileFormat}
+                  </span>
+                )}
               </div>
             </div>
           </div>
         </div>
 
-        {/* Acciones principales: Cargar planos de prueba y Subir archivo */}
+        {/* Acciones principales */}
         <div className="flex items-center gap-2">
-          {/* Selector de Planos de Demostración */}
-          <div className="hidden md:flex items-center gap-1 bg-slate-900 p-1 rounded-xl border border-slate-800 text-xs">
-            <button
-              onClick={() => {
-                setDrawing(getSampleCivil3DDrawing());
-                setStatusMessage('Plano de Topografía Civil 3D cargado');
-              }}
-              className="px-2.5 py-1 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition flex items-center gap-1"
-            >
-              <span>⛰️ Civil 3D Topo</span>
-            </button>
-            <button
-              onClick={() => {
-                setDrawing(getSampleArchitecturalDrawing());
-                setStatusMessage('Plano Arquitectónico Residencial cargado');
-              }}
-              className="px-2.5 py-1 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition flex items-center gap-1"
-            >
-              <span>🏢 Arquitectónico</span>
-            </button>
-          </div>
-
-          {/* Botón para Abrir/Subir propio DWG/DXF */}
+          {/* Input oculto para abrir archivo */}
           <input
             type="file"
             ref={fileInputRef}
-            onChange={handleFileUpload}
+            onChange={handleFileInputChange}
             accept=".dwg,.dxf"
             className="hidden"
           />
+
           <button
             onClick={() => fileInputRef.current?.click()}
             className="flex items-center gap-1.5 px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition shadow-sm"
           >
             <Upload className="w-3.5 h-3.5" />
-            <span>Abrir DWG / DXF</span>
+            <span>{drawing ? 'Abrir otro plano' : 'Abrir DWG / DXF'}</span>
           </button>
 
-          {/* Alternar fondo Modelo Oscuro / Papel Claro */}
-          <button
-            onClick={() => setIsDarkCanvas(!isDarkCanvas)}
-            title={isDarkCanvas ? 'Fondo Espacio Papel (Claro)' : 'Fondo Espacio Modelo (Oscuro)'}
-            className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition"
-          >
-            {isDarkCanvas ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-blue-400" />}
-          </button>
+          {drawing && (
+            <>
+              <button
+                onClick={() => setIsDarkCanvas(!isDarkCanvas)}
+                title={isDarkCanvas ? 'Fondo Espacio Papel (Claro)' : 'Fondo Espacio Modelo (Oscuro)'}
+                className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition"
+              >
+                {isDarkCanvas ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-blue-400" />}
+              </button>
 
-          {/* Pantalla completa */}
-          <button
-            onClick={toggleFullscreen}
-            title="Pantalla Completa"
-            className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition"
-          >
-            {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
-          </button>
+              <button
+                onClick={toggleFullscreen}
+                title="Pantalla Completa"
+                className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition"
+              >
+                {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+              </button>
+            </>
+          )}
         </div>
       </header>
 
-      {/* 2. ÁREA DE TRABAJO PRINCIPAL (CANVAS + PANELES FLOTANTES) */}
-      <div className="relative flex-1 w-full h-full overflow-hidden">
-        {/* Lienzo Canvas CAD */}
-        <canvas
-          ref={canvasRef}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
-          onWheel={handleWheel}
-          className="w-full h-full cursor-crosshair block"
-        />
+      {/* 2. ÁREA PRINCIPAL */}
+      {drawing ? (
+        /* VISTA DEL PLANO CARGADO CON CANVAS */
+        <div className="relative flex-1 w-full h-full overflow-hidden">
+          <canvas
+            ref={canvasRef}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+            onWheel={handleWheel}
+            className="w-full h-full cursor-crosshair block"
+          />
 
-        {/* BARRA DE HERRAMIENTAS FLOTANTE CAD (ZOOM, MEDIR, CAPAS) */}
-        <div className="absolute top-4 left-4 z-10 flex flex-col gap-1.5 bg-slate-900/90 backdrop-blur-md p-1.5 rounded-2xl border border-slate-800 shadow-xl">
-          <button
-            onClick={zoomIn}
-            title="Acercar (Zoom In)"
-            className="p-2 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition"
-          >
-            <ZoomIn className="w-4 h-4" />
-          </button>
-          <button
-            onClick={zoomOut}
-            title="Alejar (Zoom Out)"
-            className="p-2 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition"
-          >
-            <ZoomOut className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => fitToScreen(drawing)}
-            title="Ajustar a Pantalla (Zoom Extents)"
-            className="p-2 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition"
-          >
-            <RotateCcw className="w-4 h-4" />
-          </button>
+          {/* BARRA DE HERRAMIENTAS FLOTANTE CAD */}
+          <div className="absolute top-4 left-4 z-10 flex flex-col gap-1.5 bg-slate-900/90 backdrop-blur-md p-1.5 rounded-2xl border border-slate-800 shadow-xl">
+            <button
+              onClick={zoomIn}
+              title="Acercar (Zoom In)"
+              className="p-2 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition"
+            >
+              <ZoomIn className="w-4 h-4" />
+            </button>
+            <button
+              onClick={zoomOut}
+              title="Alejar (Zoom Out)"
+              className="p-2 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition"
+            >
+              <ZoomOut className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => fitToScreen(drawing)}
+              title="Ajustar a Pantalla (Zoom Extents)"
+              className="p-2 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition"
+            >
+              <RotateCcw className="w-4 h-4" />
+            </button>
 
-          <div className="h-px bg-slate-800 my-1" />
+            <div className="h-px bg-slate-800 my-1" />
 
-          {/* Herramienta de Medición (Regla) */}
-          <button
-            onClick={() => {
-              setMeasureMode(!measureMode);
-              setMeasurePoints([]);
-              setStatusMessage(!measureMode ? 'Modo Regla activo: haz clic en dos puntos para medir distancia' : 'Modo navegación');
-            }}
-            title="Medir Distancia entre dos puntos"
-            className={`p-2 rounded-xl transition ${
-              measureMode ? 'bg-amber-500 text-slate-950 font-bold shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-            }`}
-          >
-            <Ruler className="w-4 h-4" />
-          </button>
+            {/* Medición */}
+            <button
+              onClick={() => {
+                setMeasureMode(!measureMode);
+                setMeasurePoints([]);
+                setStatusMessage(!measureMode ? 'Modo Regla activo: haz clic en dos puntos para medir distancia' : 'Modo navegación');
+              }}
+              title="Medir Distancia"
+              className={`p-2 rounded-xl transition ${
+                measureMode ? 'bg-amber-500 text-slate-950 font-bold shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+              }`}
+            >
+              <Ruler className="w-4 h-4" />
+            </button>
 
-          {/* Panel de Capas Toggle */}
-          <button
-            onClick={() => setLayersPanelOpen(!layersPanelOpen)}
-            title="Mostrar / Ocultar Capas"
-            className={`p-2 rounded-xl transition ${
-              layersPanelOpen ? 'bg-blue-600 text-white shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-            }`}
-          >
-            <Layers className="w-4 h-4" />
-          </button>
-        </div>
-
-        {/* PANEL LATERAL DE CAPAS (LAYERS) */}
-        {layersPanelOpen && (
-          <aside className="absolute top-4 right-4 z-10 w-72 max-h-[calc(100%-80px)] bg-slate-900/95 backdrop-blur-md rounded-2xl border border-slate-800 shadow-2xl flex flex-col overflow-hidden">
-            <div className="p-3.5 border-b border-slate-800 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Layers className="w-4 h-4 text-blue-400" />
-                <h3 className="text-xs font-bold uppercase tracking-wider text-white">Capas del Plano</h3>
-              </div>
-              <span className="text-[11px] font-semibold text-slate-400">
-                {Object.keys(drawing.layers).length} capas
-              </span>
-            </div>
-
-            {/* Acciones de capas */}
-            <div className="px-3 py-2 bg-slate-950/60 border-b border-slate-800 flex items-center justify-between text-[11px]">
-              <button
-                onClick={() => toggleAllLayers(true)}
-                className="text-blue-400 hover:underline font-semibold"
-              >
-                Mostrar todas
-              </button>
-              <button
-                onClick={() => toggleAllLayers(false)}
-                className="text-slate-400 hover:underline font-semibold"
-              >
-                Ocultar todas
-              </button>
-            </div>
-
-            {/* Lista de Capas con Ojos y Colores */}
-            <div className="flex-1 overflow-y-auto p-2 space-y-1">
-              {Object.keys(drawing.layers).map((layerName) => {
-                const layer = drawing.layers[layerName];
-                const isVisible = layersState[layerName] !== false;
-
-                return (
-                  <div
-                    key={layerName}
-                    onClick={() => toggleLayer(layerName)}
-                    className={`flex items-center justify-between p-2 rounded-xl text-xs cursor-pointer transition ${
-                      isVisible ? 'bg-slate-800/60 text-slate-200 hover:bg-slate-800' : 'bg-slate-950/40 text-slate-500 opacity-50'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2.5 truncate">
-                      {/* Cuadro de Color de la Capa */}
-                      <span
-                        className="w-3.5 h-3.5 rounded-full shrink-0 border border-white/20"
-                        style={{ backgroundColor: layer.color }}
-                      />
-                      <span className="truncate font-mono">{layerName}</span>
-                    </div>
-
-                    <div className="flex items-center gap-2 shrink-0">
-                      <span className="text-[10px] text-slate-500">{layer.entityCount} ent.</span>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleLayer(layerName);
-                        }}
-                        className="p-1 text-slate-400 hover:text-white"
-                      >
-                        {isVisible ? <Eye className="w-3.5 h-3.5 text-blue-400" /> : <EyeOff className="w-3.5 h-3.5 text-slate-600" />}
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </aside>
-        )}
-
-        {/* NOTIFICACIÓN O ESTADO EN VIVO */}
-        {statusMessage && (
-          <div className="absolute bottom-10 left-4 z-10 bg-slate-900/90 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-slate-800 text-xs font-medium text-slate-300 shadow-lg flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>{statusMessage}</span>
+            {/* Capas Toggle */}
+            <button
+              onClick={() => setLayersPanelOpen(!layersPanelOpen)}
+              title="Mostrar / Ocultar Capas"
+              className={`p-2 rounded-xl transition ${
+                layersPanelOpen ? 'bg-blue-600 text-white shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+              }`}
+            >
+              <Layers className="w-4 h-4" />
+            </button>
           </div>
-        )}
-      </div>
 
-      {/* 3. BARRA INFERIOR DE ESTADO CAD (Coordenadas en vivo, escala y entidades) */}
+          {/* PANEL LATERAL DE CAPAS */}
+          {layersPanelOpen && (
+            <aside className="absolute top-4 right-4 z-10 w-72 max-h-[calc(100%-80px)] bg-slate-900/95 backdrop-blur-md rounded-2xl border border-slate-800 shadow-2xl flex flex-col overflow-hidden">
+              <div className="p-3.5 border-b border-slate-800 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Layers className="w-4 h-4 text-blue-400" />
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-white">Capas del Plano</h3>
+                </div>
+                <span className="text-[11px] font-semibold text-slate-400">
+                  {Object.keys(drawing.layers).length} capas
+                </span>
+              </div>
+
+              <div className="px-3 py-2 bg-slate-950/60 border-b border-slate-800 flex items-center justify-between text-[11px]">
+                <button onClick={() => toggleAllLayers(true)} className="text-blue-400 hover:underline font-semibold">
+                  Mostrar todas
+                </button>
+                <button onClick={() => toggleAllLayers(false)} className="text-slate-400 hover:underline font-semibold">
+                  Ocultar todas
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-2 space-y-1">
+                {Object.keys(drawing.layers).map((layerName) => {
+                  const layer = drawing.layers[layerName];
+                  const isVisible = layersState[layerName] !== false;
+
+                  return (
+                    <div
+                      key={layerName}
+                      onClick={() => toggleLayer(layerName)}
+                      className={`flex items-center justify-between p-2 rounded-xl text-xs cursor-pointer transition ${
+                        isVisible ? 'bg-slate-800/60 text-slate-200 hover:bg-slate-800' : 'bg-slate-950/40 text-slate-500 opacity-50'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 truncate">
+                        <span
+                          className="w-3.5 h-3.5 rounded-full shrink-0 border border-white/20"
+                          style={{ backgroundColor: layer.color }}
+                        />
+                        <span className="truncate font-mono">{layerName}</span>
+                      </div>
+
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className="text-[10px] text-slate-500">{layer.entityCount} ent.</span>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleLayer(layerName);
+                          }}
+                          className="p-1 text-slate-400 hover:text-white"
+                        >
+                          {isVisible ? <Eye className="w-3.5 h-3.5 text-blue-400" /> : <EyeOff className="w-3.5 h-3.5 text-slate-600" />}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </aside>
+          )}
+
+          {/* ESTADO EN VIVO */}
+          {statusMessage && (
+            <div className="absolute bottom-10 left-4 z-10 bg-slate-900/90 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-slate-800 text-xs font-medium text-slate-300 shadow-lg flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>{statusMessage}</span>
+            </div>
+          )}
+        </div>
+      ) : (
+        /* VISTA DE ESPERA / ZONA DE CARGA (CUANDO NO HAY PLANO CARGADO) */
+        <main className="flex-1 flex flex-col items-center justify-center p-6 max-w-4xl mx-auto w-full text-center">
+          <div
+            onClick={() => fileInputRef.current?.click()}
+            className={`w-full max-w-2xl p-10 sm:p-14 rounded-3xl border-2 border-dashed transition-all cursor-pointer flex flex-col items-center justify-center ${
+              isDragOver
+                ? 'border-emerald-500 bg-emerald-950/20 scale-[1.02]'
+                : 'border-slate-800 hover:border-slate-600 bg-slate-950/60 hover:bg-slate-950'
+            }`}
+          >
+            <div className="w-20 h-20 rounded-3xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-4xl mb-6">
+              📐
+            </div>
+
+            <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">
+              Abre o arrastra tu plano DWG o DXF aquí
+            </h2>
+            <p className="text-sm text-slate-400 max-w-md mb-6 leading-relaxed">
+              Compatible con planos de <strong>AutoCAD</strong> (R11 a 2024), <strong>Civil 3D</strong> y archivos de intercambio <strong>DXF</strong>. Paneo, zoom, capas y mediciones.
+            </p>
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                fileInputRef.current?.click();
+              }}
+              className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl font-bold text-sm transition shadow-lg shadow-emerald-600/20 flex items-center gap-2"
+            >
+              <FolderOpen className="w-4 h-4" />
+              <span>Seleccionar archivo desde mi equipo</span>
+            </button>
+
+            <span className="text-xs text-slate-500 mt-4">
+              Formatos soportados: <strong>.dwg</strong>, <strong>.dxf</strong>
+            </span>
+          </div>
+
+          {/* Opción secundaria para cargar un plano de muestra si el usuario desea probar */}
+          <div className="mt-8 flex items-center gap-3 text-xs text-slate-400">
+            <span>¿Deseas probar con un plano de demostración?</span>
+            <button
+              onClick={() => {
+                setDrawing(getSampleCivil3DDrawing());
+                setStatusMessage('Plano de Topografía Civil 3D cargado');
+              }}
+              className="text-emerald-400 hover:underline font-semibold"
+            >
+              ⛰️ Cargar Civil 3D Topo
+            </button>
+            <span>•</span>
+            <button
+              onClick={() => {
+                setDrawing(getSampleArchitecturalDrawing());
+                setStatusMessage('Plano Arquitectónico Residencial cargado');
+              }}
+              className="text-blue-400 hover:underline font-semibold"
+            >
+              🏢 Cargar Arquitectónico
+            </button>
+          </div>
+        </main>
+      )}
+
+      {/* 3. BARRA INFERIOR DE ESTADO CAD */}
       <footer className="h-8 bg-slate-950 border-t border-slate-800 px-4 flex items-center justify-between text-[11px] font-mono text-slate-400 z-20 shrink-0">
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1 text-slate-300">
@@ -722,11 +802,35 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
         </div>
 
         <div className="flex items-center gap-3">
-          <span>{drawing.entities.length} entidades</span>
+          <span>{drawing ? `${drawing.entities.length} entidades` : 'Sin archivo abierto'}</span>
           <span className="hidden md:inline text-slate-600">|</span>
-          <span className="hidden md:inline">AutoCAD & Civil 3D Web Engine</span>
+          <span className="hidden md:inline">AutoCAD & Civil 3D Engine</span>
         </div>
       </footer>
+
+      {/* MODAL DE PROGRESO Y BARRA DE CARGA */}
+      {isLoading && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-6">
+          <div className="bg-slate-900 border border-slate-800 p-8 rounded-3xl max-w-md w-full shadow-2xl flex flex-col items-center text-center">
+            <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-2xl mb-4 animate-bounce">
+              ⚙️
+            </div>
+
+            <h3 className="text-lg font-bold text-white mb-1">Cargando Plano CAD</h3>
+            <p className="text-xs text-slate-400 mb-6 min-h-[36px]">{loadingStage}</p>
+
+            {/* Barra de progreso visual */}
+            <div className="w-full bg-slate-800 h-3 rounded-full overflow-hidden p-0.5 border border-slate-700 mb-2">
+              <div
+                className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all duration-200"
+                style={{ width: `${loadingProgress}%` }}
+              />
+            </div>
+
+            <span className="text-xs font-mono text-emerald-400 font-bold">{loadingProgress}%</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

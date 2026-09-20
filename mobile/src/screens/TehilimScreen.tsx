@@ -140,33 +140,50 @@ export const TehilimScreen: React.FC<TehilimScreenProps> = ({ user, onBack, isDa
         console.error('Error sincronizando progreso móvil:', err);
       }
     }
+
+    // Auto-avance al siguiente salmo tras 700ms
+    setTimeout(() => {
+      setAnimatingSuccess(false);
+      if (psalmNum < 150) {
+        setSelectedPsalmNum(psalmNum + 1);
+      } else {
+        Alert.alert('¡Felicitaciones! 🎉', 'Has completado el Salmo 150 y finalizado una vuelta completa a Tehilim.');
+      }
+    }, 700);
   };
 
-  // Estadísticas
+  // Estadísticas con ciclos y vueltas continuas
   const stats = useMemo(() => {
-    let completedCount = 0;
     let totalReadings = 0;
+    const counts: number[] = [];
     for (let i = 1; i <= 150; i++) {
       const p = progressMap[i];
-      if (p && p.completed_count > 0) {
-        completedCount++;
-        totalReadings += p.completed_count;
-      }
+      const count = p?.completed_count || 0;
+      counts.push(count);
+      totalReadings += count;
     }
-    const percentage = Math.round((completedCount / 150) * 100);
+    const minCount = counts.length ? Math.min(...counts) : 0;
+    const completedCycles = minCount;
+    const currentCycle = completedCycles + 1;
+    const readInCurrentCycle = counts.filter((c) => c >= currentCycle).length;
+    const unreadInCurrentCycle = 150 - readInCurrentCycle;
+    const percentage = Math.round((readInCurrentCycle / 150) * 100);
     return {
-      completedCount,
-      unreadCount: 150 - completedCount,
+      completedCycles,
+      currentCycle,
+      completedCount: readInCurrentCycle,
+      unreadCount: unreadInCurrentCycle,
       percentage,
       totalReadings,
     };
   }, [progressMap]);
 
-  // Filtrado de Salmos
+  // Filtrado de Salmos para la vuelta actual
   const filteredPsalms = useMemo(() => {
     return TEHILIM_PSALMS.filter((psalm) => {
       const p = progressMap[psalm.number];
-      const isRead = !!(p && p.completed_count > 0);
+      const count = p?.completed_count || 0;
+      const isRead = count >= stats.currentCycle;
 
       if (statusFilter === 'unread' && isRead) return false;
       if (statusFilter === 'completed' && !isRead) return false;
@@ -286,7 +303,7 @@ export const TehilimScreen: React.FC<TehilimScreenProps> = ({ user, onBack, isDa
           </View>
 
           {/* Versículos */}
-          <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 110 }}>
+          <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 200 }}>
             {/* Título del Salmo */}
             <View style={[styles.psalmHeaderCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
               <Text style={[styles.psalmTitleSpanish, { color: colors.text }]}>
@@ -349,6 +366,9 @@ export const TehilimScreen: React.FC<TehilimScreenProps> = ({ user, onBack, isDa
                 )}
               </View>
             ))}
+
+            {/* Espacio para que el último versículo quede completamente visible */}
+            <View style={{ height: 80 }} />
           </ScrollView>
 
           {/* BARRA INFERIOR PERSISTENTE PARA MARCAR COMPLETADO */}
@@ -404,14 +424,21 @@ export const TehilimScreen: React.FC<TehilimScreenProps> = ({ user, onBack, isDa
           <View style={[styles.statsBanner, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
               <View>
-                <Text style={[styles.statsTitle, { color: colors.text }]}>Avance de Lectura</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 2 }}>
+                  <Text style={[styles.statsTitle, { color: colors.text }]}>Vuelta #{stats.currentCycle}</Text>
+                  {stats.completedCycles > 0 && (
+                    <Text style={{ fontSize: 11, fontWeight: 'bold', color: '#F59E0B' }}>
+                      🏆 {stats.completedCycles} {stats.completedCycles === 1 ? 'vuelta' : 'vueltas'}
+                    </Text>
+                  )}
+                </View>
                 <Text style={{ color: colors.subtext, fontSize: 12 }}>
-                  {stats.completedCount} de 150 salmos leídos ({stats.percentage}%)
+                  {stats.completedCount} de 150 salmos leídos en esta vuelta ({stats.percentage}%)
                 </Text>
               </View>
               <View style={[styles.statBadge, { backgroundColor: colors.accentBg }]}>
                 <Text style={[styles.statBadgeText, { color: colors.accentText }]}>
-                  {stats.totalReadings} lecturas tot.
+                  {stats.totalReadings} lecturas
                 </Text>
               </View>
             </View>
