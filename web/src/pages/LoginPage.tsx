@@ -1,9 +1,17 @@
 import React, { useState } from 'react';
 import { signInWithGoogle } from '../lib/supabase';
+import { ThemeMode, getStoredTheme, applyTheme } from '../lib/theme';
+import { Sun, Moon, Laptop } from 'lucide-react';
 
 export const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [theme, setTheme] = useState<ThemeMode>(getStoredTheme());
+
+  const handleThemeChange = (newTheme: ThemeMode) => {
+    setTheme(newTheme);
+    applyTheme(newTheme);
+  };
 
   const handleGoogleLogin = async () => {
     try {
@@ -17,24 +25,61 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col justify-center items-center p-4 relative overflow-hidden">
-      {/* Background glow effects */}
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col justify-center items-center p-4 relative overflow-hidden transition-colors duration-200">
+      {/* Selector de tema en esquina superior derecha */}
+      <div className="absolute top-6 right-6 z-20 flex items-center gap-1 bg-white dark:bg-slate-900 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+        <button
+          onClick={() => handleThemeChange('light')}
+          title="Tema Claro"
+          className={`p-1.5 rounded-xl text-xs transition ${
+            theme === 'light'
+              ? 'bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 font-bold'
+              : 'text-slate-500 hover:text-slate-900 dark:hover:text-slate-200'
+          }`}
+        >
+          <Sun className="w-4 h-4" />
+        </button>
+        <button
+          onClick={() => handleThemeChange('dark')}
+          title="Tema Oscuro"
+          className={`p-1.5 rounded-xl text-xs transition ${
+            theme === 'dark'
+              ? 'bg-blue-100 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 font-bold'
+              : 'text-slate-500 hover:text-slate-900 dark:hover:text-slate-200'
+          }`}
+        >
+          <Moon className="w-4 h-4" />
+        </button>
+        <button
+          onClick={() => handleThemeChange('system')}
+          title="Tema del Sistema"
+          className={`p-1.5 rounded-xl text-xs transition ${
+            theme === 'system'
+              ? 'bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 font-bold'
+              : 'text-slate-500 hover:text-slate-900 dark:hover:text-slate-200'
+          }`}
+        >
+          <Laptop className="w-4 h-4" />
+        </button>
+      </div>
+
+      {/* Decorative background glows */}
       <div className="absolute top-1/4 -left-20 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="w-full max-w-md bg-slate-900/80 border border-slate-800 rounded-3xl p-8 backdrop-blur-xl shadow-2xl relative z-10">
+      <div className="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 shadow-xl relative z-10 transition-colors">
         <div className="flex flex-col items-center text-center">
-          <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-3xl mb-4 shadow-lg shadow-emerald-500/10">
+          <div className="w-16 h-16 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-3xl mb-4 shadow-sm">
             💎
           </div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Personal Tools</h1>
-          <p className="text-slate-400 text-sm mt-2">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Personal Tools</h1>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-2">
             Suite privada de productividad y gestión financiera personal.
           </p>
         </div>
 
         {error && (
-          <div className="mt-6 p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs text-center">
+          <div className="mt-6 p-3 rounded-xl bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 text-rose-700 dark:text-rose-300 text-xs text-center font-medium">
             {error}
           </div>
         )}
@@ -43,7 +88,7 @@ export const LoginPage: React.FC = () => {
           <button
             onClick={handleGoogleLogin}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-3 bg-white hover:bg-slate-100 text-slate-900 font-bold py-3.5 px-4 rounded-xl shadow-lg transition duration-200 disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-3 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 font-bold py-3.5 px-4 rounded-xl shadow-md transition duration-200 disabled:opacity-50"
           >
             {loading ? (
               <span className="text-sm font-semibold">Conectando con Google...</span>
@@ -73,9 +118,9 @@ export const LoginPage: React.FC = () => {
           </button>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-slate-800/80 text-center">
-          <p className="text-[11px] text-slate-500 leading-relaxed">
-            Acceso privado y cifrado. Solo tú puedes ver tus movimientos y registros personales mediante Row Level Security (RLS).
+        <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800 text-center">
+          <p className="text-[11px] text-slate-400 dark:text-slate-500 leading-relaxed">
+            Acceso seguro mediante Google OAuth. Datos protegidos con Row Level Security (RLS) en Supabase PostgreSQL.
           </p>
         </div>
       </div>

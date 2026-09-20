@@ -287,17 +287,47 @@ export default function App() {
     return (
       <SafeAreaView style={[styles.container, { backgroundColor: colors.bg }]}>
         <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
+
+        {/* Selector de tema en esquina superior derecha de Login */}
+        <View style={{ flexDirection: 'row', justifyContent: 'flex-end', paddingHorizontal: 24, paddingTop: 16 }}>
+          <View style={[styles.loginThemeToggle, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            {[
+              { id: 'light', label: '☀️' },
+              { id: 'dark', label: '🌙' },
+              { id: 'system', label: '📱' },
+            ].map((t) => (
+              <TouchableOpacity
+                key={t.id}
+                onPress={() => changeThemeMode(t.id as ThemeMode)}
+                style={[
+                  styles.loginThemeBtn,
+                  themeMode === t.id && { backgroundColor: colors.accentBg },
+                ]}
+              >
+                <Text style={{ fontSize: 13 }}>{t.label}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+
         <View style={styles.loginContent}>
           <View style={[styles.logoBadge, { backgroundColor: colors.accentBg }]}>
             <Text style={{ fontSize: 36 }}>💎</Text>
           </View>
           <Text style={[styles.loginTitle, { color: colors.text }]}>Personal Tools</Text>
           <Text style={[styles.loginSubtitle, { color: colors.subtext }]}>
-            Suite privada de finanzas y productividad con soporte para temas Claro y Oscuro.
+            Suite privada de finanzas y productividad con soporte completo para temas Claro y Oscuro.
           </Text>
 
           <TouchableOpacity
-            style={[styles.googleButton, { backgroundColor: isDark ? '#FFFFFF' : '#0F172A' }]}
+            style={[
+              styles.googleButton,
+              {
+                backgroundColor: isDark ? '#FFFFFF' : '#0F172A',
+                borderWidth: isDark ? 0 : 1,
+                borderColor: colors.border,
+              },
+            ]}
             onPress={() => signInWithGoogleMobile()}
           >
             <Text style={[styles.googleButtonText, { color: isDark ? '#0F172A' : '#FFFFFF' }]}>
@@ -437,12 +467,48 @@ export default function App() {
               </ScrollView>
 
               <View style={[styles.drawerFooter, { borderColor: colors.border }]}>
+                {/* Selector rápido de tema en el menú lateral */}
+                <View style={{ marginBottom: 12 }}>
+                  <Text style={{ color: colors.subtext, fontSize: 10, fontWeight: '700', letterSpacing: 0.5, marginBottom: 8 }}>
+                    APARIENCIA & TEMA
+                  </Text>
+                  <View style={{ flexDirection: 'row', gap: 6 }}>
+                    {[
+                      { id: 'light', label: '☀️ Claro' },
+                      { id: 'dark', label: '🌙 Oscuro' },
+                      { id: 'system', label: '📱 Auto' },
+                    ].map((t) => (
+                      <TouchableOpacity
+                        key={t.id}
+                        onPress={() => changeThemeMode(t.id as ThemeMode)}
+                        style={[
+                          styles.drawerThemeChip,
+                          {
+                            backgroundColor: themeMode === t.id ? colors.accentBg : colors.inputBg,
+                            borderColor: themeMode === t.id ? colors.accent : colors.border,
+                          },
+                        ]}
+                      >
+                        <Text
+                          style={{
+                            fontSize: 11,
+                            fontWeight: themeMode === t.id ? '800' : '600',
+                            color: themeMode === t.id ? colors.accent : colors.text,
+                          }}
+                        >
+                          {t.label}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </View>
+
                 <TouchableOpacity
                   onPress={() => {
                     setIsMenuOpen(false);
                     setCurrentView('hub');
                   }}
-                  style={[styles.returnHubBtn, { borderColor: colors.border }]}
+                  style={[styles.returnHubBtn, { borderColor: colors.border, backgroundColor: colors.inputBg }]}
                 >
                   <Text style={{ color: colors.accent, fontWeight: '700', fontSize: 12 }}>
                     🏠 Cambiar de Herramienta (Hub)
@@ -886,7 +952,7 @@ export default function App() {
 
         {/* Modal de Registro Rápido con Moneda Dinámica */}
         <Modal visible={isModalOpen} animationType="slide" transparent>
-          <View style={styles.modalOverlay}>
+          <View style={[styles.modalOverlay, { backgroundColor: isDark ? 'rgba(0,0,0,0.75)' : 'rgba(15,23,42,0.5)' }]}>
             <View style={[styles.modalCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
               <Text style={[styles.modalTitle, { color: colors.text }]}>
                 Nuevo Movimiento ({settings.currency_symbol})
@@ -914,6 +980,42 @@ export default function App() {
                   </TouchableOpacity>
                 ))}
               </View>
+
+              {/* Selector de cuenta para el movimiento */}
+              <Text style={{ fontSize: 11, fontWeight: '700', color: colors.subtext, marginBottom: 6 }}>
+                CUENTA:
+              </Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 12 }}>
+                {accounts.map((acc) => {
+                  const isSelected = txAccount === acc.id || (!txAccount && accounts[0]?.id === acc.id);
+                  return (
+                    <TouchableOpacity
+                      key={acc.id}
+                      onPress={() => setTxAccount(acc.id)}
+                      style={[
+                        styles.modalAccChip,
+                        {
+                          backgroundColor: isSelected ? colors.accentBg : colors.inputBg,
+                          borderColor: isSelected ? colors.accent : colors.border,
+                        },
+                      ]}
+                    >
+                      <Text style={{ fontSize: 13, marginRight: 4 }}>
+                        {acc.type === 'tarjeta' ? '💳' : acc.type === 'efectivo' ? '💵' : '🏦'}
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 12,
+                          color: isSelected ? colors.accent : colors.text,
+                          fontWeight: isSelected ? '800' : '600',
+                        }}
+                      >
+                        {acc.name}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </ScrollView>
 
               <View style={{ position: 'relative', marginBottom: 12 }}>
                 <TextInput
@@ -963,12 +1065,35 @@ export default function App() {
           </Text>
           <Text style={[styles.hubSub, { color: colors.subtext }]}>Workspace Personal de Herramientas</Text>
         </View>
-        <TouchableOpacity
-          onPress={() => supabase.auth.signOut()}
-          style={[styles.logoutBtn, { backgroundColor: colors.inputBg }]}
-        >
-          <Text style={styles.logoutBtnText}>Salir</Text>
-        </TouchableOpacity>
+
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          {/* Selector de tema rápido en Hub */}
+          <View style={[styles.loginThemeToggle, { backgroundColor: colors.inputBg, borderColor: colors.border }]}>
+            {[
+              { id: 'light', label: '☀️' },
+              { id: 'dark', label: '🌙' },
+              { id: 'system', label: '📱' },
+            ].map((t) => (
+              <TouchableOpacity
+                key={t.id}
+                onPress={() => changeThemeMode(t.id as ThemeMode)}
+                style={[
+                  styles.loginThemeBtn,
+                  themeMode === t.id && { backgroundColor: colors.accentBg },
+                ]}
+              >
+                <Text style={{ fontSize: 12 }}>{t.label}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          <TouchableOpacity
+            onPress={() => supabase.auth.signOut()}
+            style={[styles.logoutBtn, { backgroundColor: colors.inputBg }]}
+          >
+            <Text style={styles.logoutBtnText}>Salir</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <ScrollView style={{ flex: 1, padding: 16 }}>
@@ -1090,5 +1215,9 @@ const styles = StyleSheet.create({
   drawerItem: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 18, paddingVertical: 14, borderRadius: 10, marginHorizontal: 8, marginBottom: 4 },
   drawerItemText: { fontSize: 14, fontWeight: '600' },
   drawerFooter: { padding: 16, borderTopWidth: 1 },
+  drawerThemeChip: { flex: 1, paddingVertical: 8, alignItems: 'center', borderRadius: 8, borderWidth: 1 },
   returnHubBtn: { paddingVertical: 10, alignItems: 'center', borderWidth: 1, borderRadius: 10 },
+  loginThemeToggle: { flexDirection: 'row', padding: 3, borderRadius: 12, borderWidth: 1 },
+  loginThemeBtn: { paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8 },
+  modalAccChip: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 10, borderWidth: 1.5, marginRight: 8 },
 });
