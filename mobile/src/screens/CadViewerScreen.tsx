@@ -166,20 +166,54 @@ export const CadViewerScreen: React.FC<CadViewerScreenProps> = ({ onBack, isDark
   const toScreenX = (x: number) => screenWidth / 2 + (x * scale) + offset.x;
   const toScreenY = (y: number) => screenHeight / 2 - (y * scale) + offset.y;
 
-  // Pan Responder táctil para paneo continuo con el dedo
+  // Referencias para seguimiento suave del gesto táctil (1 dedo = paneo, 2 dedos = zoom)
+  const savedOffset = React.useRef({ x: 0, y: 0 });
+  const initialDistance = React.useRef<number | null>(null);
+  const initialScale = React.useRef(1.2);
+
+  // Pan Responder táctil para paneo continuo con 1 dedo y zoom con 2 dedos (Pinch-to-zoom)
   const panResponder = useMemo(
     () =>
       PanResponder.create({
         onStartShouldSetPanResponder: () => true,
-        onPanResponderGrant: () => {},
-        onPanResponderMove: (_evt, gestureState) => {
-          setOffset((prev) => ({
-            x: prev.x + gestureState.dx * 0.1,
-            y: prev.y + gestureState.dy * 0.1,
-          }));
+        onMoveShouldSetPanResponder: () => true,
+        onPanResponderGrant: (evt) => {
+          savedOffset.current = { ...offset };
+          const touches = evt.nativeEvent.touches;
+          if (touches && touches.length >= 2) {
+            const dx = touches[0].pageX - touches[1].pageX;
+            const dy = touches[0].pageY - touches[1].pageY;
+            initialDistance.current = Math.hypot(dx, dy);
+            initialScale.current = scale;
+          } else {
+            initialDistance.current = null;
+          }
+        },
+        onPanResponderMove: (evt, gestureState) => {
+          const touches = evt.nativeEvent.touches;
+          // Si el usuario usa 2 dedos: Pinch-to-Zoom
+          if (touches && touches.length >= 2) {
+            const dx = touches[0].pageX - touches[1].pageX;
+            const dy = touches[0].pageY - touches[1].pageY;
+            const distance = Math.hypot(dx, dy);
+            if (initialDistance.current && initialDistance.current > 10) {
+              const factor = distance / initialDistance.current;
+              const nextScale = Math.min(Math.max(initialScale.current * factor, 0.2), 8);
+              setScale(nextScale);
+            }
+          } else {
+            // Si el usuario usa 1 dedo: Paneo directo 1:1
+            setOffset({
+              x: savedOffset.current.x + gestureState.dx,
+              y: savedOffset.current.y + gestureState.dy,
+            });
+          }
+        },
+        onPanResponderRelease: () => {
+          initialDistance.current = null;
         },
       }),
-    []
+    [offset, scale]
   );
 
   const resetView = () => {
