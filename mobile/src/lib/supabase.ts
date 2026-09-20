@@ -6,10 +6,8 @@ import * as AuthSession from 'expo-auth-session';
 
 WebBrowser.maybeCompleteAuthSession();
 
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://cbvqwdrbwogsmcglsvzg.supabase.co';
-const supabaseAnonKey =
-  process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ||
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNidnF3ZHJid29nc21jZ2xzdnpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3MzUxNDUsImV4cCI6MjA5ODMxMTE0NX0.QE6mClBS9UTQTlIgmhVB2mZAv0CihdMne0o5vfk-_CU';
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || '';
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '';
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
