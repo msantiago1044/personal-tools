@@ -4,6 +4,8 @@ import { createClient } from '@supabase/supabase-js';
 import * as WebBrowser from 'expo-web-browser';
 import * as AuthSession from 'expo-auth-session';
 
+declare const process: any;
+
 WebBrowser.maybeCompleteAuthSession();
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://phczdxbtquxwfqnrakcz.supabase.co';

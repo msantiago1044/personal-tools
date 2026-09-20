@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'mobile/**'
+      - 'packages/shared/**'
       - '.github/workflows/build-apk.yml'
   workflow_dispatch:
 

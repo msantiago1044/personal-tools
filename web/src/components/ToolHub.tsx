@@ -15,6 +15,24 @@ const AVAILABLE_TOOLS: ToolModule[] = [
     badge: 'Herramienta Principal',
   },
   {
+    id: 'tehilim',
+    name: 'Tehilim (150 Salmos)',
+    description: 'Lectura completa en hebreo con nikud, transliteración fonética y español. Seguimiento de lectura y no leídos.',
+    icon: 'book-open',
+    route: '/tehilim',
+    status: 'active',
+    badge: 'Nuevo • Activo',
+  },
+  {
+    id: 'dwg_viewer',
+    name: 'Visor de Planos DWG / CAD',
+    description: 'Visualizador de planos de AutoCAD y Civil 3D (R12 hasta 2024). Paneo, zoom, capas, regla de medición y espacio modelo.',
+    icon: 'layers',
+    route: '/cad-viewer',
+    status: 'active',
+    badge: 'Nuevo • Activo',
+  },
+  {
     id: 'investments',
     name: 'Cartera de Inversiones',
     description: 'Seguimiento de activos, acciones, cripto y rendimientos pasivos a largo plazo.',
@@ -174,7 +192,17 @@ export const ToolHub: React.FC<ToolHubProps> = ({
                           : 'bg-slate-200 dark:bg-slate-800 text-slate-500'
                       }`}
                     >
-                      {tool.id === 'finance' ? '📊' : tool.id === 'investments' ? '📈' : tool.id === 'invoicing' ? '🧾' : '🎯'}
+                      {tool.id === 'finance'
+                        ? '📊'
+                        : tool.id === 'tehilim'
+                        ? '📜'
+                        : tool.id === 'dwg_viewer'
+                        ? '📐'
+                        : tool.id === 'investments'
+                        ? '📈'
+                        : tool.id === 'invoicing'
+                        ? '🧾'
+                        : '🎯'}
                     </div>
 
                     {tool.badge && (

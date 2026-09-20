@@ -223,3 +223,27 @@ BEGIN
     ORDER BY percentage_used DESC, estimated_amount DESC;
 END;
 $$;
+
+-- ==============================================================================
+-- 11. MÓDULO: TEHILIM (150 SALMOS) - SEGUIMIENTO DE LECTURA Y CONTEO
+-- ==============================================================================
+CREATE TABLE IF NOT EXISTS public.tehilim_progress (
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    psalm_number SMALLINT NOT NULL CHECK (psalm_number BETWEEN 1 AND 150),
+    completed_count INT NOT NULL DEFAULT 0 CHECK (completed_count >= 0),
+    is_completed BOOLEAN NOT NULL DEFAULT FALSE,
+    last_read_at TIMESTAMPTZ DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+    PRIMARY KEY (user_id, psalm_number)
+);
+
+CREATE INDEX IF NOT EXISTS idx_tehilim_progress_user ON public.tehilim_progress(user_id);
+CREATE INDEX IF NOT EXISTS idx_tehilim_progress_psalm ON public.tehilim_progress(user_id, psalm_number);
+
+ALTER TABLE public.tehilim_progress ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can CRUD their own tehilim progress"
+    ON public.tehilim_progress FOR ALL
+    USING (auth.uid() = user_id)
+    WITH CHECK (auth.uid() = user_id);
+

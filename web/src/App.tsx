@@ -3,11 +3,13 @@ import { supabase, signOut } from './lib/supabase';
 import { LoginPage } from './pages/LoginPage';
 import { ToolHub } from './components/ToolHub';
 import { FinanceModule } from './pages/finance/FinanceModule';
+import { TehilimModule } from './pages/tehilim/TehilimModule';
+import { DwgViewerModule } from './pages/cad/DwgViewerModule';
 
 export default function App() {
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [currentView, setCurrentView] = useState<'hub' | 'finance'>('hub');
+  const [currentView, setCurrentView] = useState<'hub' | 'finance' | 'tehilim' | 'dwg_viewer'>('hub');
 
   useEffect(() => {
     // 1. Obtener sesión actual
@@ -53,6 +55,25 @@ export default function App() {
     );
   }
 
+  // Si está en el módulo de Tehilim (150 Salmos)
+  if (currentView === 'tehilim') {
+    return (
+      <TehilimModule
+        user={session.user}
+        onBackToHub={() => setCurrentView('hub')}
+      />
+    );
+  }
+
+  // Si está en el módulo de Visor de Planos DWG / CAD
+  if (currentView === 'dwg_viewer') {
+    return (
+      <DwgViewerModule
+        onBackToHub={() => setCurrentView('hub')}
+      />
+    );
+  }
+
   // Vista por defecto post-login: Tool Hub (Launcher de Herramientas)
   return (
     <ToolHub
@@ -62,6 +83,10 @@ export default function App() {
       onSelectTool={(route) => {
         if (route.startsWith('/finance')) {
           setCurrentView('finance');
+        } else if (route.startsWith('/tehilim')) {
+          setCurrentView('tehilim');
+        } else if (route.startsWith('/cad-viewer') || route.startsWith('/dwg')) {
+          setCurrentView('dwg_viewer');
         }
       }}
       onLogout={() => signOut()}

@@ -16,6 +16,8 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase, signInWithGoogleMobile } from './src/lib/supabase';
+import { TehilimScreen } from './src/screens/TehilimScreen';
+import { CadViewerScreen } from './src/screens/CadViewerScreen';
 
 type ThemeMode = 'light' | 'dark' | 'system';
 type FinanceTab = 'home' | 'transactions' | 'accounts' | 'categories' | 'budgets' | 'reports' | 'settings';
@@ -46,7 +48,7 @@ export default function App() {
   const [themeMode, setThemeMode] = useState<ThemeMode>('light');
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [currentView, setCurrentView] = useState<'hub' | 'finance'>('hub');
+  const [currentView, setCurrentView] = useState<'hub' | 'finance' | 'tehilim' | 'dwg_viewer'>('hub');
   const [financeTab, setFinanceTab] = useState<FinanceTab>('home');
 
   // Menú desplegable móvil (ocultar / mostrar)
@@ -339,7 +341,28 @@ export default function App() {
     );
   }
 
-  // 2. MÓDULO DE FINANZAS
+  // 2. MÓDULO DE TEHILIM (150 SALMOS)
+  if (currentView === 'tehilim') {
+    return (
+      <TehilimScreen
+        user={session.user}
+        onBack={() => setCurrentView('hub')}
+        isDark={isDark}
+      />
+    );
+  }
+
+  // 3. MÓDULO DE VISOR DE PLANOS CAD (DWG / DXF)
+  if (currentView === 'dwg_viewer') {
+    return (
+      <CadViewerScreen
+        onBack={() => setCurrentView('hub')}
+        isDark={isDark}
+      />
+    );
+  }
+
+  // 4. MÓDULO DE FINANZAS
   if (currentView === 'finance') {
     const totalIncome = transactions
       .filter((t) => t.type === 'ingreso')
@@ -389,7 +412,6 @@ export default function App() {
             <TouchableOpacity
               onPress={() => handleSaveSettings({ hide_balances: !settings.hide_balances })}
               style={[styles.iconButton, { backgroundColor: colors.inputBg, borderColor: colors.border }]}
-              title={settings.hide_balances ? 'Mostrar saldos' : 'Ocultar saldos'}
             >
               <Text style={{ fontSize: 14 }}>{settings.hide_balances ? '👁️' : '🙈'}</Text>
             </TouchableOpacity>
@@ -1113,6 +1135,48 @@ export default function App() {
             </View>
             <Text style={[styles.toolCardDesc, { color: colors.subtext }]}>
               Control de flujo de caja, cuentas bancarias, tarjetas y presupuestos.
+            </Text>
+          </View>
+        </TouchableOpacity>
+
+        {/* MÓDULO TEHILIM (150 SALMOS) */}
+        <TouchableOpacity
+          style={[styles.toolCardActive, { backgroundColor: colors.card, borderColor: '#059669' }]}
+          onPress={() => setCurrentView('tehilim')}
+        >
+          <View style={[styles.toolIconWrap, { backgroundColor: colors.accentBg }]}>
+            <Text style={{ fontSize: 24 }}>📜</Text>
+          </View>
+          <View style={{ flex: 1, marginLeft: 12 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Text style={[styles.toolCardTitle, { color: colors.text }]}>Tehilim (150 Salmos)</Text>
+              <View style={[styles.badgeActive, { backgroundColor: colors.accentBg }]}>
+                <Text style={[styles.badgeText, { color: colors.accentText }]}>NUEVO</Text>
+              </View>
+            </View>
+            <Text style={[styles.toolCardDesc, { color: colors.subtext }]}>
+              Lectura en hebreo, fonética y español con contador de lecturas y no leídos.
+            </Text>
+          </View>
+        </TouchableOpacity>
+
+        {/* MÓDULO VISOR DE PLANOS CAD DWG / DXF */}
+        <TouchableOpacity
+          style={[styles.toolCardActive, { backgroundColor: colors.card, borderColor: '#2563EB' }]}
+          onPress={() => setCurrentView('dwg_viewer')}
+        >
+          <View style={[styles.toolIconWrap, { backgroundColor: isDark ? '#1E3A8A' : '#DBEAFE' }]}>
+            <Text style={{ fontSize: 24 }}>📐</Text>
+          </View>
+          <View style={{ flex: 1, marginLeft: 12 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Text style={[styles.toolCardTitle, { color: colors.text }]}>Visor DWG / CAD</Text>
+              <View style={[styles.badgeActive, { backgroundColor: isDark ? '#1E3A8A' : '#DBEAFE' }]}>
+                <Text style={[styles.badgeText, { color: isDark ? '#93C5FD' : '#1E40AF' }]}>NUEVO</Text>
+              </View>
+            </View>
+            <Text style={[styles.toolCardDesc, { color: colors.subtext }]}>
+              Visualizador de planos de AutoCAD y Civil 3D con paneo, zoom y capas.
             </Text>
           </View>
         </TouchableOpacity>
