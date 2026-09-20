@@ -377,6 +377,125 @@ export function parseDxfContent(dxfText: string, filename: string): CadDrawing {
           }
           break;
 
+        case '3DFACE': {
+          const vertices: CadPoint[] = [];
+          if (Array.isArray(ent.vertices)) {
+            ent.vertices.forEach((v: any) => {
+              const pt = { x: v.x, y: v.y, z: v.z || 0 };
+              updateBounds(pt);
+              vertices.push(pt);
+            });
+          }
+          if (vertices.length >= 3) {
+            entities.push({
+              type: 'LWPOLYLINE',
+              layer: layerName,
+              color: entityColor,
+              vertices,
+              closed: true,
+            });
+          }
+          break;
+        }
+
+        case 'POINT': {
+          const pt = ent.position || (ent.vertices && ent.vertices[0]);
+          if (pt) {
+            updateBounds(pt);
+            entities.push({
+              type: 'LINE',
+              layer: layerName,
+              color: entityColor,
+              start: { x: pt.x - 2, y: pt.y },
+              end: { x: pt.x + 2, y: pt.y },
+            });
+            entities.push({
+              type: 'LINE',
+              layer: layerName,
+              color: entityColor,
+              start: { x: pt.x, y: pt.y - 2 },
+              end: { x: pt.x, y: pt.y + 2 },
+            });
+          }
+          break;
+        }
+
+        case 'HATCH': {
+          if (Array.isArray(ent.boundaryPaths)) {
+            ent.boundaryPaths.forEach((bp: any) => {
+              if (Array.isArray(bp.vertices) && bp.vertices.length > 1) {
+                const vertices = bp.vertices.map((v: any) => {
+                  const pt = { x: v.x, y: v.y, z: 0 };
+                  updateBounds(pt);
+                  return pt;
+                });
+                entities.push({
+                  type: 'LWPOLYLINE',
+                  layer: layerName,
+                  color: entityColor,
+                  vertices,
+                  closed: bp.isClosed !== false,
+                });
+              }
+            });
+          }
+          break;
+        }
+
+        case 'SOLID':
+        case 'TRACE': {
+          if (Array.isArray(ent.vertices) && ent.vertices.length >= 3) {
+            const vertices = ent.vertices.map((v: any) => {
+              const pt = { x: v.x, y: v.y, z: v.z || 0 };
+              updateBounds(pt);
+              return pt;
+            });
+            entities.push({
+              type: 'LWPOLYLINE',
+              layer: layerName,
+              color: entityColor,
+              vertices,
+              closed: true,
+            });
+          }
+          break;
+        }
+
+        case 'SPLINE': {
+          if (Array.isArray(ent.controlPoints) && ent.controlPoints.length > 0) {
+            const vertices = ent.controlPoints.map((p: any) => {
+              const pt = { x: p.x, y: p.y, z: p.z || 0 };
+              updateBounds(pt);
+              return pt;
+            });
+            entities.push({
+              type: 'LWPOLYLINE',
+              layer: layerName,
+              color: entityColor,
+              vertices,
+              closed: !!ent.closed,
+            });
+          }
+          break;
+        }
+
+        case 'ELLIPSE': {
+          if (ent.center) {
+            const center = { x: ent.center.x, y: ent.center.y, z: ent.center.z };
+            const r = ent.majorAxisEndPoint ? Math.hypot(ent.majorAxisEndPoint.x, ent.majorAxisEndPoint.y) : 10;
+            updateBounds({ x: center.x - r, y: center.y - r });
+            updateBounds({ x: center.x + r, y: center.y + r });
+            entities.push({
+              type: 'CIRCLE',
+              layer: layerName,
+              color: entityColor,
+              center,
+              radius: r,
+            });
+          }
+          break;
+        }
+
         case 'TEXT':
         case 'MTEXT':
           if (ent.startPoint) {
@@ -505,9 +624,13 @@ function convertDwgDatabaseToCadDrawing(db: any, filename: string, version: stri
         }
         break;
 
+      // Curvas de nivel, alineamientos y polilíneas 2D/3D de Civil 3D y AutoCAD 2026
       case 'LWPOLYLINE':
-      case 'POLYLINE_2D':
       case 'POLYLINE':
+      case 'POLYLINE_2D':
+      case 'POLYLINE2D':
+      case 'POLYLINE_3D':
+      case 'POLYLINE3D':
         if (ent.vertices && Array.isArray(ent.vertices) && ent.vertices.length > 0) {
           const vertices: CadPoint[] = ent.vertices.map((v: any) => {
             const pt = { x: v.x * scl + offX, y: v.y * scl + offY, z: v.z || 0 };
@@ -523,6 +646,167 @@ function convertDwgDatabaseToCadDrawing(db: any, filename: string, version: stri
           });
         }
         break;
+
+      // Triangulación de superficies TIN y mallas de terreno de Civil 3D
+      case '3DFACE': {
+        const c1 = ent.corner1 ? { x: ent.corner1.x * scl + offX, y: ent.corner1.y * scl + offY, z: ent.corner1.z } : null;
+        const c2 = ent.corner2 ? { x: ent.corner2.x * scl + offX, y: ent.corner2.y * scl + offY, z: ent.corner2.z } : null;
+        const c3 = ent.corner3 ? { x: ent.corner3.x * scl + offX, y: ent.corner3.y * scl + offY, z: ent.corner3.z } : null;
+        const c4 = ent.corner4 ? { x: ent.corner4.x * scl + offX, y: ent.corner4.y * scl + offY, z: ent.corner4.z } : c3;
+
+        if (c1 && c2 && c3) {
+          [c1, c2, c3, c4].forEach((c) => c && updateBounds(c));
+          const vertices = [c1, c2, c3];
+          if (c4 && (c4.x !== c3.x || c4.y !== c3.y)) {
+            vertices.push(c4);
+          }
+          entities.push({
+            type: 'LWPOLYLINE',
+            layer: layerName,
+            color: entityColor,
+            vertices,
+            closed: true,
+          });
+        }
+        break;
+      }
+
+      // Puntos topográficos, estaciones y cotas de nivel
+      case 'POINT': {
+        const pos = ent.position || ent.location || ent.point;
+        if (pos) {
+          const pt = { x: pos.x * scl + offX, y: pos.y * scl + offY, z: pos.z || 0 };
+          updateBounds(pt);
+          const sz = 1.5 * scl;
+          entities.push({
+            type: 'LINE',
+            layer: layerName,
+            color: entityColor,
+            start: { x: pt.x - sz, y: pt.y },
+            end: { x: pt.x + sz, y: pt.y },
+          });
+          entities.push({
+            type: 'LINE',
+            layer: layerName,
+            color: entityColor,
+            start: { x: pt.x, y: pt.y - sz },
+            end: { x: pt.x, y: pt.y + sz },
+          });
+          if (pos.z != null && pos.z !== 0) {
+            entities.push({
+              type: 'TEXT',
+              layer: layerName,
+              color: entityColor,
+              start: { x: pt.x + sz, y: pt.y + sz, z: pt.z },
+              text: `${pos.z.toFixed(2)}`,
+              height: 2 * scl,
+            });
+          }
+        }
+        break;
+      }
+
+      // Rellenos y contornos de taludes, parcelas y zonas
+      case 'HATCH': {
+        if (Array.isArray(ent.boundaryPaths)) {
+          ent.boundaryPaths.forEach((bp: any) => {
+            if (Array.isArray(bp.vertices) && bp.vertices.length > 1) {
+              const vertices = bp.vertices.map((v: any) => {
+                const pt = { x: v.x * scl + offX, y: v.y * scl + offY, z: 0 };
+                updateBounds(pt);
+                return pt;
+              });
+              entities.push({
+                type: 'LWPOLYLINE',
+                layer: layerName,
+                color: entityColor,
+                vertices,
+                closed: bp.isClosed !== false,
+              });
+            }
+          });
+        }
+        break;
+      }
+
+      // Objetos AEC / Civil 3D (Superficies, Alineamientos, Perfiles guardados con ProxyGraphics)
+      case 'ACAD_PROXY_ENTITY': {
+        if (ent.graphicsData && typeof ent.graphicsData === 'string' && ent.graphicsData.length > 64) {
+          try {
+            const hex = ent.graphicsData;
+            const bytes = new Uint8Array(hex.length / 2);
+            for (let i = 0; i < hex.length; i += 2) {
+              bytes[i / 2] = parseInt(hex.substr(i, 2), 16);
+            }
+            const view = new DataView(bytes.buffer);
+            const extractedPoints: CadPoint[] = [];
+
+            for (let i = 0; i <= bytes.length - 16; i += 8) {
+              const x = view.getFloat64(i, true);
+              const y = view.getFloat64(i + 8, true);
+
+              if (
+                !isNaN(x) &&
+                !isNaN(y) &&
+                isFinite(x) &&
+                isFinite(y) &&
+                Math.abs(x) > 0.001 &&
+                Math.abs(x) < 100000000 &&
+                Math.abs(y) > 0.001 &&
+                Math.abs(y) < 100000000
+              ) {
+                extractedPoints.push({ x: x * scl + offX, y: y * scl + offY });
+                if (extractedPoints.length > 3000) break;
+              }
+            }
+
+            if (extractedPoints.length >= 2) {
+              for (let j = 0; j < extractedPoints.length - 1; j += 2) {
+                const p1 = extractedPoints[j];
+                const p2 = extractedPoints[j + 1];
+                const dist = Math.hypot(p2.x - p1.x, p2.y - p1.y);
+                if (dist > 0.01 && dist < 100000) {
+                  updateBounds(p1);
+                  updateBounds(p2);
+                  entities.push({
+                    type: 'LINE',
+                    layer: layerName,
+                    color: entityColor,
+                    start: p1,
+                    end: p2,
+                  });
+                }
+              }
+            }
+          } catch (e) {
+            // Ignorar errores de proxy data
+          }
+        }
+        break;
+      }
+
+      case 'SOLID':
+      case 'TRACE': {
+        const p1 = ent.firstCorner || ent.corner1;
+        const p2 = ent.secondCorner || ent.corner2;
+        const p3 = ent.thirdCorner || ent.corner3;
+        const p4 = ent.fourthCorner || ent.corner4;
+        if (p1 && p2 && p3) {
+          const pts = [p1, p2, p4 || p3, p3].map((p: any) => {
+            const pt = { x: p.x * scl + offX, y: p.y * scl + offY, z: p.z || 0 };
+            updateBounds(pt);
+            return pt;
+          });
+          entities.push({
+            type: 'LWPOLYLINE',
+            layer: layerName,
+            color: entityColor,
+            vertices: pts,
+            closed: true,
+          });
+        }
+        break;
+      }
 
       case 'CIRCLE':
         if (ent.center && typeof ent.radius === 'number') {

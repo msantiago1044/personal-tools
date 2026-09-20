@@ -743,8 +743,8 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
             <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">
               Abre o arrastra tu plano DWG o DXF aquí
             </h2>
-            <p className="text-sm text-slate-400 max-w-md mb-6 leading-relaxed">
-              Compatible con planos de <strong>AutoCAD</strong> (R11 a 2024), <strong>Civil 3D</strong> y archivos de intercambio <strong>DXF</strong>. Paneo, zoom, capas y mediciones.
+            <p className="text-sm text-slate-400 max-w-lg mb-6 leading-relaxed">
+              Compatible con planos de <strong>AutoCAD</strong> (R11 hasta <strong>2026</strong>), <strong>Civil 3D</strong> (curvas de nivel, polilíneas 3D, triangulación TIN) y <strong>DXF</strong>.
             </p>
 
             <button
@@ -759,12 +759,12 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
             </button>
 
             <span className="text-xs text-slate-500 mt-4">
-              Formatos soportados: <strong>.dwg</strong>, <strong>.dxf</strong>
+              Formatos soportados: <strong>.dwg</strong> (AutoCAD / Civil 3D 2018-2026), <strong>.dxf</strong>
             </span>
           </div>
 
           {/* Opción secundaria para cargar un plano de muestra si el usuario desea probar */}
-          <div className="mt-8 flex items-center gap-3 text-xs text-slate-400">
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-xs text-slate-400">
             <span>¿Deseas probar con un plano de demostración?</span>
             <button
               onClick={() => {
@@ -786,6 +786,17 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
               🏢 Cargar Arquitectónico
             </button>
           </div>
+
+          {/* Consejo profesional para usuarios de Civil 3D */}
+          <div className="mt-6 p-4 rounded-2xl bg-slate-950/70 border border-slate-800/80 max-w-xl text-left text-xs text-slate-400 flex items-start gap-3">
+            <span className="text-base shrink-0">💡</span>
+            <div>
+              <span className="font-semibold text-slate-200">Consejo para planos de Civil 3D 2026:</span>
+              <p className="mt-1 text-slate-400 leading-normal">
+                Para que las curvas de nivel y superficies TIN de Civil 3D se dibujen con máxima nitidez vectorial en la web, asegúrate de tener la variable <code className="text-emerald-400 font-mono bg-emerald-950/50 px-1 py-0.5 rounded">PROXYGRAPHICS = 1</code> al guardar, o utiliza el comando <code className="text-emerald-400 font-mono bg-emerald-950/50 px-1 py-0.5 rounded">EXPORTTOAUTOCAD</code>.
+              </p>
+            </div>
+          </div>
         </main>
       )}
 
@@ -804,7 +815,7 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
         <div className="flex items-center gap-3">
           <span>{drawing ? `${drawing.entities.length} entidades` : 'Sin archivo abierto'}</span>
           <span className="hidden md:inline text-slate-600">|</span>
-          <span className="hidden md:inline">AutoCAD & Civil 3D Engine</span>
+          <span className="hidden md:inline">AutoCAD & Civil 3D 2026 Engine</span>
         </div>
       </footer>
 
