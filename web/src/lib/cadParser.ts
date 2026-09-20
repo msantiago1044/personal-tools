@@ -415,30 +415,240 @@ export function parseDxfContent(dxfText: string, filename: string): CadDrawing {
 }
 
 /**
- * Parsea un archivo DWG binario con LibreDwg o convierte automáticamente a dibujo CAD
+ * Convierte una instancia de DwgDatabase (obtenida mediante LibreDWG WebAssembly)
+ * en nuestro modelo de dibujo universal CadDrawing con capas y entidades reales.
  */
-export async function parseDwgBinary(buffer: ArrayBuffer, filename: string): Promise<CadDrawing> {
-  try {
-    const libredwgModule: any = await import('@mlightcad/libredwg-web');
-    if (libredwgModule?.LibreDwg) {
-      const libredwg = await (libredwgModule.LibreDwg as any).create();
-      const data = libredwg.dwg_read_data(buffer);
+function convertDwgDatabaseToCadDrawing(db: any, filename: string, version: string): CadDrawing {
+  const layers: Record<string, CadLayer> = {};
+  const entities: CadEntity[] = [];
+  let minX = Infinity;
+  let maxX = -Infinity;
+  let minY = Infinity;
+  let maxY = -Infinity;
 
-      if (data) {
-        try {
-          const dxfStr = libredwg.dwg_write_dxf(data);
-          if (typeof dxfStr === 'string' && dxfStr.length > 50) {
-            return parseDxfContent(dxfStr, filename);
-          }
-        } catch (e) {
-          console.warn('dwg_write_dxf no produjo texto DXF, procesando entidades...');
-        }
-      }
-    }
-  } catch (err) {
-    console.warn('LibreDwg WebAssembly falló o no pudo procesar esta versión binaria específica:', err);
+  const updateBounds = (pt: { x: number; y: number }) => {
+    if (typeof pt.x !== 'number' || typeof pt.y !== 'number' || isNaN(pt.x) || isNaN(pt.y)) return;
+    if (pt.x < minX) minX = pt.x;
+    if (pt.x > maxX) maxX = pt.x;
+    if (pt.y < minY) minY = pt.y;
+    if (pt.y > maxY) maxY = pt.y;
+  };
+
+  // 1. Extraer capas desde la tabla de capas db.tables.LAYER
+  const layerEntries = db.tables?.LAYER?.entries || [];
+  layerEntries.forEach((l: any) => {
+    const layerName = l.name || '0';
+    const color = getAciHexColor(l.colorIndex || 7);
+    layers[layerName] = {
+      name: layerName,
+      color,
+      visible: !l.off && !l.frozen,
+      entityCount: 0,
+    };
+  });
+
+  // Asegurar existencia de la capa '0' estándar
+  if (!layers['0']) {
+    layers['0'] = { name: '0', color: '#ffffff', visible: true, entityCount: 0 };
   }
 
+  // Mapa de bloques para resolver inserciones (INSERT)
+  const blockMap = new Map<string, any>();
+  const blockEntries = db.tables?.BLOCK_RECORD?.entries || [];
+  blockEntries.forEach((b: any) => {
+    if (b.name) {
+      blockMap.set(b.name.toUpperCase(), b);
+    }
+  });
+
+  // 2. Recolectar entidades de espacio modelo (db.entities y bloque *MODEL_SPACE)
+  const rawEntities: any[] = [...(db.entities || [])];
+  const modelSpaceBlock = blockEntries.find(
+    (b: any) => b.name && b.name.toUpperCase() === '*MODEL_SPACE'
+  );
+  if (modelSpaceBlock && Array.isArray(modelSpaceBlock.entities)) {
+    rawEntities.push(...modelSpaceBlock.entities);
+  }
+
+  // Función interna para procesar una entidad individual (y llamadas recursivas para bloques)
+  const processEntity = (ent: any, transformOffset?: { x: number; y: number }, transformScale?: number) => {
+    if (!ent) return;
+    // Omitir entidades que estén marcadas explícitamente en Paper Space
+    if (ent.isInPaperSpace) return;
+
+    const layerName = ent.layer || '0';
+    if (!layers[layerName]) {
+      layers[layerName] = { name: layerName, color: '#38bdf8', visible: true, entityCount: 0 };
+    }
+    layers[layerName].entityCount = (layers[layerName].entityCount || 0) + 1;
+
+    const entityColor = ent.colorIndex ? getAciHexColor(ent.colorIndex) : layers[layerName].color;
+
+    const offX = transformOffset?.x || 0;
+    const offY = transformOffset?.y || 0;
+    const scl = transformScale ?? 1;
+
+    switch (ent.type) {
+      case 'LINE':
+        if (ent.startPoint && ent.endPoint) {
+          const start = { x: ent.startPoint.x * scl + offX, y: ent.startPoint.y * scl + offY, z: ent.startPoint.z };
+          const end = { x: ent.endPoint.x * scl + offX, y: ent.endPoint.y * scl + offY, z: ent.endPoint.z };
+          updateBounds(start);
+          updateBounds(end);
+          entities.push({
+            type: 'LINE',
+            layer: layerName,
+            color: entityColor,
+            start,
+            end,
+          });
+        }
+        break;
+
+      case 'LWPOLYLINE':
+      case 'POLYLINE_2D':
+      case 'POLYLINE':
+        if (ent.vertices && Array.isArray(ent.vertices) && ent.vertices.length > 0) {
+          const vertices: CadPoint[] = ent.vertices.map((v: any) => {
+            const pt = { x: v.x * scl + offX, y: v.y * scl + offY, z: v.z || 0 };
+            updateBounds(pt);
+            return pt;
+          });
+          entities.push({
+            type: 'LWPOLYLINE',
+            layer: layerName,
+            color: entityColor,
+            vertices,
+            closed: !!(ent.flag & 1 || ent.isClosed),
+          });
+        }
+        break;
+
+      case 'CIRCLE':
+        if (ent.center && typeof ent.radius === 'number') {
+          const r = ent.radius * scl;
+          const center = { x: ent.center.x * scl + offX, y: ent.center.y * scl + offY, z: ent.center.z };
+          updateBounds({ x: center.x - r, y: center.y - r });
+          updateBounds({ x: center.x + r, y: center.y + r });
+          entities.push({
+            type: 'CIRCLE',
+            layer: layerName,
+            color: entityColor,
+            center,
+            radius: r,
+          });
+        }
+        break;
+
+      case 'ARC':
+        if (ent.center && typeof ent.radius === 'number') {
+          const r = ent.radius * scl;
+          const center = { x: ent.center.x * scl + offX, y: ent.center.y * scl + offY, z: ent.center.z };
+          updateBounds({ x: center.x - r, y: center.y - r });
+          updateBounds({ x: center.x + r, y: center.y + r });
+          entities.push({
+            type: 'ARC',
+            layer: layerName,
+            color: entityColor,
+            center,
+            radius: r,
+            startAngle: ent.startAngle,
+            endAngle: ent.endAngle,
+          });
+        }
+        break;
+
+      case 'ELLIPSE':
+        if (ent.center) {
+          const center = { x: ent.center.x * scl + offX, y: ent.center.y * scl + offY, z: ent.center.z };
+          const r = (ent.majorAxisEndPoint ? Math.hypot(ent.majorAxisEndPoint.x, ent.majorAxisEndPoint.y) : 10) * scl;
+          updateBounds({ x: center.x - r, y: center.y - r });
+          updateBounds({ x: center.x + r, y: center.y + r });
+          entities.push({
+            type: 'CIRCLE',
+            layer: layerName,
+            color: entityColor,
+            center,
+            radius: r,
+          });
+        }
+        break;
+
+      case 'TEXT':
+      case 'MTEXT': {
+        const pt = ent.insertionPoint || ent.startPoint || ent.point;
+        if (pt) {
+          const start = { x: pt.x * scl + offX, y: pt.y * scl + offY, z: pt.z };
+          updateBounds(start);
+          entities.push({
+            type: 'TEXT',
+            layer: layerName,
+            color: entityColor,
+            start,
+            text: ent.text || ent.string || '',
+            height: (ent.height || ent.textHeight || 4) * scl,
+          });
+        }
+        break;
+      }
+
+      case 'SPLINE':
+        if (ent.controlPoints && Array.isArray(ent.controlPoints) && ent.controlPoints.length > 0) {
+          const vertices = ent.controlPoints.map((p: any) => {
+            const pt = { x: p.x * scl + offX, y: p.y * scl + offY, z: p.z || 0 };
+            updateBounds(pt);
+            return pt;
+          });
+          entities.push({
+            type: 'LWPOLYLINE',
+            layer: layerName,
+            color: entityColor,
+            vertices,
+            closed: !!ent.isClosed,
+          });
+        }
+        break;
+
+      case 'INSERT':
+        // Bloque insertado (ej. símbolos, muebles, estaciones)
+        if (ent.name) {
+          const referencedBlock = blockMap.get(ent.name.toUpperCase());
+          if (referencedBlock && Array.isArray(referencedBlock.entities)) {
+            const insPt = ent.insertionPoint || { x: 0, y: 0 };
+            const insScale = typeof ent.scale === 'number' ? ent.scale : (ent.scale?.x || 1);
+            referencedBlock.entities.forEach((bEnt: any) => {
+              processEntity(bEnt, { x: offX + insPt.x * scl, y: offY + insPt.y * scl }, scl * insScale);
+            });
+          }
+        }
+        break;
+    }
+  };
+
+  rawEntities.forEach((ent) => processEntity(ent));
+
+  // Si no se encontraron entidades ni límites válidos, definir rango predeterminado
+  if (minX === Infinity || maxX === -Infinity) {
+    minX = -100;
+    maxX = 100;
+    minY = -100;
+    maxY = 100;
+  }
+
+  return {
+    filename,
+    fileFormat: 'DWG',
+    version,
+    layers,
+    entities,
+    bounds: { minX, minY, maxX, maxY },
+  };
+}
+
+/**
+ * Parsea un archivo DWG binario con LibreDwg o extrae las entidades reales del dibujo
+ */
+export async function parseDwgBinary(buffer: ArrayBuffer, filename: string): Promise<CadDrawing> {
   // Detección de versión desde la cabecera mágica de AutoCAD (primeros 6 bytes)
   const headerBytes = new Uint8Array(buffer.slice(0, 6));
   const magic = String.fromCharCode(...headerBytes);
@@ -456,11 +666,124 @@ export async function parseDwgBinary(buffer: ArrayBuffer, filename: string): Pro
 
   const detectedVersion = versionMap[magic] || `Formato DWG (${magic})`;
 
-  // Si el archivo binario fue subido y detectado con éxito, construimos la vista base de planos
-  const sample = getSampleCivil3DDrawing();
-  sample.filename = filename;
-  sample.version = detectedVersion;
-  return sample;
+  try {
+    const libredwgModule: any = await import('@mlightcad/libredwg-web');
+    if (libredwgModule?.LibreDwg) {
+      // Inicializar LibreDWG apuntando al archivo wasm en /libredwg-web.wasm o relativo
+      const libredwg = await libredwgModule.LibreDwg.create('/libredwg-web.wasm').catch(async () => {
+        return await libredwgModule.LibreDwg.create();
+      });
+
+      // 1. Intentar conversión binaria directa a DXF
+      try {
+        const dxfBytes = libredwg.dwg_write_dxf(buffer);
+        if (dxfBytes && dxfBytes.length > 50) {
+          const dxfText = new TextDecoder('utf-8').decode(dxfBytes);
+          const parsedDxf = parseDxfContent(dxfText, filename);
+          parsedDxf.fileFormat = 'DWG';
+          parsedDxf.version = detectedVersion;
+          if (parsedDxf.entities.length > 0) {
+            return parsedDxf;
+          }
+        }
+      } catch (dxfErr) {
+        console.warn('dwg_write_dxf no produjo salida DXF:', dxfErr);
+      }
+
+      // 2. Intentar decodificación directa del árbol de base de datos DWG
+      // Dwg_File_Type.DWG es 0
+      const dataPtr = libredwg.dwg_read_data(buffer, libredwgModule.Dwg_File_Type?.DWG ?? 0);
+      if (dataPtr) {
+        try {
+          const db = libredwg.convert(dataPtr);
+          if (db) {
+            const cadDrawing = convertDwgDatabaseToCadDrawing(db, filename, detectedVersion);
+            if (cadDrawing.entities.length > 0 || Object.keys(cadDrawing.layers).length > 1) {
+              return cadDrawing;
+            }
+          }
+        } finally {
+          try {
+            libredwg.dwg_free(dataPtr);
+          } catch {}
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('LibreDwg WebAssembly falló o no pudo procesar esta versión binaria específica:', err);
+  }
+
+  // 3. Si no se pudieron extraer entidades vectoriales directas, NO mostramos el plano demo bajo ninguna circunstancia.
+  // En su lugar, construimos un modelo limpio con las capas y un mensaje informativo en el centro del plano.
+  const emptyLayers: Record<string, CadLayer> = {
+    '0': { name: '0', color: '#ffffff', visible: true, entityCount: 1 },
+    'INFO-SISTEMA': { name: 'INFO-SISTEMA', color: '#38bdf8', visible: true, entityCount: 3 },
+  };
+
+  const emptyEntities: CadEntity[] = [
+    {
+      type: 'TEXT',
+      layer: 'INFO-SISTEMA',
+      color: '#38bdf8',
+      start: { x: 0, y: 15 },
+      text: `PLANO CARGADO: ${filename}`,
+      height: 12,
+    },
+    {
+      type: 'TEXT',
+      layer: 'INFO-SISTEMA',
+      color: '#94a3b8',
+      start: { x: 0, y: 0 },
+      text: `Versión detectada: ${detectedVersion}`,
+      height: 7,
+    },
+    {
+      type: 'TEXT',
+      layer: 'INFO-SISTEMA',
+      color: '#cbd5e1',
+      start: { x: 0, y: -15 },
+      text: 'Este archivo contiene entidades 3D/AEC o bloques propietarios. Para visualización completa de vectores, expórtalo como DXF o DWG 2013-2018.',
+      height: 6,
+    },
+    // Marco perimetral informativo
+    {
+      type: 'LINE',
+      layer: '0',
+      color: '#475569',
+      start: { x: -220, y: -40 },
+      end: { x: 220, y: -40 },
+    },
+    {
+      type: 'LINE',
+      layer: '0',
+      color: '#475569',
+      start: { x: 220, y: -40 },
+      end: { x: 220, y: 40 },
+    },
+    {
+      type: 'LINE',
+      layer: '0',
+      color: '#475569',
+      start: { x: 220, y: 40 },
+      end: { x: -220, y: 40 },
+    },
+    {
+      type: 'LINE',
+      layer: '0',
+      color: '#475569',
+      start: { x: -220, y: 40 },
+      end: { x: -220, y: -40 },
+    },
+  ];
+
+  return {
+    filename,
+    fileFormat: 'DWG',
+    version: detectedVersion,
+    layers: emptyLayers,
+    entities: emptyEntities,
+    bounds: { minX: -250, minY: -60, maxX: 250, maxY: 60 },
+  };
 }
 
 /**
