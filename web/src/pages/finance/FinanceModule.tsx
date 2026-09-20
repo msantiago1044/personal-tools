@@ -3,6 +3,7 @@ import { supabase, signOut } from '../../lib/supabase';
 import { Account, Category, Transaction } from '../../../../packages/shared/src/types';
 import { TransactionModal } from '../../components/finance/TransactionModal';
 import { BudgetGaugeCard } from '../../components/finance/BudgetGaugeCard';
+import { DownloadApkModal } from '../../components/DownloadApkModal';
 import { ThemeMode, getStoredTheme, applyTheme } from '../../lib/theme';
 import {
   Wallet,
@@ -29,7 +30,8 @@ import {
   Moon,
   Laptop,
   Eye,
-  EyeOff
+  EyeOff,
+  Smartphone
 } from 'lucide-react';
 
 interface FinanceModuleProps {
@@ -63,6 +65,7 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
   // Menú colapsable / expandible
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
+  const [showDownloadModal, setShowDownloadModal] = useState<boolean>(false);
 
   // Selector de tema
   const [theme, setTheme] = useState<ThemeMode>(getStoredTheme());
@@ -381,6 +384,20 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
           </nav>
         </div>
 
+        {/* Botón Descargar APK Android en Sidebar */}
+        <div className="p-3 border-t border-slate-200 dark:border-slate-800">
+          <button
+            onClick={() => setShowDownloadModal(true)}
+            title="Descargar App Android (.APK)"
+            className={`w-full flex items-center gap-2.5 p-2 rounded-xl text-xs font-semibold bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 transition shadow-sm ${
+              sidebarCollapsed ? 'justify-center' : ''
+            }`}
+          >
+            <Smartphone className="w-4 h-4 shrink-0" />
+            {!sidebarCollapsed && <span>Descargar App (.APK)</span>}
+          </button>
+        </div>
+
         {/* Footer del usuario */}
         <div className="p-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
           {!sidebarCollapsed && (
@@ -438,6 +455,16 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Botón Descargar App Android */}
+            <button
+              onClick={() => setShowDownloadModal(true)}
+              title="Descargar App Nativa Android (.APK)"
+              className="flex items-center gap-1.5 p-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/60 border border-emerald-200 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300 shadow-sm transition text-xs font-semibold"
+            >
+              <Smartphone className="w-4 h-4" />
+              <span className="hidden sm:inline">App APK</span>
+            </button>
+
             {/* Botón Ocultar/Mostrar Saldos (Modo Discreto) */}
             <button
               onClick={toggleHideBalances}
@@ -1252,6 +1279,12 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
         accounts={accounts}
         categories={categories}
         onSuccess={() => loadAllData()}
+      />
+
+      {/* Modal de Descarga de APK Oficial */}
+      <DownloadApkModal
+        isOpen={showDownloadModal}
+        onClose={() => setShowDownloadModal(false)}
       />
     </div>
   );

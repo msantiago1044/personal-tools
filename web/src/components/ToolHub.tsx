@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { ToolModule } from '../../../packages/shared/src/types';
 import { ThemeMode, getStoredTheme, applyTheme } from '../lib/theme';
-import { Sun, Moon, Laptop } from 'lucide-react';
+import { Sun, Moon, Laptop, Smartphone } from 'lucide-react';
+import { DownloadApkModal } from './DownloadApkModal';
 
 const AVAILABLE_TOOLS: ToolModule[] = [
   {
@@ -56,6 +57,7 @@ export const ToolHub: React.FC<ToolHubProps> = ({
   onLogout,
 }) => {
   const [theme, setTheme] = useState<ThemeMode>(getStoredTheme());
+  const [showDownloadModal, setShowDownloadModal] = useState(false);
 
   const handleThemeChange = (newTheme: ThemeMode) => {
     setTheme(newTheme);
@@ -116,6 +118,16 @@ export const ToolHub: React.FC<ToolHubProps> = ({
               <Laptop className="w-4 h-4" />
             </button>
           </div>
+
+          {/* Botón Descargar App Android */}
+          <button
+            onClick={() => setShowDownloadModal(true)}
+            title="Descargar App Nativa para Android (.APK)"
+            className="flex items-center gap-1.5 text-xs bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 px-3 py-2 rounded-xl border border-emerald-200 dark:border-emerald-800/60 font-semibold shadow-sm transition"
+          >
+            <Smartphone className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">App Android</span>
+          </button>
 
           {avatarUrl ? (
             <img src={avatarUrl} alt="Avatar" className="w-10 h-10 rounded-full border border-slate-200 dark:border-slate-700" />
@@ -199,6 +211,11 @@ export const ToolHub: React.FC<ToolHubProps> = ({
           })}
         </div>
       </main>
+
+      <DownloadApkModal
+        isOpen={showDownloadModal}
+        onClose={() => setShowDownloadModal(false)}
+      />
     </div>
   );
 };
