@@ -20,6 +20,11 @@
         "backgroundColor": "#030712"
       },
       "package": "com.msantiago1044.personaltools"
-    }
+    },
+    "plugins": [
+      "expo-asset",
+      "expo-status-bar",
+      "expo-web-browser"
+    ]
   }
 }
