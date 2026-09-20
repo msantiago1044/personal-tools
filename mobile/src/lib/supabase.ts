@@ -6,8 +6,9 @@ import * as AuthSession from 'expo-auth-session';
 
 WebBrowser.maybeCompleteAuthSession();
 
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '';
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://phczdxbtquxwfqnrakcz.supabase.co';
+const supabaseAnonKey =
+  process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'sb_publishable_ThVP291edlMvGoeLw2182w_sb7hmslN';
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
