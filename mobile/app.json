@@ -4,7 +4,6 @@
     "slug": "personal-tools",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
     "scheme": "personaltools",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
@@ -21,9 +20,6 @@
         "backgroundColor": "#030712"
       },
       "package": "com.msantiago1044.personaltools"
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
     }
   }
 }
