@@ -2,10 +2,9 @@
 export const LATEST_RELEASE_CONFIG = {
   appName: 'Personal Tools',
   version: '1.0.0',
-  // GitHub Releases redirige de forma automática y oficial a la última versión publicada
-  githubLatestUrl: 'https://github.com/msantiago1044/personal-tools/releases/latest/download/PersonalTools.apk',
-  // URL alternativa directa en Supabase Storage (en caso de usar bucket público)
-  supabaseBucketUrl: 'https://phczdxbtquxwfqnrakcz.supabase.co/storage/v1/object/public/app-releases/PersonalTools-latest.apk',
+  // Enlace directo permanente al release con etiqueta 'latest' que actualiza GitHub Actions
+  githubLatestUrl: 'https://github.com/msantiago1044/personal-tools/releases/download/latest/PersonalTools.apk',
+  githubRedirectUrl: 'https://github.com/msantiago1044/personal-tools/releases/latest/download/PersonalTools.apk',
 };
 
 export async function fetchLatestApkDownloadUrl(): Promise<string> {

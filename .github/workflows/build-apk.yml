@@ -1,0 +1,78 @@
+name: Compilar y Publicar APK Android Automáticamente
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'mobile/**'
+      - '.github/workflows/build-apk.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-apk:
+    name: Compilar APK Android
+    runs-on: ubuntu-latest
+
+    env:
+      EXPO_PUBLIC_SUPABASE_URL: "https://phczdxbtquxwfqnrakcz.supabase.co"
+      EXPO_PUBLIC_SUPABASE_ANON_KEY: "sb_publishable_ThVP291edlMvGoeLw2182w_sb7hmslN"
+
+    steps:
+      - name: 📥 Clonar repositorio
+        uses: actions/checkout@v4
+
+      - name: ☕ Configurar JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: 🟢 Configurar Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: mobile/package-lock.json
+
+      - name: 📦 Instalar dependencias de mobile
+        working-directory: mobile
+        run: |
+          npm ci --legacy-peer-deps || npm install --legacy-peer-deps
+
+      - name: ⚙️ Generar proyecto nativo Android (Expo Prebuild)
+        working-directory: mobile
+        run: |
+          npx expo prebuild --platform android --clean
+
+      - name: 🔨 Compilar APK con Gradle
+        working-directory: mobile/android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+
+      - name: 📋 Preparar artefacto APK final
+        run: |
+          mkdir -p build-output
+          find mobile/android/app/build/outputs/apk -name "*.apk" -exec cp {} build-output/PersonalTools.apk \;
+          ls -la build-output/
+
+      - name: 🚀 Publicar y Reemplazar APK en GitHub Releases (Etiqueta 'latest')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: "Personal Tools Android (Última Versión)"
+          body: |
+            ### 📱 Nueva versión compilada automáticamente
+            - **Fecha de compilación:** ${{ github.event.head_commit.timestamp || 'Ahora' }}
+            - **Commit:** ${{ github.sha }}
+            - **Mensaje:** ${{ github.event.head_commit.message }}
+            
+            *Este archivo se actualiza de forma automática en cada cambio de la aplicación móvil.*
+          files: build-output/PersonalTools.apk
+          overwrite: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
