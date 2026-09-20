@@ -6,8 +6,10 @@ import * as AuthSession from 'expo-auth-session';
 
 WebBrowser.maybeCompleteAuthSession();
 
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://YOUR_PROJECT_ID.supabase.co';
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'YOUR_ANON_KEY';
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://cbvqwdrbwogsmcglsvzg.supabase.co';
+const supabaseAnonKey =
+  process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ||
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNidnF3ZHJid29nc21jZ2xzdnpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3MzUxNDUsImV4cCI6MjA5ODMxMTE0NX0.QE6mClBS9UTQTlIgmhVB2mZAv0CihdMne0o5vfk-_CU';
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
@@ -23,7 +25,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
  */
 export async function signInWithGoogleMobile() {
   const redirectUri = AuthSession.makeRedirectUri({
-    scheme: 'gestiongastos', // Asegúrate de configurar este scheme en app.json
+    scheme: 'personaltools',
     path: 'auth/callback',
   });
 
@@ -40,7 +42,6 @@ export async function signInWithGoogleMobile() {
   if (data?.url) {
     const res = await WebBrowser.openAuthSessionAsync(data.url, redirectUri);
     if (res.type === 'success' && res.url) {
-      // Extrae tokens o sesión de la URL de retorno
       const params = new URL(res.url).searchParams;
       const accessToken = params.get('access_token');
       const refreshToken = params.get('refresh_token');
