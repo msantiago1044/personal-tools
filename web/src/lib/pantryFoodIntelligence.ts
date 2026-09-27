@@ -3,6 +3,7 @@ import { PantryItem } from '../../../packages/shared/src/types';
 export interface FoodNutritionalProfile {
   servingSize: string;
   calories: number;
+  totalPackageCalories?: number;
   protein_g: number;
   carbs_g: number;
   sugar_g: number;
@@ -45,8 +46,16 @@ export interface IsaFootprintMetrics {
 export interface EconomicNutritionalMetrics {
   // Precio por gramo nutricional y eficiencia económica del alimento
   pricePerUnitCOP: number;
+  totalPriceCOP?: number;
+  totalItemGrams?: number;
+  totalItemMl?: number;
   estimatedWeightGrams: number;
   pricePerGramCOP: number;
+  pricePerMlCOP?: number;
+  pricePer100gCOP?: number;
+  pricePer100mlCOP?: number;
+  pricePerServingCOP?: number;
+  totalServings?: number;
   pricePerProteinGramCOP: number; // $ COP por gramo de proteína neta
   pricePerNutrientGramCOP: number; // $ COP por gramo de nutriente útil (proteína + fibra + carbohidratos limpios)
   economicNutritionalEfficiency: 'Excelente' | 'Alta' | 'Moderada' | 'Baja' | 'Ineficiente';
@@ -225,33 +234,6 @@ const KNOWN_FOODS: KnownFoodDefinition[] = [
     packaging: 'Costal o bolsa de papel',
   },
   // Frutas
-  {
-    keywords: ['aceite', 'premier', 'girasol', 'soya', 'vegetal', 'oliva'],
-    category: 'Condimentos & Aceites',
-    servingSize: '1 cucharada (14g / 15ml)',
-    cals100g: 884,
-    prot100g: 0,
-    carbs100g: 0,
-    sugar100g: 0,
-    fiber100g: 0,
-    fat100g: 100,
-    satFat100g: 12,
-    sodium100g: 0,
-    micronutrients: [
-      { name: 'Vitamina E', amount: '41 mg', pctDailyValue: 273 },
-      { name: 'Grasas Monoinsaturadas (Omega-9)', amount: '60g' },
-      { name: 'Grasas Poliinsaturadas (Omega-6)', amount: '28g' },
-    ],
-    isNatural: true,
-    warnings: ['EXCESO EN GRASAS SATURADAS'],
-    storage: 'Cerrado en alacena a temperatura ambiente protegido de luz y calor.',
-    waterL: 3200,
-    landM2: 4.5,
-    soilRisk: 'Moderado',
-    co2Kg: 3.2,
-    shelfLifeTypicalDays: 240,
-    packaging: 'Botella PET reciclable',
-  },
   {
     keywords: ['arandanos', 'arándanos', 'blueberry'],
     category: 'Frutas & Verduras',
@@ -592,6 +574,107 @@ const KNOWN_FOODS: KnownFoodDefinition[] = [
     shelfLifeTypicalDays: 14,
     packaging: 'Bolsa plástica con alambre / clip',
   },
+  // Condimentos & Aceites
+  {
+    keywords: ['aceite', 'premier', 'girasol', 'oliva', 'canola', 'vegetal', 'maiz', 'maíz', 'soya', 'palma'],
+    category: 'Condimentos & Aceites',
+    servingSize: '1 cucharada (14g / 15ml)',
+    cals100g: 884, // ~124 kcal por cucharada de 14g / 15ml
+    prot100g: 0,
+    carbs100g: 0,
+    sugar100g: 0,
+    fiber100g: 0,
+    fat100g: 100, // 100% lípidos
+    satFat100g: 14,
+    sodium100g: 0,
+    micronutrients: [
+      { name: 'Vitamina E (Alfa-tocoferol)', amount: '14.8 mg', pctDailyValue: 99 },
+      { name: 'Ácidos Grasos Monoinsaturados (Omega-9)', amount: '60 g' },
+      { name: 'Ácidos Grasos Poliinsaturados (Omega-6)', amount: '26 g' },
+    ],
+    isNatural: true,
+    storage: 'Lugar fresco, oscuro y seco; tapar herméticamente para evitar oxidación.',
+    waterL: 1800,
+    landM2: 2.4,
+    soilRisk: 'Moderado',
+    co2Kg: 2.9,
+    shelfLifeTypicalDays: 365,
+    packaging: 'Botella PET reciclable',
+  },
+  {
+    keywords: ['mantequilla', 'margarina', 'ghee'],
+    category: 'Condimentos & Aceites',
+    servingSize: '1 porción (10g)',
+    cals100g: 717,
+    prot100g: 0.9,
+    carbs100g: 0.1,
+    sugar100g: 0.1,
+    fiber100g: 0,
+    fat100g: 81.1,
+    satFat100g: 51.4,
+    sodium100g: 11,
+    micronutrients: [
+      { name: 'Vitamina A', amount: '684 µg', pctDailyValue: 76 },
+    ],
+    isNatural: true,
+    warnings: ['EXCESO EN GRASAS SATURADAS'],
+    storage: 'Refrigerado entre 2°C y 6°C.',
+    waterL: 5553,
+    landM2: 8.7,
+    soilRisk: 'Alto',
+    co2Kg: 9.2,
+    shelfLifeTypicalDays: 90,
+    packaging: 'Papel encerado / tarrina',
+  },
+  {
+    keywords: ['sal', 'refisal'],
+    category: 'Condimentos & Aceites',
+    servingSize: '1 pizca (1g)',
+    cals100g: 0,
+    prot100g: 0,
+    carbs100g: 0,
+    sugar100g: 0,
+    fiber100g: 0,
+    fat100g: 0,
+    satFat100g: 0,
+    sodium100g: 38758,
+    micronutrients: [
+      { name: 'Sodio', amount: '38.8 g' },
+      { name: 'Yodo', amount: '2000 µg', pctDailyValue: 1333 },
+    ],
+    isNatural: true,
+    warnings: ['EXCESO EN SODIO'],
+    storage: 'Lugar seco en salero hermético.',
+    waterL: 5,
+    landM2: 0.1,
+    soilRisk: 'Bajo',
+    co2Kg: 0.1,
+    shelfLifeTypicalDays: 1800,
+    packaging: 'Bolsa plástica',
+  },
+  // Mascotas (no comestible para humanos)
+  {
+    keywords: ['perro', 'gato', 'mascota', 'pedigree', 'dog chow', 'cat chow', 'whiskas', 'ringo', 'filpo', 'chunky'],
+    category: 'Mascotas',
+    servingSize: 'Porción para mascota',
+    cals100g: 0,
+    prot100g: 0,
+    carbs100g: 0,
+    sugar100g: 0,
+    fiber100g: 0,
+    fat100g: 0,
+    satFat100g: 0,
+    sodium100g: 0,
+    micronutrients: [],
+    isNatural: false,
+    storage: 'Lugar fresco y seco alejado de roedores e insectos.',
+    waterL: 800,
+    landM2: 1.0,
+    soilRisk: 'Moderado',
+    co2Kg: 1.5,
+    shelfLifeTypicalDays: 180,
+    packaging: 'Bolsa multicapa',
+  },
   // Aseo & Limpieza (manejo de productos de despensa no alimenticios)
   {
     keywords: ['detergente', 'jabon', 'jabón', 'limpido', 'límpido', 'cloro', 'papel'],
@@ -630,18 +713,160 @@ export function getFoodIntelligence(item: PantryItem): FoodIntelligenceData {
 
   // 2. Si no coincide exactamente, inferir por categoría y datos existentes
   const category = item.category || 'Despensa';
+  const u = (item.unit || '').toLowerCase().trim();
+  const qty = Math.max(0.001, Number(item.quantity) || 1);
+
+  // Detección estricta de unidades
+  const isGrams = u === 'g' || u === 'gr' || u.includes('gram');
+  const isMl = u === 'ml' || u.includes('mili') || u.includes('mililitro') || u === 'cc' || u === 'cm3';
+  const isKg = u.includes('kg') || u.includes('kilo');
+  const isLiter = u === 'l' || u === 'lt' || u.includes('litro');
+  const isLb = u.includes('lb') || u.includes('libra');
+
+  // Gramaje total real del producto en despensa
+  let totalItemGrams = 250;
+  const density = cleanName.includes('aceite') ? 0.92 : 1.0;
+
+  if (isGrams || isMl) {
+    totalItemGrams = Math.max(1, Math.round(qty * density));
+  } else if (isKg || isLiter) {
+    totalItemGrams = Math.max(1, Math.round(qty * 1000 * density));
+  } else if (isLb) {
+    totalItemGrams = Math.max(1, Math.round(qty * 500));
+  } else {
+    // Buscar si el nombre incluye peso explícito (ej. "2700ml", "1000g")
+    const matchedGrams = cleanName.match(/(\d+)\s*(g|gr|gramos|ml|mililitros|cc)/i);
+    const matchedKg = cleanName.match(/(\d+(?:\.\d+)?)\s*(kg|kilos|litros|l)\b/i);
+    if (matchedGrams) {
+      totalItemGrams = Math.max(1, Math.round(parseFloat(matchedGrams[1]) * density * qty));
+    } else if (matchedKg) {
+      totalItemGrams = Math.max(1, Math.round(parseFloat(matchedKg[1]) * 1000 * density * qty));
+    } else {
+      totalItemGrams = (matched?.servingSize ? 250 : 200) * qty;
+    }
+  }
+
+  // Precios: si unit_price es el precio de todo el empaque
+  let totalPriceCOP = Number(item.total_price) || 0;
+  if (totalPriceCOP <= 0 && Number(item.unit_price) > 0) {
+    if (isGrams || isMl) {
+      // Si la unidad es ml o g y qty es grande (ej. 2700ml), unit_price suele ser el precio pagado por el envase
+      totalPriceCOP = Number(item.unit_price);
+    } else {
+      totalPriceCOP = Number(item.unit_price) * qty;
+    }
+  }
+  const unitPriceCOP = Number(item.unit_price) || (totalPriceCOP > 0 && qty > 0 ? totalPriceCOP / qty : 0);
+
   let servingSize = matched?.servingSize || '100g o 1 porción';
-  let cals = item.calories_per_unit > 0 ? item.calories_per_unit : matched?.cals100g || 150;
-  let prot = item.protein_g > 0 ? item.protein_g : matched?.prot100g || 4;
-  let carbs = item.carbs_g > 0 ? item.carbs_g : matched?.carbs100g || 15;
-  let fat = item.fat_g > 0 ? item.fat_g : matched?.fat100g || 2;
-  let sugar = matched?.sugar100g || (carbs > 20 ? Math.round(carbs * 0.15) : 1);
-  let fiber = matched?.fiber100g || (category.includes('Fruta') || category.includes('Grano') ? 3 : 0.5);
-  let satFat = matched?.satFat100g || Math.round(fat * 0.3 * 10) / 10;
-  let sodium = matched?.sodium100g || 25;
-  let isNatural = matched ? matched.isNatural : !cleanName.includes('paquete') && !cleanName.includes('snack');
-  let storageAdvice = matched?.storage || 'Mantener en lugar fresco, seco y protegido de la luz directa.';
-  let micronutrients = matched?.micronutrients || [
+
+  // Gramos de la porción oficial
+  let servingGrams = 100;
+  if (servingSize.includes('14g') || servingSize.includes('15ml')) servingGrams = 14;
+  else if (servingSize.includes('10g')) servingGrams = 10;
+  else if (servingSize.includes('50g')) servingGrams = 50;
+  else if (servingSize.includes('80g')) servingGrams = 80;
+  else if (servingSize.includes('120g')) servingGrams = 120;
+  else if (servingSize.includes('250ml') || servingSize.includes('250g')) servingGrams = 250;
+
+  // Macronutrientes por 100g
+  // IMPORTANTE: NO USAR || 4 o || 15 porque para aceites y otros alimentos 0g es el valor real
+  const prot100g =
+    item.protein_g !== undefined && item.protein_g !== null && !isNaN(Number(item.protein_g))
+      ? Number(item.protein_g)
+      : matched?.prot100g !== undefined
+      ? matched.prot100g
+      : category.includes('Proteína')
+      ? 20
+      : 0;
+
+  const carbs100g =
+    item.carbs_g !== undefined && item.carbs_g !== null && !isNaN(Number(item.carbs_g))
+      ? Number(item.carbs_g)
+      : matched?.carbs100g !== undefined
+      ? matched.carbs100g
+      : category.includes('Grano') || category.includes('Pan')
+      ? 50
+      : 0;
+
+  const fat100g =
+    item.fat_g !== undefined && item.fat_g !== null && !isNaN(Number(item.fat_g))
+      ? Number(item.fat_g)
+      : matched?.fat100g !== undefined
+      ? matched.fat100g
+      : category.includes('Aceite')
+      ? 100
+      : 0;
+
+  // Calorías por 100g
+  let cals100g = 0;
+  if (Number(item.calories_per_unit) > 0) {
+    if (Number(item.calories_per_unit) <= 900) {
+      cals100g = Number(item.calories_per_unit);
+    } else {
+      // Si el número es un total del empaque (ej. 22410 kcal para 2700ml):
+      cals100g = totalItemGrams > 0 ? Math.round((Number(item.calories_per_unit) / totalItemGrams) * 100) : matched?.cals100g || 150;
+      if (cals100g > 900 || cals100g <= 0) {
+        cals100g = matched?.cals100g || 884;
+      }
+    }
+  } else if (matched?.cals100g !== undefined) {
+    cals100g = matched.cals100g;
+  } else {
+    // Estimación Atwater: 4 kcal/g prot + 4 kcal/g carb + 9 kcal/g grasa
+    cals100g = Math.round((prot100g * 4) + (carbs100g * 4) + (fat100g * 9));
+    if (cals100g <= 0 && !cleanName.includes('sal') && !cleanName.includes('agua')) cals100g = 50;
+  }
+
+  // Valores oficiales de la porción oficial de etiqueta
+  const cals = Math.round((cals100g / 100) * servingGrams);
+  const totalPackageCalories = totalItemGrams > 0 ? Math.round((cals100g / 100) * totalItemGrams) : Math.round(cals * qty);
+
+  const prot =
+    item.protein_g !== undefined && item.protein_g !== null && !isNaN(Number(item.protein_g))
+      ? Number(item.protein_g)
+      : Math.round(((prot100g / 100) * servingGrams) * 10) / 10;
+
+  const carbs =
+    item.carbs_g !== undefined && item.carbs_g !== null && !isNaN(Number(item.carbs_g))
+      ? Number(item.carbs_g)
+      : Math.round(((carbs100g / 100) * servingGrams) * 10) / 10;
+
+  const fat =
+    item.fat_g !== undefined && item.fat_g !== null && !isNaN(Number(item.fat_g))
+      ? Number(item.fat_g)
+      : Math.round(((fat100g / 100) * servingGrams) * 10) / 10;
+
+  const sugar =
+    item.sugar_g !== undefined && item.sugar_g !== null && !isNaN(Number(item.sugar_g))
+      ? Number(item.sugar_g)
+      : matched?.sugar100g !== undefined
+      ? Math.round(((matched.sugar100g / 100) * servingGrams) * 10) / 10
+      : 0;
+
+  const fiber =
+    item.fiber_g !== undefined && item.fiber_g !== null && !isNaN(Number(item.fiber_g))
+      ? Number(item.fiber_g)
+      : matched?.fiber100g !== undefined
+      ? Math.round(((matched.fiber100g / 100) * servingGrams) * 10) / 10
+      : 0;
+
+  const satFat =
+    item.saturated_fat_g !== undefined && item.saturated_fat_g !== null && !isNaN(Number(item.saturated_fat_g))
+      ? Number(item.saturated_fat_g)
+      : matched?.satFat100g !== undefined
+      ? Math.round(((matched.satFat100g / 100) * servingGrams) * 10) / 10
+      : Math.round(fat * 0.2 * 10) / 10;
+
+  const sodium =
+    item.sodium_mg !== undefined && item.sodium_mg !== null && !isNaN(Number(item.sodium_mg))
+      ? Number(item.sodium_mg)
+      : matched?.sodium100g !== undefined
+      ? Math.round((matched.sodium100g / 100) * servingGrams)
+      : 0;
+  const isNatural = matched ? matched.isNatural : !cleanName.includes('paquete') && !cleanName.includes('snack');
+  const storageAdvice = matched?.storage || 'Mantener en lugar fresco, seco y protegido de la luz directa.';
+  const micronutrients = matched?.micronutrients || [
     { name: 'Energía Celular', amount: `${Math.round(cals)} kcal` },
     { name: 'Macronutrientes equilibrados', amount: 'Aporte base' },
   ];
@@ -738,45 +963,58 @@ export function getFoodIntelligence(item: PantryItem): FoodIntelligenceData {
   const entropyExplanation = `Al ingresar a tu despensa, este producto aporta un nivel de entropía ${entropyLevel.toLowerCase()} debido a su tiempo de vida útil (${shelfLife} días) y composición de empaque (${packaging}).`;
 
   // 6. CÁLCULO DE EFICIENCIA ECONÓMICA & PRECIO POR GRAMO NUTRICIONAL
-  // Estimar el peso y gramos de nutrientes útiles para determinar el costo por gramo de nutrición
-  const u = (item.unit || '').toLowerCase().trim();
-  const qty = Math.max(0.001, Number(item.quantity) || 1);
-  let estimatedWeightGrams = 250; // por unidad por defecto
+  // Usamos el totalItemGrams, totalPriceCOP y unitPriceCOP ya determinados con exactitud y densidad
+  const pricePerGramCOP =
+    totalItemGrams > 0 && totalPriceCOP > 0
+      ? Math.round((totalPriceCOP / totalItemGrams) * 100) / 100
+      : 0;
 
-  if (u.includes('kg')) {
-    estimatedWeightGrams = 1000;
-  } else if (u.includes('lb') || u.includes('libra')) {
-    estimatedWeightGrams = 500;
-  } else if (u === 'g' || u.includes('gramo')) {
-    estimatedWeightGrams = 1;
-  } else if (u.includes('l') || u.includes('litro')) {
-    estimatedWeightGrams = 1000;
-  } else if (u.includes('ml')) {
-    estimatedWeightGrams = 1;
-  } else if (u.includes('paquete') || u.includes('bolsa') || u.includes('caja')) {
-    estimatedWeightGrams = 500;
-  } else {
-    const lname = item.name.toLowerCase();
-    if (lname.includes('huevo')) estimatedWeightGrams = 60;
-    else if (lname.includes('atun') || lname.includes('atún')) estimatedWeightGrams = 140;
-    else if (lname.includes('pan')) estimatedWeightGrams = 80;
-    else estimatedWeightGrams = 200;
-  }
-
-  const unitPriceCOP = Number(item.unit_price) || (Number(item.total_price) && qty > 0 ? Number(item.total_price) / qty : 0);
-  const totalItemGrams = estimatedWeightGrams * qty;
-  const pricePerGramCOP = totalItemGrams > 0 && unitPriceCOP > 0 ? Math.round((unitPriceCOP * qty) / totalItemGrams * 100) / 100 : 0;
-
-  // Gramos de nutrientes útiles por 100g (proteína + fibra + carbohidratos limpios)
+  // Gramos de nutrientes útiles por 100g (proteína + fibra + carbohidratos limpios + lípidos esenciales en aceites)
   const cleanCarbs100g = isNatural ? Math.max(0, carbs - sugar) : Math.max(0, carbs - sugar * 1.5);
-  const usefulNutrients100g = Math.max(0.5, prot + fiber * 1.5 + (cleanCarbs100g * 0.25));
+  let usefulNutrients100g = prot100g + fiber * 1.5 + (cleanCarbs100g * 0.25);
+  if (cleanName.includes('aceite') || category.includes('Aceite')) {
+    usefulNutrients100g = 20; // Ácidos grasos monoinsaturados/poliinsaturados esenciales y vitamina E
+  }
+  usefulNutrients100g = Math.max(0.1, usefulNutrients100g);
 
-  // Proteína total en la porción/unidad
-  const proteinGramsPerUnit = (prot / 100) * estimatedWeightGrams;
-  const usefulNutrientGramsPerUnit = (usefulNutrients100g / 100) * estimatedWeightGrams;
+  // Proteína total en gramos en todo el stock disponible
+  const totalProteinGramsInStock = (prot100g / 100) * totalItemGrams;
+  const totalUsefulNutrientGrams = (usefulNutrients100g / 100) * totalItemGrams;
 
-  const pricePerProteinGramCOP = proteinGramsPerUnit > 0 && unitPriceCOP > 0 ? Math.round(unitPriceCOP / proteinGramsPerUnit) : 0;
-  const pricePerNutrientGramCOP = usefulNutrientGramsPerUnit > 0 && unitPriceCOP > 0 ? Math.round(unitPriceCOP / usefulNutrientGramsPerUnit) : Math.round(pricePerGramCOP);
+  // Costo por gramo de proteína neta (solo si el alimento aporta proteína real)
+  const pricePerProteinGramCOP =
+    totalProteinGramsInStock > 0 && totalPriceCOP > 0
+      ? Math.round(totalPriceCOP / totalProteinGramsInStock)
+      : 0;
+
+  // Costo por gramo de nutriente útil
+  const pricePerNutrientGramCOP =
+    totalUsefulNutrientGrams > 0 && totalPriceCOP > 0
+      ? Math.round(totalPriceCOP / totalUsefulNutrientGrams)
+      : Math.round(pricePerGramCOP);
+
+  // Peso unitario estimado para visualización (g)
+  const estimatedWeightGrams =
+    isGrams || isMl ? Math.round((totalItemGrams / qty) * 100) / 100 : Math.round(totalItemGrams / qty);
+
+  // Equivalencias volumétricas y de porción
+  const totalItemMl = isMl
+    ? Math.round(qty)
+    : isLiter
+    ? Math.round(qty * 1000)
+    : Math.round(totalItemGrams / density);
+
+  const pricePerMlCOP =
+    totalItemMl > 0 && totalPriceCOP > 0
+      ? Math.round((totalPriceCOP / totalItemMl) * 100) / 100
+      : undefined;
+
+  const pricePer100gCOP = pricePerGramCOP > 0 ? Math.round(pricePerGramCOP * 100) : undefined;
+  const pricePer100mlCOP = pricePerMlCOP ? Math.round(pricePerMlCOP * 100) : undefined;
+  const pricePerServingCOP =
+    pricePerGramCOP > 0 && servingGrams > 0 ? Math.round(pricePerGramCOP * servingGrams) : undefined;
+  const totalServings =
+    totalItemGrams > 0 && servingGrams > 0 ? Math.round(totalItemGrams / servingGrams) : undefined;
 
   // Score de Eficiencia Económica (0 a 100)
   // Menor precio por gramo de nutriente útil = Mayor retorno biológico por peso gastado ($ COP)
@@ -784,8 +1022,12 @@ export function getFoodIntelligence(item: PantryItem): FoodIntelligenceData {
   let economicNutritionalEfficiency: 'Excelente' | 'Alta' | 'Moderada' | 'Baja' | 'Ineficiente' = 'Moderada';
   let economicExplanation = '';
 
-  if (unitPriceCOP > 0 && pricePerNutrientGramCOP > 0) {
-    if (pricePerNutrientGramCOP <= 40) {
+  if (totalPriceCOP > 0 && pricePerNutrientGramCOP > 0) {
+    if (prot100g === 0 && (cleanName.includes('aceite') || category.includes('Aceite'))) {
+      economicScore = 85;
+      economicNutritionalEfficiency = 'Alta';
+      economicExplanation = `Aporte energético y lipídico (~$${pricePerGramCOP} COP por gramo). No aporta proteína para masa muscular, pero es una fuente concentrada de energía culinaria (~$${pricePerNutrientGramCOP} COP/g de lípidos y vitamina E).`;
+    } else if (pricePerNutrientGramCOP <= 40) {
       economicScore = 95;
       economicNutritionalEfficiency = 'Excelente';
       economicExplanation = `Costo-beneficio nutricional sobresaliente (~$${pricePerNutrientGramCOP} COP por gramo de nutriente útil). Es un pilar de máximo rendimiento para el presupuesto familiar.`;
@@ -870,6 +1112,7 @@ export function getFoodIntelligence(item: PantryItem): FoodIntelligenceData {
     nutrition: {
       servingSize,
       calories: Math.round(cals),
+      totalPackageCalories,
       protein_g: Math.round(prot * 10) / 10,
       carbs_g: Math.round(carbs * 10) / 10,
       sugar_g: Math.round(sugar * 10) / 10,
@@ -899,9 +1142,17 @@ export function getFoodIntelligence(item: PantryItem): FoodIntelligenceData {
       entropyExplanation,
     },
     economics: {
-      pricePerUnitCOP: Math.round(unitPriceCOP),
+      pricePerUnitCOP: Math.round(unitPriceCOP * 100) / 100,
+      totalPriceCOP: Math.round(totalPriceCOP),
+      totalItemGrams,
+      totalItemMl,
       estimatedWeightGrams,
       pricePerGramCOP,
+      pricePerMlCOP,
+      pricePer100gCOP,
+      pricePer100mlCOP,
+      pricePerServingCOP,
+      totalServings,
       pricePerProteinGramCOP,
       pricePerNutrientGramCOP,
       economicNutritionalEfficiency,

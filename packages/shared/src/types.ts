@@ -187,6 +187,11 @@ export interface PantryItem {
   protein_g: number;
   carbs_g: number;
   fat_g: number;
+  sugar_g?: number;
+  fiber_g?: number;
+  saturated_fat_g?: number;
+  sodium_mg?: number;
+  serving_size?: string;
   status: PantryItemStatus;
   consumed_at?: string | null;
   consumption_days?: number | null;

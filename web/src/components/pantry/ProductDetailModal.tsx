@@ -58,31 +58,228 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   const [currentItem, setCurrentItem] = useState<PantryItem>(item);
   const [activeSubTab, setActiveSubTab] = useState<'balance' | 'nutrition' | 'isa' | 'economics'>('balance');
 
-  // Estado de Edición Individual (Cantidad, Unidad, Precio, etc.)
-  const [isEditing, setIsEditing] = useState(initialEditMode);
-  const [editName, setEditName] = useState(item.name);
-  const [editCategory, setEditCategory] = useState(item.category || 'Despensa');
-  const [editQuantity, setEditQuantity] = useState(String(item.quantity));
-  const [editUnit, setEditUnit] = useState(item.unit || 'un');
-  const [editUnitPrice, setEditUnitPrice] = useState(String(item.unit_price || ''));
-  const [editShelfLife, setEditShelfLife] = useState(String(item.shelf_life_days || 14));
-  const [isSaving, setIsSaving] = useState(false);
-  const [saveSuccessNotice, setSaveSuccessNotice] = useState(false);
+  // Helper robusto para admitir decimales con punto (.) o coma (,)
+  const parseDecimal = (val: string | number): number => {
+    if (typeof val === 'number') return isNaN(val) ? 0 : val;
+    if (!val || String(val).trim() === '') return 0;
+    const clean = String(val).replace(',', '.').trim();
+    const num = parseFloat(clean);
+    return isNaN(num) ? 0 : num;
+  };
 
   const foodData: FoodIntelligenceData = useMemo(() => {
     return getFoodIntelligence(currentItem);
   }, [currentItem]);
 
+  // Estado de Edición Individual (Cantidad, Unidad, Precios y Nutrición Completa)
+  const [isEditing, setIsEditing] = useState(initialEditMode);
+  const [editName, setEditName] = useState(item.name);
+  const [editCategory, setEditCategory] = useState(item.category || 'Despensa');
+  const [editQuantity, setEditQuantity] = useState(String(item.quantity));
+  const [editUnit, setEditUnit] = useState(item.unit || 'un');
+  const [editUnitPrice, setEditUnitPrice] = useState(item.unit_price !== undefined ? String(item.unit_price) : '');
+  const [editTotalPrice, setEditTotalPrice] = useState(
+    item.total_price !== undefined
+      ? String(item.total_price)
+      : item.unit_price
+      ? String(Math.round(Number(item.unit_price) * Number(item.quantity) * 100) / 100)
+      : ''
+  );
+  const [editShelfLife, setEditShelfLife] = useState(String(item.shelf_life_days || 14));
+
+  // Datos nutricionales editables
+  const [editServingSize, setEditServingSize] = useState(
+    item.serving_size || foodData.nutrition.servingSize || '100g o 1 porción'
+  );
+  const [editCalories, setEditCalories] = useState(
+    String(item.calories_per_unit || foodData.nutrition.calories || '')
+  );
+  const [editProtein, setEditProtein] = useState(
+    item.protein_g !== undefined ? String(item.protein_g) : String(foodData.nutrition.protein_g ?? 0)
+  );
+  const [editCarbs, setEditCarbs] = useState(
+    item.carbs_g !== undefined ? String(item.carbs_g) : String(foodData.nutrition.carbs_g ?? 0)
+  );
+  const [editSugar, setEditSugar] = useState(
+    item.sugar_g !== undefined ? String(item.sugar_g) : String(foodData.nutrition.sugar_g ?? 0)
+  );
+  const [editFiber, setEditFiber] = useState(
+    item.fiber_g !== undefined ? String(item.fiber_g) : String(foodData.nutrition.fiber_g ?? 0)
+  );
+  const [editFat, setEditFat] = useState(
+    item.fat_g !== undefined ? String(item.fat_g) : String(foodData.nutrition.fat_g ?? 0)
+  );
+  const [editSatFat, setEditSatFat] = useState(
+    item.saturated_fat_g !== undefined ? String(item.saturated_fat_g) : String(foodData.nutrition.saturated_fat_g ?? 0)
+  );
+  const [editSodium, setEditSodium] = useState(
+    item.sodium_mg !== undefined ? String(item.sodium_mg) : String(foodData.nutrition.sodium_mg ?? 0)
+  );
+
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveSuccessNotice, setSaveSuccessNotice] = useState(false);
+
   const { nutrition, isa, economics, isaScore, isaGrade, nutriEcoBalance, balanceExplanation } = foodData;
+
+  // Manejadores sincronizados de cambios numéricos con soporte para decimales
+  const handleQuantityChange = (val: string) => {
+    const sanitized = val.replace(/[^0-9.,]/g, '');
+    setEditQuantity(sanitized);
+    const q = parseDecimal(sanitized);
+    const tot = parseDecimal(editTotalPrice);
+    const p = parseDecimal(editUnitPrice);
+    if (q > 0 && tot > 0) {
+      setEditUnitPrice(String(Math.round((tot / q) * 100) / 100));
+    } else if (q > 0 && p > 0) {
+      setEditTotalPrice(String(Math.round(q * p * 100) / 100));
+    }
+  };
+
+  const handleUnitPriceChange = (val: string) => {
+    const sanitized = val.replace(/[^0-9.,]/g, '');
+    setEditUnitPrice(sanitized);
+    const p = parseDecimal(sanitized);
+    const q = parseDecimal(editQuantity);
+    if (p > 0 && q > 0) {
+      setEditTotalPrice(String(Math.round(p * q * 100) / 100));
+    }
+  };
+
+  const handleTotalPriceChange = (val: string) => {
+    const sanitized = val.replace(/[^0-9.,]/g, '');
+    setEditTotalPrice(sanitized);
+    const tot = parseDecimal(sanitized);
+    const q = parseDecimal(editQuantity);
+    if (tot > 0 && q > 0) {
+      setEditUnitPrice(String(Math.round((tot / q) * 100) / 100));
+    }
+  };
+
+  const handleDecimalInput = (setter: (v: string) => void) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    setter(e.target.value.replace(/[^0-9.,]/g, ''));
+  };
+
+  // Cálculos en tiempo real para el calculador interactivo de costo y rendimiento
+  const parsedEditQty = parseDecimal(editQuantity);
+  const parsedEditTotal = parseDecimal(editTotalPrice);
+  const parsedEditUnitP = parseDecimal(editUnitPrice);
+  const activeTotalPrice = parsedEditTotal > 0 ? parsedEditTotal : parsedEditUnitP * parsedEditQty;
+  const activeUnitPrice =
+    parsedEditUnitP > 0
+      ? parsedEditUnitP
+      : parsedEditQty > 0 && activeTotalPrice > 0
+      ? activeTotalPrice / parsedEditQty
+      : 0;
+
+  const cleanUnit = (editUnit || '').toLowerCase().trim();
+  const isVolumeUnit =
+    cleanUnit === 'ml' ||
+    cleanUnit.includes('mili') ||
+    cleanUnit.includes('mililitro') ||
+    cleanUnit === 'cc' ||
+    cleanUnit === 'cm3' ||
+    cleanUnit === 'l' ||
+    cleanUnit === 'lt' ||
+    cleanUnit === 'lts' ||
+    cleanUnit.includes('litro');
+
+  const isLiter = cleanUnit === 'l' || cleanUnit === 'lt' || cleanUnit === 'lts' || cleanUnit.includes('litro');
+  const isGram = cleanUnit === 'g' || cleanUnit === 'gr' || cleanUnit === 'grs' || cleanUnit.includes('gram');
+  const isKg = cleanUnit.includes('kg') || cleanUnit.includes('kilo');
+  const isPound = cleanUnit.includes('lb') || cleanUnit.includes('libra');
+
+  // Densidad alimentaria específica del producto (ej. Aceite = 0.92, Leche = 1.03, General = 1.0)
+  const isCookingOil = (editName || currentItem.name).toLowerCase().includes('aceite');
+  const isDairyMilk = (editName || currentItem.name).toLowerCase().includes('leche');
+  const productDensity = isCookingOil ? 0.92 : isDairyMilk ? 1.03 : 1.0;
+
+  // Equivalencias exactas en ml y gramos
+  let calculatedMl = 0;
+  let calculatedGrams = 0;
+
+  if (isVolumeUnit) {
+    calculatedMl = isLiter ? parsedEditQty * 1000 : parsedEditQty;
+    calculatedGrams = Math.round(calculatedMl * productDensity);
+  } else if (isGram || isKg || isPound) {
+    calculatedGrams = isKg ? parsedEditQty * 1000 : isPound ? parsedEditQty * 500 : parsedEditQty;
+    calculatedMl = Math.round(calculatedGrams / productDensity);
+  } else {
+    // Si la unidad es libre (ej. unidades, paquetes, latas)
+    const matchNameMl = (editName || currentItem.name).match(/(\d+)\s*(ml|mililitros|cc|l|litros)\b/i);
+    const matchNameGr = (editName || currentItem.name).match(/(\d+)\s*(g|gr|gramos|kg|kilos)\b/i);
+    if (matchNameMl) {
+      const val = parseFloat(matchNameMl[1]);
+      calculatedMl = matchNameMl[2].toLowerCase().startsWith('l') ? val * 1000 : val;
+      calculatedGrams = Math.round(calculatedMl * productDensity);
+    } else if (matchNameGr) {
+      const val = parseFloat(matchNameGr[1]);
+      calculatedGrams = matchNameGr[2].toLowerCase().startsWith('k') ? val * 1000 : val;
+      calculatedMl = Math.round(calculatedGrams / productDensity);
+    } else {
+      calculatedGrams = parsedEditQty * 100;
+      calculatedMl = calculatedGrams;
+    }
+  }
+
+  // Costos equivalentes en tiempo real
+  const costPerMl = calculatedMl > 0 && activeTotalPrice > 0 ? activeTotalPrice / calculatedMl : 0;
+  const costPerLiter = costPerMl * 1000;
+  const costPerGram = calculatedGrams > 0 && activeTotalPrice > 0 ? activeTotalPrice / calculatedGrams : 0;
+  const costPer100g = costPerGram * 100;
+  const costPerKg = costPerGram * 1000;
+  const costPer100ml = costPerMl * 100;
+
+  // Porción de consumo
+  let portionGrams = 100;
+  if (editServingSize.includes('14g') || editServingSize.includes('15ml')) portionGrams = 14;
+  else if (editServingSize.includes('10g')) portionGrams = 10;
+  else if (editServingSize.includes('50g')) portionGrams = 50;
+  else if (editServingSize.includes('80g')) portionGrams = 80;
+  else if (editServingSize.includes('120g')) portionGrams = 120;
+  else if (editServingSize.includes('250ml') || editServingSize.includes('250g')) portionGrams = 250;
+
+  const costPerServing = isVolumeUnit
+    ? costPerMl * (portionGrams / productDensity)
+    : costPerGram * portionGrams;
+  const approxServings = calculatedGrams > 0 && portionGrams > 0 ? Math.round(calculatedGrams / portionGrams) : 0;
+
+  const handleApplyUnit = (targetUnit: 'mililitros' | 'litros' | 'gramos' | 'kg') => {
+    if (targetUnit === 'mililitros') {
+      setEditQuantity(String(calculatedMl));
+      setEditUnit('mililitros');
+      setEditUnitPrice(String(Math.round(costPerMl * 100) / 100));
+    } else if (targetUnit === 'litros') {
+      setEditQuantity(String(Math.round((calculatedMl / 1000) * 100) / 100));
+      setEditUnit('litros');
+      setEditUnitPrice(String(Math.round(costPerLiter * 100) / 100));
+    } else if (targetUnit === 'gramos') {
+      setEditQuantity(String(calculatedGrams));
+      setEditUnit('gramos');
+      setEditUnitPrice(String(Math.round(costPerGram * 100) / 100));
+    } else if (targetUnit === 'kg') {
+      setEditQuantity(String(Math.round((calculatedGrams / 1000) * 100) / 100));
+      setEditUnit('kg');
+      setEditUnitPrice(String(Math.round(costPerKg * 100) / 100));
+    }
+  };
 
   // Guardar cambios individuales del producto
   const handleSaveItemChanges = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     setIsSaving(true);
     try {
-      const q = parseFloat(editQuantity) || 0;
-      const p = parseFloat(editUnitPrice) || 0;
+      const q = parseDecimal(editQuantity);
+      const p = parseDecimal(editUnitPrice);
+      const tot = parseDecimal(editTotalPrice) || (p * q);
       const sl = parseInt(editShelfLife) || 14;
+      const cal = parseDecimal(editCalories);
+      const prot = parseDecimal(editProtein);
+      const carbs = parseDecimal(editCarbs);
+      const sugar = parseDecimal(editSugar);
+      const fiber = parseDecimal(editFiber);
+      const fat = parseDecimal(editFat);
+      const satFat = parseDecimal(editSatFat);
+      const sod = parseDecimal(editSodium);
 
       const updatedItem: PantryItem = {
         ...currentItem,
@@ -91,8 +288,18 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
         quantity: q,
         unit: editUnit.trim() || currentItem.unit || 'un',
         unit_price: p,
-        total_price: p * q,
+        total_price: tot,
         shelf_life_days: sl,
+        calories_per_unit: cal,
+        total_calories: cal * q,
+        protein_g: prot,
+        carbs_g: carbs,
+        fat_g: fat,
+        sugar_g: sugar,
+        fiber_g: fiber,
+        saturated_fat_g: satFat,
+        sodium_mg: sod,
+        serving_size: editServingSize.trim() || undefined,
         status: q <= 0 ? 'agotado' : currentItem.status === 'agotado' ? 'disponible' : currentItem.status,
         updated_at: new Date().toISOString(),
       };
@@ -172,7 +379,12 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 <>
                   <span>•</span>
                   <span className="text-emerald-600 dark:text-emerald-400 font-bold">
-                    ${Number(currentItem.unit_price).toLocaleString()} {currentItem.unit}
+                    ${Number(currentItem.unit_price).toLocaleString()} / {currentItem.unit}
+                    {Number(currentItem.total_price) > 0 && Number(currentItem.total_price) !== Number(currentItem.unit_price) && (
+                      <span className="text-slate-400 font-normal ml-1">
+                        (Total: ${Number(currentItem.total_price).toLocaleString()} COP)
+                      </span>
+                    )}
                   </span>
                 </>
               )}
@@ -212,10 +424,10 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
         )}
 
         {/* ========================================================================= */}
-        {/* PANEL DE EDICIÓN INDIVIDUAL (CANTIDAD, UNIDAD, PRECIO, ETC.)              */}
+        {/* PANEL DE EDICIÓN COMPLETA (STOCK, FINANZAS Y NUTRICIÓN)                    */}
         {/* ========================================================================= */}
         {isEditing && (
-          <div className="p-5 bg-gradient-to-br from-emerald-500/10 via-slate-50 to-emerald-500/5 dark:from-emerald-950/40 dark:via-slate-900 dark:to-emerald-950/20 border border-emerald-500/30 rounded-3xl space-y-4 animate-in fade-in zoom-in-95">
+          <div className="p-5 bg-gradient-to-br from-emerald-500/10 via-slate-50 to-emerald-500/5 dark:from-emerald-950/40 dark:via-slate-900 dark:to-emerald-950/20 border border-emerald-500/30 rounded-3xl space-y-5 animate-in fade-in zoom-in-95">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
@@ -223,109 +435,416 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 </div>
                 <div>
                   <h4 className="font-bold text-sm text-slate-900 dark:text-white">
-                    Modificar Producto Individual
+                    Modificar Producto & Datos Nutricionales
                   </h4>
                   <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                    Ajusta la cantidad disponible, unidad o precio pagado para recalcular su rendimiento.
+                    Ajusta stock, precios o macronutrientes oficiales. Se admiten valores decimales con coma o punto.
                   </p>
                 </div>
               </div>
             </div>
 
-            <form onSubmit={handleSaveItemChanges} className="space-y-3">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {/* Cantidad */}
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
-                    Cantidad Disponible
-                  </label>
-                  <input
-                    type="number"
-                    step="any"
-                    min="0"
-                    required
-                    value={editQuantity}
-                    onChange={(e) => setEditQuantity(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl text-xs font-black bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:border-emerald-500 outline-none"
-                  />
+            <form onSubmit={handleSaveItemChanges} className="space-y-4">
+              {/* SECCIÓN 1: STOCK, PRESENTACIÓN Y FINANZAS */}
+              <div className="p-4 bg-white/80 dark:bg-slate-900/80 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-3">
+                <span className="text-[10px] font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block">
+                  1. Stock, Presentación y Precios
+                </span>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {/* Nombre */}
+                  <div className="sm:col-span-2">
+                    <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
+                      Nombre del Alimento
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={editName}
+                      onChange={(e) => setEditName(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl text-xs font-bold bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:border-emerald-500 outline-none"
+                    />
+                  </div>
+
+                  {/* Categoría */}
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
+                      Categoría
+                    </label>
+                    <select
+                      value={editCategory}
+                      onChange={(e) => setEditCategory(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl text-xs font-semibold bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:border-emerald-500 outline-none"
+                    >
+                      {PANTRY_CATEGORIES.map((cat) => (
+                        <option key={cat} value={cat}>
+                          {cat}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
 
-                {/* Unidad */}
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
-                    Unidad de Medida
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={editUnit}
-                    onChange={(e) => setEditUnit(e.target.value)}
-                    placeholder="un, kg, g, lb, litro, paquete..."
-                    className="w-full px-3 py-2 rounded-xl text-xs font-semibold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:border-emerald-500 outline-none"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                  {/* Cantidad Comprada */}
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
+                      Cantidad del Producto
+                    </label>
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      required
+                      value={editQuantity}
+                      onChange={(e) => handleQuantityChange(e.target.value)}
+                      placeholder="ej. 2700, 2.7, 500"
+                      className="w-full px-3 py-2 rounded-xl text-xs font-black bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:border-emerald-500 outline-none"
+                    />
+                    <span className="text-[10px] text-slate-400 block mt-0.5">Contenido del envase</span>
+                  </div>
+
+                  {/* Unidad */}
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
+                      Unidad de Medida
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={editUnit}
+                      onChange={(e) => setEditUnit(e.target.value)}
+                      placeholder="mililitros, g, litros, kg..."
+                      className="w-full px-3 py-2 rounded-xl text-xs font-bold bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:border-emerald-500 outline-none"
+                    />
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {[
+                        { label: 'ml', val: 'mililitros' },
+                        { label: 'L', val: 'litros' },
+                        { label: 'g', val: 'gramos' },
+                        { label: 'kg', val: 'kg' },
+                        { label: 'lb', val: 'libras' },
+                        { label: 'un', val: 'unidades' },
+                      ].map((uOpt) => (
+                        <button
+                          key={uOpt.label}
+                          type="button"
+                          onClick={() => setEditUnit(uOpt.val)}
+                          className={`text-[9px] px-1.5 py-0.5 rounded font-bold transition border ${
+                            cleanUnit.startsWith(uOpt.label) || cleanUnit === uOpt.val
+                              ? 'bg-emerald-600 text-white border-emerald-600'
+                              : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700'
+                          }`}
+                        >
+                          {uOpt.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Precio Total Pagado */}
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
+                      Precio Pagado ($ COP)
+                    </label>
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      value={editTotalPrice}
+                      onChange={(e) => handleTotalPriceChange(e.target.value)}
+                      placeholder="ej. 26000"
+                      className="w-full px-3 py-2 rounded-xl text-xs font-black text-emerald-600 dark:text-emerald-400 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 focus:border-emerald-500 outline-none"
+                    />
+                    <span className="text-[10px] text-slate-400 block mt-0.5">Total pagado en caja</span>
+                  </div>
+
+                  {/* Precio Unitario */}
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
+                      Precio Unitario ($/{editUnit || 'un'})
+                    </label>
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      value={editUnitPrice}
+                      onChange={(e) => handleUnitPriceChange(e.target.value)}
+                      placeholder="ej. 9.63"
+                      className="w-full px-3 py-2 rounded-xl text-xs font-black text-emerald-600 dark:text-emerald-400 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 focus:border-emerald-500 outline-none"
+                    />
+                    <span className="text-[10px] text-slate-400 block mt-0.5">Calculado: Total ÷ Cantidad</span>
+                  </div>
                 </div>
 
-                {/* Precio Unitario */}
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
-                    Precio Unitario ($ COP)
-                  </label>
-                  <input
-                    type="number"
-                    min="0"
-                    value={editUnitPrice}
-                    onChange={(e) => setEditUnitPrice(e.target.value)}
-                    placeholder="ej. 4500"
-                    className="w-full px-3 py-2 rounded-xl text-xs font-black text-emerald-600 dark:text-emerald-400 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:border-emerald-500 outline-none"
-                  />
+                {/* CALCULADORA INTELIGENTE DE COSTO UNITARIO Y RENDIMIENTO EN TIEMPO REAL */}
+                {activeTotalPrice > 0 && parsedEditQty > 0 && (
+                  <div className="p-4 bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-500/30 rounded-2xl space-y-3 animate-in fade-in">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-emerald-500/20 pb-2">
+                      <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-700 dark:text-emerald-300">
+                        <Sparkles className="w-4 h-4 text-emerald-500" />
+                        <span>Cálculo Automático de Costo por Unidad (ml, g, L, Kg, porción)</span>
+                      </div>
+                      <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+                        Compra: {parsedEditQty} {editUnit} = ${activeTotalPrice.toLocaleString()} COP
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-2.5">
+                      {/* Costo por Mililitro / Litro */}
+                      <div className="p-2.5 bg-white dark:bg-slate-900 rounded-xl border border-emerald-500/20 shadow-2xs">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                          Costo por Mililitro
+                        </span>
+                        <p className="text-base font-black text-emerald-600 dark:text-emerald-400">
+                          ${costPerMl >= 1 ? costPerMl.toFixed(2) : costPerMl.toFixed(3)}{' '}
+                          <span className="text-[10px] font-semibold text-slate-400">/ ml</span>
+                        </p>
+                        <p className="text-[10px] text-slate-500 mt-0.5">
+                          ${Math.round(costPerLiter).toLocaleString()} / Litro
+                        </p>
+                        {calculatedMl > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => handleApplyUnit('mililitros')}
+                            className="mt-1 text-[9px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-0.5"
+                          >
+                            Guardar como {calculatedMl.toLocaleString()} ml →
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Costo por Gramo / 100g */}
+                      <div className="p-2.5 bg-white dark:bg-slate-900 rounded-xl border border-emerald-500/20 shadow-2xs">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                          Costo por Gramo
+                        </span>
+                        <p className="text-base font-black text-slate-900 dark:text-white">
+                          ${costPerGram >= 1 ? costPerGram.toFixed(2) : costPerGram.toFixed(3)}{' '}
+                          <span className="text-[10px] font-semibold text-slate-400">/ g</span>
+                        </p>
+                        <p className="text-[10px] text-slate-500 mt-0.5">
+                          ${Math.round(costPer100g).toLocaleString()} / 100g • ${Math.round(costPerKg).toLocaleString()} / Kg
+                        </p>
+                        {calculatedGrams > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => handleApplyUnit('gramos')}
+                            className="mt-1 text-[9px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-0.5"
+                          >
+                            Guardar como {calculatedGrams.toLocaleString()} g →
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Costo por Porción */}
+                      <div className="p-2.5 bg-white dark:bg-slate-900 rounded-xl border border-emerald-500/20 shadow-2xs">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                          Porción ({portionGrams}g / {Math.round(portionGrams / productDensity)}ml)
+                        </span>
+                        <p className="text-base font-black text-amber-600 dark:text-amber-400">
+                          ${Math.round(costPerServing).toLocaleString()}{' '}
+                          <span className="text-[10px] font-semibold text-slate-400">COP</span>
+                        </p>
+                        <p className="text-[10px] text-slate-500 mt-0.5">
+                          ~{approxServings} porciones en el envase
+                        </p>
+                      </div>
+
+                      {/* Adaptar a otra unidad */}
+                      <div className="p-2.5 bg-white dark:bg-slate-900 rounded-xl border border-emerald-500/20 shadow-2xs flex flex-col justify-between">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                          Adaptar Inventario
+                        </span>
+                        <div className="grid grid-cols-2 gap-1 my-1">
+                          <button
+                            type="button"
+                            onClick={() => handleApplyUnit('litros')}
+                            className="px-1.5 py-1 text-[9px] font-bold bg-slate-100 dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 hover:bg-emerald-50 dark:hover:bg-emerald-950 text-slate-700 dark:text-slate-300"
+                            title="Guardar en Litros"
+                          >
+                            En Litros (L)
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleApplyUnit('kg')}
+                            className="px-1.5 py-1 text-[9px] font-bold bg-slate-100 dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 hover:bg-emerald-50 dark:hover:bg-emerald-950 text-slate-700 dark:text-slate-300"
+                            title="Guardar en Kilogramos"
+                          >
+                            En Kilos (kg)
+                          </button>
+                        </div>
+                        <p className="text-[9px] text-slate-400">
+                          {isCookingOil
+                            ? 'Densidad aceite: 0.92 g/ml'
+                            : isDairyMilk
+                            ? 'Densidad leche: 1.03 g/ml'
+                            : 'Densidad base: 1.0 g/ml'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {/* Vida Útil */}
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
+                      Vida Útil Estimada (Días)
+                    </label>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      value={editShelfLife}
+                      onChange={(e) => setEditShelfLife(e.target.value.replace(/[^0-9]/g, ''))}
+                      className="w-full px-3 py-2 rounded-xl text-xs font-semibold bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:border-emerald-500 outline-none"
+                    />
+                  </div>
+
+                  {/* Tamaño Porción */}
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
+                      Tamaño de Porción de Referencia
+                    </label>
+                    <input
+                      type="text"
+                      value={editServingSize}
+                      onChange={(e) => setEditServingSize(e.target.value)}
+                      placeholder="ej. 1 cucharada (14g / 15ml), 100g, 1 vaso"
+                      className="w-full px-3 py-2 rounded-xl text-xs font-semibold bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:border-emerald-500 outline-none"
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {/* Nombre */}
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
-                    Nombre del Alimento
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={editName}
-                    onChange={(e) => setEditName(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl text-xs font-bold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:border-emerald-500 outline-none"
-                  />
+              {/* SECCIÓN 2: INFORMACIÓN NUTRICIONAL OFICIAL DE ETIQUETA */}
+              <div className="p-4 bg-white/80 dark:bg-slate-900/80 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-amber-600 dark:text-amber-400 block">
+                    2. Tabla Nutricional Oficial (Valores de Etiqueta)
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-medium">
+                    Base: {editServingSize}
+                  </span>
                 </div>
 
-                {/* Categoría */}
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
-                    Categoría
-                  </label>
-                  <select
-                    value={editCategory}
-                    onChange={(e) => setEditCategory(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl text-xs font-semibold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:border-emerald-500 outline-none"
-                  >
-                    {PANTRY_CATEGORIES.map((cat) => (
-                      <option key={cat} value={cat}>
-                        {cat}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  {/* Calorías */}
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
+                      Calorías (kcal)
+                    </label>
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      value={editCalories}
+                      onChange={handleDecimalInput(setEditCalories)}
+                      placeholder="ej. 124 o 884"
+                      className="w-full px-3 py-2 rounded-xl text-xs font-black text-amber-600 dark:text-amber-400 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 focus:border-amber-500 outline-none"
+                    />
+                  </div>
 
-                {/* Vida Útil */}
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
-                    Vida Útil (Días)
-                  </label>
-                  <input
-                    type="number"
-                    min="1"
-                    value={editShelfLife}
-                    onChange={(e) => setEditShelfLife(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl text-xs font-semibold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:border-emerald-500 outline-none"
-                  />
+                  {/* Proteína */}
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
+                      Proteína (g)
+                    </label>
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      value={editProtein}
+                      onChange={handleDecimalInput(setEditProtein)}
+                      placeholder="ej. 0 o 25"
+                      className="w-full px-3 py-2 rounded-xl text-xs font-black bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:border-emerald-500 outline-none"
+                    />
+                  </div>
+
+                  {/* Carbohidratos */}
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
+                      Carbohidratos (g)
+                    </label>
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      value={editCarbs}
+                      onChange={handleDecimalInput(setEditCarbs)}
+                      placeholder="ej. 0 o 45"
+                      className="w-full px-3 py-2 rounded-xl text-xs font-black bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:border-emerald-500 outline-none"
+                    />
+                  </div>
+
+                  {/* Grasas Totales */}
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
+                      Grasas Totales (g)
+                    </label>
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      value={editFat}
+                      onChange={handleDecimalInput(setEditFat)}
+                      placeholder="ej. 14 o 100"
+                      className="w-full px-3 py-2 rounded-xl text-xs font-black bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:border-emerald-500 outline-none"
+                    />
+                  </div>
+
+                  {/* Grasas Saturadas */}
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
+                      Grasas Saturadas (g)
+                    </label>
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      value={editSatFat}
+                      onChange={handleDecimalInput(setEditSatFat)}
+                      placeholder="ej. 1.7"
+                      className="w-full px-3 py-2 rounded-xl text-xs font-semibold bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:border-emerald-500 outline-none"
+                    />
+                  </div>
+
+                  {/* Azúcares */}
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
+                      Azúcares Totales (g)
+                    </label>
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      value={editSugar}
+                      onChange={handleDecimalInput(setEditSugar)}
+                      placeholder="ej. 0"
+                      className="w-full px-3 py-2 rounded-xl text-xs font-semibold bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:border-emerald-500 outline-none"
+                    />
+                  </div>
+
+                  {/* Fibra */}
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
+                      Fibra Dietaria (g)
+                    </label>
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      value={editFiber}
+                      onChange={handleDecimalInput(setEditFiber)}
+                      placeholder="ej. 0"
+                      className="w-full px-3 py-2 rounded-xl text-xs font-semibold bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:border-emerald-500 outline-none"
+                    />
+                  </div>
+
+                  {/* Sodio */}
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
+                      Sodio (mg)
+                    </label>
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      value={editSodium}
+                      onChange={handleDecimalInput(setEditSodium)}
+                      placeholder="ej. 0"
+                      className="w-full px-3 py-2 rounded-xl text-xs font-semibold bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:border-emerald-500 outline-none"
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -644,11 +1163,13 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                       <span className="text-xs font-normal text-slate-400">COP/g</span>
                     </>
                   ) : (
-                    <span className="text-base font-semibold text-slate-400">N/A</span>
+                    <span className="text-sm font-semibold text-slate-400">N/A (Sin proteína)</span>
                   )}
                 </p>
                 <p className="text-[11px] text-slate-500">
-                  Eficiencia para masa muscular
+                  {economics.pricePerProteinGramCOP > 0
+                    ? 'Eficiencia para masa muscular'
+                    : 'Este alimento no aporta proteína significativa'}
                 </p>
               </div>
 
@@ -662,8 +1183,67 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                   <span className="text-xs font-normal text-slate-400">COP/g</span>
                 </p>
                 <p className="text-[11px] text-slate-500">
-                  Peso estimado (~{economics.estimatedWeightGrams}g por unidad)
+                  ~{economics.estimatedWeightGrams}g por {currentItem.unit}
+                  {economics.totalItemGrams ? ` • Total: ~${economics.totalItemGrams.toLocaleString()}g` : ''}
                 </p>
+              </div>
+            </div>
+
+            {/* DESGLOSE DETALLADO DE COSTO EQUIVALENTE & RENDIMIENTO */}
+            <div className="p-4 bg-emerald-50/50 dark:bg-emerald-950/20 rounded-2xl border border-emerald-500/20 space-y-3">
+              <div className="flex items-center gap-1.5 font-bold text-xs text-emerald-700 dark:text-emerald-300">
+                <Sparkles className="w-4 h-4 text-emerald-500" />
+                <span>Desglose Completo de Costo Equivalente (ml, g, L, Kg, porción)</span>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                {/* Costo ml */}
+                <div className="p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+                  <span className="text-[10px] font-bold text-slate-400 block uppercase">Costo por Mililitro</span>
+                  <p className="text-base font-black text-emerald-600 dark:text-emerald-400">
+                    ${economics.pricePerMlCOP ? (economics.pricePerMlCOP >= 1 ? economics.pricePerMlCOP.toFixed(2) : economics.pricePerMlCOP.toFixed(3)) : `${economics.pricePerGramCOP}`}
+                    <span className="text-[10px] text-slate-400 font-normal"> / ml</span>
+                  </p>
+                  <span className="text-[10px] text-slate-500">
+                    ${Math.round((economics.pricePerMlCOP || economics.pricePerGramCOP) * 1000).toLocaleString()} / Litro
+                  </span>
+                </div>
+
+                {/* Costo gramo */}
+                <div className="p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+                  <span className="text-[10px] font-bold text-slate-400 block uppercase">Costo por Gramo</span>
+                  <p className="text-base font-black text-slate-900 dark:text-white">
+                    ${economics.pricePerGramCOP}{' '}
+                    <span className="text-[10px] text-slate-400 font-normal">/ g</span>
+                  </p>
+                  <span className="text-[10px] text-slate-500">
+                    ${(economics.pricePer100gCOP || Math.round(economics.pricePerGramCOP * 100)).toLocaleString()} / 100g • ${Math.round(economics.pricePerGramCOP * 1000).toLocaleString()} / Kg
+                  </span>
+                </div>
+
+                {/* Costo porción */}
+                <div className="p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+                  <span className="text-[10px] font-bold text-slate-400 block uppercase">Porción Oficial</span>
+                  <p className="text-base font-black text-amber-600 dark:text-amber-400">
+                    ${economics.pricePerServingCOP?.toLocaleString() || Math.round(economics.pricePerGramCOP * 14)}{' '}
+                    <span className="text-[10px] text-slate-400 font-normal">COP</span>
+                  </p>
+                  <span className="text-[10px] text-slate-500">
+                    {foodData.nutrition.servingSize} {economics.totalServings ? `(~${economics.totalServings} porciones)` : ''}
+                  </span>
+                </div>
+
+                {/* Resumen compra */}
+                <div className="p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+                  <span className="text-[10px] font-bold text-slate-400 block uppercase">Total Pagado</span>
+                  <p className="text-base font-black text-slate-900 dark:text-white">
+                    ${Number(currentItem.total_price || economics.totalPriceCOP || 0).toLocaleString()}{' '}
+                    <span className="text-[10px] text-slate-400 font-normal">COP</span>
+                  </p>
+                  <span className="text-[10px] text-slate-500">
+                    Por {currentItem.quantity} {currentItem.unit}
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -711,7 +1291,12 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                     <tr className="py-1.5">
                       <td className="py-2 font-black text-slate-900 dark:text-white">Calorías / Energía</td>
                       <td className="py-2 text-right font-black text-amber-600 dark:text-amber-400">
-                        {nutrition.calories} kcal
+                        <span>{nutrition.calories} kcal</span>
+                        {nutrition.totalPackageCalories && nutrition.totalPackageCalories > nutrition.calories && (
+                          <span className="block text-[10px] font-normal text-slate-400">
+                            Total despensa: ~{nutrition.totalPackageCalories.toLocaleString()} kcal
+                          </span>
+                        )}
                       </td>
                     </tr>
                     <tr>
@@ -898,7 +1483,23 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
         {/* ========================================================================= */}
         <div className="flex flex-col sm:flex-row justify-between items-center gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
           <div className="text-xs text-slate-400">
-            Stock actual: <strong className="text-slate-800 dark:text-slate-200">{currentItem.quantity} {currentItem.unit}</strong> • Precio: <strong className="text-slate-800 dark:text-slate-200">${Number(currentItem.unit_price).toLocaleString()}</strong>
+            Stock actual: <strong className="text-slate-800 dark:text-slate-200">{currentItem.quantity} {currentItem.unit}</strong>
+            {Number(currentItem.unit_price) > 0 && (
+              <>
+                {' '}• Precio:{' '}
+                <strong className="text-slate-800 dark:text-slate-200">
+                  ${Number(currentItem.unit_price).toLocaleString()} COP / {currentItem.unit}
+                </strong>
+              </>
+            )}
+            {Number(currentItem.total_price) > 0 && (
+              <>
+                {' '}• Total:{' '}
+                <strong className="text-emerald-600 dark:text-emerald-400 font-bold">
+                  ${Number(currentItem.total_price).toLocaleString()} COP
+                </strong>
+              </>
+            )}
           </div>
 
           <div className="flex items-center gap-2">

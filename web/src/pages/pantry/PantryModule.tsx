@@ -328,6 +328,11 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
           unit_price: updatedItem.unit_price,
           total_price: updatedItem.total_price || (updatedItem.unit_price * updatedItem.quantity),
           shelf_life_days: updatedItem.shelf_life_days,
+          calories_per_unit: Number(updatedItem.calories_per_unit) || 0,
+          total_calories: Number(updatedItem.total_calories) || (Number(updatedItem.calories_per_unit) * Number(updatedItem.quantity)) || 0,
+          protein_g: Number(updatedItem.protein_g) || 0,
+          carbs_g: Number(updatedItem.carbs_g) || 0,
+          fat_g: Number(updatedItem.fat_g) || 0,
           status: updatedItem.status,
           updated_at: updatedItem.updated_at,
         })
@@ -684,10 +689,10 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
     e.preventDefault();
     if (!manualName.trim()) return;
 
-    const qty = parseFloat(manualQty) || 1;
-    const price = parseFloat(manualPrice) || 0;
+    const qty = parseFloat(manualQty.replace(',', '.')) || 1;
+    const price = parseFloat(manualPrice.replace(',', '.')) || 0;
     const shelfLife = parseInt(manualShelfLife) || 14;
-    const cal = parseFloat(manualCalories) || 0;
+    const cal = parseFloat(manualCalories.replace(',', '.')) || 0;
 
     const newItem: PantryItem = {
       id: crypto.randomUUID(),
@@ -1420,10 +1425,12 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                           <td className="py-2.5 px-2 text-center">
                             <input
                               type="number"
+                              step="any"
                               value={item.quantity}
                               onChange={(e) => {
                                 const newItems = [...extractedData.items];
-                                newItems[idx].quantity = parseFloat(e.target.value) || 1;
+                                const raw = String(e.target.value).replace(',', '.');
+                                newItems[idx].quantity = parseFloat(raw) || 0;
                                 newItems[idx].total_price = newItems[idx].quantity * newItems[idx].unit_price;
                                 setExtractedData({ ...extractedData, items: newItems });
                               }}
@@ -1433,10 +1440,12 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                           <td className="py-2.5 px-2 text-right">
                             <input
                               type="number"
+                              step="any"
                               value={item.unit_price}
                               onChange={(e) => {
                                 const newItems = [...extractedData.items];
-                                newItems[idx].unit_price = parseFloat(e.target.value) || 0;
+                                const raw = String(e.target.value).replace(',', '.');
+                                newItems[idx].unit_price = parseFloat(raw) || 0;
                                 newItems[idx].total_price = newItems[idx].quantity * newItems[idx].unit_price;
                                 setExtractedData({ ...extractedData, items: newItems });
                               }}
@@ -2330,20 +2339,21 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                 <div>
                   <label className="block text-[11px] font-bold text-slate-400 mb-1">Cantidad</label>
                   <input
-                    type="number"
-                    step="0.5"
+                    type="text"
+                    inputMode="decimal"
                     value={manualQty}
-                    onChange={(e) => setManualQty(e.target.value)}
+                    onChange={(e) => setManualQty(e.target.value.replace(/[^0-9.,]/g, ''))}
                     className="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-bold"
                   />
                 </div>
                 <div>
                   <label className="block text-[11px] font-bold text-slate-400 mb-1">Precio Unitario ($)</label>
                   <input
-                    type="number"
+                    type="text"
+                    inputMode="decimal"
                     placeholder="ej. 4500"
                     value={manualPrice}
-                    onChange={(e) => setManualPrice(e.target.value)}
+                    onChange={(e) => setManualPrice(e.target.value.replace(/[^0-9.,]/g, ''))}
                     className="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-bold text-emerald-600"
                   />
                 </div>
@@ -2353,18 +2363,20 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                 <div>
                   <label className="block text-[11px] font-bold text-slate-400 mb-1">Vida Útil (Días)</label>
                   <input
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
                     value={manualShelfLife}
-                    onChange={(e) => setManualShelfLife(e.target.value)}
+                    onChange={(e) => setManualShelfLife(e.target.value.replace(/[^0-9]/g, ''))}
                     className="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white"
                   />
                 </div>
                 <div>
                   <label className="block text-[11px] font-bold text-slate-400 mb-1">Calorías Est. (kcal)</label>
                   <input
-                    type="number"
+                    type="text"
+                    inputMode="decimal"
                     value={manualCalories}
-                    onChange={(e) => setManualCalories(e.target.value)}
+                    onChange={(e) => setManualCalories(e.target.value.replace(/[^0-9.,]/g, ''))}
                     className="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-amber-500 font-bold"
                   />
                 </div>
