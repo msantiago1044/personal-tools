@@ -46,6 +46,7 @@ import {
   FileText,
 } from 'lucide-react';
 import { PriceEvolutionModal } from '../../components/pantry/PriceEvolutionModal';
+import { ProductDetailModal } from '../../components/pantry/ProductDetailModal';
 
 interface PantryModuleProps {
   user: any;
@@ -102,6 +103,9 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
 
   // Producto seleccionado para ver historial y evolución de precios
   const [selectedPriceProduct, setSelectedPriceProduct] = useState<ProductPriceHistory | null>(null);
+
+  // Producto seleccionado en despensa para ver ventana flotante (Nutrición, Consumo & ISA)
+  const [selectedPantryItemDetail, setSelectedPantryItemDetail] = useState<PantryItem | null>(null);
 
   // Datos extraídos listos para revisar antes de guardar
   const [extractedData, setExtractedData] = useState<ExtractedReceiptData | null>(null);
@@ -241,6 +245,65 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
     } catch (e) {
       console.warn('Supabase update warning, guardado localmente');
     }
+  };
+
+  // Auto-agotar productos existentes al comprar nuevamente el mismo producto
+  const autoDepletePreviousPurchases = async (
+    newPurchases: { name: string; purchase_date?: string }[],
+    currentItemsList: PantryItem[]
+  ): Promise<PantryItem[]> => {
+    if (!newPurchases.length) return currentItemsList;
+
+    const namesToDeplete = new Set(
+      newPurchases
+        .map((p) => p.name.trim().toLowerCase())
+        .filter((n) => n.length > 0)
+    );
+
+    const today = new Date();
+    const updatedList: PantryItem[] = [];
+    const depletedIds: string[] = [];
+
+    for (const item of currentItemsList) {
+      const normName = (item.name || '').trim().toLowerCase();
+      const isActive = item.status === 'disponible' || item.status === 'consumiendo';
+
+      if (isActive && namesToDeplete.has(normName)) {
+        // Al comprarlo nuevamente, el lote previo se marca como agotado automáticamente
+        const purchaseDate = new Date(item.purchase_date);
+        const daysSincePurchase = Math.max(1, Math.round((today.getTime() - purchaseDate.getTime()) / (1000 * 86400)));
+        const depletedItem: PantryItem = {
+          ...item,
+          quantity: 0,
+          status: 'agotado',
+          consumed_at: today.toISOString(),
+          consumption_days: daysSincePurchase,
+          updated_at: today.toISOString(),
+        };
+        updatedList.push(depletedItem);
+        depletedIds.push(item.id);
+      } else {
+        updatedList.push(item);
+      }
+    }
+
+    if (depletedIds.length > 0) {
+      try {
+        await supabase
+          .from('pantry_items')
+          .update({
+            quantity: 0,
+            status: 'agotado',
+            consumed_at: today.toISOString(),
+            updated_at: today.toISOString(),
+          })
+          .in('id', depletedIds);
+      } catch (err) {
+        console.warn('Advertencia actualizando productos auto-agotados en Supabase:', err);
+      }
+    }
+
+    return updatedList;
   };
 
   // 4. BORRAR PRODUCTO
@@ -465,7 +528,8 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
 
       const newReceipts = receipts.map((r) => (r.id === updatedReceipt.id ? updatedReceipt : r));
       const remainingItems = pantryItems.filter((it) => it.receipt_id !== selectedReceipt.id);
-      const newItems = [...receiptEditItems, ...remainingItems];
+      const updatedRemaining = await autoDepletePreviousPurchases(receiptEditItems, remainingItems);
+      const newItems = [...receiptEditItems, ...updatedRemaining];
 
       setReceipts(newReceipts);
       setPantryItems(newItems);
@@ -567,7 +631,9 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
 
       // Actualizar estado local
       const updatedReceipts = [newReceipt, ...receipts];
-      const updatedItems = [...newItemsToAdd, ...pantryItems];
+      // Si se compró nuevamente el producto, el lote anterior se marca como agotado
+      const depletedExistingItems = await autoDepletePreviousPurchases(newItemsToAdd, pantryItems);
+      const updatedItems = [...newItemsToAdd, ...depletedExistingItems];
       setReceipts(updatedReceipts);
       setPantryItems(updatedItems);
       persistLocally(updatedItems, updatedReceipts);
@@ -614,7 +680,8 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
       updated_at: new Date().toISOString(),
     };
 
-    const newItems = [newItem, ...pantryItems];
+    const depletedExistingItems = await autoDepletePreviousPurchases([newItem], pantryItems);
+    const newItems = [newItem, ...depletedExistingItems];
     setPantryItems(newItems);
     persistLocally(newItems, receipts);
 
@@ -950,10 +1017,11 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                   return (
                     <div
                       key={item.id}
-                      className={`p-5 rounded-3xl border transition flex flex-col justify-between ${
+                      onClick={() => setSelectedPantryItemDetail(item)}
+                      className={`p-5 rounded-3xl border transition flex flex-col justify-between cursor-pointer group ${
                         isConsumed
-                          ? 'bg-slate-50/60 dark:bg-slate-900/40 border-slate-200 dark:border-slate-800/60 opacity-60'
-                          : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 shadow-sm'
+                          ? 'bg-slate-50/60 dark:bg-slate-900/40 border-slate-200 dark:border-slate-800/60 opacity-60 hover:opacity-100 hover:border-slate-400'
+                          : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-emerald-500 shadow-sm hover:shadow-md'
                       }`}
                     >
                       <div>
@@ -969,7 +1037,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                           </span>
                         </div>
 
-                        <h4 className="text-base font-bold text-slate-900 dark:text-white leading-tight mb-1">
+                        <h4 className="text-base font-bold text-slate-900 dark:text-white leading-tight mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition">
                           {item.name}
                         </h4>
 
@@ -1010,22 +1078,20 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                         </div>
                       </div>
 
-                      {/* Botones de acción */}
+                      {/* Pie de la tarjeta interactivo: Abre ventana flotante al hacer clic */}
                       <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-1 text-xs font-bold text-emerald-600 dark:text-emerald-400 group-hover:underline">
+                          <Sparkles className="w-3.5 h-3.5" />
+                          <span>Nutrición & ISA</span>
+                          <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition" />
+                        </div>
+
                         {!isConsumed ? (
-                          <div className="flex items-center gap-1.5 w-full">
-                            <button
-                              onClick={() => handleConsumeItem(item, false)}
-                              title="Consumir 1 unidad"
-                              className="flex-1 py-1.5 rounded-xl bg-slate-100 hover:bg-emerald-50 dark:bg-slate-800 dark:hover:bg-emerald-950/40 text-slate-800 hover:text-emerald-700 dark:text-slate-200 dark:hover:text-emerald-300 text-xs font-bold transition flex items-center justify-center gap-1"
-                            >
-                              <Utensils className="w-3.5 h-3.5" />
-                              <span>Consumir 1</span>
-                            </button>
+                          <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
                             <button
                               onClick={() => handleConsumeItem(item, true)}
-                              title="Marcar como consumido totalmente"
-                              className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-semibold text-slate-600 dark:text-slate-300 transition"
+                              title="Marcar como agotado"
+                              className="px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-semibold text-slate-600 dark:text-slate-300 transition"
                             >
                               Agotar
                             </button>
@@ -1038,11 +1104,15 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                             </button>
                           </div>
                         ) : (
-                          <div className="flex items-center justify-between w-full text-xs text-slate-400">
-                            <span>Consumido en {item.consumption_days || '—'} días</span>
+                          <div
+                            className="flex items-center gap-2 text-xs text-slate-400"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <span>Consumido en {item.consumption_days || '—'}d</span>
                             <button
                               onClick={() => setItemToDelete(item)}
-                              className="text-slate-400 hover:text-rose-500 transition"
+                              className="text-slate-400 hover:text-rose-500 transition p-1"
+                              title="Eliminar producto"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
@@ -2381,6 +2451,17 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
           pantryItems={pantryItems}
           receipts={receipts}
           onClose={() => setSelectedPriceProduct(null)}
+        />
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL FLOTANTE: NUTRICIÓN, CONSUMO, LOS 4 PILARES DEL ISA & PRECIO/GRAMO  */}
+      {/* ========================================================================= */}
+      {selectedPantryItemDetail && (
+        <ProductDetailModal
+          item={selectedPantryItemDetail}
+          onClose={() => setSelectedPantryItemDetail(null)}
+          onConsume={handleConsumeItem}
         />
       )}
     </div>
