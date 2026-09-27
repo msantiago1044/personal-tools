@@ -50,6 +50,7 @@ import { PriceEvolutionModal } from '../../components/pantry/PriceEvolutionModal
 import { ProductDetailModal } from '../../components/pantry/ProductDetailModal';
 import { NutritionAnalytics } from '../../components/pantry/NutritionAnalytics';
 import { getFoodIntelligence } from '../../lib/pantryFoodIntelligence';
+import { inferProductPhysicalPresentation } from '../../lib/productPresentationInferrer';
 
 interface PantryModuleProps {
   user: any;
@@ -104,6 +105,11 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
   const [receiptEditItems, setReceiptEditItems] = useState<PantryItem[]>([]);
   const [isSavingReceiptChanges, setIsSavingReceiptChanges] = useState(false);
   const [receiptSavedNotice, setReceiptSavedNotice] = useState(false);
+  const [receiptSaveError, setReceiptSaveError] = useState<string | null>(null);
+
+  // Estado de Normalización Global de Despensa (Deducción por Tienda y Precios)
+  const [isNormalizingAll, setIsNormalizingAll] = useState(false);
+  const [normalizationNotice, setNormalizationNotice] = useState<string | null>(null);
 
   // Producto seleccionado para ver historial y evolución de precios
   const [selectedPriceProduct, setSelectedPriceProduct] = useState<ProductPriceHistory | null>(null);
@@ -463,6 +469,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
     setEditingReceiptData(null);
     setReceiptEditItems([]);
     setReceiptSavedNotice(false);
+    setReceiptSaveError(null);
   };
 
   const handleUpdateReceiptItem = (index: number, field: keyof PantryItem, value: any) => {
@@ -471,19 +478,146 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
       const item = { ...next[index], [field]: value };
 
       if (field === 'quantity' || field === 'unit_price') {
-        const q = field === 'quantity' ? Number(value) || 0 : Number(item.quantity) || 0;
-        const u = field === 'unit_price' ? Number(value) || 0 : Number(item.unit_price) || 0;
-        item.total_price = q * u;
-        item.total_calories = (Number(item.calories_per_unit) || 0) * q;
+        const q = field === 'quantity' ? (typeof value === 'string' ? parseFloat(value.replace(',', '.')) || 0 : Number(value) || 0) : Number(item.quantity) || 0;
+        const u = field === 'unit_price' ? (typeof value === 'string' ? parseFloat(value.replace(',', '.')) || 0 : Number(value) || 0) : Number(item.unit_price) || 0;
+        item.total_price = Math.round(q * u * 100) / 100;
+        const servings = item.unit === 'mililitros' ? Math.round(q / 15) : item.unit === 'gramos' ? Math.round(q / 50) : q;
+        item.total_calories = Math.round((Number(item.calories_per_unit) || 0) * (servings || 1));
+      } else if (field === 'total_price') {
+        const t = typeof value === 'string' ? parseFloat(value.replace(',', '.')) || 0 : Number(value) || 0;
+        const q = Number(item.quantity) || 1;
+        item.unit_price = q > 0 ? Math.round((t / q) * 100) / 100 : 0;
       }
 
       if (field === 'calories_per_unit') {
-        item.total_calories = (Number(value) || 0) * (Number(item.quantity) || 0);
+        const c = typeof value === 'string' ? parseFloat(value.replace(',', '.')) || 0 : Number(value) || 0;
+        const q = Number(item.quantity) || 1;
+        const servings = item.unit === 'mililitros' ? Math.round(q / 15) : item.unit === 'gramos' ? Math.round(q / 50) : q;
+        item.total_calories = Math.round(c * (servings || 1));
       }
 
       next[index] = item;
       return next;
     });
+  };
+
+  // Inferencia inteligente en bloque para los productos de la factura abierta
+  const handleInferReceiptItemsInBulk = () => {
+    if (!editingReceiptData || receiptEditItems.length === 0) return;
+    const store = editingReceiptData.store_name;
+
+    const normalized = receiptEditItems.map((item) => {
+      const currentTotal = Number(item.total_price) || (Number(item.unit_price) * Number(item.quantity)) || 0;
+      const inferred = inferProductPhysicalPresentation(item.name, currentTotal, store, item.unit, item.quantity);
+
+      return {
+        ...item,
+        category: item.category || inferred.category,
+        quantity: inferred.quantity,
+        initial_quantity: inferred.quantity,
+        unit: inferred.unit,
+        unit_price: inferred.unit_price,
+        total_price: currentTotal > 0 ? currentTotal : inferred.total_price,
+        shelf_life_days: inferred.shelf_life_days || item.shelf_life_days || 14,
+        calories_per_unit: inferred.calories_per_unit,
+        total_calories: inferred.total_calories,
+        protein_g: inferred.protein_g,
+        carbs_g: inferred.carbs_g,
+        fat_g: inferred.fat_g,
+      };
+    });
+
+    setReceiptEditItems(normalized);
+  };
+
+  // Normalizar todos los productos de la despensa deduciendo presentación real (ml, g, kg, un)
+  const handleNormalizeAllProducts = async () => {
+    if (pantryItems.length === 0) return;
+    setIsNormalizingAll(true);
+    setNormalizationNotice(null);
+
+    try {
+      let updatedCount = 0;
+      const normalizedItems: PantryItem[] = pantryItems.map((item) => {
+        const storeName = receipts.find((r) => r.id === item.receipt_id)?.store_name;
+        const currentTotal = Number(item.total_price) || (Number(item.unit_price) * Number(item.quantity)) || 0;
+
+        const inferred = inferProductPhysicalPresentation(
+          item.name,
+          currentTotal,
+          storeName,
+          item.unit,
+          item.quantity
+        );
+
+        const hasChanged =
+          item.unit !== inferred.unit ||
+          Math.abs(Number(item.quantity) - inferred.quantity) > 0.01 ||
+          Math.abs(Number(item.calories_per_unit || 0) - inferred.calories_per_unit) > 1;
+
+        if (hasChanged) updatedCount++;
+
+        return {
+          ...item,
+          category: item.category || inferred.category,
+          quantity: inferred.quantity,
+          initial_quantity: inferred.quantity,
+          unit: inferred.unit,
+          unit_price: inferred.unit_price,
+          total_price: currentTotal > 0 ? currentTotal : inferred.total_price,
+          shelf_life_days: inferred.shelf_life_days || item.shelf_life_days || 14,
+          calories_per_unit: inferred.calories_per_unit,
+          total_calories: inferred.total_calories,
+          protein_g: inferred.protein_g,
+          carbs_g: inferred.carbs_g,
+          fat_g: inferred.fat_g,
+          updated_at: new Date().toISOString(),
+        };
+      });
+
+      setPantryItems(normalizedItems);
+      persistLocally(normalizedItems, receipts);
+
+      // Guardar en bloque en Supabase (solo columnas reales de Postgres)
+      const { error: upsertErr } = await supabase.from('pantry_items').upsert(
+        normalizedItems.map((it) => ({
+          id: it.id,
+          user_id: user.id,
+          receipt_id: it.receipt_id || null,
+          name: it.name,
+          category: it.category,
+          quantity: it.quantity,
+          initial_quantity: it.initial_quantity,
+          unit: it.unit,
+          unit_price: it.unit_price,
+          total_price: it.total_price,
+          purchase_date: it.purchase_date,
+          shelf_life_days: it.shelf_life_days,
+          calories_per_unit: it.calories_per_unit,
+          total_calories: it.total_calories,
+          protein_g: it.protein_g,
+          carbs_g: it.carbs_g,
+          fat_g: it.fat_g,
+          status: it.status,
+          updated_at: it.updated_at,
+        }))
+      );
+
+      if (upsertErr) {
+        console.warn('Error al guardar normalización en Supabase:', upsertErr);
+        setNormalizationNotice(`⚠️ Ajustados ${normalizedItems.length} productos localmente (${upsertErr.message})`);
+      } else {
+        setNormalizationNotice(`✅ Se normalizaron y guardaron en Base de Datos ${normalizedItems.length} productos con unidades reales (ml, g, kg, un).`);
+      }
+
+      setTimeout(() => setNormalizationNotice(null), 6000);
+    } catch (err: any) {
+      console.error('Error normalizando productos:', err);
+      setNormalizationNotice(`Error al normalizar productos: ${err.message}`);
+      setTimeout(() => setNormalizationNotice(null), 5000);
+    } finally {
+      setIsNormalizingAll(false);
+    }
   };
 
   const handleAddProductToReceipt = () => {
@@ -520,6 +654,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
   const handleSaveReceiptChanges = async () => {
     if (!selectedReceipt || !editingReceiptData) return;
     setIsSavingReceiptChanges(true);
+    setReceiptSaveError(null);
 
     try {
       const calculatedTotal = receiptEditItems.reduce(
@@ -532,8 +667,9 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
         items_count: receiptEditItems.length,
       };
 
+      let dbError: string | null = null;
       try {
-        await supabase.from('grocery_receipts').upsert({
+        const { error: rErr } = await supabase.from('grocery_receipts').upsert({
           id: updatedReceipt.id,
           user_id: updatedReceipt.user_id,
           store_name: updatedReceipt.store_name,
@@ -542,6 +678,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
           items_count: updatedReceipt.items_count,
           notes: updatedReceipt.notes,
         });
+        if (rErr) throw rErr;
 
         const originalItemIds = pantryItems
           .filter((it) => it.receipt_id === selectedReceipt.id)
@@ -550,11 +687,12 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
         const deletedItemIds = originalItemIds.filter((id) => !currentItemIds.has(id));
 
         if (deletedItemIds.length > 0) {
-          await supabase.from('pantry_items').delete().in('id', deletedItemIds);
+          const { error: dErr } = await supabase.from('pantry_items').delete().in('id', deletedItemIds);
+          if (dErr) throw dErr;
         }
 
         if (receiptEditItems.length > 0) {
-          await supabase.from('pantry_items').upsert(
+          const { error: uErr } = await supabase.from('pantry_items').upsert(
             receiptEditItems.map((it) => ({
               id: it.id,
               user_id: user.id,
@@ -577,9 +715,11 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
               updated_at: new Date().toISOString(),
             }))
           );
+          if (uErr) throw uErr;
         }
-      } catch (dbErr) {
+      } catch (dbErr: any) {
         console.warn('Error sincronizando con Supabase, respaldando localmente:', dbErr);
+        dbError = dbErr?.message || 'Error sincronizando con Supabase';
       }
 
       const newReceipts = receipts.map((r) => (r.id === updatedReceipt.id ? updatedReceipt : r));
@@ -593,10 +733,16 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
 
       setSelectedReceipt(updatedReceipt);
       setEditingReceiptData(updatedReceipt);
-      setReceiptSavedNotice(true);
-      setTimeout(() => setReceiptSavedNotice(false), 3000);
-    } catch (err) {
+
+      if (dbError) {
+        setReceiptSaveError(dbError);
+      } else {
+        setReceiptSavedNotice(true);
+        setTimeout(() => setReceiptSavedNotice(false), 4000);
+      }
+    } catch (err: any) {
       console.error('Error guardando cambios de factura:', err);
+      setReceiptSaveError(err?.message || 'Error desconocido');
     } finally {
       setIsSavingReceiptChanges(false);
     }
@@ -622,25 +768,33 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
 
       const newItemsToAdd: PantryItem[] = extractedData.items.map((item) => {
         const itemId = crypto.randomUUID();
-        const totalCals = item.calories_per_unit * item.quantity;
+        const currentTotal = Number(item.total_price) || (Number(item.unit_price) * Number(item.quantity)) || 0;
+        const inferred = inferProductPhysicalPresentation(
+          item.name,
+          currentTotal,
+          extractedData.store_name,
+          item.unit,
+          item.quantity
+        );
+
         return {
           id: itemId,
           user_id: user.id,
           receipt_id: receiptId,
-          name: item.name,
-          category: item.category,
-          quantity: item.quantity,
-          initial_quantity: item.quantity,
-          unit: item.unit,
-          unit_price: item.unit_price,
-          total_price: item.total_price || item.unit_price * item.quantity,
+          name: item.name || inferred.name,
+          category: item.category || inferred.category,
+          quantity: inferred.quantity,
+          initial_quantity: inferred.quantity,
+          unit: inferred.unit,
+          unit_price: inferred.unit_price,
+          total_price: currentTotal > 0 ? currentTotal : inferred.total_price,
           purchase_date: extractedData.purchase_date,
-          shelf_life_days: item.shelf_life_days,
-          calories_per_unit: item.calories_per_unit,
-          total_calories: totalCals,
-          protein_g: item.protein_g,
-          carbs_g: item.carbs_g,
-          fat_g: item.fat_g,
+          shelf_life_days: inferred.shelf_life_days || item.shelf_life_days || 14,
+          calories_per_unit: inferred.calories_per_unit,
+          total_calories: inferred.total_calories,
+          protein_g: inferred.protein_g,
+          carbs_g: inferred.carbs_g,
+          fat_g: inferred.fat_g,
           status: 'disponible',
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
@@ -815,6 +969,16 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
           {/* Botones de acción rápida */}
           <div className="flex items-center gap-2">
             <button
+              onClick={handleNormalizeAllProducts}
+              disabled={isNormalizingAll || pantryItems.length === 0}
+              title="Deduce automáticamente unidades reales (ml, g, kg, un), porciones y calorías de todos los productos según su precio y supermercado"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-indigo-500/30 bg-indigo-50 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 text-indigo-700 dark:text-indigo-400 font-semibold text-xs transition disabled:opacity-50"
+            >
+              <Sparkles className={`w-3.5 h-3.5 ${isNormalizingAll ? 'animate-spin' : ''}`} />
+              <span className="hidden md:inline">{isNormalizingAll ? 'Normalizando...' : 'Normalizar Gramajes'}</span>
+            </button>
+
+            <button
               onClick={() => setActiveTab('scanner')}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs shadow-xs transition"
             >
@@ -839,6 +1003,22 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
             </button>
           </div>
         </div>
+
+        {/* Notificación de Normalización Global */}
+        {normalizationNotice && (
+          <div className="max-w-7xl mx-auto mt-3 p-3 rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-500/30 text-indigo-900 dark:text-indigo-200 text-xs font-medium flex items-center justify-between animate-in fade-in">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
+              <span>{normalizationNotice}</span>
+            </div>
+            <button
+              onClick={() => setNormalizationNotice(null)}
+              className="text-slate-400 hover:text-slate-600 dark:hover:text-white p-1"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
 
         {/* Resumen KPI Rápido */}
         <div className="max-w-7xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/80">
@@ -1348,7 +1528,34 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                       Revisión de Factura: {extractedData.store_name}
                     </h3>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 flex-wrap">
+                    <button
+                      onClick={() => {
+                        if (!extractedData) return;
+                        const calibratedItems = extractedData.items.map((it) => {
+                          const tot = Number(it.total_price) || (Number(it.unit_price) * Number(it.quantity)) || 0;
+                          const inf = inferProductPhysicalPresentation(it.name, tot, extractedData.store_name, it.unit, it.quantity);
+                          return {
+                            ...it,
+                            quantity: inf.quantity,
+                            unit: inf.unit,
+                            unit_price: inf.unit_price,
+                            total_price: tot > 0 ? tot : inf.total_price,
+                            shelf_life_days: inf.shelf_life_days || it.shelf_life_days,
+                            calories_per_unit: inf.calories_per_unit,
+                            protein_g: inf.protein_g,
+                            carbs_g: inf.carbs_g,
+                            fat_g: inf.fat_g,
+                          };
+                        });
+                        setExtractedData({ ...extractedData, items: calibratedItems });
+                      }}
+                      title="Re-calcular gramajes y unidades según nombres y precios de supermercado"
+                      className="px-3.5 py-2 rounded-xl border border-indigo-500/30 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-400 font-semibold text-xs hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition flex items-center gap-1.5"
+                    >
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>Auto-Calibrar</span>
+                    </button>
                     <button
                       onClick={() => setExtractedData(null)}
                       className="px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100"
@@ -1361,7 +1568,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                       className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition disabled:opacity-50 flex items-center gap-1.5"
                     >
                       <Check className="w-4 h-4" />
-                      <span>{savingReceipt ? 'Guardando...' : 'Confirmar & Guardar en Despensa'}</span>
+                      <span>{savingReceipt ? 'Guardando en BD...' : 'Confirmar & Guardar en Despensa'}</span>
                     </button>
                   </div>
                 </div>
@@ -1407,6 +1614,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                         <th className="py-2.5 px-2">Producto</th>
                         <th className="py-2.5 px-2">Categoría</th>
                         <th className="py-2.5 px-2 text-center">Cant.</th>
+                        <th className="py-2.5 px-2">Unidad</th>
                         <th className="py-2.5 px-2 text-right">Precio U.</th>
                         <th className="py-2.5 px-2 text-right">Total</th>
                         <th className="py-2.5 px-2 text-center">Vida Útil</th>
@@ -1458,7 +1666,19 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                                 newItems[idx].total_price = newItems[idx].quantity * newItems[idx].unit_price;
                                 setExtractedData({ ...extractedData, items: newItems });
                               }}
-                              className="w-12 text-center bg-transparent font-bold text-slate-800 dark:text-slate-200"
+                              className="w-16 text-center bg-transparent font-bold text-slate-800 dark:text-slate-200 border-b border-slate-200 dark:border-slate-800"
+                            />
+                          </td>
+                          <td className="py-2.5 px-2">
+                            <input
+                              type="text"
+                              value={item.unit || 'unidad'}
+                              onChange={(e) => {
+                                const newItems = [...extractedData.items];
+                                newItems[idx].unit = e.target.value;
+                                setExtractedData({ ...extractedData, items: newItems });
+                              }}
+                              className="w-20 bg-transparent text-slate-700 dark:text-slate-300 font-medium border-b border-slate-200 dark:border-slate-800 focus:outline-none focus:border-emerald-500"
                             />
                           </td>
                           <td className="py-2.5 px-2 text-right">
@@ -1473,7 +1693,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                                 newItems[idx].total_price = newItems[idx].quantity * newItems[idx].unit_price;
                                 setExtractedData({ ...extractedData, items: newItems });
                               }}
-                              className="w-20 text-right bg-transparent text-slate-700 dark:text-slate-300"
+                              className="w-20 text-right bg-transparent text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-slate-800"
                             />
                           </td>
                           <td className="py-2.5 px-2 text-right font-bold text-emerald-600">
@@ -1818,14 +2038,29 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                       <span>Volver a Facturas</span>
                     </button>
                     {receiptSavedNotice && (
-                      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-bold border border-emerald-500/30 animate-in fade-in">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-bold border border-emerald-500/30 animate-in fade-in">
                         <Check className="w-3.5 h-3.5" />
-                        <span>Factura y productos guardados</span>
+                        <span>Guardado con éxito en Base de Datos (PostgreSQL)</span>
+                      </span>
+                    )}
+                    {receiptSaveError && (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 text-xs font-bold border border-rose-500/30 animate-in fade-in">
+                        <AlertTriangle className="w-3.5 h-3.5" />
+                        <span>Error al guardar: {receiptSaveError}</span>
                       </span>
                     )}
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <button
+                      onClick={handleInferReceiptItemsInBulk}
+                      disabled={receiptEditItems.length === 0}
+                      title="Deduce automáticamente unidades reales (ml, g, kg, un), porciones, calorías y macros según el precio pagado y la tienda"
+                      className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-indigo-500/30 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-400 text-xs font-bold hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition shadow-xs"
+                    >
+                      <Sparkles className="w-4 h-4" />
+                      <span>Inferir Gramajes en Bloque</span>
+                    </button>
                     <button
                       onClick={handleAddProductToReceipt}
                       className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-emerald-500/30 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 text-xs font-bold hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition"
@@ -1839,7 +2074,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                       className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition shadow-sm disabled:opacity-50"
                     >
                       <Save className="w-4 h-4" />
-                      <span>{isSavingReceiptChanges ? 'Guardando...' : 'Guardar Cambios'}</span>
+                      <span>{isSavingReceiptChanges ? 'Guardando en BD...' : 'Guardar Cambios en BD'}</span>
                     </button>
                   </div>
                 </div>
@@ -1922,45 +2157,75 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                   </div>
                 </div>
 
-                {/* 3. TABLA EDITABLE DE PRODUCTOS */}
+                {/* 3. TABLA EDITABLE DE PRODUCTOS ORGANIZADA EN BLOQUE */}
                 <div className="space-y-3">
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center px-1 gap-1">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center px-1 gap-2">
                     <div>
-                      <h4 className="text-sm font-bold text-slate-900 dark:text-white">
-                        Productos de la Factura
+                      <h4 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                        <span>Edición en Bloque de Productos</span>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
+                          Gramajes, Unidades, Precios & Nutrición
+                        </span>
                       </h4>
                       <p className="text-xs text-slate-400">
-                        Modifica directamente en la tabla los nombres, categorías, cantidades, precios unitarios y estados.
+                        Edita directamente en la tabla las cantidades, unidades reales (ml, g, kg), precios unitarios, días de vida útil y macronutrientes.
                       </p>
                     </div>
-                    <button
-                      onClick={handleAddProductToReceipt}
-                      className="text-xs font-bold text-emerald-600 hover:text-emerald-500 flex items-center gap-1"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                      <span>Añadir fila</span>
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={handleInferReceiptItemsInBulk}
+                        className="text-xs font-bold text-indigo-600 hover:text-indigo-500 flex items-center gap-1 px-2.5 py-1 rounded-lg border border-indigo-500/20 bg-indigo-50 dark:bg-indigo-950/40"
+                      >
+                        <Sparkles className="w-3.5 h-3.5" />
+                        <span>Inferir Todo</span>
+                      </button>
+                      <button
+                        onClick={handleAddProductToReceipt}
+                        className="text-xs font-bold text-emerald-600 hover:text-emerald-500 flex items-center gap-1 px-2.5 py-1 rounded-lg border border-emerald-500/20 bg-emerald-50 dark:bg-emerald-950/40"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Añadir fila</span>
+                      </button>
+                    </div>
                   </div>
 
                   <div className="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
+                    {/* Datalist de unidades comunes para autocompletado rápido */}
+                    <datalist id="pantry-units-list">
+                      <option value="gramos" />
+                      <option value="mililitros" />
+                      <option value="litros" />
+                      <option value="kg" />
+                      <option value="unidades" />
+                      <option value="paquete" />
+                      <option value="latas" />
+                      <option value="libras" />
+                      <option value="porción" />
+                    </datalist>
+
                     <table className="w-full text-left text-xs border-collapse">
                       <thead>
-                        <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 text-slate-500 font-bold uppercase text-[10px] tracking-wider">
-                          <th className="py-3 px-3 text-center w-10">#</th>
-                          <th className="py-3 px-3 min-w-[200px]">Producto</th>
-                          <th className="py-3 px-3 min-w-[150px]">Categoría</th>
-                          <th className="py-3 px-3 w-20">Cant.</th>
-                          <th className="py-3 px-3 w-24">Unidad</th>
-                          <th className="py-3 px-3 w-28 text-right">Precio Unit. ($)</th>
-                          <th className="py-3 px-3 w-28 text-right">Subtotal ($)</th>
-                          <th className="py-3 px-3 w-32">Estado</th>
-                          <th className="py-3 px-3 text-center w-12">Acción</th>
+                        <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 text-slate-500 font-bold uppercase text-[10px] tracking-wider whitespace-nowrap">
+                          <th className="py-3 px-2 text-center w-8">#</th>
+                          <th className="py-3 px-2 min-w-[170px]">Producto</th>
+                          <th className="py-3 px-2 min-w-[130px]">Categoría</th>
+                          <th className="py-3 px-2 w-20 text-center">Cant.</th>
+                          <th className="py-3 px-2 w-28 text-center">Unidad</th>
+                          <th className="py-3 px-2 w-24 text-right">Precio U. ($)</th>
+                          <th className="py-3 px-2 w-24 text-right">Subtotal ($)</th>
+                          <th className="py-3 px-2 w-18 text-center">Vida Útil (d)</th>
+                          <th className="py-3 px-2 w-20 text-center">Cal/Porc (kcal)</th>
+                          <th className="py-3 px-2 w-16 text-center">Grasas (g)</th>
+                          <th className="py-3 px-2 w-16 text-center">Prot (g)</th>
+                          <th className="py-3 px-2 w-16 text-center">Carb (g)</th>
+                          <th className="py-3 px-2 w-28">Estado</th>
+                          <th className="py-3 px-2 text-center w-10">Acción</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
                         {receiptEditItems.length === 0 ? (
                           <tr>
-                            <td colSpan={9} className="py-8 text-center text-slate-400 text-xs">
+                            <td colSpan={14} className="py-8 text-center text-slate-400 text-xs">
                               No hay productos registrados en esta factura.{' '}
                               <button
                                 onClick={handleAddProductToReceipt}
@@ -1973,19 +2238,19 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                         ) : (
                           receiptEditItems.map((item, idx) => (
                             <tr key={item.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition">
-                              <td className="py-2.5 px-3 text-center text-slate-400 text-[11px] font-mono">
+                              <td className="py-2 px-2 text-center text-slate-400 text-[11px] font-mono">
                                 {idx + 1}
                               </td>
-                              <td className="py-2.5 px-3">
+                              <td className="py-2 px-2">
                                 <input
                                   type="text"
                                   value={item.name}
                                   onChange={(e) => handleUpdateReceiptItem(idx, 'name', e.target.value)}
                                   placeholder="Nombre del producto"
-                                  className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-medium focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                                  className="w-full px-2 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-medium focus:ring-1 focus:ring-emerald-500 focus:outline-none"
                                 />
                               </td>
-                              <td className="py-2.5 px-3">
+                              <td className="py-2 px-2">
                                 <select
                                   value={item.category}
                                   onChange={(e) => handleUpdateReceiptItem(idx, 'category', e.target.value)}
@@ -1998,52 +2263,112 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                                   ))}
                                 </select>
                               </td>
-                              <td className="py-2.5 px-3">
+                              <td className="py-2 px-2">
                                 <input
                                   type="number"
                                   min="0"
                                   step="any"
                                   value={item.quantity}
                                   onChange={(e) =>
-                                    handleUpdateReceiptItem(idx, 'quantity', Number(e.target.value) || 0)
+                                    handleUpdateReceiptItem(idx, 'quantity', e.target.value)
                                   }
                                   className="w-full px-2 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-bold text-center focus:ring-1 focus:ring-emerald-500 focus:outline-none"
                                 />
                               </td>
-                              <td className="py-2.5 px-3">
+                              <td className="py-2 px-2">
                                 <input
+                                  list="pantry-units-list"
                                   type="text"
                                   value={item.unit}
                                   onChange={(e) => handleUpdateReceiptItem(idx, 'unit', e.target.value)}
-                                  placeholder="un, kg..."
+                                  placeholder="g, ml, un..."
                                   className="w-full px-2 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-medium text-center focus:ring-1 focus:ring-emerald-500 focus:outline-none"
                                 />
                               </td>
-                              <td className="py-2.5 px-3">
+                              <td className="py-2 px-2">
                                 <input
                                   type="number"
                                   min="0"
                                   step="any"
                                   value={item.unit_price}
                                   onChange={(e) =>
-                                    handleUpdateReceiptItem(idx, 'unit_price', Number(e.target.value) || 0)
+                                    handleUpdateReceiptItem(idx, 'unit_price', e.target.value)
                                   }
                                   className="w-full px-2 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-medium text-right focus:ring-1 focus:ring-emerald-500 focus:outline-none"
                                 />
                               </td>
-                              <td className="py-2.5 px-3">
+                              <td className="py-2 px-2">
                                 <input
                                   type="number"
                                   min="0"
                                   step="any"
                                   value={item.total_price}
                                   onChange={(e) =>
-                                    handleUpdateReceiptItem(idx, 'total_price', Number(e.target.value) || 0)
+                                    handleUpdateReceiptItem(idx, 'total_price', e.target.value)
                                   }
-                                  className="w-full px-2 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-bold text-right focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                                  className="w-full px-2 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-bold text-right text-emerald-600 dark:text-emerald-400 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
                                 />
                               </td>
-                              <td className="py-2.5 px-3">
+                              <td className="py-2 px-2">
+                                <input
+                                  type="number"
+                                  min="1"
+                                  value={item.shelf_life_days || 14}
+                                  onChange={(e) =>
+                                    handleUpdateReceiptItem(idx, 'shelf_life_days', parseInt(e.target.value) || 14)
+                                  }
+                                  className="w-full px-1.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-medium text-center focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                                />
+                              </td>
+                              <td className="py-2 px-2">
+                                <input
+                                  type="number"
+                                  min="0"
+                                  step="any"
+                                  value={item.calories_per_unit || 0}
+                                  onChange={(e) =>
+                                    handleUpdateReceiptItem(idx, 'calories_per_unit', e.target.value)
+                                  }
+                                  className="w-full px-1.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-amber-600 dark:text-amber-400 font-bold text-center focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                                />
+                              </td>
+                              <td className="py-2 px-2">
+                                <input
+                                  type="number"
+                                  min="0"
+                                  step="any"
+                                  value={item.fat_g || 0}
+                                  onChange={(e) =>
+                                    handleUpdateReceiptItem(idx, 'fat_g', parseFloat(e.target.value) || 0)
+                                  }
+                                  className="w-full px-1 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 text-center focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                                />
+                              </td>
+                              <td className="py-2 px-2">
+                                <input
+                                  type="number"
+                                  min="0"
+                                  step="any"
+                                  value={item.protein_g || 0}
+                                  onChange={(e) =>
+                                    handleUpdateReceiptItem(idx, 'protein_g', parseFloat(e.target.value) || 0)
+                                  }
+                                  className="w-full px-1 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 text-center focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                                />
+                              </td>
+                              <td className="py-2 px-2">
+                                <input
+                                  type="number"
+                                  min="0"
+                                  step="any"
+                                  value={item.carbs_g || 0}
+                                  onChange={(e) =>
+                                    handleUpdateReceiptItem(idx, 'carbs_g', parseFloat(e.target.value) || 0)
+                                  }
+                                  className="w-full px-1 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 text-center focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                                />
+                              </td>
+                              <td className="py-2 px-2">
                                 <select
                                   value={item.status}
                                   onChange={(e) =>
@@ -2057,7 +2382,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                                   <option value="vencido">Vencido</option>
                                 </select>
                               </td>
-                              <td className="py-2.5 px-3 text-center">
+                              <td className="py-2 px-2 text-center">
                                 <button
                                   onClick={() => handleRemoveProductFromReceipt(idx)}
                                   title="Eliminar producto de factura"
@@ -2073,7 +2398,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                     </table>
                   </div>
 
-                  {/* Pie de tabla con totales y botón sincronizar */}
+                  {/* Pie de tabla con totales y botones de guardado en bloque */}
                   <div className="flex flex-col sm:flex-row justify-between items-center p-4 bg-slate-50 dark:bg-slate-950/60 rounded-2xl border border-slate-200 dark:border-slate-800 gap-3">
                     <div className="flex items-center gap-4 text-xs">
                       <span className="text-slate-500">
@@ -2096,7 +2421,15 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <button
+                        onClick={handleInferReceiptItemsInBulk}
+                        disabled={receiptEditItems.length === 0}
+                        className="px-3 py-1.5 rounded-xl border border-indigo-500/30 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-400 text-xs font-semibold hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition flex items-center gap-1"
+                      >
+                        <Sparkles className="w-3.5 h-3.5" />
+                        <span>Inferir Gramajes</span>
+                      </button>
                       <button
                         onClick={() => {
                           const sum = receiptEditItems.reduce(
@@ -2120,7 +2453,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                         className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition shadow-sm disabled:opacity-50"
                       >
                         <Save className="w-3.5 h-3.5" />
-                        <span>{isSavingReceiptChanges ? 'Guardando...' : 'Guardar Factura'}</span>
+                        <span>{isSavingReceiptChanges ? 'Guardando en BD...' : 'Guardar Factura en BD'}</span>
                       </button>
                     </div>
                   </div>

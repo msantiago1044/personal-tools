@@ -1,4 +1,5 @@
 import { PantryItem, GroceryReceipt, ProductPriceHistory, PantryEntropyMetrics } from '../../../packages/shared/src/types';
+import { inferProductPhysicalPresentation } from './productPresentationInferrer';
 
 export interface ExtractedReceiptData {
   store_name: string;
@@ -256,10 +257,41 @@ export async function parseReceiptWithGemini(
 Eres un sistema experto en Visión por Computadora, OCR y Nutrición para facturas de supermercado (Colombia, Latinoamérica e internacional).
 Analiza detalladamente la imagen de la factura de compra o recibo de mercado y extrae TODOS los productos comprados en formato JSON estructurado.
 
-Debes responder ÚNICAMENTE con un JSON válido sin bloques markdown adicionales o con markdown \`\`\`json.
+IMPORTANTE PARA DEDUCIR PRESENTACIÓN FÍSICA Y UNIDADES:
+En las facturas de supermercados (como Éxito, D1, Ara, Jumbo, Carulla, Olímpica, etc.), los productos a menudo sólo muestran cantidad 1 y el precio total, sin decir si es una garrafa de 2700ml, una bolsa de 1000g de arroz, o un panal de 30 huevos.
+Debes DEDUCIR la cantidad y unidad física real (mililitros 'ml', gramos 'g', kilogramos 'kg', unidades 'un') basándote en el nombre comercial, el precio pagado en COP y la tienda:
+- ACEITES DE COCINA (Premier, Gourmet, Diana, etc.):
+  * Si el precio es >= $42.000 COP: Es una garrafa grande familiar de 2.700 ml o 3.000 ml. Cantidad: 2700, unit: 'mililitros'.
+  * Si es $18.000 - $35.000 COP: Garrafa mediana de 1.500 ml. Cantidad: 1500, unit: 'mililitros'.
+  * Si es $9.000 - $17.000 COP: Botella estándar de 1.000 ml. Cantidad: 1000, unit: 'mililitros'.
+  * Si es < $8.000 COP: Cojín o botella pequeña de 500 ml. Cantidad: 500, unit: 'mililitros'.
+- ARROZ:
+  * Si es >= $18.000 COP: Bolsa familiar de 5.000 g (5 kg). Cantidad: 5000, unit: 'gramos'.
+  * Si es $9.000 - $17.000 COP: Bolsa de 2.500 g (5 libras). Cantidad: 2500, unit: 'gramos'.
+  * Si es $3.200 - $8.000 COP: Bolsa estándar de 1.000 g (1 kg). Cantidad: 1000, unit: 'gramos'.
+  * Si es < $3.200 COP: Bolsa de 500 g (1 libra). Cantidad: 500, unit: 'gramos'.
+- LECHE:
+  * Si es >= $19.000 COP: Six-pack (pack x 6 bolsas = 6.000 ml). Cantidad: 6000, unit: 'mililitros'.
+  * Si es $12.000 - $18.000 COP: Tripack (3.300 ml). Cantidad: 3300, unit: 'mililitros'.
+  * Si es $3.200 - $6.500 COP: Bolsa estándar de 1.100 ml / 1.000 ml. Cantidad: 1100, unit: 'mililitros'.
+- HUEVOS:
+  * Si es >= $14.000 COP: Panal o cubeta de 30 unidades. Cantidad: 30, unit: 'unidades'.
+  * Si es $8.000 - $13.000 COP: Cubeta de 15 o 12 unidades. Cantidad: 15, unit: 'unidades'.
+  * Si es < $8.000 COP: Estuche de 6 unidades. Cantidad: 6, unit: 'unidades'.
+- PECHUGA / POLLO / CARNES:
+  * Bandeja de 1.000 g si precio ~$13.000 - $25.000 COP; 500 g si ~$6.000 - $12.000 COP; 2.000 g si > $25.000 COP. Cantidad en gramos.
+- PASTAS, HARINAS, LEGUMBRES (Lentejas, Frijol):
+  * Paquetes de 500 g o 1.000 g según precio. Cantidad en gramos.
+- ATÚN:
+  * Latas de 160 g o tripack de 480 g si > $13.000 COP.
+- ALIMENTO PARA MASCOTAS (Perro, Gato, Chunky, Ringo, etc.):
+  * Categoría: 'Mascotas', unit: 'gramos', calories_per_unit: 0, protein_g: 0, carbs_g: 0, fat_g: 0 (no comestible para humanos).
+- ASEO Y LIMPIEZA:
+  * Categoría: 'Aseo & Limpieza', calories_per_unit: 0, protein_g: 0, carbs_g: 0, fat_g: 0.
+
 Estructura esperada:
 {
-  "store_name": "Nombre de la tienda o supermercado (ej. Éxito, D1, Carulla, Ara, Jumbo, Walmart, etc.)",
+  "store_name": "Nombre de la tienda o supermercado (ej. Éxito, D1, Carulla, Ara, Jumbo, etc.)",
   "purchase_date": "YYYY-MM-DD (fecha de la factura; si no es visible, usa la fecha de hoy)",
   "total_amount": 0.00,
   "payment_method": "Efectivo / Tarjeta / etc.",
@@ -267,23 +299,19 @@ Estructura esperada:
     {
       "name": "Nombre limpio y reconocible del producto en español",
       "category": "Proteínas | Lácteos | Granos & Cereales | Frutas & Verduras | Aseo & Limpieza | Mascotas | Snacks & Bebidas | Condimentos & Aceites | Panadería | Despensa",
-      "quantity": 1,
-      "unit": "unidad | kg | g | litro | ml | paquete | lata",
-      "unit_price": 0.00,
-      "total_price": 0.00,
-      "shelf_life_days": 7, // Días estimados de vida útil en nevera/despensa antes de vencerse o descomponerse
-      "calories_per_unit": 250, // Calorías estimadas (kcal) por unidad/paquete comprado
-      "protein_g": 10, // Proteínas estimadas en gramos
-      "carbs_g": 20, // Carbohidratos en gramos
-      "fat_g": 5 // Grasas en gramos
+      "quantity": 1000,
+      "unit": "gramos | mililitros | unidades | litros | kg | latas | paquete",
+      "unit_price": 4.5,
+      "total_price": 4500.00,
+      "shelf_life_days": 180,
+      "calories_per_unit": 180, // Calorías por porción estándar del alimento
+      "protein_g": 3.5, // Proteína por porción en gramos
+      "carbs_g": 40, // Carbohidratos por porción en gramos
+      "fat_g": 0.5 // Grasas por porción en gramos
     }
   ]
 }
-
-Reglas clave:
-1. Normaliza los nombres de productos (ej. si dice "LECH ENT ALG 1L" pon "Leche Entera Alquería 1L").
-2. Estima razonablemente las calorías y macronutrientes según las tablas nutricionales estándar para cada alimento humano. Para productos de aseo, mascotas o no comestibles para humanos, pon 0 calorías y 0 macros.
-3. Estima "shelf_life_days" considerando si es alimento perecedero (carnes/aves: 3-5 días, lácteos: 7-10 días, frutas/verduras: 5-14 días, no perecederos/enlatados: 180-720 días, aseo: 365 días, mascotas: 180 días).
+Debes responder ÚNICAMENTE con un JSON válido sin texto previo o markdown fuera de \`\`\`json.
 `;
 
   const requestBody = {
@@ -342,6 +370,37 @@ Reglas clave:
       // Parsear JSON limpio
       const cleanedText = textOutput.replace(/```json/gi, '').replace(/```/g, '').trim();
       const parsed = JSON.parse(cleanedText) as ExtractedReceiptData;
+
+      // POST-PROCESAMIENTO OBLIGATORIO:
+      // Calibrar cada producto con el motor de inferencia de supermercados colombianos
+      // para asegurar unidades físicas precisas (ml, g, kg, un), porciones y calorías
+      if (parsed && Array.isArray(parsed.items)) {
+        parsed.items = parsed.items.map((it) => {
+          const totPrice = Number(it.total_price) || (Number(it.unit_price) * Number(it.quantity)) || 0;
+          const inferred = inferProductPhysicalPresentation(
+            it.name,
+            totPrice,
+            parsed.store_name,
+            it.unit,
+            it.quantity
+          );
+
+          return {
+            name: it.name || inferred.name,
+            category: it.category || inferred.category,
+            quantity: inferred.quantity,
+            unit: inferred.unit,
+            unit_price: inferred.unit_price,
+            total_price: totPrice > 0 ? totPrice : inferred.total_price,
+            shelf_life_days: inferred.shelf_life_days || it.shelf_life_days || 14,
+            calories_per_unit: inferred.calories_per_unit,
+            protein_g: inferred.protein_g,
+            carbs_g: inferred.carbs_g,
+            fat_g: inferred.fat_g,
+          };
+        });
+      }
+
       return parsed;
     } catch (err: any) {
       lastError = err;
