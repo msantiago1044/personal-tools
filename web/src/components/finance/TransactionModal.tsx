@@ -8,6 +8,7 @@ interface TransactionModalProps {
   accounts: Account[];
   categories: Category[];
   onSuccess: () => void;
+  currencySymbol?: string;
 }
 
 export const TransactionModal: React.FC<TransactionModalProps> = ({
@@ -16,6 +17,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
   accounts,
   categories,
   onSuccess,
+  currencySymbol = '$',
 }) => {
   const [type, setType] = useState<TransactionType>('salida');
   const [amount, setAmount] = useState<string>('');
@@ -194,11 +196,15 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
                 className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-emerald-500 focus:bg-white dark:focus:bg-slate-900 transition"
               >
                 <option value="" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">Selecciona cuenta...</option>
-                {accounts.map((acc) => (
-                  <option key={acc.id} value={acc.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">
-                    {acc.name} ({acc.type})
-                  </option>
-                ))}
+                {accounts.map((acc) => {
+                  const bal = acc.current_balance ?? acc.initial_balance;
+                  const balFormatted = bal.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                  return (
+                    <option key={acc.id} value={acc.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">
+                      {acc.name} ({acc.type} • Saldo: {currencySymbol} {balFormatted})
+                    </option>
+                  );
+                })}
               </select>
             </div>
 
@@ -215,11 +221,15 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
                   <option value="" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">Selecciona destino...</option>
                   {accounts
                     .filter((acc) => acc.id !== accountId)
-                    .map((acc) => (
-                      <option key={acc.id} value={acc.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">
-                        {acc.name} ({acc.type})
-                      </option>
-                    ))}
+                    .map((acc) => {
+                      const bal = acc.current_balance ?? acc.initial_balance;
+                      const balFormatted = bal.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                      return (
+                        <option key={acc.id} value={acc.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">
+                          {acc.name} ({acc.type} • Saldo: {currencySymbol} {balFormatted})
+                        </option>
+                      );
+                    })}
                 </select>
               </div>
             )}

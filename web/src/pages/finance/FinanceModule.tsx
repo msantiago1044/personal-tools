@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { supabase, signOut } from '../../lib/supabase';
 import { Account, Category, Transaction } from '../../../../packages/shared/src/types';
 import { TransactionModal } from '../../components/finance/TransactionModal';
@@ -210,6 +210,54 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
     loadAllData();
   }, []);
 
+  // Cálculo de saldos acumulados por cuenta en tiempo real (restando de origen y sumando a destino)
+  const accountsWithBalances = useMemo(() => {
+    return accounts.map((acc) => {
+      let currentBalance = Number(acc.initial_balance) || 0;
+      let totalIngresos = 0;
+      let totalSalidas = 0;
+      let totalTransferenciasEntrantes = 0;
+      let totalTransferenciasSalientes = 0;
+
+      for (const tx of transactions) {
+        const amt = Number(tx.amount) || 0;
+        if (tx.type === 'ingreso' && tx.account_id === acc.id) {
+          currentBalance += amt;
+          totalIngresos += amt;
+        } else if (tx.type === 'salida' && tx.account_id === acc.id) {
+          currentBalance -= amt;
+          totalSalidas += amt;
+        } else if (tx.type === 'transferencia') {
+          if (tx.account_id === acc.id) {
+            currentBalance -= amt; // Resta de la cuenta origen
+            totalTransferenciasSalientes += amt;
+          }
+          if (tx.destination_account_id === acc.id) {
+            currentBalance += amt; // Suma a la cuenta destino
+            totalTransferenciasEntrantes += amt;
+          }
+        }
+      }
+
+      return {
+        ...acc,
+        current_balance: currentBalance,
+        total_ingresos: totalIngresos,
+        total_salidas: totalSalidas,
+        total_transferencias_entrantes: totalTransferenciasEntrantes,
+        total_transferencias_salientes: totalTransferenciasSalientes,
+      };
+    });
+  }, [accounts, transactions]);
+
+  // Saldo total de todas las cuentas o de las cuentas seleccionadas
+  const totalPortfolioBalance = useMemo(() => {
+    const list = selectedAccountIds.length > 0
+      ? accountsWithBalances.filter((a) => selectedAccountIds.includes(a.id))
+      : accountsWithBalances;
+    return list.reduce((sum, a) => sum + (a.current_balance || 0), 0);
+  }, [accountsWithBalances, selectedAccountIds]);
+
   const filteredTransactions = transactions.filter((tx) => {
     if (selectedAccountIds.length > 0) {
       const matchSource = selectedAccountIds.includes(tx.account_id);
@@ -218,15 +266,23 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
     }
 
     if (timeFilter !== 'todo') {
-      const txDate = new Date(tx.date);
+      const [y, m, d] = tx.date.split('-').map(Number);
+      const txDate = new Date(y, m - 1, d);
       const now = new Date();
+      const todayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
       if (timeFilter === 'dia') {
-        const todayStr = now.toISOString().split('T')[0];
-        if (tx.date !== todayStr) return false;
+        if (
+          txDate.getFullYear() !== todayDate.getFullYear() ||
+          txDate.getMonth() !== todayDate.getMonth() ||
+          txDate.getDate() !== todayDate.getDate()
+        ) {
+          return false;
+        }
       } else if (timeFilter === 'semana') {
-        const weekAgo = new Date();
-        weekAgo.setDate(now.getDate() - 7);
-        if (txDate < weekAgo) return false;
+        const weekAgo = new Date(todayDate);
+        weekAgo.setDate(todayDate.getDate() - 7);
+        if (txDate < weekAgo || txDate > todayDate) return false;
       } else if (timeFilter === 'mes') {
         if (txDate.getMonth() !== now.getMonth() || txDate.getFullYear() !== now.getFullYear()) {
           return false;
@@ -239,13 +295,43 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
     return true;
   });
 
-  const totalIncome = filteredTransactions
-    .filter((tx) => tx.type === 'ingreso')
-    .reduce((sum, tx) => sum + Number(tx.amount), 0);
+  const { totalIncome, totalExpense, totalTransfersIn, totalTransfersOut } = useMemo(() => {
+    let income = 0;
+    let expense = 0;
+    let transfersIn = 0;
+    let transfersOut = 0;
 
-  const totalExpense = filteredTransactions
-    .filter((tx) => tx.type === 'salida')
-    .reduce((sum, tx) => sum + Number(tx.amount), 0);
+    for (const tx of filteredTransactions) {
+      const amt = Number(tx.amount) || 0;
+      if (tx.type === 'ingreso') {
+        income += amt;
+      } else if (tx.type === 'salida') {
+        expense += amt;
+      } else if (tx.type === 'transferencia') {
+        if (selectedAccountIds.length > 0) {
+          const isSourceSelected = selectedAccountIds.includes(tx.account_id);
+          const isDestSelected = tx.destination_account_id ? selectedAccountIds.includes(tx.destination_account_id) : false;
+
+          if (isDestSelected && !isSourceSelected) {
+            // Transferencia recibida en la cuenta seleccionada
+            income += amt;
+            transfersIn += amt;
+          } else if (isSourceSelected && !isDestSelected) {
+            // Transferencia enviada desde la cuenta seleccionada
+            expense += amt;
+            transfersOut += amt;
+          }
+        }
+      }
+    }
+
+    return {
+      totalIncome: income,
+      totalExpense: expense,
+      totalTransfersIn: transfersIn,
+      totalTransfersOut: transfersOut,
+    };
+  }, [filteredTransactions, selectedAccountIds]);
 
   const netBalance = totalIncome - totalExpense;
 
@@ -595,10 +681,16 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
 
             {/* Selector de Cuentas */}
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
-              <div className="flex justify-between items-center mb-3">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                  Cuentas ({selectedAccountIds.length === 0 ? 'Todas' : `${selectedAccountIds.length} seleccionadas`})
-                </span>
+              <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2 mb-3">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                    Cuentas ({selectedAccountIds.length === 0 ? 'Todas' : `${selectedAccountIds.length} seleccionadas`})
+                  </span>
+                  <span className="text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60 px-2.5 py-0.5 rounded-lg flex items-center gap-1.5">
+                    <span className="text-[10px] uppercase font-bold text-emerald-600 dark:text-emerald-500">Saldo Total:</span>
+                    <strong className="font-bold">{formatMoney(totalPortfolioBalance)}</strong>
+                  </span>
+                </div>
                 <button
                   onClick={selectAllAccounts}
                   className={`text-xs ${
@@ -612,23 +704,33 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
               </div>
 
               <div className="flex flex-wrap gap-2">
-                {accounts.map((acc) => {
+                {accountsWithBalances.map((acc) => {
                   const isSelected = selectedAccountIds.includes(acc.id);
+                  const bal = acc.current_balance ?? acc.initial_balance;
                   return (
                     <button
                       key={acc.id}
                       onClick={() => toggleAccountFilter(acc.id)}
-                      className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold border transition ${
+                      className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold border transition ${
                         isSelected
-                          ? 'bg-emerald-50 dark:bg-emerald-500/20 border-emerald-500 text-emerald-800 dark:text-emerald-300'
+                          ? 'bg-emerald-50 dark:bg-emerald-500/20 border-emerald-500 text-emerald-800 dark:text-emerald-300 shadow-sm'
                           : 'bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-slate-300'
                       }`}
                     >
-                      <span>
+                      <span className="text-sm">
                         {acc.type === 'tarjeta' ? '💳' : acc.type === 'efectivo' ? '💵' : '🏦'}
                       </span>
-                      <span>{acc.name}</span>
-                      {isSelected && <Check className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />}
+                      <div className="flex flex-col text-left">
+                        <span className="leading-tight">{acc.name}</span>
+                        <span
+                          className={`text-[10px] leading-tight font-bold ${
+                            bal < 0 ? 'text-rose-500 dark:text-rose-400' : 'text-slate-500 dark:text-slate-400'
+                          }`}
+                        >
+                          {formatMoney(bal)}
+                        </span>
+                      </div>
+                      {isSelected && <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 ml-0.5" />}
                     </button>
                   );
                 })}
@@ -648,7 +750,10 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
                   <h3 className="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-2">
                     {formatMoney(totalIncome)}
                   </h3>
-                  <span className="text-[10px] text-slate-400 mt-1 block">Filtrado por: {timeFilter}</span>
+                  <span className="text-[10px] text-slate-400 mt-1 block">
+                    Filtrado por: {timeFilter}
+                    {totalTransfersIn > 0 && ` • Inc. +${formatMoney(totalTransfersIn)} transf.`}
+                  </span>
                 </div>
 
                 <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
@@ -661,7 +766,10 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
                   <h3 className="text-2xl font-black text-rose-600 dark:text-rose-400 mt-2">
                     {formatMoney(totalExpense)}
                   </h3>
-                  <span className="text-[10px] text-slate-400 mt-1 block">Filtrado por: {timeFilter}</span>
+                  <span className="text-[10px] text-slate-400 mt-1 block">
+                    Filtrado por: {timeFilter}
+                    {totalTransfersOut > 0 && ` • Inc. -${formatMoney(totalTransfersOut)} transf.`}
+                  </span>
                 </div>
 
                 <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
@@ -713,50 +821,72 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
                 </div>
 
                 <div className="divide-y divide-slate-100 dark:divide-slate-800">
-                  {filteredTransactions.slice(0, 5).map((tx) => (
-                    <div key={tx.id} className="py-3 flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg ${
-                            tx.type === 'ingreso'
-                              ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                              : tx.type === 'salida'
-                              ? 'bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400'
-                              : 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400'
-                          }`}
-                        >
-                          {tx.type === 'ingreso' ? (
-                            <ArrowDownLeft className="w-5 h-5" />
-                          ) : tx.type === 'salida' ? (
-                            <ArrowUpRight className="w-5 h-5" />
-                          ) : (
-                            <ArrowLeftRight className="w-5 h-5" />
-                          )}
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold text-slate-900 dark:text-white">
-                            {tx.description || (tx.type === 'transferencia' ? 'Transferencia' : tx.category?.name || 'Movimiento')}
-                          </p>
-                          <p className="text-[11px] text-slate-400">
-                            {tx.date} • {tx.account?.name}{' '}
-                            {tx.destination_account && `➔ ${tx.destination_account.name}`}
-                          </p>
-                        </div>
-                      </div>
+                  {filteredTransactions.slice(0, 5).map((tx) => {
+                    const isTransfer = tx.type === 'transferencia';
+                    const isSourceSelected =
+                      selectedAccountIds.length > 0 && selectedAccountIds.includes(tx.account_id);
+                    const isDestSelected =
+                      selectedAccountIds.length > 0 && tx.destination_account_id
+                        ? selectedAccountIds.includes(tx.destination_account_id)
+                        : false;
 
-                      <span
-                        className={`text-sm font-black ${
-                          tx.type === 'ingreso'
-                            ? 'text-emerald-600 dark:text-emerald-400'
-                            : tx.type === 'salida'
-                            ? 'text-rose-600 dark:text-rose-400'
-                            : 'text-blue-600 dark:text-blue-400'
-                        }`}
-                      >
-                        {tx.type === 'salida' ? '-' : tx.type === 'ingreso' ? '+' : ''}{formatMoney(tx.amount)}
-                      </span>
-                    </div>
-                  ))}
+                    let amountPrefix = '';
+                    let amountColor = 'text-blue-600 dark:text-blue-400';
+                    let iconBg = 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400';
+                    let IconComponent = ArrowLeftRight;
+
+                    if (tx.type === 'ingreso') {
+                      amountPrefix = '+';
+                      amountColor = 'text-emerald-600 dark:text-emerald-400';
+                      iconBg = 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400';
+                      IconComponent = ArrowDownLeft;
+                    } else if (tx.type === 'salida') {
+                      amountPrefix = '-';
+                      amountColor = 'text-rose-600 dark:text-rose-400';
+                      iconBg = 'bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400';
+                      IconComponent = ArrowUpRight;
+                    } else if (isTransfer) {
+                      if (isSourceSelected && !isDestSelected) {
+                        amountPrefix = '-';
+                        amountColor = 'text-rose-600 dark:text-rose-400';
+                        iconBg = 'bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400';
+                        IconComponent = ArrowUpRight;
+                      } else if (isDestSelected && !isSourceSelected) {
+                        amountPrefix = '+';
+                        amountColor = 'text-emerald-600 dark:text-emerald-400';
+                        iconBg = 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400';
+                        IconComponent = ArrowDownLeft;
+                      }
+                    }
+
+                    return (
+                      <div key={tx.id} className="py-3 flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg ${iconBg}`}>
+                            <IconComponent className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                              {tx.description ||
+                                (tx.type === 'transferencia' ? 'Transferencia' : tx.category?.name || 'Movimiento')}
+                            </p>
+                            <p className="text-[11px] text-slate-400">
+                              {tx.date} • {tx.account?.name}{' '}
+                              {tx.destination_account && (
+                                <span className="font-semibold text-slate-600 dark:text-slate-300">
+                                  ➔ {tx.destination_account.name}
+                                </span>
+                              )}
+                            </p>
+                          </div>
+                        </div>
+
+                        <span className={`text-sm font-black ${amountColor}`}>
+                          {amountPrefix}{formatMoney(tx.amount)}
+                        </span>
+                      </div>
+                    );
+                  })}
 
                   {filteredTransactions.length === 0 && (
                     <div className="py-8 text-center text-slate-400 text-sm">
@@ -830,9 +960,9 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
                 className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-700 dark:text-slate-300 focus:outline-none"
               >
                 <option value="todas">Todas las cuentas</option>
-                {accounts.map((a) => (
+                {accountsWithBalances.map((a) => (
                   <option key={a.id} value={a.id}>
-                    {a.name}
+                    {a.name} ({formatMoney(a.current_balance ?? a.initial_balance)})
                   </option>
                 ))}
               </select>
@@ -859,53 +989,76 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
                       if (txAccountFilter !== 'todas' && tx.account_id !== txAccountFilter && tx.destination_account_id !== txAccountFilter) return false;
                       return true;
                     })
-                    .map((tx) => (
-                      <tr key={tx.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition">
-                        <td className="p-4 text-xs text-slate-400 whitespace-nowrap">{tx.date}</td>
-                        <td className="p-4">
-                          <span
-                            className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                              tx.type === 'ingreso'
-                                ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300'
-                                : tx.type === 'salida'
-                                ? 'bg-rose-100 dark:bg-rose-500/20 text-rose-800 dark:text-rose-300'
-                                : 'bg-blue-100 dark:bg-blue-500/20 text-blue-800 dark:text-blue-300'
-                            }`}
-                          >
-                            {tx.type}
-                          </span>
-                        </td>
-                        <td className="p-4 font-semibold text-slate-900 dark:text-white">{tx.description || '—'}</td>
-                        <td className="p-4 text-xs text-slate-500 dark:text-slate-300">
-                          {tx.account?.name}{' '}
-                          {tx.destination_account && `➔ ${tx.destination_account.name}`}
-                        </td>
-                        <td className="p-4 text-xs text-slate-400">
-                          {tx.category ? (
-                            <span className="flex items-center gap-1.5">
-                              <span
-                                className="w-2 h-2 rounded-full"
-                                style={{ backgroundColor: tx.category.color }}
-                              />
-                              {tx.category.name}
+                    .map((tx) => {
+                      const isTransfer = tx.type === 'transferencia';
+                      const isSourceSelected =
+                        txAccountFilter !== 'todas' && tx.account_id === txAccountFilter;
+                      const isDestSelected =
+                        txAccountFilter !== 'todas' && tx.destination_account_id === txAccountFilter;
+
+                      let amountPrefix = '';
+                      let amountColor = 'text-blue-600 dark:text-blue-400';
+
+                      if (tx.type === 'ingreso') {
+                        amountPrefix = '+';
+                        amountColor = 'text-emerald-600 dark:text-emerald-400';
+                      } else if (tx.type === 'salida') {
+                        amountPrefix = '-';
+                        amountColor = 'text-rose-600 dark:text-rose-400';
+                      } else if (isTransfer) {
+                        if (isSourceSelected && !isDestSelected) {
+                          amountPrefix = '-';
+                          amountColor = 'text-rose-600 dark:text-rose-400';
+                        } else if (isDestSelected && !isSourceSelected) {
+                          amountPrefix = '+';
+                          amountColor = 'text-emerald-600 dark:text-emerald-400';
+                        }
+                      }
+
+                      return (
+                        <tr key={tx.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition">
+                          <td className="p-4 text-xs text-slate-400 whitespace-nowrap">{tx.date}</td>
+                          <td className="p-4">
+                            <span
+                              className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                                tx.type === 'ingreso'
+                                  ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300'
+                                  : tx.type === 'salida'
+                                  ? 'bg-rose-100 dark:bg-rose-500/20 text-rose-800 dark:text-rose-300'
+                                  : 'bg-blue-100 dark:bg-blue-500/20 text-blue-800 dark:text-blue-300'
+                              }`}
+                            >
+                              {tx.type}
                             </span>
-                          ) : (
-                            '—'
-                          )}
-                        </td>
-                        <td
-                          className={`p-4 text-right font-black text-sm ${
-                            tx.type === 'ingreso'
-                              ? 'text-emerald-600 dark:text-emerald-400'
-                              : tx.type === 'salida'
-                              ? 'text-rose-600 dark:text-rose-400'
-                              : 'text-blue-600 dark:text-blue-400'
-                          }`}
-                        >
-                          {tx.type === 'salida' ? '-' : tx.type === 'ingreso' ? '+' : ''}{formatMoney(tx.amount)}
-                        </td>
-                      </tr>
-                    ))}
+                          </td>
+                          <td className="p-4 font-semibold text-slate-900 dark:text-white">{tx.description || '—'}</td>
+                          <td className="p-4 text-xs text-slate-500 dark:text-slate-300">
+                            {tx.account?.name}{' '}
+                            {tx.destination_account && (
+                              <span className="font-semibold text-slate-700 dark:text-slate-200">
+                                ➔ {tx.destination_account.name}
+                              </span>
+                            )}
+                          </td>
+                          <td className="p-4 text-xs text-slate-400">
+                            {tx.category ? (
+                              <span className="flex items-center gap-1.5">
+                                <span
+                                  className="w-2 h-2 rounded-full"
+                                  style={{ backgroundColor: tx.category.color }}
+                                />
+                                {tx.category.name}
+                              </span>
+                            ) : (
+                              '—'
+                            )}
+                          </td>
+                          <td className={`p-4 text-right font-black text-sm ${amountColor}`}>
+                            {amountPrefix}{formatMoney(tx.amount)}
+                          </td>
+                        </tr>
+                      );
+                    })}
                 </tbody>
               </table>
             </div>
@@ -915,18 +1068,35 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
         {/* 3. SECCIÓN CUENTAS */}
         {activeTab === 'accounts' && (
           <div className="space-y-6 max-w-5xl mx-auto">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
               <div>
                 <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Mis Cuentas</h2>
-                <p className="text-sm text-slate-500 dark:text-slate-400">Saldos representados en {currencyCode} ({currencySymbol}).</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">
+                  Saldos calculados en tiempo real en {currencyCode} ({currencySymbol}).
+                </p>
               </div>
               <button
                 onClick={() => setAccountFormOpen(!accountFormOpen)}
-                className="bg-emerald-500 hover:bg-emerald-400 text-white dark:text-slate-950 font-bold px-4 py-2.5 rounded-xl text-sm flex items-center gap-2"
+                className="bg-emerald-500 hover:bg-emerald-400 text-white dark:text-slate-950 font-bold px-4 py-2.5 rounded-xl text-sm flex items-center gap-2 shadow-sm"
               >
                 <PlusCircle className="w-4 h-4" />
                 <span>{accountFormOpen ? 'Cerrar' : 'Agregar Cuenta'}</span>
               </button>
+            </div>
+
+            {/* Banner de Resumen Consolidado */}
+            <div className="bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-blue-500/10 border border-emerald-500/20 rounded-3xl p-6 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+              <div>
+                <span className="text-xs uppercase tracking-wider font-bold text-emerald-600 dark:text-emerald-400">
+                  Patrimonio Total en Cuentas
+                </span>
+                <h3 className="text-3xl font-black text-slate-900 dark:text-white mt-1">
+                  {formatMoney(accountsWithBalances.reduce((sum, a) => sum + (a.current_balance || 0), 0))}
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                  Suma total de {accountsWithBalances.length} cuentas registradas con transferencias e ingresos/salidas aplicados.
+                </p>
+              </div>
             </div>
 
             {accountFormOpen && (
@@ -975,21 +1145,74 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
             )}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {accounts.map((acc) => (
-                <div key={acc.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
-                  <div>
-                    <span className="text-2xl mb-2 block">
-                      {acc.type === 'tarjeta' ? '💳' : acc.type === 'efectivo' ? '💵' : '🏦'}
-                    </span>
-                    <h4 className="text-base font-bold text-slate-900 dark:text-white">{acc.name}</h4>
-                    <span className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">{acc.type}</span>
+              {accountsWithBalances.map((acc) => {
+                const bal = acc.current_balance ?? acc.initial_balance;
+                return (
+                  <div
+                    key={acc.id}
+                    className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm flex flex-col justify-between"
+                  >
+                    <div>
+                      <div className="flex justify-between items-start mb-2">
+                        <span className="text-3xl">
+                          {acc.type === 'tarjeta' ? '💳' : acc.type === 'efectivo' ? '💵' : '🏦'}
+                        </span>
+                        <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold">
+                          {acc.type}
+                        </span>
+                      </div>
+                      <h4 className="text-lg font-bold text-slate-900 dark:text-white">{acc.name}</h4>
+
+                      {/* Saldo Actual destacado */}
+                      <div className="mt-3 p-3 bg-slate-50 dark:bg-slate-950/80 rounded-2xl border border-slate-100 dark:border-slate-800/80">
+                        <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-0.5">
+                          Saldo Actual
+                        </span>
+                        <h3
+                          className={`text-2xl font-black ${
+                            bal >= 0 ? 'text-slate-900 dark:text-white' : 'text-rose-600 dark:text-rose-400'
+                          }`}
+                        >
+                          {formatMoney(bal)}
+                        </h3>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 space-y-1.5 text-xs">
+                      <div className="flex justify-between text-slate-500 dark:text-slate-400">
+                        <span>Saldo Inicial:</span>
+                        <span className="font-semibold text-slate-700 dark:text-slate-300">
+                          {formatMoney(acc.initial_balance)}
+                        </span>
+                      </div>
+                      {acc.total_ingresos > 0 && (
+                        <div className="flex justify-between text-emerald-600 dark:text-emerald-400">
+                          <span>Ingresos recibidos:</span>
+                          <span className="font-semibold">+{formatMoney(acc.total_ingresos)}</span>
+                        </div>
+                      )}
+                      {acc.total_salidas > 0 && (
+                        <div className="flex justify-between text-rose-600 dark:text-rose-400">
+                          <span>Gastos pagados:</span>
+                          <span className="font-semibold">-{formatMoney(acc.total_salidas)}</span>
+                        </div>
+                      )}
+                      {acc.total_transferencias_entrantes > 0 && (
+                        <div className="flex justify-between text-emerald-600 dark:text-emerald-400">
+                          <span>Transf. recibidas (+):</span>
+                          <span className="font-semibold">+{formatMoney(acc.total_transferencias_entrantes)}</span>
+                        </div>
+                      )}
+                      {acc.total_transferencias_salientes > 0 && (
+                        <div className="flex justify-between text-rose-600 dark:text-rose-400">
+                          <span>Transf. enviadas (-):</span>
+                          <span className="font-semibold">-{formatMoney(acc.total_transferencias_salientes)}</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-xs">
-                    <span className="text-slate-400">Saldo Inicial:</span>
-                    <span className="font-bold text-slate-900 dark:text-white">{formatMoney(acc.initial_balance)}</span>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
@@ -1276,8 +1499,9 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
       <TransactionModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        accounts={accounts}
+        accounts={accountsWithBalances}
         categories={categories}
+        currencySymbol={currencySymbol}
         onSuccess={() => loadAllData()}
       />
 
