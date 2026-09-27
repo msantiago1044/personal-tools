@@ -55,7 +55,41 @@ const CURRENCIES = [
 ];
 
 export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user }) => {
-  const [activeTab, setActiveTab] = useState<TabType>('home');
+  const [activeTab, setActiveTab] = useState<TabType>(() => {
+    const hash = window.location.hash.toLowerCase();
+    const validTabs: TabType[] = ['home', 'transactions', 'accounts', 'categories', 'budgets', 'reports_date', 'reports_category', 'settings'];
+    for (const t of validTabs) {
+      if (hash.includes(t)) return t;
+    }
+    const saved = localStorage.getItem('finance_active_tab') as TabType;
+    if (saved && validTabs.includes(saved)) {
+      return saved;
+    }
+    return 'home';
+  });
+
+  const handleTabChange = (tab: TabType) => {
+    setActiveTab(tab);
+    localStorage.setItem('finance_active_tab', tab);
+    window.location.hash = `#/finance/${tab}`;
+  };
+
+  useEffect(() => {
+    const handleHash = () => {
+      const hash = window.location.hash.toLowerCase();
+      const validTabs: TabType[] = ['home', 'transactions', 'accounts', 'categories', 'budgets', 'reports_date', 'reports_category', 'settings'];
+      for (const t of validTabs) {
+        if (hash.includes(t)) {
+          setActiveTab(t);
+          localStorage.setItem('finance_active_tab', t);
+          break;
+        }
+      }
+    };
+    window.addEventListener('hashchange', handleHash);
+    return () => window.removeEventListener('hashchange', handleHash);
+  }, []);
+
   const [timeFilter, setTimeFilter] = useState<TimeFilter>('mes');
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [selectedAccountIds, setSelectedAccountIds] = useState<string[]>([]);
@@ -620,7 +654,7 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
                 <button
                   key={item.id}
                   onClick={() => {
-                    setActiveTab(item.id as TabType);
+                    handleTabChange(item.id as TabType);
                     setMobileMenuOpen(false);
                   }}
                   title={item.label}
@@ -1111,7 +1145,7 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-lg font-bold text-slate-900 dark:text-white">Últimos Movimientos</h3>
                   <button
-                    onClick={() => setActiveTab('transactions')}
+                    onClick={() => handleTabChange('transactions')}
                     className="text-xs text-emerald-600 dark:text-emerald-400 hover:underline font-semibold"
                   >
                     Ver historial completo ➔

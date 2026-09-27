@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { supabase, signOut } from './lib/supabase';
 import { LoginPage } from './pages/LoginPage';
 import { ToolHub } from './components/ToolHub';
@@ -6,10 +6,55 @@ import { FinanceModule } from './pages/finance/FinanceModule';
 import { TehilimModule } from './pages/tehilim/TehilimModule';
 import { DwgViewerModule } from './pages/cad/DwgViewerModule';
 
+type ViewType = 'hub' | 'finance' | 'tehilim' | 'dwg_viewer';
+
+function getViewFromLocation(): ViewType {
+  const hash = window.location.hash.toLowerCase();
+  const path = window.location.pathname.toLowerCase();
+
+  if (hash.includes('finance') || path.startsWith('/finance')) return 'finance';
+  if (hash.includes('tehilim') || path.startsWith('/tehilim')) return 'tehilim';
+  if (hash.includes('cad') || hash.includes('dwg') || path.startsWith('/cad') || path.startsWith('/dwg')) return 'dwg_viewer';
+  if (hash.includes('hub')) return 'hub';
+
+  // Fallback con localStorage si el hash está vacío
+  const saved = localStorage.getItem('app_current_view') as ViewType;
+  if (saved && ['hub', 'finance', 'tehilim', 'dwg_viewer'].includes(saved)) {
+    return saved;
+  }
+
+  return 'hub';
+}
+
 export default function App() {
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [currentView, setCurrentView] = useState<'hub' | 'finance' | 'tehilim' | 'dwg_viewer'>('hub');
+  const [currentView, setCurrentView] = useState<ViewType>(getViewFromLocation);
+
+  const changeView = useCallback((view: ViewType) => {
+    setCurrentView(view);
+    localStorage.setItem('app_current_view', view);
+    if (view === 'hub') {
+      if (window.location.hash) {
+        window.history.replaceState(null, '', window.location.pathname);
+      }
+    } else if (view === 'dwg_viewer') {
+      window.location.hash = '#/cad-viewer';
+    } else {
+      window.location.hash = `#/${view}`;
+    }
+  }, []);
+
+  // Sincronizar vista ante cambios en el hash del navegador (Atrás / Adelante)
+  useEffect(() => {
+    const handleHashChange = () => {
+      const detected = getViewFromLocation();
+      setCurrentView(detected);
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
 
   useEffect(() => {
     // 1. Obtener sesión actual
@@ -50,7 +95,7 @@ export default function App() {
     return (
       <FinanceModule
         user={session.user}
-        onBackToHub={() => setCurrentView('hub')}
+        onBackToHub={() => changeView('hub')}
       />
     );
   }
@@ -60,7 +105,7 @@ export default function App() {
     return (
       <TehilimModule
         user={session.user}
-        onBackToHub={() => setCurrentView('hub')}
+        onBackToHub={() => changeView('hub')}
       />
     );
   }
@@ -69,7 +114,7 @@ export default function App() {
   if (currentView === 'dwg_viewer') {
     return (
       <DwgViewerModule
-        onBackToHub={() => setCurrentView('hub')}
+        onBackToHub={() => changeView('hub')}
       />
     );
   }
@@ -82,14 +127,18 @@ export default function App() {
       avatarUrl={session.user.user_metadata?.avatar_url}
       onSelectTool={(route) => {
         if (route.startsWith('/finance')) {
-          setCurrentView('finance');
+          changeView('finance');
         } else if (route.startsWith('/tehilim')) {
-          setCurrentView('tehilim');
+          changeView('tehilim');
         } else if (route.startsWith('/cad-viewer') || route.startsWith('/dwg')) {
-          setCurrentView('dwg_viewer');
+          changeView('dwg_viewer');
         }
       }}
-      onLogout={() => signOut()}
+      onLogout={() => {
+        localStorage.removeItem('app_current_view');
+        window.location.hash = '';
+        signOut();
+      }}
     />
   );
 }
