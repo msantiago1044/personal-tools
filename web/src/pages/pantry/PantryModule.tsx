@@ -45,6 +45,7 @@ import {
   Save,
   FileText,
 } from 'lucide-react';
+import { PriceEvolutionModal } from '../../components/pantry/PriceEvolutionModal';
 
 interface PantryModuleProps {
   user: any;
@@ -98,6 +99,9 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
   const [receiptEditItems, setReceiptEditItems] = useState<PantryItem[]>([]);
   const [isSavingReceiptChanges, setIsSavingReceiptChanges] = useState(false);
   const [receiptSavedNotice, setReceiptSavedNotice] = useState(false);
+
+  // Producto seleccionado para ver historial y evolución de precios
+  const [selectedPriceProduct, setSelectedPriceProduct] = useState<ProductPriceHistory | null>(null);
 
   // Datos extraídos listos para revisar antes de guardar
   const [extractedData, setExtractedData] = useState<ExtractedReceiptData | null>(null);
@@ -1629,7 +1633,8 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                   return (
                     <div
                       key={trend.product_name}
-                      className="p-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl space-y-3 shadow-sm flex flex-col justify-between"
+                      onClick={() => setSelectedPriceProduct(trend)}
+                      className="p-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 rounded-3xl space-y-3 shadow-sm hover:shadow-md cursor-pointer transition group flex flex-col justify-between"
                     >
                       <div>
                         <div className="flex items-center justify-between mb-2">
@@ -1664,7 +1669,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                           )}
                         </div>
 
-                        <h4 className="text-base font-bold text-slate-900 dark:text-white leading-tight">
+                        <h4 className="text-base font-bold text-slate-900 dark:text-white leading-tight group-hover:text-emerald-600 transition">
                           {trend.product_name}
                         </h4>
 
@@ -1686,9 +1691,15 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                         </div>
                       </div>
 
-                      {/* Historial de compras registradas */}
-                      <div className="pt-2 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-400 space-y-1">
-                        <span className="font-semibold text-[10px] uppercase tracking-wider">Historial:</span>
+                      {/* Historial de compras registradas y llamada a la acción */}
+                      <div className="pt-2 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-400 space-y-1.5">
+                        <div className="flex justify-between items-center">
+                          <span className="font-semibold text-[10px] uppercase tracking-wider">Historial:</span>
+                          <span className="text-emerald-600 dark:text-emerald-400 font-bold text-[10.5px] group-hover:underline flex items-center gap-0.5">
+                            <span>Ver gráfica</span>
+                            <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition" />
+                          </span>
+                        </div>
                         {trend.history.slice(-3).map((h, i) => (
                           <div key={i} className="flex justify-between">
                             <span>{h.date}</span>
@@ -2359,6 +2370,18 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
             </div>
           </div>
         </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL FLOTANTE: HISTORIAL DE COMPRA, EVOLUCIÓN DE PRECIO Y GRÁFICA LINEAL */}
+      {/* ========================================================================= */}
+      {selectedPriceProduct && (
+        <PriceEvolutionModal
+          productTrend={selectedPriceProduct}
+          pantryItems={pantryItems}
+          receipts={receipts}
+          onClose={() => setSelectedPriceProduct(null)}
+        />
       )}
     </div>
   );
