@@ -49,6 +49,7 @@ import {
 import { PriceEvolutionModal } from '../../components/pantry/PriceEvolutionModal';
 import { ProductDetailModal } from '../../components/pantry/ProductDetailModal';
 import { NutritionAnalytics } from '../../components/pantry/NutritionAnalytics';
+import { getFoodIntelligence } from '../../lib/pantryFoodIntelligence';
 
 interface PantryModuleProps {
   user: any;
@@ -192,19 +193,38 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
   );
 
   const totalCaloriesAvailable = useMemo(() => {
-    return activeItems.reduce((acc, item) => acc + (Number(item.total_calories) || (item.calories_per_unit * item.quantity)), 0);
+    return activeItems.reduce((acc, item) => {
+      const fi = getFoodIntelligence(item);
+      const cals = Number(item.total_calories) || fi.nutrition.totalPackageCalories || (item.calories_per_unit * item.quantity);
+      return acc + (isNaN(cals) ? 0 : cals);
+    }, 0);
   }, [activeItems]);
 
   const totalProteinG = useMemo(() => {
-    return activeItems.reduce((acc, item) => acc + ((Number(item.protein_g) || 0) * item.quantity), 0);
+    return activeItems.reduce((acc, item) => {
+      const fi = getFoodIntelligence(item);
+      const servings = fi.economics.totalServings || (item.quantity > 50 ? 1 : item.quantity);
+      const prot = (fi.nutrition.protein_g || Number(item.protein_g) || 0) * servings;
+      return acc + (isNaN(prot) ? 0 : prot);
+    }, 0);
   }, [activeItems]);
 
   const totalCarbsG = useMemo(() => {
-    return activeItems.reduce((acc, item) => acc + ((Number(item.carbs_g) || 0) * item.quantity), 0);
+    return activeItems.reduce((acc, item) => {
+      const fi = getFoodIntelligence(item);
+      const servings = fi.economics.totalServings || (item.quantity > 50 ? 1 : item.quantity);
+      const carbs = (fi.nutrition.carbs_g || Number(item.carbs_g) || 0) * servings;
+      return acc + (isNaN(carbs) ? 0 : carbs);
+    }, 0);
   }, [activeItems]);
 
   const totalFatG = useMemo(() => {
-    return activeItems.reduce((acc, item) => acc + ((Number(item.fat_g) || 0) * item.quantity), 0);
+    return activeItems.reduce((acc, item) => {
+      const fi = getFoodIntelligence(item);
+      const servings = fi.economics.totalServings || (item.quantity > 50 ? 1 : item.quantity);
+      const fat = (fi.nutrition.fat_g || Number(item.fat_g) || 0) * servings;
+      return acc + (isNaN(fat) ? 0 : fat);
+    }, 0);
   }, [activeItems]);
 
   const totalStockValue = useMemo(() => {
@@ -1107,7 +1127,11 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                         <div className="flex items-center gap-2 text-[11px] text-slate-600 dark:text-slate-300 mb-4">
                           <span className="flex items-center gap-1 font-bold text-amber-600 dark:text-amber-400">
                             <Flame className="w-3 h-3" />
-                            {Math.round(item.calories_per_unit * item.quantity)} kcal
+                            {Math.round(
+                              Number(item.total_calories) ||
+                              getFoodIntelligence(item).nutrition.totalPackageCalories ||
+                              (item.calories_per_unit * item.quantity)
+                            ).toLocaleString()} kcal
                           </span>
                           {item.protein_g > 0 && <span>• {item.protein_g}g Prot</span>}
                           {item.carbs_g > 0 && <span>• {item.carbs_g}g Carb</span>}

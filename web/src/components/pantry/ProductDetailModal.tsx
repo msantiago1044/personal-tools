@@ -71,6 +71,61 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
     return getFoodIntelligence(currentItem);
   }, [currentItem]);
 
+  // Pre-cálculo para inicializar porción limpia sin que calorías totales de empaque (>800) inflen la porción
+  const initialServingSizeStr =
+    item.serving_size ||
+    foodData.nutrition.servingSize ||
+    ((item.name || '').toLowerCase().includes('aceite') ? '1 cucharada (14g / 15ml)' : '100g o 1 porción');
+
+  const rawInitQty = Number(item.quantity) || 1;
+  const rawInitUnit = (item.unit || '').toLowerCase().trim();
+  const initIsMilli =
+    rawInitUnit === 'ml' ||
+    rawInitUnit.includes('mili') ||
+    rawInitUnit === 'cc' ||
+    rawInitUnit === 'cm3';
+  const initIsLiter = !initIsMilli && (rawInitUnit === 'l' || rawInitUnit === 'lt' || rawInitUnit.includes('litro'));
+  const initIsKg = rawInitUnit.startsWith('kg') || rawInitUnit.includes('kilo');
+  const initIsGram = !initIsKg && (rawInitUnit === 'g' || rawInitUnit === 'gr' || rawInitUnit.includes('gram'));
+  const initIsCookingOil = (item.name || '').toLowerCase().includes('aceite');
+  const initDensity = initIsCookingOil ? 0.92 : 1.0;
+
+  let initMl = 0;
+  let initGrams = 0;
+  if (initIsMilli || initIsLiter) {
+    initMl = initIsLiter ? rawInitQty * 1000 : rawInitQty;
+    initGrams = Math.round(initMl * initDensity);
+  } else if (initIsGram || initIsKg) {
+    initGrams = initIsKg ? rawInitQty * 1000 : rawInitQty;
+    initMl = Math.round(initGrams / initDensity);
+  }
+
+  const initMatchMl = initialServingSizeStr.match(/(\d+(?:[.,]\d+)?)\s*(?:ml|mililitro|cc)\b/i);
+  const initMatchG = initialServingSizeStr.match(/(\d+(?:[.,]\d+)?)\s*(?:g|gr|gramo)\b/i);
+  let initPortionMl = initMatchMl ? parseFloat(initMatchMl[1].replace(',', '.')) : 0;
+  let initPortionG = initMatchG ? parseFloat(initMatchG[1].replace(',', '.')) : 0;
+  if (initPortionMl === 0 && initPortionG === 0) {
+    initPortionG = initIsCookingOil ? 14 : 100;
+    initPortionMl = initIsCookingOil ? 15 : 100;
+  }
+
+  const initServings =
+    initMl > 0 && initPortionMl > 0
+      ? Math.max(1, Math.round(initMl / initPortionMl))
+      : initGrams > 0 && initPortionG > 0
+      ? Math.max(1, Math.round(initGrams / initPortionG))
+      : 1;
+
+  const rawInitCals = Number(item.calories_per_unit) || 0;
+  const initialPerServingCals =
+    rawInitCals > 800 && initServings > 1
+      ? String(Math.round((rawInitCals / initServings) * 10) / 10)
+      : rawInitCals > 0
+      ? String(rawInitCals)
+      : foodData.nutrition.calories !== undefined
+      ? String(foodData.nutrition.calories)
+      : '';
+
   // Estado de Edición Individual (Cantidad, Unidad, Precios y Nutrición Completa)
   const [isEditing, setIsEditing] = useState(initialEditMode);
   const [editName, setEditName] = useState(item.name);
@@ -87,13 +142,9 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   );
   const [editShelfLife, setEditShelfLife] = useState(String(item.shelf_life_days || 14));
 
-  // Datos nutricionales editables
-  const [editServingSize, setEditServingSize] = useState(
-    item.serving_size || foodData.nutrition.servingSize || '100g o 1 porción'
-  );
-  const [editCalories, setEditCalories] = useState(
-    String(item.calories_per_unit || foodData.nutrition.calories || '')
-  );
+  // Datos nutricionales editables (Base: Porción oficial de etiqueta)
+  const [editServingSize, setEditServingSize] = useState(initialServingSizeStr);
+  const [editCalories, setEditCalories] = useState(initialPerServingCals);
   const [editProtein, setEditProtein] = useState(
     item.protein_g !== undefined ? String(item.protein_g) : String(foodData.nutrition.protein_g ?? 0)
   );
@@ -107,10 +158,22 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
     item.fiber_g !== undefined ? String(item.fiber_g) : String(foodData.nutrition.fiber_g ?? 0)
   );
   const [editFat, setEditFat] = useState(
-    item.fat_g !== undefined ? String(item.fat_g) : String(foodData.nutrition.fat_g ?? 0)
+    item.fat_g !== undefined
+      ? String(item.fat_g)
+      : foodData.nutrition.fat_g !== undefined
+      ? String(foodData.nutrition.fat_g)
+      : initIsCookingOil
+      ? '14'
+      : '0'
   );
   const [editSatFat, setEditSatFat] = useState(
-    item.saturated_fat_g !== undefined ? String(item.saturated_fat_g) : String(foodData.nutrition.saturated_fat_g ?? 0)
+    item.saturated_fat_g !== undefined
+      ? String(item.saturated_fat_g)
+      : foodData.nutrition.saturated_fat_g !== undefined
+      ? String(foodData.nutrition.saturated_fat_g)
+      : initIsCookingOil
+      ? '2'
+      : '0'
   );
   const [editSodium, setEditSodium] = useState(
     item.sodium_mg !== undefined ? String(item.sodium_mg) : String(foodData.nutrition.sodium_mg ?? 0)
@@ -172,20 +235,36 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
       : 0;
 
   const cleanUnit = (editUnit || '').toLowerCase().trim();
-  const isVolumeUnit =
+  const isMilli =
     cleanUnit === 'ml' ||
-    cleanUnit.includes('mili') ||
-    cleanUnit.includes('mililitro') ||
     cleanUnit === 'cc' ||
     cleanUnit === 'cm3' ||
-    cleanUnit === 'l' ||
-    cleanUnit === 'lt' ||
-    cleanUnit === 'lts' ||
-    cleanUnit.includes('litro');
+    cleanUnit.includes('mili') ||
+    cleanUnit.includes('mililitro');
 
-  const isLiter = cleanUnit === 'l' || cleanUnit === 'lt' || cleanUnit === 'lts' || cleanUnit.includes('litro');
-  const isGram = cleanUnit === 'g' || cleanUnit === 'gr' || cleanUnit === 'grs' || cleanUnit.includes('gram');
-  const isKg = cleanUnit.includes('kg') || cleanUnit.includes('kilo');
+  const isLiter =
+    !isMilli &&
+    (cleanUnit === 'l' ||
+      cleanUnit === 'lt' ||
+      cleanUnit === 'lts' ||
+      cleanUnit === 'litro' ||
+      cleanUnit === 'litros' ||
+      cleanUnit.includes('litro'));
+
+  const isVolumeUnit = isMilli || isLiter;
+
+  const isKg =
+    cleanUnit.startsWith('kg') ||
+    cleanUnit.includes('kilo') ||
+    cleanUnit.includes('kilogramo');
+
+  const isGram =
+    !isKg &&
+    (cleanUnit === 'g' ||
+      cleanUnit === 'gr' ||
+      cleanUnit === 'grs' ||
+      cleanUnit.includes('gram'));
+
   const isPound = cleanUnit.includes('lb') || cleanUnit.includes('libra');
 
   // Densidad alimentaria específica del producto (ej. Aceite = 0.92, Leche = 1.03, General = 1.0)
@@ -229,19 +308,62 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   const costPerKg = costPerGram * 1000;
   const costPer100ml = costPerMl * 100;
 
-  // Porción de consumo
-  let portionGrams = 100;
-  if (editServingSize.includes('14g') || editServingSize.includes('15ml')) portionGrams = 14;
-  else if (editServingSize.includes('10g')) portionGrams = 10;
-  else if (editServingSize.includes('50g')) portionGrams = 50;
-  else if (editServingSize.includes('80g')) portionGrams = 80;
-  else if (editServingSize.includes('120g')) portionGrams = 120;
-  else if (editServingSize.includes('250ml') || editServingSize.includes('250g')) portionGrams = 250;
+  // Porción de consumo: extraer dinámicamente gramos y ml
+  const matchServingMl = editServingSize.match(/(\d+(?:[.,]\d+)?)\s*(?:ml|mililitro|cc)\b/i);
+  const matchServingG = editServingSize.match(/(\d+(?:[.,]\d+)?)\s*(?:g|gr|gramo)\b/i);
 
-  const costPerServing = isVolumeUnit
-    ? costPerMl * (portionGrams / productDensity)
-    : costPerGram * portionGrams;
-  const approxServings = calculatedGrams > 0 && portionGrams > 0 ? Math.round(calculatedGrams / portionGrams) : 0;
+  let portionMl = matchServingMl ? parseFloat(matchServingMl[1].replace(',', '.')) : 0;
+  let portionGrams = matchServingG ? parseFloat(matchServingG[1].replace(',', '.')) : 0;
+
+  if (portionMl > 0 && portionGrams === 0) {
+    portionGrams = Math.round(portionMl * productDensity * 10) / 10;
+  } else if (portionGrams > 0 && portionMl === 0) {
+    portionMl = Math.round((portionGrams / productDensity) * 10) / 10;
+  } else if (portionMl === 0 && portionGrams === 0) {
+    portionGrams = isCookingOil ? 14 : 100;
+    portionMl = isCookingOil ? 15 : Math.round(100 / productDensity);
+  }
+
+  // Porciones aproximadas en todo el envase
+  const approxServings =
+    isVolumeUnit && portionMl > 0
+      ? Math.max(1, Math.round(calculatedMl / portionMl))
+      : portionGrams > 0
+      ? Math.max(1, Math.round(calculatedGrams / portionGrams))
+      : 1;
+
+  // Costo por porción
+  const costPerServing =
+    activeTotalPrice > 0 && approxServings > 0
+      ? activeTotalPrice / approxServings
+      : 0;
+
+  // Cálculos automáticos de la información nutricional: PORCIÓN -> TODO EL ENVASE
+  const parsedServingCals = parseDecimal(editCalories);
+  const parsedServingProt = parseDecimal(editProtein);
+  const parsedServingCarbs = parseDecimal(editCarbs);
+  const parsedServingFat = parseDecimal(editFat);
+  const parsedServingSatFat = parseDecimal(editSatFat);
+  const parsedServingSugar = parseDecimal(editSugar);
+  const parsedServingFiber = parseDecimal(editFiber);
+  const parsedServingSodium = parseDecimal(editSodium);
+
+  const computedPortionCals = parsedServingCals;
+  const computedTotalCals = Math.round(parsedServingCals * approxServings);
+  const computed100Cals =
+    portionGrams > 0
+      ? Math.round((parsedServingCals / portionGrams) * 100)
+      : portionMl > 0
+      ? Math.round((parsedServingCals / portionMl) * 100)
+      : 0;
+
+  const computedTotalFat = Math.round(parsedServingFat * approxServings * 10) / 10;
+  const computedTotalSatFat = Math.round(parsedServingSatFat * approxServings * 10) / 10;
+  const computedTotalProt = Math.round(parsedServingProt * approxServings * 10) / 10;
+  const computedTotalCarbs = Math.round(parsedServingCarbs * approxServings * 10) / 10;
+  const computedTotalSugar = Math.round(parsedServingSugar * approxServings * 10) / 10;
+  const computedTotalFiber = Math.round(parsedServingFiber * approxServings * 10) / 10;
+  const computedTotalSodium = Math.round(parsedServingSodium * approxServings);
 
   const handleApplyUnit = (targetUnit: 'mililitros' | 'litros' | 'gramos' | 'kg') => {
     if (targetUnit === 'mililitros') {
@@ -272,7 +394,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
       const p = parseDecimal(editUnitPrice);
       const tot = parseDecimal(editTotalPrice) || (p * q);
       const sl = parseInt(editShelfLife) || 14;
-      const cal = parseDecimal(editCalories);
+      const rawCals = parseDecimal(editCalories);
       const prot = parseDecimal(editProtein);
       const carbs = parseDecimal(editCarbs);
       const sugar = parseDecimal(editSugar);
@@ -280,6 +402,13 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
       const fat = parseDecimal(editFat);
       const satFat = parseDecimal(editSatFat);
       const sod = parseDecimal(editSodium);
+
+      // Si el usuario ingresó por error las calorías totales de todo el envase (>800), se normaliza a la porción
+      const savedServingCals =
+        rawCals > 800 && approxServings > 1
+          ? Math.round((rawCals / approxServings) * 10) / 10
+          : rawCals;
+      const savedTotalCals = Math.round(savedServingCals * approxServings);
 
       const updatedItem: PantryItem = {
         ...currentItem,
@@ -290,8 +419,8 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
         unit_price: p,
         total_price: tot,
         shelf_life_days: sl,
-        calories_per_unit: cal,
-        total_calories: cal * q,
+        calories_per_unit: savedServingCals,
+        total_calories: savedTotalCals,
         protein_g: prot,
         carbs_g: carbs,
         fat_g: fat,
@@ -714,44 +843,60 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 </div>
               </div>
 
-              {/* SECCIÓN 2: INFORMACIÓN NUTRICIONAL OFICIAL DE ETIQUETA */}
+              {/* SECCIÓN 2: INFORMACIÓN NUTRICIONAL OFICIAL DE ETIQUETA (POR PORCIÓN) */}
               <div className="p-4 bg-white/80 dark:bg-slate-900/80 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-black uppercase tracking-wider text-amber-600 dark:text-amber-400 block">
-                    2. Tabla Nutricional Oficial (Valores de Etiqueta)
-                  </span>
-                  <span className="text-[10px] text-slate-400 font-medium">
-                    Base: {editServingSize}
-                  </span>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-2.5">
+                  <div>
+                    <span className="text-[10px] font-black uppercase tracking-wider text-amber-600 dark:text-amber-400 block">
+                      2. Tabla Nutricional Oficial (Valores por Porción)
+                    </span>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                      Ingresa los datos para <strong>1 porción de etiqueta</strong>. La aplicación calculará automáticamente los totales para todo el producto.
+                    </p>
+                  </div>
+                  <div className="text-left sm:text-right shrink-0">
+                    <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-500/20 block sm:inline-block">
+                      Base: 1 porción (~{portionGrams}g / {portionMl}ml)
+                    </span>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {/* Calorías */}
                   <div>
                     <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
-                      Calorías (kcal)
+                      Calorías por Porción (kcal)
                     </label>
                     <input
                       type="text"
                       inputMode="decimal"
                       value={editCalories}
                       onChange={handleDecimalInput(setEditCalories)}
-                      placeholder="ej. 124 o 884"
+                      placeholder="ej. 125"
                       className="w-full px-3 py-2 rounded-xl text-xs font-black text-amber-600 dark:text-amber-400 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 focus:border-amber-500 outline-none"
                     />
+                    {parsedServingCals > 800 && approxServings > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => setEditCalories(String(Math.round((parsedServingCals / approxServings) * 10) / 10))}
+                        className="mt-1 text-[9px] font-bold text-amber-600 dark:text-amber-400 hover:underline block leading-tight text-left"
+                      >
+                        💡 ¿Ingresaste {parsedServingCals.toLocaleString()} kcal totales? Clic para convertir a ~{Math.round((parsedServingCals / approxServings) * 10) / 10} kcal/porción
+                      </button>
+                    )}
                   </div>
 
                   {/* Proteína */}
                   <div>
                     <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
-                      Proteína (g)
+                      Proteína por Porción (g)
                     </label>
                     <input
                       type="text"
                       inputMode="decimal"
                       value={editProtein}
                       onChange={handleDecimalInput(setEditProtein)}
-                      placeholder="ej. 0 o 25"
+                      placeholder="ej. 0"
                       className="w-full px-3 py-2 rounded-xl text-xs font-black bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:border-emerald-500 outline-none"
                     />
                   </div>
@@ -759,14 +904,14 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                   {/* Carbohidratos */}
                   <div>
                     <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
-                      Carbohidratos (g)
+                      Carbohidratos por Porción (g)
                     </label>
                     <input
                       type="text"
                       inputMode="decimal"
                       value={editCarbs}
                       onChange={handleDecimalInput(setEditCarbs)}
-                      placeholder="ej. 0 o 45"
+                      placeholder="ej. 0"
                       className="w-full px-3 py-2 rounded-xl text-xs font-black bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:border-emerald-500 outline-none"
                     />
                   </div>
@@ -774,14 +919,14 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                   {/* Grasas Totales */}
                   <div>
                     <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
-                      Grasas Totales (g)
+                      Grasas Totales por Porción (g)
                     </label>
                     <input
                       type="text"
                       inputMode="decimal"
                       value={editFat}
                       onChange={handleDecimalInput(setEditFat)}
-                      placeholder="ej. 14 o 100"
+                      placeholder="ej. 14"
                       className="w-full px-3 py-2 rounded-xl text-xs font-black bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:border-emerald-500 outline-none"
                     />
                   </div>
@@ -796,7 +941,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                       inputMode="decimal"
                       value={editSatFat}
                       onChange={handleDecimalInput(setEditSatFat)}
-                      placeholder="ej. 1.7"
+                      placeholder="ej. 2"
                       className="w-full px-3 py-2 rounded-xl text-xs font-semibold bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:border-emerald-500 outline-none"
                     />
                   </div>
@@ -844,6 +989,63 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                       placeholder="ej. 0"
                       className="w-full px-3 py-2 rounded-xl text-xs font-semibold bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:border-emerald-500 outline-none"
                     />
+                  </div>
+                </div>
+
+                {/* CÁLCULO AUTOMÁTICO DE TOTALES DE TODO EL ENVASE */}
+                <div className="p-3.5 bg-gradient-to-r from-amber-500/10 via-emerald-500/10 to-transparent border border-amber-500/30 dark:border-amber-500/20 rounded-2xl space-y-2 text-xs">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-amber-500/20 pb-2">
+                    <div className="flex items-center gap-1.5 font-bold text-amber-800 dark:text-amber-300">
+                      <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />
+                      <span>
+                        Cálculo Automático de Todo el Producto ({editQuantity} {editUnit} • ~{approxServings} porciones):
+                      </span>
+                    </div>
+                    <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+                      Costo por Porción: ${Math.round(costPerServing).toLocaleString()} COP
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-slate-700 dark:text-slate-300">
+                    <div className="p-2 bg-white/70 dark:bg-slate-900/70 rounded-xl border border-slate-200/50 dark:border-slate-800">
+                      <span className="text-[10px] text-slate-400 block font-bold uppercase">Calorías Totales</span>
+                      <span className="text-sm font-black text-amber-600 dark:text-amber-400">
+                        {computedTotalCals.toLocaleString()} kcal
+                      </span>
+                      <span className="text-[9px] text-slate-400 block mt-0.5">
+                        ({computedPortionCals} kcal × {approxServings} porciones)
+                      </span>
+                    </div>
+
+                    <div className="p-2 bg-white/70 dark:bg-slate-900/70 rounded-xl border border-slate-200/50 dark:border-slate-800">
+                      <span className="text-[10px] text-slate-400 block font-bold uppercase">Grasas Totales</span>
+                      <span className="text-sm font-black text-slate-900 dark:text-white">
+                        {computedTotalFat.toLocaleString()} g
+                      </span>
+                      <span className="text-[9px] text-slate-400 block mt-0.5">
+                        Saturadas: {computedTotalSatFat.toLocaleString()} g
+                      </span>
+                    </div>
+
+                    <div className="p-2 bg-white/70 dark:bg-slate-900/70 rounded-xl border border-slate-200/50 dark:border-slate-800">
+                      <span className="text-[10px] text-slate-400 block font-bold uppercase">Proteína & Carbos</span>
+                      <span className="text-sm font-black text-slate-900 dark:text-white">
+                        {computedTotalProt}g Prot • {computedTotalCarbs}g Carb
+                      </span>
+                      <span className="text-[9px] text-slate-400 block mt-0.5">
+                        En todo el envase
+                      </span>
+                    </div>
+
+                    <div className="p-2 bg-white/70 dark:bg-slate-900/70 rounded-xl border border-slate-200/50 dark:border-slate-800">
+                      <span className="text-[10px] text-slate-400 block font-bold uppercase">Densidad Calórica</span>
+                      <span className="text-sm font-black text-slate-900 dark:text-white">
+                        ~{computed100Cals} kcal
+                      </span>
+                      <span className="text-[9px] text-slate-400 block mt-0.5">
+                        por cada 100g / 100ml
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -717,15 +717,15 @@ export function getFoodIntelligence(item: PantryItem): FoodIntelligenceData {
   const qty = Math.max(0.001, Number(item.quantity) || 1);
 
   // Detección estricta de unidades
-  const isGrams = u === 'g' || u === 'gr' || u.includes('gram');
   const isMl = u === 'ml' || u.includes('mili') || u.includes('mililitro') || u === 'cc' || u === 'cm3';
-  const isKg = u.includes('kg') || u.includes('kilo');
-  const isLiter = u === 'l' || u === 'lt' || u.includes('litro');
+  const isLiter = !isMl && (u === 'l' || u === 'lt' || u.includes('litro'));
+  const isKg = u.startsWith('kg') || u.includes('kilo') || u.includes('kilogramo');
+  const isGrams = !isKg && (u === 'g' || u === 'gr' || u.includes('gram'));
   const isLb = u.includes('lb') || u.includes('libra');
 
   // Gramaje total real del producto en despensa
   let totalItemGrams = 250;
-  const density = cleanName.includes('aceite') ? 0.92 : 1.0;
+  const density = cleanName.includes('aceite') ? 0.92 : cleanName.includes('leche') ? 1.03 : 1.0;
 
   if (isGrams || isMl) {
     totalItemGrams = Math.max(1, Math.round(qty * density));
@@ -746,17 +746,18 @@ export function getFoodIntelligence(item: PantryItem): FoodIntelligenceData {
     }
   }
 
-  // Precios: si unit_price es el precio de todo el empaque
+  // Precios: sincronizar total_price y unit_price
   let totalPriceCOP = Number(item.total_price) || 0;
   if (totalPriceCOP <= 0 && Number(item.unit_price) > 0) {
-    if (isGrams || isMl) {
-      // Si la unidad es ml o g y qty es grande (ej. 2700ml), unit_price suele ser el precio pagado por el envase
+    // Si unit_price es pequeño (ej. 19.26 por ml), el total es unit_price * qty
+    // Si unit_price ya era el precio total del envase (ej. 52000), usarlo como total
+    if (Number(item.unit_price) > 1000 && qty > 50) {
       totalPriceCOP = Number(item.unit_price);
     } else {
-      totalPriceCOP = Number(item.unit_price) * qty;
+      totalPriceCOP = Math.round(Number(item.unit_price) * qty * 100) / 100;
     }
   }
-  const unitPriceCOP = Number(item.unit_price) || (totalPriceCOP > 0 && qty > 0 ? totalPriceCOP / qty : 0);
+  const unitPriceCOP = qty > 0 && totalPriceCOP > 0 ? totalPriceCOP / qty : Number(item.unit_price) || 0;
 
   let servingSize = matched?.servingSize || '100g o 1 porción';
 
@@ -800,15 +801,17 @@ export function getFoodIntelligence(item: PantryItem): FoodIntelligenceData {
 
   // Calorías por 100g
   let cals100g = 0;
-  if (Number(item.calories_per_unit) > 0) {
-    if (Number(item.calories_per_unit) <= 900) {
-      cals100g = Number(item.calories_per_unit);
-    } else {
-      // Si el número es un total del empaque (ej. 22410 kcal para 2700ml):
+  if (Number(item.total_calories) > 0 && totalItemGrams > 0) {
+    cals100g = Math.round((Number(item.total_calories) / totalItemGrams) * 100);
+  } else if (Number(item.calories_per_unit) > 0) {
+    if (Number(item.calories_per_unit) > 800) {
+      // Si el número es el total de todo el empaque (ej. 22410 kcal para 2700ml):
       cals100g = totalItemGrams > 0 ? Math.round((Number(item.calories_per_unit) / totalItemGrams) * 100) : matched?.cals100g || 150;
-      if (cals100g > 900 || cals100g <= 0) {
-        cals100g = matched?.cals100g || 884;
-      }
+    } else if (servingGrams > 0 && servingGrams < 90 && Number(item.calories_per_unit) < 400) {
+      // Si es el valor de 1 porción pequeña (ej. 125 kcal para 14g de aceite)
+      cals100g = Math.round((Number(item.calories_per_unit) / servingGrams) * 100);
+    } else {
+      cals100g = Number(item.calories_per_unit);
     }
   } else if (matched?.cals100g !== undefined) {
     cals100g = matched.cals100g;
@@ -820,7 +823,14 @@ export function getFoodIntelligence(item: PantryItem): FoodIntelligenceData {
 
   // Valores oficiales de la porción oficial de etiqueta
   const cals = Math.round((cals100g / 100) * servingGrams);
-  const totalPackageCalories = totalItemGrams > 0 ? Math.round((cals100g / 100) * totalItemGrams) : Math.round(cals * qty);
+  const totalPackageCalories =
+    Number(item.total_calories) > 0
+      ? Math.round(Number(item.total_calories))
+      : Number(item.calories_per_unit) > 800
+      ? Math.round(Number(item.calories_per_unit))
+      : totalItemGrams > 0
+      ? Math.round((cals100g / 100) * totalItemGrams)
+      : Math.round(cals * qty);
 
   const prot =
     item.protein_g !== undefined && item.protein_g !== null && !isNaN(Number(item.protein_g))
