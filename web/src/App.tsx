@@ -5,8 +5,9 @@ import { ToolHub } from './components/ToolHub';
 import { FinanceModule } from './pages/finance/FinanceModule';
 import { TehilimModule } from './pages/tehilim/TehilimModule';
 import { DwgViewerModule } from './pages/cad/DwgViewerModule';
+import { PantryModule } from './pages/pantry/PantryModule';
 
-type ViewType = 'hub' | 'finance' | 'tehilim' | 'dwg_viewer';
+type ViewType = 'hub' | 'finance' | 'tehilim' | 'dwg_viewer' | 'pantry';
 
 function getViewFromLocation(): ViewType {
   const hash = window.location.hash.toLowerCase();
@@ -15,11 +16,12 @@ function getViewFromLocation(): ViewType {
   if (hash.includes('finance') || path.startsWith('/finance')) return 'finance';
   if (hash.includes('tehilim') || path.startsWith('/tehilim')) return 'tehilim';
   if (hash.includes('cad') || hash.includes('dwg') || path.startsWith('/cad') || path.startsWith('/dwg')) return 'dwg_viewer';
+  if (hash.includes('pantry') || hash.includes('mercado') || path.startsWith('/pantry')) return 'pantry';
   if (hash.includes('hub')) return 'hub';
 
   // Fallback con localStorage si el hash está vacío
   const saved = localStorage.getItem('app_current_view') as ViewType;
-  if (saved && ['hub', 'finance', 'tehilim', 'dwg_viewer'].includes(saved)) {
+  if (saved && ['hub', 'finance', 'tehilim', 'dwg_viewer', 'pantry'].includes(saved)) {
     return saved;
   }
 
@@ -119,6 +121,16 @@ export default function App() {
     );
   }
 
+  // Si está en el módulo de Mercado, Despensa & Nutrición IA
+  if (currentView === 'pantry') {
+    return (
+      <PantryModule
+        user={session.user}
+        onBackToHub={() => changeView('hub')}
+      />
+    );
+  }
+
   // Vista por defecto post-login: Tool Hub (Launcher de Herramientas)
   return (
     <ToolHub
@@ -132,6 +144,8 @@ export default function App() {
           changeView('tehilim');
         } else if (route.startsWith('/cad-viewer') || route.startsWith('/dwg')) {
           changeView('dwg_viewer');
+        } else if (route.startsWith('/pantry')) {
+          changeView('pantry');
         }
       }}
       onLogout={() => {

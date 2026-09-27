@@ -151,3 +151,72 @@ export interface CadDrawing {
   };
 }
 
+// ============================================================================
+// MÓDULO: DESPENSA & MERCADO INTELIGENTE (GROCERY & PANTRY AI)
+// ============================================================================
+export interface GroceryReceipt {
+  id: string;
+  user_id: string;
+  store_name: string;
+  purchase_date: string;
+  total_amount: number;
+  image_url?: string;
+  items_count?: number;
+  notes?: string;
+  created_at: string;
+}
+
+export type PantryItemStatus = 'disponible' | 'consumiendo' | 'agotado' | 'vencido';
+
+export interface PantryItem {
+  id: string;
+  user_id: string;
+  receipt_id?: string | null;
+  name: string;
+  category: string;
+  quantity: number;
+  initial_quantity: number;
+  unit: string;
+  unit_price: number;
+  total_price: number;
+  purchase_date: string;
+  expiration_date?: string;
+  shelf_life_days: number;
+  calories_per_unit: number;
+  total_calories: number;
+  protein_g: number;
+  carbs_g: number;
+  fat_g: number;
+  status: PantryItemStatus;
+  consumed_at?: string | null;
+  consumption_days?: number | null;
+  created_at: string;
+  updated_at?: string;
+}
+
+export interface PriceTrendPoint {
+  date: string;
+  price: number;
+  store: string;
+}
+
+export interface ProductPriceHistory {
+  product_name: string;
+  category: string;
+  history: PriceTrendPoint[];
+  current_price: number;
+  previous_price?: number;
+  price_change_pct?: number;
+  trend: 'up' | 'down' | 'stable';
+}
+
+export interface PantryEntropyMetrics {
+  entropy_score: number; // 0 - 100
+  freshness_level: 'alta' | 'media' | 'baja' | 'critica';
+  risk_items_count: number;
+  expired_items_count: number;
+  turnover_rate_pct: number;
+  recommendations: string[];
+}
+
+

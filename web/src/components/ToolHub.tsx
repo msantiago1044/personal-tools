@@ -33,6 +33,15 @@ const AVAILABLE_TOOLS: ToolModule[] = [
     badge: 'Nuevo • Activo',
   },
   {
+    id: 'pantry',
+    name: 'Mercado, Despensa & Nutrición IA',
+    description: 'Escaneo fotográfico de facturas, control de despensa, cálculo de calorías, entropía de consumo y radar de precios.',
+    icon: 'shopping-bag',
+    route: '/pantry',
+    status: 'active',
+    badge: 'Nuevo • IA Vision',
+  },
+  {
     id: 'investments',
     name: 'Cartera de Inversiones',
     description: 'Seguimiento de activos, acciones, cripto y rendimientos pasivos a largo plazo.',
@@ -198,6 +207,8 @@ export const ToolHub: React.FC<ToolHubProps> = ({
                         ? '📜'
                         : tool.id === 'dwg_viewer'
                         ? '📐'
+                        : tool.id === 'pantry'
+                        ? '🛒'
                         : tool.id === 'investments'
                         ? '📈'
                         : tool.id === 'invoicing'

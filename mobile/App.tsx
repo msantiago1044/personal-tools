@@ -18,6 +18,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase, signInWithGoogleMobile } from './src/lib/supabase';
 import { TehilimScreen } from './src/screens/TehilimScreen';
 import { CadViewerScreen } from './src/screens/CadViewerScreen';
+import { PantryScreen } from './src/screens/PantryScreen';
 
 type ThemeMode = 'light' | 'dark' | 'system';
 type FinanceTab = 'home' | 'transactions' | 'accounts' | 'categories' | 'budgets' | 'reports' | 'settings';
@@ -48,7 +49,7 @@ export default function App() {
   const [themeMode, setThemeMode] = useState<ThemeMode>('light');
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [currentView, setCurrentView] = useState<'hub' | 'finance' | 'tehilim' | 'dwg_viewer'>('hub');
+  const [currentView, setCurrentView] = useState<'hub' | 'finance' | 'tehilim' | 'dwg_viewer' | 'pantry'>('hub');
   const [financeTab, setFinanceTab] = useState<FinanceTab>('home');
 
   // Menú desplegable móvil (ocultar / mostrar)
@@ -103,7 +104,7 @@ export default function App() {
 
     // Restaurar última vista y pestaña en móvil
     AsyncStorage.getItem('mobile_current_view').then((savedView) => {
-      if (savedView && ['hub', 'finance', 'tehilim', 'dwg_viewer'].includes(savedView)) {
+      if (savedView && ['hub', 'finance', 'tehilim', 'dwg_viewer', 'pantry'].includes(savedView)) {
         setCurrentView(savedView as any);
       }
     });
@@ -119,7 +120,7 @@ export default function App() {
     await AsyncStorage.setItem('app_theme_mode', mode);
   };
 
-  const changeView = async (v: 'hub' | 'finance' | 'tehilim' | 'dwg_viewer') => {
+  const changeView = async (v: 'hub' | 'finance' | 'tehilim' | 'dwg_viewer' | 'pantry') => {
     setCurrentView(v);
     await AsyncStorage.setItem('mobile_current_view', v);
   };
@@ -473,7 +474,18 @@ export default function App() {
     );
   }
 
-  // 4. MÓDULO DE FINANZAS
+  // 4. MÓDULO DE MERCADO & DESPENSA INTELIGENTE
+  if (currentView === 'pantry') {
+    return (
+      <PantryScreen
+        user={session.user}
+        onBack={() => changeView('hub')}
+        isDark={isDark}
+      />
+    );
+  }
+
+  // 5. MÓDULO DE FINANZAS
   if (currentView === 'finance') {
     const totalIncome = transactions
       .filter((t) => t.type === 'ingreso')
@@ -1288,6 +1300,27 @@ export default function App() {
             </View>
             <Text style={[styles.toolCardDesc, { color: colors.subtext }]}>
               Visualizador de planos de AutoCAD y Civil 3D con paneo, zoom y capas.
+            </Text>
+          </View>
+        </TouchableOpacity>
+
+        {/* MÓDULO DESPENSA & MERCADO INTELIGENTE */}
+        <TouchableOpacity
+          style={[styles.toolCardActive, { backgroundColor: colors.card, borderColor: '#10B981' }]}
+          onPress={() => changeView('pantry')}
+        >
+          <View style={[styles.toolIconWrap, { backgroundColor: colors.accentBg }]}>
+            <Text style={{ fontSize: 24 }}>🛒</Text>
+          </View>
+          <View style={{ flex: 1, marginLeft: 12 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Text style={[styles.toolCardTitle, { color: colors.text }]}>Despensa & Mercado IA</Text>
+              <View style={[styles.badgeActive, { backgroundColor: colors.accentBg }]}>
+                <Text style={[styles.badgeText, { color: colors.accentText }]}>NUEVO</Text>
+              </View>
+            </View>
+            <Text style={[styles.toolCardDesc, { color: colors.subtext }]}>
+              Control de mercado, escaneo de facturas, calorías, entropía y radar de precios.
             </Text>
           </View>
         </TouchableOpacity>
