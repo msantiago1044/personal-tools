@@ -21,7 +21,7 @@ interface PantryScreenProps {
   isDark: boolean;
 }
 
-type MobileTab = 'inventory' | 'scanner' | 'entropy' | 'prices';
+type MobileTab = 'scanner' | 'prices' | 'inventory' | 'entropy';
 
 const CATEGORIES = [
   'Todas',
@@ -127,7 +127,7 @@ const MOBILE_SAMPLE_RECEIPTS = [
 ];
 
 export const PantryScreen: React.FC<PantryScreenProps> = ({ user, onBack, isDark }) => {
-  const [activeTab, setActiveTab] = useState<MobileTab>('inventory');
+  const [activeTab, setActiveTab] = useState<MobileTab>('scanner');
   const [items, setItems] = useState<PantryItem[]>([]);
   const [receipts, setReceipts] = useState<GroceryReceipt[]>([]);
   const [loading, setLoading] = useState(true);
@@ -616,10 +616,10 @@ Responde UNICAMENTE con un JSON con la estructura:
       {/* Tabs Móviles */}
       <View style={[styles.tabsRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
         {[
-          { id: 'inventory', label: '🧺 Despensa' },
           { id: 'scanner', label: '📸 Factura IA' },
-          { id: 'entropy', label: '⚛️ Entropía' },
           { id: 'prices', label: '📈 Precios' },
+          { id: 'inventory', label: '🧺 Despensa' },
+          { id: 'entropy', label: '⚛️ Entropía' },
         ].map((t) => (
           <TouchableOpacity
             key={t.id}

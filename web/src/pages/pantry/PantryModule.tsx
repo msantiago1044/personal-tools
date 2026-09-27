@@ -50,7 +50,7 @@ interface PantryModuleProps {
   onBackToHub: () => void;
 }
 
-type ActiveTab = 'inventory' | 'scanner' | 'entropy' | 'nutrition' | 'prices' | 'receipts';
+type ActiveTab = 'scanner' | 'receipts' | 'prices' | 'inventory' | 'nutrition' | 'entropy';
 
 const CATEGORIES = [
   'Todas',
@@ -66,7 +66,7 @@ const CATEGORIES = [
 ];
 
 export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub }) => {
-  const [activeTab, setActiveTab] = useState<ActiveTab>('inventory');
+  const [activeTab, setActiveTab] = useState<ActiveTab>('scanner');
   const [pantryItems, setPantryItems] = useState<PantryItem[]>([]);
   const [receipts, setReceipts] = useState<GroceryReceipt[]>([]);
   const [loading, setLoading] = useState(true);
@@ -631,12 +631,12 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
       <nav className="border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 md:px-8">
         <div className="max-w-7xl mx-auto flex gap-1 overflow-x-auto py-2.5 no-scrollbar">
           {[
-            { id: 'inventory', label: 'Mi Despensa', icon: ShoppingBag, count: activeItems.length },
-            { id: 'scanner', label: 'Escáner de Facturas (IA)', icon: Camera, badge: 'Vision' },
-            { id: 'entropy', label: 'Entropía & Desperdicio', icon: Zap },
-            { id: 'nutrition', label: 'Calorías & Nutrición', icon: Flame },
+            { id: 'scanner', label: 'Escáner de Facturas Inteligente', icon: Camera, badge: 'Vision' },
+            { id: 'receipts', label: 'Historial de Facturas', icon: Layers, count: receipts.length },
             { id: 'prices', label: 'Radar de Precios', icon: TrendingUp },
-            { id: 'receipts', label: 'Historial Facturas', icon: Layers, count: receipts.length },
+            { id: 'inventory', label: 'Mi Despensa', icon: ShoppingBag, count: activeItems.length },
+            { id: 'nutrition', label: 'Calorías & Nutrición', icon: Flame },
+            { id: 'entropy', label: 'Entropía', icon: Zap },
           ].map((tab) => {
             const Icon = tab.icon;
             const isCurrent = activeTab === tab.id;
