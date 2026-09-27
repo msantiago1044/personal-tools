@@ -48,6 +48,7 @@ import {
 } from 'lucide-react';
 import { PriceEvolutionModal } from '../../components/pantry/PriceEvolutionModal';
 import { ProductDetailModal } from '../../components/pantry/ProductDetailModal';
+import { NutritionAnalytics } from '../../components/pantry/NutritionAnalytics';
 
 interface PantryModuleProps {
   user: any;
@@ -1629,85 +1630,14 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
         {/* PESTAÑA 4: CALORÍAS & NUTRICIÓN (RESERVAS ENERGÉTICAS DEL HOGAR)          */}
         {/* ========================================================================= */}
         {activeTab === 'nutrition' && (
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="p-6 bg-gradient-to-br from-amber-500/10 to-transparent bg-white dark:bg-slate-900 border border-amber-500/30 rounded-3xl space-y-2 shadow-sm">
-                <span className="text-xs uppercase font-bold tracking-wider text-amber-600 dark:text-amber-400">
-                  Energía Total en Despensa
-                </span>
-                <p className="text-3xl font-black text-amber-600 dark:text-amber-400">
-                  {Math.round(totalCaloriesAvailable).toLocaleString()}{' '}
-                  <span className="text-base font-normal text-slate-400">kcal</span>
-                </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                  Equivale a aprox.{' '}
-                  <strong className="text-slate-800 dark:text-slate-200">
-                    {Math.round(totalCaloriesAvailable / 2000)} días
-                  </strong>{' '}
-                  de autonomía nutricional para un adulto (base 2,000 kcal/día).
-                </p>
-              </div>
-
-              <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl space-y-3 shadow-sm md:col-span-2">
-                <span className="text-xs uppercase font-bold tracking-wider text-slate-400">
-                  Distribución de Macronutrientes Disponibles
-                </span>
-                <div className="grid grid-cols-3 gap-4 pt-1">
-                  <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800">
-                    <span className="text-[11px] font-bold text-rose-500">Proteínas</span>
-                    <p className="text-xl font-black text-slate-900 dark:text-white mt-0.5">
-                      {Math.round(totalProteinG)}g
-                    </p>
-                    <p className="text-[10px] text-slate-400">Carne, pollo, huevos, etc.</p>
-                  </div>
-                  <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800">
-                    <span className="text-[11px] font-bold text-amber-500">Carbohidratos</span>
-                    <p className="text-xl font-black text-slate-900 dark:text-white mt-0.5">
-                      {Math.round(totalCarbsG)}g
-                    </p>
-                    <p className="text-[10px] text-slate-400">Arroz, pasta, avena, frutas</p>
-                  </div>
-                  <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800">
-                    <span className="text-[11px] font-bold text-blue-500">Grasas Saludables</span>
-                    <p className="text-xl font-black text-slate-900 dark:text-white mt-0.5">
-                      {Math.round(totalFatG)}g
-                    </p>
-                    <p className="text-[10px] text-slate-400">Aceites, lácteos, frutos</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Ranking de alimentos por densidad calórica */}
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 space-y-4 shadow-sm">
-              <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                Mayor Aporte Calórico en tu Alacena
-              </h3>
-              <div className="space-y-2">
-                {activeItems
-                  .filter((i) => i.calories_per_unit > 0)
-                  .sort((a, b) => (b.calories_per_unit * b.quantity) - (a.calories_per_unit * a.quantity))
-                  .slice(0, 8)
-                  .map((item) => {
-                    const totalCal = Math.round(item.calories_per_unit * item.quantity);
-                    const pct = totalCaloriesAvailable > 0 ? (totalCal / totalCaloriesAvailable) * 100 : 0;
-                    return (
-                      <div key={item.id} className="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl space-y-1 text-xs">
-                        <div className="flex justify-between font-bold">
-                          <span className="text-slate-900 dark:text-white">{item.name}</span>
-                          <span className="text-amber-600 dark:text-amber-400 font-black">
-                            {totalCal.toLocaleString()} kcal ({pct.toFixed(1)}%)
-                          </span>
-                        </div>
-                        <div className="w-full bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                          <div className="h-full bg-amber-500 rounded-full" style={{ width: `${pct}%` }} />
-                        </div>
-                      </div>
-                    );
-                  })}
-              </div>
-            </div>
-          </div>
+          <NutritionAnalytics
+            pantryItems={pantryItems}
+            totalCaloriesAvailable={totalCaloriesAvailable}
+            totalProteinG={totalProteinG}
+            totalCarbsG={totalCarbsG}
+            totalFatG={totalFatG}
+            onSelectProduct={(item) => setSelectedPantryItemDetail(item)}
+          />
         )}
 
         {/* ========================================================================= */}
