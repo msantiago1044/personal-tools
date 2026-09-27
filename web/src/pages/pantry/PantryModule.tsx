@@ -44,6 +44,7 @@ import {
   ShieldCheck,
   Save,
   FileText,
+  Pencil,
 } from 'lucide-react';
 import { PriceEvolutionModal } from '../../components/pantry/PriceEvolutionModal';
 import { ProductDetailModal } from '../../components/pantry/ProductDetailModal';
@@ -106,6 +107,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
 
   // Producto seleccionado en despensa para ver ventana flotante (Nutrición, Consumo & ISA)
   const [selectedPantryItemDetail, setSelectedPantryItemDetail] = useState<PantryItem | null>(null);
+  const [openModalInEditMode, setOpenModalInEditMode] = useState(false);
 
   // Datos extraídos listos para revisar antes de guardar
   const [extractedData, setExtractedData] = useState<ExtractedReceiptData | null>(null);
@@ -304,6 +306,33 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
     }
 
     return updatedList;
+  };
+
+  // Modificar cantidad, unidad, precio o datos de un producto individual
+  const handleUpdateIndividualItem = async (updatedItem: PantryItem) => {
+    const newItems = pantryItems.map((i) => (i.id === updatedItem.id ? updatedItem : i));
+    setPantryItems(newItems);
+    persistLocally(newItems, receipts);
+    setSelectedPantryItemDetail(updatedItem);
+
+    try {
+      await supabase
+        .from('pantry_items')
+        .update({
+          name: updatedItem.name,
+          category: updatedItem.category,
+          quantity: updatedItem.quantity,
+          unit: updatedItem.unit,
+          unit_price: updatedItem.unit_price,
+          total_price: updatedItem.total_price || (updatedItem.unit_price * updatedItem.quantity),
+          shelf_life_days: updatedItem.shelf_life_days,
+          status: updatedItem.status,
+          updated_at: updatedItem.updated_at,
+        })
+        .eq('id', updatedItem.id);
+    } catch (err) {
+      console.warn('Error sincronizando actualización individual en Supabase:', err);
+    }
   };
 
   // 4. BORRAR PRODUCTO
@@ -1089,6 +1118,16 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                         {!isConsumed ? (
                           <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
                             <button
+                              onClick={() => {
+                                setSelectedPantryItemDetail(item);
+                                setOpenModalInEditMode(true);
+                              }}
+                              title="Modificar cantidad, unidad o precio"
+                              className="p-1.5 text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                            >
+                              <Pencil className="w-3.5 h-3.5" />
+                            </button>
+                            <button
                               onClick={() => handleConsumeItem(item, true)}
                               title="Marcar como agotado"
                               className="px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-semibold text-slate-600 dark:text-slate-300 transition"
@@ -1105,10 +1144,20 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                           </div>
                         ) : (
                           <div
-                            className="flex items-center gap-2 text-xs text-slate-400"
+                            className="flex items-center gap-1.5 text-xs text-slate-400"
                             onClick={(e) => e.stopPropagation()}
                           >
                             <span>Consumido en {item.consumption_days || '—'}d</span>
+                            <button
+                              onClick={() => {
+                                setSelectedPantryItemDetail(item);
+                                setOpenModalInEditMode(true);
+                              }}
+                              title="Modificar producto"
+                              className="p-1 text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition"
+                            >
+                              <Pencil className="w-3.5 h-3.5" />
+                            </button>
                             <button
                               onClick={() => setItemToDelete(item)}
                               className="text-slate-400 hover:text-rose-500 transition p-1"
@@ -2460,8 +2509,13 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
       {selectedPantryItemDetail && (
         <ProductDetailModal
           item={selectedPantryItemDetail}
-          onClose={() => setSelectedPantryItemDetail(null)}
+          initialEditMode={openModalInEditMode}
+          onClose={() => {
+            setSelectedPantryItemDetail(null);
+            setOpenModalInEditMode(false);
+          }}
           onConsume={handleConsumeItem}
+          onUpdateItem={handleUpdateIndividualItem}
         />
       )}
     </div>

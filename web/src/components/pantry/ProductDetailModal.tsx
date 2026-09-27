@@ -20,28 +20,97 @@ import {
   Utensils,
   Package,
   DollarSign,
+  Pencil,
+  Save,
+  Check,
 } from 'lucide-react';
 import { PantryItem } from '../../../../packages/shared/src/types';
 import { getFoodIntelligence, FoodIntelligenceData } from '../../lib/pantryFoodIntelligence';
+
+const PANTRY_CATEGORIES = [
+  'Proteínas',
+  'Lácteos',
+  'Granos & Cereales',
+  'Frutas & Verduras',
+  'Aseo & Limpieza',
+  'Snacks & Bebidas',
+  'Condimentos & Aceites',
+  'Panadería',
+  'Despensa',
+];
 
 interface ProductDetailModalProps {
   item: PantryItem;
   onClose: () => void;
   onConsume?: (item: PantryItem, full?: boolean) => void;
+  onUpdateItem?: (updatedItem: PantryItem) => void | Promise<void>;
+  initialEditMode?: boolean;
 }
 
 export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   item,
   onClose,
   onConsume,
+  onUpdateItem,
+  initialEditMode = false,
 }) => {
+  const [currentItem, setCurrentItem] = useState<PantryItem>(item);
   const [activeSubTab, setActiveSubTab] = useState<'balance' | 'nutrition' | 'isa' | 'economics'>('balance');
 
+  // Estado de Edición Individual (Cantidad, Unidad, Precio, etc.)
+  const [isEditing, setIsEditing] = useState(initialEditMode);
+  const [editName, setEditName] = useState(item.name);
+  const [editCategory, setEditCategory] = useState(item.category || 'Despensa');
+  const [editQuantity, setEditQuantity] = useState(String(item.quantity));
+  const [editUnit, setEditUnit] = useState(item.unit || 'un');
+  const [editUnitPrice, setEditUnitPrice] = useState(String(item.unit_price || ''));
+  const [editShelfLife, setEditShelfLife] = useState(String(item.shelf_life_days || 14));
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveSuccessNotice, setSaveSuccessNotice] = useState(false);
+
   const foodData: FoodIntelligenceData = useMemo(() => {
-    return getFoodIntelligence(item);
-  }, [item]);
+    return getFoodIntelligence(currentItem);
+  }, [currentItem]);
 
   const { nutrition, isa, economics, isaScore, isaGrade, nutriEcoBalance, balanceExplanation } = foodData;
+
+  // Guardar cambios individuales del producto
+  const handleSaveItemChanges = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    setIsSaving(true);
+    try {
+      const q = parseFloat(editQuantity) || 0;
+      const p = parseFloat(editUnitPrice) || 0;
+      const sl = parseInt(editShelfLife) || 14;
+
+      const updatedItem: PantryItem = {
+        ...currentItem,
+        name: editName.trim() || currentItem.name,
+        category: editCategory || currentItem.category,
+        quantity: q,
+        unit: editUnit.trim() || currentItem.unit || 'un',
+        unit_price: p,
+        total_price: p * q,
+        shelf_life_days: sl,
+        status: q <= 0 ? 'agotado' : currentItem.status === 'agotado' ? 'disponible' : currentItem.status,
+        updated_at: new Date().toISOString(),
+      };
+
+      setCurrentItem(updatedItem);
+
+      if (onUpdateItem) {
+        await onUpdateItem(updatedItem);
+      }
+
+      setSaveSuccessNotice(true);
+      setTimeout(() => setSaveSuccessNotice(false), 3000);
+      setIsEditing(false);
+    } catch (err) {
+      console.error('Error guardando cambios del producto:', err);
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   // Color temático según el grado ISA
   const isaGradeColor =
@@ -69,54 +138,216 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
           <div className="space-y-1">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-                {item.category}
+                {currentItem.category}
               </span>
               <span
                 className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border ${
-                  item.status === 'disponible'
+                  currentItem.status === 'disponible'
                     ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
-                    : item.status === 'consumiendo'
+                    : currentItem.status === 'consumiendo'
                     ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 border-amber-500/30'
                     : 'bg-slate-100 dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700'
                 }`}
               >
-                {item.status === 'disponible' ? 'En Stock' : item.status === 'consumiendo' ? 'En Consumo' : 'Agotado'}
+                {currentItem.status === 'disponible' ? 'En Stock' : currentItem.status === 'consumiendo' ? 'En Consumo' : 'Agotado'}
               </span>
               <span className="text-xs text-slate-400 font-medium">
-                {item.quantity} {item.unit} disponibles
+                {currentItem.quantity} {currentItem.unit} disponibles
               </span>
             </div>
 
             <h3 className="text-2xl font-black text-slate-900 dark:text-white leading-tight">
-              {item.name}
+              {currentItem.name}
             </h3>
 
-            <div className="flex items-center gap-3 text-xs text-slate-400 pt-0.5">
+            <div className="flex items-center gap-3 text-xs text-slate-400 pt-0.5 flex-wrap">
               <span className="flex items-center gap-1">
                 <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                Comprado: {item.purchase_date}
+                Comprado: {currentItem.purchase_date}
               </span>
               <span>•</span>
-              <span>Vida útil: ~{item.shelf_life_days || 14} días</span>
-              {Number(item.unit_price) > 0 && (
+              <span>Vida útil: ~{currentItem.shelf_life_days || 14} días</span>
+              {Number(currentItem.unit_price) > 0 && (
                 <>
                   <span>•</span>
-                  <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
-                    ${Number(item.unit_price).toLocaleString()} {item.unit}
+                  <span className="text-emerald-600 dark:text-emerald-400 font-bold">
+                    ${Number(currentItem.unit_price).toLocaleString()} {currentItem.unit}
                   </span>
                 </>
               )}
             </div>
           </div>
 
-          <button
-            onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition"
-            title="Cerrar"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsEditing(!isEditing)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border shadow-xs ${
+                isEditing
+                  ? 'bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-500'
+                  : 'border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+              }`}
+              title="Modificar cantidad, unidad o precio del producto"
+            >
+              <Pencil className="w-3.5 h-3.5" />
+              <span>{isEditing ? 'Cerrar' : 'Editar'}</span>
+            </button>
+
+            <button
+              onClick={onClose}
+              className="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+              title="Cerrar"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
+
+        {/* Notificación de guardado exitoso */}
+        {saveSuccessNotice && (
+          <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/30 rounded-2xl flex items-center gap-2 text-xs font-bold text-emerald-700 dark:text-emerald-300 animate-in fade-in">
+            <Check className="w-4 h-4 text-emerald-500" />
+            <span>¡Producto actualizado! Cantidad, unidad, precio e índices recalculados en tiempo real.</span>
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* PANEL DE EDICIÓN INDIVIDUAL (CANTIDAD, UNIDAD, PRECIO, ETC.)              */}
+        {/* ========================================================================= */}
+        {isEditing && (
+          <div className="p-5 bg-gradient-to-br from-emerald-500/10 via-slate-50 to-emerald-500/5 dark:from-emerald-950/40 dark:via-slate-900 dark:to-emerald-950/20 border border-emerald-500/30 rounded-3xl space-y-4 animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
+                  <Pencil className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-sm text-slate-900 dark:text-white">
+                    Modificar Producto Individual
+                  </h4>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                    Ajusta la cantidad disponible, unidad o precio pagado para recalcular su rendimiento.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <form onSubmit={handleSaveItemChanges} className="space-y-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {/* Cantidad */}
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
+                    Cantidad Disponible
+                  </label>
+                  <input
+                    type="number"
+                    step="any"
+                    min="0"
+                    required
+                    value={editQuantity}
+                    onChange={(e) => setEditQuantity(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl text-xs font-black bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:border-emerald-500 outline-none"
+                  />
+                </div>
+
+                {/* Unidad */}
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
+                    Unidad de Medida
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={editUnit}
+                    onChange={(e) => setEditUnit(e.target.value)}
+                    placeholder="un, kg, g, lb, litro, paquete..."
+                    className="w-full px-3 py-2 rounded-xl text-xs font-semibold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:border-emerald-500 outline-none"
+                  />
+                </div>
+
+                {/* Precio Unitario */}
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
+                    Precio Unitario ($ COP)
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={editUnitPrice}
+                    onChange={(e) => setEditUnitPrice(e.target.value)}
+                    placeholder="ej. 4500"
+                    className="w-full px-3 py-2 rounded-xl text-xs font-black text-emerald-600 dark:text-emerald-400 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:border-emerald-500 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {/* Nombre */}
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
+                    Nombre del Alimento
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl text-xs font-bold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:border-emerald-500 outline-none"
+                  />
+                </div>
+
+                {/* Categoría */}
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
+                    Categoría
+                  </label>
+                  <select
+                    value={editCategory}
+                    onChange={(e) => setEditCategory(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl text-xs font-semibold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:border-emerald-500 outline-none"
+                  >
+                    {PANTRY_CATEGORIES.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Vida Útil */}
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
+                    Vida Útil (Días)
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={editShelfLife}
+                    onChange={(e) => setEditShelfLife(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl text-xs font-semibold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:border-emerald-500 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end items-center gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setIsEditing(false)}
+                  className="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSaving}
+                  className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition shadow-md flex items-center gap-1.5"
+                >
+                  <Save className="w-3.5 h-3.5" />
+                  <span>{isSaving ? 'Guardando...' : 'Guardar Cambios'}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
 
         {/* ========================================================================= */}
         {/* PANEL PRINCIPAL: ÍNDICE ISA & BALANCE NUTRI-ECO-ECONÓMICO                */}
@@ -666,22 +897,28 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
         {/* ========================================================================= */}
         <div className="flex flex-col sm:flex-row justify-between items-center gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
           <div className="text-xs text-slate-400">
-            Stock actual: <strong className="text-slate-800 dark:text-slate-200">{item.quantity} {item.unit}</strong> • Precio: <strong className="text-slate-800 dark:text-slate-200">${Number(item.unit_price).toLocaleString()}</strong>
+            Stock actual: <strong className="text-slate-800 dark:text-slate-200">{currentItem.quantity} {currentItem.unit}</strong> • Precio: <strong className="text-slate-800 dark:text-slate-200">${Number(currentItem.unit_price).toLocaleString()}</strong>
           </div>
 
           <div className="flex items-center gap-2">
-            {onConsume && item.status !== 'agotado' && (
-              <>
-                <button
-                  onClick={() => {
-                    onConsume(item, true);
-                    onClose();
-                  }}
-                  className="px-3.5 py-2 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs font-bold hover:bg-rose-100 dark:hover:bg-rose-900/50 transition"
-                >
-                  Marcar Agotado
-                </button>
-              </>
+            <button
+              onClick={() => setIsEditing(!isEditing)}
+              className="px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-1.5"
+            >
+              <Pencil className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              <span>{isEditing ? 'Cerrar Edición' : 'Editar'}</span>
+            </button>
+
+            {onConsume && currentItem.status !== 'agotado' && (
+              <button
+                onClick={() => {
+                  onConsume(currentItem, true);
+                  onClose();
+                }}
+                className="px-3.5 py-2 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs font-bold hover:bg-rose-100 dark:hover:bg-rose-900/50 transition"
+              >
+                Marcar Agotado
+              </button>
             )}
             <button
               onClick={onClose}
