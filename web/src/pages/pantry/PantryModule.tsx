@@ -49,7 +49,7 @@ import {
 import { PriceEvolutionModal } from '../../components/pantry/PriceEvolutionModal';
 import { ProductDetailModal } from '../../components/pantry/ProductDetailModal';
 import { NutritionAnalytics } from '../../components/pantry/NutritionAnalytics';
-import { getFoodIntelligence } from '../../lib/pantryFoodIntelligence';
+import { getFoodIntelligence, calculateFoodMacroTotals } from '../../lib/pantryFoodIntelligence';
 import { inferProductPhysicalPresentation } from '../../lib/productPresentationInferrer';
 
 interface PantryModuleProps {
@@ -154,8 +154,67 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
         .order('purchase_date', { ascending: false });
 
       if (!itemsErr && dbItems) {
-        setPantryItems(dbItems);
-        localStorage.setItem(`pantry_items_${user.id}`, JSON.stringify(dbItems));
+        // Normalización automática de productos antiguos al cargar
+        const itemsToUpdateInDb: PantryItem[] = [];
+        const normalizedItems = dbItems.map((item) => {
+          const totPrice = Number(item.total_price) || (Number(item.unit_price) * Number(item.quantity)) || 0;
+          const u = (item.unit || '').toLowerCase().trim();
+          const isGenericUnit = !u || u === 'unidad' || u === 'unidades' || u === 'un' || u === 'und';
+          const needsCalibration = isGenericUnit && totPrice >= 5000;
+
+          if (needsCalibration) {
+            const inferred = inferProductPhysicalPresentation(item.name, totPrice, undefined, item.unit, item.quantity);
+            const updated: PantryItem = {
+              ...item,
+              quantity: inferred.quantity,
+              unit: inferred.unit,
+              unit_price: inferred.unit_price,
+              total_price: totPrice > 0 ? totPrice : inferred.total_price,
+              shelf_life_days: item.shelf_life_days || inferred.shelf_life_days,
+              calories_per_unit: inferred.calories_per_unit,
+              total_calories: inferred.total_calories,
+              protein_g: inferred.protein_g,
+              carbs_g: inferred.carbs_g,
+              fat_g: inferred.fat_g,
+            };
+            itemsToUpdateInDb.push(updated);
+            return updated;
+          }
+          return item;
+        });
+
+        setPantryItems(normalizedItems);
+        localStorage.setItem(`pantry_items_${user.id}`, JSON.stringify(normalizedItems));
+
+        if (itemsToUpdateInDb.length > 0) {
+          const safeItems = itemsToUpdateInDb.map((it) => ({
+            id: it.id,
+            user_id: it.user_id,
+            receipt_id: it.receipt_id || null,
+            name: it.name,
+            category: it.category,
+            quantity: it.quantity,
+            initial_quantity: it.initial_quantity || it.quantity,
+            unit: it.unit,
+            unit_price: it.unit_price,
+            total_price: it.total_price,
+            purchase_date: it.purchase_date,
+            shelf_life_days: it.shelf_life_days,
+            calories_per_unit: it.calories_per_unit,
+            total_calories: it.total_calories,
+            protein_g: it.protein_g,
+            carbs_g: it.carbs_g,
+            fat_g: it.fat_g,
+            status: it.status,
+            consumed_at: it.consumed_at || null,
+            consumption_days: it.consumption_days || null,
+            created_at: it.created_at,
+            updated_at: new Date().toISOString(),
+          }));
+          supabase.from('pantry_items').upsert(safeItems).then(({ error }) => {
+            if (error) console.error('Silent auto-calibration sync error:', error);
+          });
+        }
       } else {
         // Fallback a localStorage
         const local = localStorage.getItem(`pantry_items_${user.id}`);
@@ -200,36 +259,29 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
 
   const totalCaloriesAvailable = useMemo(() => {
     return activeItems.reduce((acc, item) => {
-      const fi = getFoodIntelligence(item);
-      const cals = Number(item.total_calories) || fi.nutrition.totalPackageCalories || (item.calories_per_unit * item.quantity);
-      return acc + (isNaN(cals) ? 0 : cals);
+      const m = calculateFoodMacroTotals(item);
+      return acc + (m.isHumanFood ? m.totalCalories : 0);
     }, 0);
   }, [activeItems]);
 
   const totalProteinG = useMemo(() => {
     return activeItems.reduce((acc, item) => {
-      const fi = getFoodIntelligence(item);
-      const servings = fi.economics.totalServings || (item.quantity > 50 ? 1 : item.quantity);
-      const prot = (fi.nutrition.protein_g || Number(item.protein_g) || 0) * servings;
-      return acc + (isNaN(prot) ? 0 : prot);
+      const m = calculateFoodMacroTotals(item);
+      return acc + (m.isHumanFood ? m.totalProteinG : 0);
     }, 0);
   }, [activeItems]);
 
   const totalCarbsG = useMemo(() => {
     return activeItems.reduce((acc, item) => {
-      const fi = getFoodIntelligence(item);
-      const servings = fi.economics.totalServings || (item.quantity > 50 ? 1 : item.quantity);
-      const carbs = (fi.nutrition.carbs_g || Number(item.carbs_g) || 0) * servings;
-      return acc + (isNaN(carbs) ? 0 : carbs);
+      const m = calculateFoodMacroTotals(item);
+      return acc + (m.isHumanFood ? m.totalCarbsG : 0);
     }, 0);
   }, [activeItems]);
 
   const totalFatG = useMemo(() => {
     return activeItems.reduce((acc, item) => {
-      const fi = getFoodIntelligence(item);
-      const servings = fi.economics.totalServings || (item.quantity > 50 ? 1 : item.quantity);
-      const fat = (fi.nutrition.fat_g || Number(item.fat_g) || 0) * servings;
-      return acc + (isNaN(fat) ? 0 : fat);
+      const m = calculateFoodMacroTotals(item);
+      return acc + (m.isHumanFood ? m.totalFatG : 0);
     }, 0);
   }, [activeItems]);
 
@@ -969,18 +1021,8 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
           {/* Botones de acción rápida */}
           <div className="flex items-center gap-2">
             <button
-              onClick={handleNormalizeAllProducts}
-              disabled={isNormalizingAll || pantryItems.length === 0}
-              title="Deduce automáticamente unidades reales (ml, g, kg, un), porciones y calorías de todos los productos según su precio y supermercado"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-indigo-500/30 bg-indigo-50 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 text-indigo-700 dark:text-indigo-400 font-semibold text-xs transition disabled:opacity-50"
-            >
-              <Sparkles className={`w-3.5 h-3.5 ${isNormalizingAll ? 'animate-spin' : ''}`} />
-              <span className="hidden md:inline">{isNormalizingAll ? 'Normalizando...' : 'Normalizar Gramajes'}</span>
-            </button>
-
-            <button
               onClick={() => setActiveTab('scanner')}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs shadow-xs transition"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs shadow-xs transition"
             >
               <Camera className="w-3.5 h-3.5" />
               <span>Escanear</span>
@@ -1003,22 +1045,6 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
             </button>
           </div>
         </div>
-
-        {/* Notificación de Normalización Global */}
-        {normalizationNotice && (
-          <div className="max-w-7xl mx-auto mt-3 p-3 rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-500/30 text-indigo-900 dark:text-indigo-200 text-xs font-medium flex items-center justify-between animate-in fade-in">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
-              <span>{normalizationNotice}</span>
-            </div>
-            <button
-              onClick={() => setNormalizationNotice(null)}
-              className="text-slate-400 hover:text-slate-600 dark:hover:text-white p-1"
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        )}
 
         {/* Resumen KPI Rápido */}
         <div className="max-w-7xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/80">

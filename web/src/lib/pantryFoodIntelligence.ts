@@ -773,28 +773,34 @@ export function getFoodIntelligence(item: PantryItem): FoodIntelligenceData {
   // Macronutrientes por 100g
   // IMPORTANTE: NO USAR || 4 o || 15 porque para aceites y otros alimentos 0g es el valor real
   const prot100g =
-    item.protein_g !== undefined && item.protein_g !== null && !isNaN(Number(item.protein_g))
-      ? Number(item.protein_g)
-      : matched?.prot100g !== undefined
+    matched?.prot100g !== undefined
       ? matched.prot100g
+      : item.protein_g !== undefined && item.protein_g !== null && !isNaN(Number(item.protein_g))
+      ? (servingGrams > 0 && servingGrams < 90 && Number(item.protein_g) > 0
+          ? Math.min(100, Math.round((Number(item.protein_g) / servingGrams) * 100 * 10) / 10)
+          : Number(item.protein_g))
       : category.includes('Proteína')
       ? 20
       : 0;
 
   const carbs100g =
-    item.carbs_g !== undefined && item.carbs_g !== null && !isNaN(Number(item.carbs_g))
-      ? Number(item.carbs_g)
-      : matched?.carbs100g !== undefined
+    matched?.carbs100g !== undefined
       ? matched.carbs100g
+      : item.carbs_g !== undefined && item.carbs_g !== null && !isNaN(Number(item.carbs_g))
+      ? (servingGrams > 0 && servingGrams < 90 && Number(item.carbs_g) > 0
+          ? Math.min(100, Math.round((Number(item.carbs_g) / servingGrams) * 100 * 10) / 10)
+          : Number(item.carbs_g))
       : category.includes('Grano') || category.includes('Pan')
       ? 50
       : 0;
 
   const fat100g =
-    item.fat_g !== undefined && item.fat_g !== null && !isNaN(Number(item.fat_g))
-      ? Number(item.fat_g)
-      : matched?.fat100g !== undefined
+    matched?.fat100g !== undefined
       ? matched.fat100g
+      : item.fat_g !== undefined && item.fat_g !== null && !isNaN(Number(item.fat_g))
+      ? (servingGrams > 0 && servingGrams < 90 && Number(item.fat_g) > 0
+          ? Math.min(100, Math.round((Number(item.fat_g) / servingGrams) * 100 * 10) / 10)
+          : Number(item.fat_g))
       : category.includes('Aceite')
       ? 100
       : 0;
@@ -1173,5 +1179,267 @@ export function getFoodIntelligence(item: PantryItem): FoodIntelligenceData {
     isaGrade,
     nutriEcoBalance,
     balanceExplanation,
+  };
+}
+
+// ============================================================================
+// CÁLCULO CANÓNICO Y UNIFICADO DE MACRONUTRIENTES Y TOTALES EN DESPENSA
+// Resuelve conversiones volumétricas y de peso (g, kg, ml, l, un, latas)
+// Garantiza que los macronutrientes totales respeten las leyes físicas de conservación
+// ============================================================================
+export interface CalculatedFoodMacros {
+  totalGrams: number;
+  totalMl: number;
+  servingGrams: number;
+  servingsCount: number;
+  cals100g: number;
+  prot100g: number;
+  carbs100g: number;
+  fat100g: number;
+  totalCalories: number;
+  totalProteinG: number;
+  totalCarbsG: number;
+  totalFatG: number;
+  pricePerGramCOP: number;
+  isHumanFood: boolean;
+}
+
+export function calculateFoodMacroTotals(item: PantryItem): CalculatedFoodMacros {
+  const cat = (item.category || '').toLowerCase();
+  const name = (item.name || '').toLowerCase();
+
+  // 1. Filtrar artículos no comestibles para humanos (Aseo, Mascotas)
+  const isNonFood =
+    cat.includes('aseo') ||
+    cat.includes('limpieza') ||
+    cat.includes('higiene') ||
+    cat.includes('cuidado personal') ||
+    cat.includes('mascota') ||
+    cat.includes('perro') ||
+    cat.includes('gato') ||
+    cat.includes('animal') ||
+    [
+      'jabon', 'jabón', 'detergente', 'limpido', 'límpido', 'cloro', 'desinfectante',
+      'lavaplatos', 'blanqueador', 'papel higienico', 'papel higiénico', 'servilletas',
+      'shampoo', 'champu', 'champú', 'crema dental', 'desodorante', 'ambientador',
+      'varsol', 'suavizante', 'toallas cocina', 'insecticida', 'perro', 'perros',
+      'gato', 'gatos', 'chunky', 'ringo', 'cat chow', 'dog chow', 'pedigree', 'purina',
+      'whiskas', 'mirringo', 'filpo', 'arena gato', 'arena para gato'
+    ].some((kw) => name.includes(kw));
+
+  if (isNonFood) {
+    return {
+      totalGrams: 0,
+      totalMl: 0,
+      servingGrams: 100,
+      servingsCount: 0,
+      cals100g: 0,
+      prot100g: 0,
+      carbs100g: 0,
+      fat100g: 0,
+      totalCalories: 0,
+      totalProteinG: 0,
+      totalCarbsG: 0,
+      totalFatG: 0,
+      pricePerGramCOP: 0,
+      isHumanFood: false,
+    };
+  }
+
+  // 2. Coincidencia en base de datos de alimentos
+  const matched = KNOWN_FOODS.find((kf) =>
+    kf.keywords.some((kw) => name.includes(kw))
+  );
+
+  const u = (item.unit || '').toLowerCase().trim();
+  const qty = Math.max(0.001, Number(item.quantity) || 1);
+
+  const isMl = u === 'ml' || u.includes('mili') || u.includes('mililitro') || u === 'cc' || u === 'cm3';
+  const isLiter = !isMl && (u === 'l' || u === 'lt' || u.includes('litro'));
+  const isKg = u.startsWith('kg') || u.includes('kilo') || u.includes('kilogramo');
+  const isGrams = !isKg && (u === 'g' || u === 'gr' || u.includes('gram'));
+  const isLb = u.includes('lb') || u.includes('libra');
+  const isUnits = u.includes('unidad') || u.includes('und') || u === 'un' || u.includes('piez');
+  const isCans = u.includes('lata');
+
+  // Densidad según tipo de producto
+  const density = name.includes('aceite') ? 0.92 : name.includes('leche') ? 1.03 : 1.0;
+
+  // Gramaje total en despensa
+  let totalGrams = 100;
+  if (isGrams) {
+    totalGrams = qty;
+  } else if (isMl) {
+    totalGrams = qty * density;
+  } else if (isKg) {
+    totalGrams = qty * 1000;
+  } else if (isLiter) {
+    totalGrams = qty * 1000 * density;
+  } else if (isLb) {
+    totalGrams = qty * 500;
+  } else if (isUnits) {
+    if (name.includes('huevo')) totalGrams = qty * 50;
+    else if (name.includes('pan') || name.includes('arepa')) totalGrams = qty * 60;
+    else if (name.includes('manzana') || name.includes('naranja') || name.includes('pera')) totalGrams = qty * 150;
+    else totalGrams = qty * 100;
+  } else if (isCans) {
+    if (name.includes('atun') || name.includes('atún') || name.includes('sardina')) totalGrams = qty * 160;
+    else totalGrams = qty * 250;
+  } else {
+    // Buscar peso explícito en el nombre
+    const matchedG = name.match(/(\d+)\s*(g|gr|gramos|ml|mililitros|cc)/i);
+    const matchedK = name.match(/(\d+(?:[.,]\d+)?)\s*(kg|kilos|litros|l)\b/i);
+    if (matchedG) {
+      totalGrams = parseFloat(matchedG[1]) * (matchedG[2].includes('ml') ? density : 1) * qty;
+    } else if (matchedK) {
+      totalGrams = parseFloat(matchedK[1].replace(',', '.')) * 1000 * density * qty;
+    } else {
+      totalGrams = 250 * qty;
+    }
+  }
+  totalGrams = Math.max(1, Math.round(totalGrams));
+  const totalMl = isMl ? Math.round(qty) : isLiter ? Math.round(qty * 1000) : Math.round(totalGrams / density);
+
+  // Porción de referencia en gramos
+  let servingGrams = 100;
+  if (name.includes('aceite') || cat.includes('aceite')) servingGrams = 14;
+  else if (name.includes('arroz') || cat.includes('grano') || name.includes('pasta') || name.includes('frijol') || name.includes('lenteja') || name.includes('avena')) servingGrams = 50;
+  else if (name.includes('leche') || cat.includes('lácteo') || cat.includes('lacteo')) servingGrams = 200;
+  else if (name.includes('huevo')) servingGrams = 50;
+  else if (name.includes('queso')) servingGrams = 30;
+  else if (name.includes('atun') || name.includes('atún')) servingGrams = 80;
+  else if (matched?.servingSize) {
+    if (matched.servingSize.includes('14g') || matched.servingSize.includes('15ml')) servingGrams = 14;
+    else if (matched.servingSize.includes('50g')) servingGrams = 50;
+    else if (matched.servingSize.includes('30g')) servingGrams = 30;
+    else if (matched.servingSize.includes('80g')) servingGrams = 80;
+    else if (matched.servingSize.includes('120g')) servingGrams = 120;
+    else if (matched.servingSize.includes('200ml') || matched.servingSize.includes('250ml')) servingGrams = 200;
+  }
+
+  // 3. Concentración nutricional por 100g
+  let prot100g = 0;
+  let carbs100g = 0;
+  let fat100g = 0;
+  let cals100g = 0;
+
+  if (matched) {
+    prot100g = matched.prot100g;
+    carbs100g = matched.carbs100g;
+    fat100g = matched.fat100g;
+    cals100g = matched.cals100g;
+  } else {
+    if (name.includes('aceite') || cat.includes('aceite')) {
+      cals100g = 884;
+      fat100g = 100;
+      prot100g = 0;
+      carbs100g = 0;
+    } else if (name.includes('arroz')) {
+      cals100g = 360;
+      carbs100g = 80;
+      prot100g = 7.1;
+      fat100g = 0.7;
+    } else if (cat.includes('proteína') || cat.includes('proteina') || name.includes('pollo') || name.includes('carne') || name.includes('pescado') || name.includes('tilapia')) {
+      cals100g = 165;
+      prot100g = 25;
+      carbs100g = 0;
+      fat100g = 3.6;
+    } else if (cat.includes('grano') || cat.includes('cereal') || cat.includes('pan')) {
+      cals100g = 350;
+      carbs100g = 70;
+      prot100g = 10;
+      fat100g = 2;
+    } else if (cat.includes('lácteo') || cat.includes('lacteo')) {
+      cals100g = 65;
+      carbs100g = 4.8;
+      prot100g = 3.3;
+      fat100g = 3.3;
+    } else if (cat.includes('fruta') || cat.includes('verdura')) {
+      cals100g = 45;
+      carbs100g = 10;
+      prot100g = 1;
+      fat100g = 0.2;
+    } else {
+      cals100g = 150;
+      carbs100g = 20;
+      prot100g = 5;
+      fat100g = 3;
+    }
+  }
+
+  // Si el usuario especificó valores manuales en el item
+  if (item.fat_g !== undefined && item.fat_g !== null && !isNaN(Number(item.fat_g))) {
+    const rawFat = Number(item.fat_g);
+    if (servingGrams > 0 && servingGrams < 90 && rawFat > 0) {
+      fat100g = Math.min(100, Math.round((rawFat / servingGrams) * 100 * 10) / 10);
+    } else if (rawFat <= 100) {
+      fat100g = rawFat;
+    }
+  }
+
+  if (item.carbs_g !== undefined && item.carbs_g !== null && !isNaN(Number(item.carbs_g))) {
+    const rawCarbs = Number(item.carbs_g);
+    if (servingGrams > 0 && servingGrams < 90 && rawCarbs > 0) {
+      carbs100g = Math.min(100, Math.round((rawCarbs / servingGrams) * 100 * 10) / 10);
+    } else if (rawCarbs <= 100) {
+      carbs100g = rawCarbs;
+    }
+  }
+
+  if (item.protein_g !== undefined && item.protein_g !== null && !isNaN(Number(item.protein_g))) {
+    const rawProt = Number(item.protein_g);
+    if (servingGrams > 0 && servingGrams < 90 && rawProt > 0) {
+      prot100g = Math.min(100, Math.round((rawProt / servingGrams) * 100 * 10) / 10);
+    } else if (rawProt <= 100) {
+      prot100g = rawProt;
+    }
+  }
+
+  if (item.calories_per_unit !== undefined && item.calories_per_unit !== null && Number(item.calories_per_unit) > 0) {
+    const rawCal = Number(item.calories_per_unit);
+    if (servingGrams > 0 && servingGrams < 90 && rawCal < 500) {
+      cals100g = Math.round((rawCal / servingGrams) * 100);
+    } else if (rawCal <= 900) {
+      cals100g = rawCal;
+    }
+  }
+
+  // 4. Totales absolutos en despensa
+  let totalProteinG = Math.round(((prot100g / 100) * totalGrams) * 10) / 10;
+  let totalCarbsG = Math.round(((carbs100g / 100) * totalGrams) * 10) / 10;
+  let totalFatG = Math.round(((fat100g / 100) * totalGrams) * 10) / 10;
+
+  // Límite físico: los macros no pueden superar la masa total del alimento
+  totalProteinG = Math.min(totalProteinG, totalGrams);
+  totalCarbsG = Math.min(totalCarbsG, totalGrams);
+  totalFatG = Math.min(totalFatG, totalGrams);
+
+  let totalCalories = 0;
+  if (Number(item.total_calories) > 0 && Number(item.total_calories) < 2000000) {
+    totalCalories = Math.round(Number(item.total_calories));
+  } else {
+    totalCalories = Math.round((cals100g / 100) * totalGrams);
+  }
+
+  // 5. Métricas económicas
+  const totalPrice = Number(item.total_price) || (Number(item.unit_price) * Number(item.quantity)) || 0;
+  const pricePerGramCOP = totalGrams > 0 && totalPrice > 0 ? Math.round((totalPrice / totalGrams) * 100) / 100 : 0;
+  const servingsCount = servingGrams > 0 ? Math.round((totalGrams / servingGrams) * 10) / 10 : Math.round(qty);
+
+  return {
+    totalGrams,
+    totalMl,
+    servingGrams,
+    servingsCount,
+    cals100g,
+    prot100g,
+    carbs100g,
+    fat100g,
+    totalCalories,
+    totalProteinG,
+    totalCarbsG,
+    totalFatG,
+    pricePerGramCOP,
+    isHumanFood: true,
   };
 }

@@ -9,7 +9,7 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { PantryItem } from '../../../../packages/shared/src/types';
-import { getFoodIntelligence } from '../../lib/pantryFoodIntelligence';
+import { getFoodIntelligence, calculateFoodMacroTotals } from '../../lib/pantryFoodIntelligence';
 
 export type NutritionMode = 'calories' | 'protein' | 'carbs' | 'fat';
 
@@ -157,58 +157,36 @@ export const NutritionAnalytics: React.FC<NutritionAnalyticsProps> = ({
   // Procesar métricas de cada alimento para el plano cartesiano y el ranking
   const processedPoints: ProcessedFoodPoint[] = useMemo(() => {
     return activeFoodItems.map((item) => {
-      const intel = getFoodIntelligence(item);
-      const economics = intel.economics;
-      const nutrition = intel.nutrition;
-
-      const pPerGram = economics.pricePerGramCOP > 0 ? economics.pricePerGramCOP : 5;
-
-      // Densidad nutricional por cada 100g del alimento
-      const calsPer100g = Math.max(nutrition.calories || 0, item.calories_per_unit || 0, 50);
-      const protPer100g = Math.max(nutrition.protein_g || 0, item.protein_g || 0);
-      const carbsPer100g = Math.max(nutrition.carbs_g || 0, item.carbs_g || 0);
-      const fatPer100g = Math.max(nutrition.fat_g || 0, item.fat_g || 0);
-
-      const currentStockGrams = economics.estimatedWeightGrams * Math.max(1, item.quantity);
+      const macros = calculateFoodMacroTotals(item);
 
       let chart1Val = 0;
       let chart1Lbl = '';
       let totalNutrient = 0;
 
       if (activeMode === 'calories') {
-        chart1Val = Math.round(calsPer100g);
+        chart1Val = Math.round(macros.cals100g);
         chart1Lbl = `${chart1Val} kcal/100g`;
-        totalNutrient = Math.round(
-          item.total_calories ||
-            (calsPer100g * (currentStockGrams / 100)) ||
-            (item.calories_per_unit * item.quantity)
-        );
+        totalNutrient = Math.round(macros.totalCalories);
       } else if (activeMode === 'protein') {
-        chart1Val = Math.round(protPer100g * 10) / 10;
+        chart1Val = Math.round(macros.prot100g * 10) / 10;
         chart1Lbl = `${chart1Val}g Prot/100g`;
-        totalNutrient = Math.round(
-          (item.protein_g || protPer100g) * (item.unit === 'kg' ? item.quantity * 10 : item.quantity)
-        );
+        totalNutrient = Math.round(macros.totalProteinG * 10) / 10;
       } else if (activeMode === 'carbs') {
-        chart1Val = Math.round(carbsPer100g * 10) / 10;
+        chart1Val = Math.round(macros.carbs100g * 10) / 10;
         chart1Lbl = `${chart1Val}g Carb/100g`;
-        totalNutrient = Math.round(
-          (item.carbs_g || carbsPer100g) * (item.unit === 'kg' ? item.quantity * 10 : item.quantity)
-        );
+        totalNutrient = Math.round(macros.totalCarbsG * 10) / 10;
       } else {
         // fat
-        chart1Val = Math.round(fatPer100g * 10) / 10;
+        chart1Val = Math.round(macros.fat100g * 10) / 10;
         chart1Lbl = `${chart1Val}g Grasa/100g`;
-        totalNutrient = Math.round(
-          (item.fat_g || fatPer100g) * (item.unit === 'kg' ? item.quantity * 10 : item.quantity)
-        );
+        totalNutrient = Math.round(macros.totalFatG * 10) / 10;
       }
 
       return {
         item,
         name: item.name,
         category: item.category,
-        pricePerGramCOP: pPerGram,
+        pricePerGramCOP: macros.pricePerGramCOP,
         chart1NutrientAmount: chart1Val,
         chart1NutrientLabel: chart1Lbl,
         totalNutrientInStock: totalNutrient,
@@ -226,11 +204,13 @@ export const NutritionAnalytics: React.FC<NutritionAnalyticsProps> = ({
 
   // Total acumulado del nutriente activo para calcular porcentajes en las barras
   const totalNutrientSum = useMemo(() => {
+    const directSum = processedPoints.reduce((acc, p) => acc + (p.totalNutrientInStock || 0), 0);
+    if (directSum > 0) return directSum;
     if (activeMode === 'calories') return totalCaloriesAvailable || 1;
     if (activeMode === 'protein') return totalProteinG || 1;
     if (activeMode === 'carbs') return totalCarbsG || 1;
     return totalFatG || 1;
-  }, [activeMode, totalCaloriesAvailable, totalProteinG, totalCarbsG, totalFatG]);
+  }, [processedPoints, activeMode, totalCaloriesAvailable, totalProteinG, totalCarbsG, totalFatG]);
 
   // Punto activo para la barra de inspección
   const activePoint1 = selectedPointChart1 || (processedPoints.length > 0 ? processedPoints[0] : null);
