@@ -22,6 +22,7 @@ import {
   LogOut,
   Check,
   TrendingUp,
+  TrendingDown,
   CreditCard,
   PiggyBank,
   PanelLeftClose,
@@ -137,15 +138,66 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
   // Modal de registro rápido
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-  // Widgets configurables del Home
-  const [showConfigWidgets, setShowConfigWidgets] = useState<boolean>(false);
-  const [activeWidgets, setActiveWidgets] = useState({
+  // Widgets configurables del Home con persistencia
+  const DEFAULT_ACTIVE_WIDGETS = {
     dailyCashflow: true,
     monthlyBalance: true,
     recentTransactions: true,
     budgetGauge: true,
     accountCards: true,
+  };
+
+  type ActiveWidgetsState = typeof DEFAULT_ACTIVE_WIDGETS;
+
+  const [showConfigWidgets, setShowConfigWidgets] = useState<boolean>(false);
+  const [activeWidgets, setActiveWidgets] = useState<ActiveWidgetsState>(() => {
+    try {
+      const saved = localStorage.getItem('finance_active_widgets');
+      if (saved) {
+        return { ...DEFAULT_ACTIVE_WIDGETS, ...JSON.parse(saved) };
+      }
+    } catch (e) {
+      console.error('Error al recuperar finance_active_widgets de localStorage:', e);
+    }
+    return DEFAULT_ACTIVE_WIDGETS;
   });
+
+  const handleToggleWidget = async (key: keyof ActiveWidgetsState) => {
+    const updated = {
+      ...activeWidgets,
+      [key]: !activeWidgets[key],
+    };
+    setActiveWidgets(updated);
+
+    try {
+      localStorage.setItem('finance_active_widgets', JSON.stringify(updated));
+
+      // Sincronizar en Supabase profiles.home_widgets
+      if (user?.id) {
+        const widgetKeyMap: Record<string, string> = {
+          dailyCashflow: 'daily_cashflow',
+          monthlyBalance: 'monthly_balance',
+          recentTransactions: 'recent_transactions',
+          budgetGauge: 'budget_gauge',
+          accountCards: 'account_cards',
+        };
+
+        const activeList = Object.entries(updated)
+          .filter(([_, active]) => active)
+          .map(([k]) => widgetKeyMap[k] || k);
+
+        await supabase
+          .from('profiles')
+          .update({
+            home_widgets: activeList,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', user.id);
+      }
+    } catch (err) {
+      console.error('Error al guardar configuración de widgets:', err);
+    }
+  };
 
   // Filtros avanzados
   const [txSearch, setTxSearch] = useState<string>('');
@@ -178,6 +230,20 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
         if (profile.currency_symbol) {
           setCurrencySymbol(profile.currency_symbol);
           localStorage.setItem('currency_symbol', profile.currency_symbol);
+        }
+        if (profile.home_widgets && !localStorage.getItem('finance_active_widgets')) {
+          if (Array.isArray(profile.home_widgets)) {
+            const list = profile.home_widgets as string[];
+            const loadedWidgets: ActiveWidgetsState = {
+              dailyCashflow: list.includes('daily_cashflow') || list.includes('dailyCashflow'),
+              monthlyBalance: list.includes('monthly_balance') || list.includes('monthlyBalance'),
+              recentTransactions: list.includes('recent_transactions') || list.includes('recentTransactions'),
+              budgetGauge: list.includes('budget_gauge') || list.includes('budgetGauge'),
+              accountCards: list.includes('account_cards') || list.includes('accountCards'),
+            };
+            setActiveWidgets(loadedWidgets);
+            localStorage.setItem('finance_active_widgets', JSON.stringify(loadedWidgets));
+          }
         }
       }
 
@@ -346,6 +412,98 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
   }, [filteredTransactions, selectedAccountIds]);
 
   const netBalance = totalIncome - totalExpense;
+
+  // Cálculo de datos para el widget de Flujo de Caja (entradas, salidas y saldo neto diario)
+  const cashflowData = useMemo(() => {
+    const now = new Date();
+    const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+
+    const dateSet = new Set<string>();
+    filteredTransactions.forEach((tx) => {
+      if (tx.date) dateSet.add(tx.date);
+    });
+
+    // Asegurar al menos los últimos 7 días hasta hoy para una visualización consistente
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+      const ds = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      dateSet.add(ds);
+    }
+
+    const sortedDates = Array.from(dateSet).sort().slice(-7);
+
+    const days = sortedDates.map((dateStr) => {
+      const [y, m, d] = dateStr.split('-').map(Number);
+      const dateObj = new Date(y, m - 1, d);
+      const isToday =
+        dateObj.getFullYear() === now.getFullYear() &&
+        dateObj.getMonth() === now.getMonth() &&
+        dateObj.getDate() === now.getDate();
+
+      const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+      const isYesterday =
+        dateObj.getFullYear() === yesterday.getFullYear() &&
+        dateObj.getMonth() === yesterday.getMonth() &&
+        dateObj.getDate() === yesterday.getDate();
+
+      const label = isToday ? 'Hoy' : isYesterday ? 'Ayer' : `${dayNames[dateObj.getDay()]} ${dateObj.getDate()}`;
+
+      return {
+        dateStr,
+        label,
+        income: 0,
+        expense: 0,
+        net: 0,
+      };
+    });
+
+    for (const tx of filteredTransactions) {
+      const dayItem = days.find((d) => d.dateStr === tx.date);
+      if (!dayItem) continue;
+
+      const amt = Number(tx.amount) || 0;
+      if (tx.type === 'ingreso') {
+        dayItem.income += amt;
+      } else if (tx.type === 'salida') {
+        dayItem.expense += amt;
+      } else if (tx.type === 'transferencia') {
+        if (selectedAccountIds.length === 0) {
+          dayItem.income += amt;
+          dayItem.expense += amt;
+        } else {
+          const isSourceSelected = selectedAccountIds.includes(tx.account_id);
+          const isDestSelected = tx.destination_account_id ? selectedAccountIds.includes(tx.destination_account_id) : false;
+          if (isDestSelected && !isSourceSelected) {
+            dayItem.income += amt;
+          } else if (isSourceSelected && !isDestSelected) {
+            dayItem.expense += amt;
+          } else if (isSourceSelected && isDestSelected) {
+            dayItem.income += amt;
+            dayItem.expense += amt;
+          }
+        }
+      }
+    }
+
+    days.forEach((d) => {
+      d.net = d.income - d.expense;
+    });
+
+    const maxVal = Math.max(...days.map((d) => Math.max(d.income, d.expense)), 1);
+    const totalPeriodNet = days.reduce((sum, d) => sum + d.net, 0);
+    const totalPeriodIncome = days.reduce((sum, d) => sum + d.income, 0);
+    const totalPeriodExpense = days.reduce((sum, d) => sum + d.expense, 0);
+    const avgDailyNet = days.length > 0 ? totalPeriodNet / days.length : 0;
+
+    return {
+      days,
+      maxVal,
+      totalPeriodNet,
+      totalPeriodIncome,
+      totalPeriodExpense,
+      avgDailyNet,
+    };
+  }, [filteredTransactions, selectedAccountIds]);
 
   const toggleAccountFilter = (accId: string) => {
     if (selectedAccountIds.includes(accId)) {
@@ -654,27 +812,27 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
             {/* Panel de Widgets Dinámicos */}
             {showConfigWidgets && (
               <div className="bg-white dark:bg-slate-900/90 border border-emerald-500/30 rounded-2xl p-4 shadow-sm animate-in fade-in">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-3">
-                  Personalizar Tarjetas del Home
-                </h4>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                <div className="flex items-center justify-between mb-3 flex-wrap gap-1">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                    Personalizar Tarjetas del Home
+                  </h4>
+                  <span className="text-[10px] text-slate-400 font-medium">
+                    (Se guarda automáticamente en tu cuenta)
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 text-xs">
                   {Object.entries(activeWidgets).map(([key, val]) => (
                     <label
                       key={key}
-                      className="flex items-center gap-2 cursor-pointer bg-slate-50 dark:bg-slate-950 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800"
+                      className="flex items-center gap-2 cursor-pointer bg-slate-50 dark:bg-slate-950 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 transition"
                     >
                       <input
                         type="checkbox"
                         checked={val}
-                        onChange={() =>
-                          setActiveWidgets({
-                            ...activeWidgets,
-                            [key]: !val,
-                          })
-                        }
-                        className="rounded text-emerald-500 focus:ring-0"
+                        onChange={() => handleToggleWidget(key as keyof ActiveWidgetsState)}
+                        className="rounded text-emerald-500 focus:ring-0 cursor-pointer"
                       />
-                      <span className="capitalize text-slate-700 dark:text-slate-300">
+                      <span className="capitalize text-slate-700 dark:text-slate-300 font-medium select-none">
                         {key === 'dailyCashflow'
                           ? 'Flujo de Caja'
                           : key === 'monthlyBalance'
@@ -691,63 +849,191 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
               </div>
             )}
 
-            {/* Selector de Cuentas */}
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
-              <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2 mb-3">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                    Cuentas ({selectedAccountIds.length === 0 ? 'Todas' : `${selectedAccountIds.length} seleccionadas`})
-                  </span>
-                  <span className="text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60 px-2.5 py-0.5 rounded-lg flex items-center gap-1.5">
-                    <span className="text-[10px] uppercase font-bold text-emerald-600 dark:text-emerald-500">Saldo Total:</span>
-                    <strong className="font-bold">{formatMoney(totalPortfolioBalance)}</strong>
-                  </span>
+            {/* Selector de Cuentas / Tarjetas de Cuentas */}
+            {activeWidgets.accountCards && (
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm animate-in fade-in">
+                <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2 mb-3">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                      Cuentas ({selectedAccountIds.length === 0 ? 'Todas' : `${selectedAccountIds.length} seleccionadas`})
+                    </span>
+                    <span className="text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60 px-2.5 py-0.5 rounded-lg flex items-center gap-1.5">
+                      <span className="text-[10px] uppercase font-bold text-emerald-600 dark:text-emerald-500">Saldo Total:</span>
+                      <strong className="font-bold">{formatMoney(totalPortfolioBalance)}</strong>
+                    </span>
+                  </div>
+                  <button
+                    onClick={selectAllAccounts}
+                    className={`text-xs ${
+                      selectedAccountIds.length === 0
+                        ? 'text-emerald-600 dark:text-emerald-400 font-bold'
+                        : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                  >
+                    Ver Todas
+                  </button>
                 </div>
-                <button
-                  onClick={selectAllAccounts}
-                  className={`text-xs ${
-                    selectedAccountIds.length === 0
-                      ? 'text-emerald-600 dark:text-emerald-400 font-bold'
-                      : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
-                  }`}
-                >
-                  Ver Todas
-                </button>
-              </div>
 
-              <div className="flex flex-wrap gap-2">
-                {accountsWithBalances.map((acc) => {
-                  const isSelected = selectedAccountIds.includes(acc.id);
-                  const bal = acc.current_balance ?? acc.initial_balance;
-                  return (
-                    <button
-                      key={acc.id}
-                      onClick={() => toggleAccountFilter(acc.id)}
-                      className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold border transition ${
-                        isSelected
-                          ? 'bg-emerald-50 dark:bg-emerald-500/20 border-emerald-500 text-emerald-800 dark:text-emerald-300 shadow-sm'
-                          : 'bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-slate-300'
+                <div className="flex flex-wrap gap-2">
+                  {accountsWithBalances.map((acc) => {
+                    const isSelected = selectedAccountIds.includes(acc.id);
+                    const bal = acc.current_balance ?? acc.initial_balance;
+                    return (
+                      <button
+                        key={acc.id}
+                        onClick={() => toggleAccountFilter(acc.id)}
+                        className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold border transition ${
+                          isSelected
+                            ? 'bg-emerald-50 dark:bg-emerald-500/20 border-emerald-500 text-emerald-800 dark:text-emerald-300 shadow-sm'
+                            : 'bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-slate-300'
+                        }`}
+                      >
+                        <span className="text-sm">
+                          {acc.type === 'tarjeta' ? '💳' : acc.type === 'efectivo' ? '💵' : '🏦'}
+                        </span>
+                        <div className="flex flex-col text-left">
+                          <span className="leading-tight">{acc.name}</span>
+                          <span
+                            className={`text-[10px] leading-tight font-bold ${
+                              bal < 0 ? 'text-rose-500 dark:text-rose-400' : 'text-slate-500 dark:text-slate-400'
+                            }`}
+                          >
+                            {formatMoney(bal)}
+                          </span>
+                        </div>
+                        {isSelected && <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 ml-0.5" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Widget de Flujo de Caja */}
+            {activeWidgets.dailyCashflow && (
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm animate-in fade-in transition-all">
+                <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-5">
+                  <div>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                        Flujo de Caja
+                      </h3>
+                      <span
+                        className={`text-xs px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1 ${
+                          cashflowData.totalPeriodNet >= 0
+                            ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60'
+                            : 'bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60'
+                        }`}
+                      >
+                        {cashflowData.totalPeriodNet >= 0 ? (
+                          <TrendingUp className="w-3.5 h-3.5" />
+                        ) : (
+                          <TrendingDown className="w-3.5 h-3.5" />
+                        )}
+                        {cashflowData.totalPeriodNet >= 0 ? 'Superávit / Flujo Positivo' : 'Déficit / Flujo Negativo'}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                      Dinámica de entradas y salidas recientes ({timeFilter === 'ano' ? 'Año' : timeFilter === 'dia' ? 'Día' : timeFilter})
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-300">
+                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block" />
+                      <span>Entradas</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-300">
+                      <span className="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block" />
+                      <span>Salidas</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Métricas clave de flujo */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+                  <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800/80">
+                    <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">Entradas Registradas</span>
+                    <span className="text-sm sm:text-base font-black text-emerald-600 dark:text-emerald-400">
+                      +{formatMoney(cashflowData.totalPeriodIncome)}
+                    </span>
+                  </div>
+                  <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800/80">
+                    <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">Salidas Registradas</span>
+                    <span className="text-sm sm:text-base font-black text-rose-600 dark:text-rose-400">
+                      -{formatMoney(cashflowData.totalPeriodExpense)}
+                    </span>
+                  </div>
+                  <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800/80">
+                    <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">Flujo Neto Total</span>
+                    <span
+                      className={`text-sm sm:text-base font-black ${
+                        cashflowData.totalPeriodNet >= 0
+                          ? 'text-emerald-600 dark:text-emerald-400'
+                          : 'text-rose-600 dark:text-rose-400'
                       }`}
                     >
-                      <span className="text-sm">
-                        {acc.type === 'tarjeta' ? '💳' : acc.type === 'efectivo' ? '💵' : '🏦'}
-                      </span>
-                      <div className="flex flex-col text-left">
-                        <span className="leading-tight">{acc.name}</span>
-                        <span
-                          className={`text-[10px] leading-tight font-bold ${
-                            bal < 0 ? 'text-rose-500 dark:text-rose-400' : 'text-slate-500 dark:text-slate-400'
-                          }`}
-                        >
-                          {formatMoney(bal)}
-                        </span>
-                      </div>
-                      {isSelected && <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 ml-0.5" />}
-                    </button>
-                  );
-                })}
+                      {cashflowData.totalPeriodNet >= 0 ? '+' : ''}
+                      {formatMoney(cashflowData.totalPeriodNet)}
+                    </span>
+                  </div>
+                  <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800/80">
+                    <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">Promedio Diario</span>
+                    <span
+                      className={`text-sm sm:text-base font-black ${
+                        cashflowData.avgDailyNet >= 0
+                          ? 'text-emerald-600 dark:text-emerald-400'
+                          : 'text-rose-600 dark:text-rose-400'
+                      }`}
+                    >
+                      {cashflowData.avgDailyNet >= 0 ? '+' : ''}
+                      {formatMoney(cashflowData.avgDailyNet)}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Gráfico comparativo de barras de flujo diario */}
+                <div>
+                  <div className="h-44 flex items-end justify-between gap-1.5 sm:gap-3 pt-6 pb-2 border-b border-slate-100 dark:border-slate-800">
+                    {cashflowData.days.map((d) => {
+                      const incHeight = Math.round((d.income / cashflowData.maxVal) * 100);
+                      const expHeight = Math.round((d.expense / cashflowData.maxVal) * 100);
+                      return (
+                        <div key={d.dateStr} className="flex-1 flex flex-col items-center h-full justify-end group relative">
+                          {/* Tooltip flotante con detalle de valores al hover */}
+                          <div className="absolute -top-14 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-900 text-white dark:bg-white dark:text-slate-900 text-[10px] font-semibold py-1 px-2.5 rounded-lg pointer-events-none z-20 whitespace-nowrap shadow-lg">
+                            <div className="text-emerald-400 dark:text-emerald-600 font-bold">+ {formatMoney(d.income)}</div>
+                            <div className="text-rose-400 dark:text-rose-600 font-bold">- {formatMoney(d.expense)}</div>
+                            <div className="font-extrabold border-t border-slate-700 dark:border-slate-200 mt-0.5 pt-0.5">
+                              Neto: {d.net >= 0 ? '+' : ''}{formatMoney(d.net)}
+                            </div>
+                          </div>
+
+                          {/* Barras de Entradas y Salidas */}
+                          <div className="w-full flex items-end justify-center gap-1 sm:gap-1.5 h-full">
+                            <div
+                              className="w-2.5 sm:w-4 bg-emerald-500 rounded-t-md transition-all duration-300 hover:brightness-110"
+                              style={{ height: `${Math.max(incHeight > 0 ? incHeight : 4, 4)}%` }}
+                              title={`Entradas: ${formatMoney(d.income)}`}
+                            />
+                            <div
+                              className="w-2.5 sm:w-4 bg-rose-500 rounded-t-md transition-all duration-300 hover:brightness-110"
+                              style={{ height: `${Math.max(expHeight > 0 ? expHeight : 4, 4)}%` }}
+                              title={`Salidas: ${formatMoney(d.expense)}`}
+                            />
+                          </div>
+
+                          {/* Etiqueta de la fecha */}
+                          <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400 mt-2 truncate w-full text-center">
+                            {d.label}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Balance General con Moneda Dinámica */}
             {activeWidgets.monthlyBalance && (
