@@ -64,6 +64,7 @@ const CATEGORIES = [
   'Granos & Cereales',
   'Frutas & Verduras',
   'Aseo & Limpieza',
+  'Mascotas',
   'Snacks & Bebidas',
   'Condimentos & Aceites',
   'Panadería',

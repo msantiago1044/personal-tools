@@ -266,7 +266,7 @@ Estructura esperada:
   "items": [
     {
       "name": "Nombre limpio y reconocible del producto en español",
-      "category": "Proteínas | Lácteos | Granos & Cereales | Frutas & Verduras | Aseo & Limpieza | Snacks & Bebidas | Condimentos & Aceites | Panadería | Despensa",
+      "category": "Proteínas | Lácteos | Granos & Cereales | Frutas & Verduras | Aseo & Limpieza | Mascotas | Snacks & Bebidas | Condimentos & Aceites | Panadería | Despensa",
       "quantity": 1,
       "unit": "unidad | kg | g | litro | ml | paquete | lata",
       "unit_price": 0.00,
@@ -282,8 +282,8 @@ Estructura esperada:
 
 Reglas clave:
 1. Normaliza los nombres de productos (ej. si dice "LECH ENT ALG 1L" pon "Leche Entera Alquería 1L").
-2. Estima razonablemente las calorías y macronutrientes según las tablas nutricionales estándar para cada alimento. Para productos de aseo o no comestibles, pon 0 calorías y 0 macros.
-3. Estima "shelf_life_days" considerando si es alimento perecedero (carnes/aves: 3-5 días, lácteos: 7-10 días, frutas/verduras: 5-14 días, no perecederos/enlatados: 180-720 días, aseo: 365 días).
+2. Estima razonablemente las calorías y macronutrientes según las tablas nutricionales estándar para cada alimento humano. Para productos de aseo, mascotas o no comestibles para humanos, pon 0 calorías y 0 macros.
+3. Estima "shelf_life_days" considerando si es alimento perecedero (carnes/aves: 3-5 días, lácteos: 7-10 días, frutas/verduras: 5-14 días, no perecederos/enlatados: 180-720 días, aseo: 365 días, mascotas: 180 días).
 `;
 
   const requestBody = {
