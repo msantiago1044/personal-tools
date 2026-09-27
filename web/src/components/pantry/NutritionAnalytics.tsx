@@ -4,20 +4,14 @@ import {
   Heart,
   Droplet,
   Zap,
-  DollarSign,
-  TrendingUp,
-  Activity,
-  Calendar,
-  Sparkles,
   Info,
   ChevronRight,
-  Filter,
+  ExternalLink,
 } from 'lucide-react';
 import { PantryItem } from '../../../../packages/shared/src/types';
 import { getFoodIntelligence } from '../../lib/pantryFoodIntelligence';
 
 export type NutritionMode = 'calories' | 'protein' | 'carbs' | 'fat';
-export type RecommendationPeriod = 'daily' | 'biweekly';
 
 interface NutritionAnalyticsProps {
   pantryItems: PantryItem[];
@@ -28,90 +22,53 @@ interface NutritionAnalyticsProps {
   onSelectProduct: (item: PantryItem) => void;
 }
 
-// Recomendación estándar de ingesta de alimentos basada en guías ICBF / OMS
-const getRecommendedPortionGrams = (item: PantryItem): { dailyG: number; desc: string } => {
-  const name = (item.name || '').toLowerCase();
+// Filtro estricto para excluir productos de aseo, limpieza y no comestibles de la analítica nutricional
+const isCleaningOrNonFood = (item: PantryItem): boolean => {
   const cat = (item.category || '').toLowerCase();
+  const name = (item.name || '').toLowerCase();
 
-  if (name.includes('huevo')) {
-    return { dailyG: 60, desc: '1 a 2 unidades diarias (~60-120g)' };
-  }
   if (
-    name.includes('pollo') ||
-    name.includes('carne') ||
-    name.includes('res') ||
-    name.includes('cerdo') ||
-    name.includes('pescado') ||
-    name.includes('atun') ||
-    name.includes('atún')
+    cat.includes('aseo') ||
+    cat.includes('limpieza') ||
+    cat.includes('higiene') ||
+    cat.includes('cuidado personal')
   ) {
-    return { dailyG: 150, desc: '1 porción magra diaria (~150g)' };
-  }
-  if (
-    name.includes('lenteja') ||
-    name.includes('frijol') ||
-    name.includes('fríjol') ||
-    name.includes('garbanzo')
-  ) {
-    return { dailyG: 80, desc: '1 porción de leguminosa seca (~80g)' };
-  }
-  if (
-    name.includes('arroz') ||
-    name.includes('pasta') ||
-    name.includes('avena') ||
-    name.includes('quinoa')
-  ) {
-    return { dailyG: 100, desc: '1 porción de cereal complejo (~100g)' };
-  }
-  if (name.includes('leche') || name.includes('yogur') || name.includes('kumis')) {
-    return { dailyG: 250, desc: '1 vaso de lácteo (~250ml)' };
-  }
-  if (name.includes('queso')) {
-    return { dailyG: 50, desc: '1 tajada de queso fresco (~50g)' };
-  }
-  if (name.includes('aceite') || name.includes('oliva')) {
-    return { dailyG: 20, desc: 'Grasa culinaria saludable (~20ml)' };
-  }
-  if (
-    name.includes('fruta') ||
-    name.includes('manzana') ||
-    name.includes('banano') ||
-    name.includes('naranja') ||
-    name.includes('arandano') ||
-    name.includes('pera') ||
-    name.includes('fresa')
-  ) {
-    return { dailyG: 200, desc: '2 porciones de fruta fresca (~200g)' };
-  }
-  if (
-    name.includes('verdura') ||
-    name.includes('tomate') ||
-    name.includes('cebolla') ||
-    name.includes('zanahoria') ||
-    name.includes('ahuyama') ||
-    name.includes('espinaca') ||
-    name.includes('lechuga') ||
-    name.includes('brocoli')
-  ) {
-    return { dailyG: 250, desc: 'Hortalizas y verduras (~250g)' };
-  }
-  if (name.includes('pan') || name.includes('arepa')) {
-    return { dailyG: 80, desc: '1 a 2 unidades diarias (~80g)' };
-  }
-  if (cat.includes('proteína') || cat.includes('proteina')) {
-    return { dailyG: 150, desc: 'Porción proteica diaria (~150g)' };
-  }
-  if (cat.includes('lácteo') || cat.includes('lacteo')) {
-    return { dailyG: 200, desc: 'Porción láctea (~200g)' };
-  }
-  if (cat.includes('fruta') || cat.includes('verdura')) {
-    return { dailyG: 200, desc: 'Porción de frescos (~200g)' };
-  }
-  if (cat.includes('grano') || cat.includes('cereal')) {
-    return { dailyG: 90, desc: 'Porción de grano integral (~90g)' };
+    return true;
   }
 
-  return { dailyG: 100, desc: 'Consumo estándar balanceado (~100g)' };
+  const nonFoodKeywords = [
+    'suavizante',
+    'jabon',
+    'jabón',
+    'detergente',
+    'limpido',
+    'límpido',
+    'cloro',
+    'desinfectante',
+    'lavaplatos',
+    'blanqueador',
+    'esponja',
+    'papel higienico',
+    'papel higiénico',
+    'toallas cocina',
+    'servilletas',
+    'crema dental',
+    'shampoo',
+    'champu',
+    'champú',
+    'acondicionador',
+    'cepillo',
+    'desodorante',
+    'ambientador',
+    'bolsas basura',
+    'varsol',
+    'toalla higienica',
+    'toallitas',
+    'desengrasante',
+    'insecticida',
+  ];
+
+  return nonFoodKeywords.some((kw) => name.includes(kw));
 };
 
 interface ProcessedFoodPoint {
@@ -119,13 +76,9 @@ interface ProcessedFoodPoint {
   name: string;
   category: string;
   pricePerGramCOP: number;
-  nutrientAmount: number; // kcal, g proteína, g carb o g grasa
-  nutrientLabel: string;
+  chart1NutrientAmount: number;
+  chart1NutrientLabel: string;
   totalNutrientInStock: number;
-  recommendedGrams: number;
-  recommendedCostCOP: number;
-  servingDesc: string;
-  daysOfCoverage: number;
 }
 
 export const NutritionAnalytics: React.FC<NutritionAnalyticsProps> = ({
@@ -139,84 +92,80 @@ export const NutritionAnalytics: React.FC<NutritionAnalyticsProps> = ({
   // Modo de selección nutricional: Calorías (default inicial), Proteína, Carbohidratos, Grasas
   const [activeMode, setActiveMode] = useState<NutritionMode>('calories');
 
-  // Período de recomendación para el segundo plano cartesiano: Diario (1d) o Quincenal (15d)
-  const [recommendationPeriod, setRecommendationPeriod] =
-    useState<RecommendationPeriod>('biweekly');
+  // Punto inspeccionado en el plano cartesiano
+  const [selectedPointChart1, setSelectedPointChart1] = useState<ProcessedFoodPoint | null>(null);
 
-  // Puntos hover interactivos para tooltips en los dos planos cartesianos
-  const [hoveredPointChart1, setHoveredPointChart1] = useState<ProcessedFoodPoint | null>(null);
-  const [hoveredPointChart2, setHoveredPointChart2] = useState<ProcessedFoodPoint | null>(null);
-
-  // Filtrar solo ítems activos disponibles o en consumo
-  const activeItems = useMemo(() => {
-    return pantryItems.filter((i) => i.status !== 'agotado');
+  // Filtrar solo alimentos activos comestibles (excluye agotados y productos de aseo/limpieza)
+  const activeFoodItems = useMemo(() => {
+    return pantryItems.filter((i) => i.status !== 'agotado' && !isCleaningOrNonFood(i));
   }, [pantryItems]);
 
-  // Procesar métricas completas de cada alimento para los planos cartesianos y rankings
+  // Procesar métricas de cada alimento para el plano cartesiano y el ranking
   const processedPoints: ProcessedFoodPoint[] = useMemo(() => {
-    return activeItems.map((item) => {
+    return activeFoodItems.map((item) => {
       const intel = getFoodIntelligence(item);
       const economics = intel.economics;
       const nutrition = intel.nutrition;
 
-      const pPerGram = economics.pricePerGramCOP > 0 ? economics.pricePerGramCOP : 5; // fallback razonable
+      const pPerGram = economics.pricePerGramCOP > 0 ? economics.pricePerGramCOP : 5;
 
-      // Determinar aporte nutricional según el modo seleccionado
-      let nutrientVal = 0;
-      let nutrientLbl = '';
+      // Densidad nutricional por cada 100g del alimento
+      const calsPer100g = Math.max(nutrition.calories || 0, item.calories_per_unit || 0, 50);
+      const protPer100g = Math.max(nutrition.protein_g || 0, item.protein_g || 0);
+      const carbsPer100g = Math.max(nutrition.carbs_g || 0, item.carbs_g || 0);
+      const fatPer100g = Math.max(nutrition.fat_g || 0, item.fat_g || 0);
+
+      const currentStockGrams = economics.estimatedWeightGrams * Math.max(1, item.quantity);
+
+      let chart1Val = 0;
+      let chart1Lbl = '';
       let totalNutrient = 0;
 
       if (activeMode === 'calories') {
-        nutrientVal = Math.round(nutrition.calories || item.calories_per_unit || 100);
-        nutrientLbl = `${nutrientVal} kcal/porc.`;
+        chart1Val = Math.round(calsPer100g);
+        chart1Lbl = `${chart1Val} kcal/100g`;
         totalNutrient = Math.round(
-          item.total_calories || (item.calories_per_unit || nutrition.calories) * item.quantity
+          item.total_calories ||
+            (calsPer100g * (currentStockGrams / 100)) ||
+            (item.calories_per_unit * item.quantity)
         );
       } else if (activeMode === 'protein') {
-        nutrientVal = Math.round((nutrition.protein_g || item.protein_g || 0) * 10) / 10;
-        nutrientLbl = `${nutrientVal}g Prot.`;
-        totalNutrient = Math.round((item.protein_g || nutrition.protein_g || 0) * item.quantity);
+        chart1Val = Math.round(protPer100g * 10) / 10;
+        chart1Lbl = `${chart1Val}g Prot/100g`;
+        totalNutrient = Math.round(
+          (item.protein_g || protPer100g) * (item.unit === 'kg' ? item.quantity * 10 : item.quantity)
+        );
       } else if (activeMode === 'carbs') {
-        nutrientVal = Math.round((nutrition.carbs_g || item.carbs_g || 0) * 10) / 10;
-        nutrientLbl = `${nutrientVal}g Carb.`;
-        totalNutrient = Math.round((item.carbs_g || nutrition.carbs_g || 0) * item.quantity);
+        chart1Val = Math.round(carbsPer100g * 10) / 10;
+        chart1Lbl = `${chart1Val}g Carb/100g`;
+        totalNutrient = Math.round(
+          (item.carbs_g || carbsPer100g) * (item.unit === 'kg' ? item.quantity * 10 : item.quantity)
+        );
       } else {
-        // 'fat'
-        nutrientVal = Math.round((nutrition.fat_g || item.fat_g || 0) * 10) / 10;
-        nutrientLbl = `${nutrientVal}g Grasa`;
-        totalNutrient = Math.round((item.fat_g || nutrition.fat_g || 0) * item.quantity);
+        // fat
+        chart1Val = Math.round(fatPer100g * 10) / 10;
+        chart1Lbl = `${chart1Val}g Grasa/100g`;
+        totalNutrient = Math.round(
+          (item.fat_g || fatPer100g) * (item.unit === 'kg' ? item.quantity * 10 : item.quantity)
+        );
       }
-
-      // Recomendación de ingesta
-      const portion = getRecommendedPortionGrams(item);
-      const recGrams =
-        recommendationPeriod === 'daily' ? portion.dailyG : portion.dailyG * 15;
-      const recCost = Math.round(recGrams * pPerGram);
-
-      // Cobertura estimada con el stock actual
-      const currentStockGrams = economics.estimatedWeightGrams * item.quantity;
-      const daysCoverage = portion.dailyG > 0 ? Math.round((currentStockGrams / portion.dailyG) * 10) / 10 : 0;
 
       return {
         item,
         name: item.name,
         category: item.category,
         pricePerGramCOP: pPerGram,
-        nutrientAmount: nutrientVal,
-        nutrientLabel: nutrientLbl,
+        chart1NutrientAmount: chart1Val,
+        chart1NutrientLabel: chart1Lbl,
         totalNutrientInStock: totalNutrient,
-        recommendedGrams: recGrams,
-        recommendedCostCOP: recCost,
-        servingDesc: portion.desc,
-        daysOfCoverage: daysCoverage,
       };
     });
-  }, [activeItems, activeMode, recommendationPeriod]);
+  }, [activeFoodItems, activeMode]);
 
-  // Lista ordenada de mayor a menor según el nutriente activo
+  // Lista ordenada de mayor a menor según el nutriente activo en despensa
   const sortedRanking = useMemo(() => {
     return [...processedPoints]
-      .filter((p) => p.totalNutrientInStock > 0 || p.nutrientAmount > 0)
+      .filter((p) => p.totalNutrientInStock > 0 || p.chart1NutrientAmount > 0)
       .sort((a, b) => b.totalNutrientInStock - a.totalNutrientInStock)
       .slice(0, 10);
   }, [processedPoints]);
@@ -229,17 +178,20 @@ export const NutritionAnalytics: React.FC<NutritionAnalyticsProps> = ({
     return totalFatG || 1;
   }, [activeMode, totalCaloriesAvailable, totalProteinG, totalCarbsG, totalFatG]);
 
+  // Punto activo para la barra de inspección
+  const activePoint1 = selectedPointChart1 || (processedPoints.length > 0 ? processedPoints[0] : null);
+
   // ==========================================================================
-  // CONFIGURACIÓN DEL PLANO CARTESIANO 1: VALOR GRAMO ($/g) VS APORTE NUTRICIONAL
+  // CONFIGURACIÓN DEL PLANO CARTESIANO: VALOR GRAMO ($/g) VS APORTE NUTRICIONAL
   // ==========================================================================
   const chart1Width = 650;
-  const chart1Height = 360;
-  const pad1 = { top: 35, right: 35, bottom: 55, left: 65 };
+  const chart1Height = 320;
+  const pad1 = { top: 25, right: 30, bottom: 45, left: 60 };
   const plot1W = chart1Width - pad1.left - pad1.right;
   const plot1H = chart1Height - pad1.top - pad1.bottom;
 
   const maxNutrient1 = useMemo(() => {
-    const maxVal = Math.max(...processedPoints.map((p) => p.nutrientAmount), 10);
+    const maxVal = Math.max(...processedPoints.map((p) => p.chart1NutrientAmount), 10);
     return Math.ceil(maxVal * 1.15);
   }, [processedPoints]);
 
@@ -249,47 +201,20 @@ export const NutritionAnalytics: React.FC<NutritionAnalyticsProps> = ({
   }, [processedPoints]);
 
   const getChart1Coords = (p: ProcessedFoodPoint) => {
-    const x = pad1.left + (Math.max(0, p.nutrientAmount) / maxNutrient1) * plot1W;
-    const y = pad1.top + plot1H - (Math.max(0, p.pricePerGramCOP) / maxPricePerGram1) * plot1H;
+    const x = pad1.left + (Math.max(0, p.chart1NutrientAmount) / (maxNutrient1 || 1)) * plot1W;
+    const y = pad1.top + plot1H - (Math.max(0, p.pricePerGramCOP) / (maxPricePerGram1 || 1)) * plot1H;
     return { x, y };
   };
 
-  // ==========================================================================
-  // CONFIGURACIÓN DEL PLANO CARTESIANO 2: GRAMO RECOMENDADO VS VALOR DE ESA CANTIDAD
-  // ==========================================================================
-  const chart2Width = 650;
-  const chart2Height = 360;
-  const pad2 = { top: 35, right: 35, bottom: 55, left: 75 };
-  const plot2W = chart2Width - pad2.left - pad2.right;
-  const plot2H = chart2Height - pad2.top - pad2.bottom;
-
-  const maxRecommendedGrams2 = useMemo(() => {
-    const maxVal = Math.max(...processedPoints.map((p) => p.recommendedGrams), 200);
-    return Math.ceil(maxVal * 1.15);
-  }, [processedPoints]);
-
-  const maxRecommendedCost2 = useMemo(() => {
-    const maxVal = Math.max(...processedPoints.map((p) => p.recommendedCostCOP), 1000);
-    return Math.ceil(maxVal * 1.2);
-  }, [processedPoints]);
-
-  const getChart2Coords = (p: ProcessedFoodPoint) => {
-    const x = pad2.left + (Math.max(0, p.recommendedGrams) / maxRecommendedGrams2) * plot2W;
-    const y = pad2.top + plot2H - (Math.max(0, p.recommendedCostCOP) / maxRecommendedCost2) * plot2H;
-    return { x, y };
-  };
-
-  // Color de acento según el modo nutricional
+  // Paleta y temas según el modo seleccionado
   const themeColors = {
     calories: {
       accent: 'amber',
       text: 'text-amber-600 dark:text-amber-400',
       border: 'border-amber-500',
-      bgActive: 'bg-amber-500/15 dark:bg-amber-950/40 border-amber-500',
       dotColor: '#f59e0b',
-      fillGrad: '#fbbf24',
       badge: 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300',
-      unitTitle: 'Calórico (kcal)',
+      unitTitle: 'Calorías (kcal / 100g)',
       rankingTitle: 'Mayor Aporte Calórico en tu Alacena',
       unitUnit: 'kcal',
     },
@@ -297,11 +222,9 @@ export const NutritionAnalytics: React.FC<NutritionAnalyticsProps> = ({
       accent: 'rose',
       text: 'text-rose-600 dark:text-rose-400',
       border: 'border-rose-500',
-      bgActive: 'bg-rose-500/15 dark:bg-rose-950/40 border-rose-500',
       dotColor: '#f43f5e',
-      fillGrad: '#fb7185',
       badge: 'bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300',
-      unitTitle: 'de Proteínas (g)',
+      unitTitle: 'Proteínas (g / 100g)',
       rankingTitle: 'Mayor Aporte de Proteína en tu Alacena',
       unitUnit: 'g Prot',
     },
@@ -309,11 +232,9 @@ export const NutritionAnalytics: React.FC<NutritionAnalyticsProps> = ({
       accent: 'orange',
       text: 'text-amber-600 dark:text-amber-400',
       border: 'border-amber-500',
-      bgActive: 'bg-amber-500/15 dark:bg-amber-950/40 border-amber-500',
       dotColor: '#ea580c',
-      fillGrad: '#fb923c',
       badge: 'bg-orange-100 text-orange-800 dark:bg-orange-950/60 dark:text-orange-300',
-      unitTitle: 'de Carbohidratos (g)',
+      unitTitle: 'Carbohidratos (g / 100g)',
       rankingTitle: 'Mayor Aporte de Carbohidratos en tu Alacena',
       unitUnit: 'g Carb',
     },
@@ -321,11 +242,9 @@ export const NutritionAnalytics: React.FC<NutritionAnalyticsProps> = ({
       accent: 'blue',
       text: 'text-blue-600 dark:text-blue-400',
       border: 'border-blue-500',
-      bgActive: 'bg-blue-500/15 dark:bg-blue-950/40 border-blue-500',
       dotColor: '#3b82f6',
-      fillGrad: '#60a5fa',
       badge: 'bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-300',
-      unitTitle: 'de Grasas Saludables (g)',
+      unitTitle: 'Grasas Saludables (g / 100g)',
       rankingTitle: 'Mayor Aporte de Grasas Saludables en tu Alacena',
       unitUnit: 'g Grasa',
     },
@@ -334,38 +253,46 @@ export const NutritionAnalytics: React.FC<NutritionAnalyticsProps> = ({
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       {/* ========================================================================= */}
-      {/* 1. FILA DE SELECCIÓN Y DIVISIONES INTERACTIVAS: ENERGÍA | PROT | CARBS | GRASAS */}
+      {/* 1. DIVISIONES INTERACTIVAS: ENERGÍA TOTAL | PROTEÍNAS | CARBOS | GRASAS    */}
       {/* ========================================================================= */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-        {/* División 1: Energía Total en Despensa (Al darle clic restaura la vista de calorías) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        {/* División 1: Energía Total en Despensa (restablece vista de calorías) */}
         <div
           onClick={() => setActiveMode('calories')}
-          className={`p-5 rounded-3xl border transition-all cursor-pointer shadow-sm hover:shadow-md flex flex-col justify-between ${
+          className={`p-4 rounded-3xl border transition-all cursor-pointer shadow-xs hover:shadow-md flex flex-col justify-between ${
             activeMode === 'calories'
-              ? 'bg-gradient-to-br from-amber-500/20 via-white to-transparent dark:from-amber-950/40 dark:via-slate-900 border-amber-500 ring-2 ring-amber-500/30'
+              ? 'bg-gradient-to-br from-amber-500/15 via-white to-transparent dark:from-amber-950/40 dark:via-slate-900 border-amber-500 ring-2 ring-amber-500/20'
               : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-amber-400'
           }`}
         >
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-[11px] uppercase font-black tracking-wider text-amber-600 dark:text-amber-400">
-              Energía Total
-            </span>
-            <Flame className="w-4 h-4 text-amber-500" />
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-amber-600 dark:text-amber-400">
+                Energía Total en Despensa
+              </span>
+              <Flame className="w-4 h-4 text-amber-500" />
+            </div>
+            <p className="text-2xl font-bold text-amber-600 dark:text-amber-400 mt-1">
+              {Math.round(totalCaloriesAvailable).toLocaleString()}{' '}
+              <span className="text-xs font-normal text-slate-400">kcal</span>
+            </p>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+              Equivale a aprox.{' '}
+              <strong className="text-slate-800 dark:text-slate-200 font-semibold">
+                {Math.round(totalCaloriesAvailable / 2000)} días
+              </strong>{' '}
+              de autonomía nutricional (base 2,000 kcal/día).
+            </p>
           </div>
-          <p className="text-2xl font-black text-amber-600 dark:text-amber-400 mt-1">
-            {Math.round(totalCaloriesAvailable).toLocaleString()}{' '}
-            <span className="text-xs font-normal text-slate-400">kcal</span>
-          </p>
-          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
-            Equivale a aprox.{' '}
-            <strong className="text-slate-800 dark:text-slate-200">
-              {Math.round(totalCaloriesAvailable / 2000)} días
-            </strong>{' '}
-            de autonomía (2,000 kcal/día).
-          </p>
-          <div className="pt-2 flex justify-between items-center text-[10px] font-bold">
-            <span className={activeMode === 'calories' ? 'text-amber-600 dark:text-amber-400' : 'text-slate-400'}>
-              {activeMode === 'calories' ? '● Filtro Activo' : 'Clic para filtrar'}
+          <div className="pt-2 flex justify-between items-center text-[10px]">
+            <span
+              className={
+                activeMode === 'calories'
+                  ? 'text-amber-600 dark:text-amber-400 font-bold'
+                  : 'text-slate-400'
+              }
+            >
+              {activeMode === 'calories' ? '● Filtro Activo' : 'Clic para ver inicial'}
             </span>
             <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
           </div>
@@ -374,27 +301,29 @@ export const NutritionAnalytics: React.FC<NutritionAnalyticsProps> = ({
         {/* División 2: Proteínas */}
         <div
           onClick={() => setActiveMode('protein')}
-          className={`p-5 rounded-3xl border transition-all cursor-pointer shadow-sm hover:shadow-md flex flex-col justify-between ${
+          className={`p-4 rounded-3xl border transition-all cursor-pointer shadow-xs hover:shadow-md flex flex-col justify-between ${
             activeMode === 'protein'
-              ? 'bg-gradient-to-br from-rose-500/20 via-white to-transparent dark:from-rose-950/40 dark:via-slate-900 border-rose-500 ring-2 ring-rose-500/30'
+              ? 'bg-gradient-to-br from-rose-500/15 via-white to-transparent dark:from-rose-950/40 dark:via-slate-900 border-rose-500 ring-2 ring-rose-500/20'
               : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-rose-400'
           }`}
         >
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-[11px] uppercase font-black tracking-wider text-rose-500">
-              Proteínas
-            </span>
-            <Heart className="w-4 h-4 text-rose-500" />
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-rose-500">
+                Proteínas
+              </span>
+              <Heart className="w-4 h-4 text-rose-500" />
+            </div>
+            <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">
+              {Math.round(totalProteinG).toLocaleString()}{' '}
+              <span className="text-xs font-normal text-slate-400">g</span>
+            </p>
+            <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">
+              Pollo, carne, atún, huevos, leguminosas.
+            </p>
           </div>
-          <p className="text-2xl font-black text-slate-900 dark:text-white mt-1">
-            {Math.round(totalProteinG).toLocaleString()}{' '}
-            <span className="text-xs font-normal text-slate-400">g</span>
-          </p>
-          <p className="text-[11px] text-slate-400 mt-1">
-            Carne, pollo, atún, huevos, leguminosas.
-          </p>
-          <div className="pt-2 flex justify-between items-center text-[10px] font-bold">
-            <span className={activeMode === 'protein' ? 'text-rose-500' : 'text-slate-400'}>
+          <div className="pt-2 flex justify-between items-center text-[10px]">
+            <span className={activeMode === 'protein' ? 'text-rose-500 font-bold' : 'text-slate-400'}>
               {activeMode === 'protein' ? '● Filtro Activo' : 'Clic para filtrar'}
             </span>
             <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
@@ -404,27 +333,29 @@ export const NutritionAnalytics: React.FC<NutritionAnalyticsProps> = ({
         {/* División 3: Carbohidratos */}
         <div
           onClick={() => setActiveMode('carbs')}
-          className={`p-5 rounded-3xl border transition-all cursor-pointer shadow-sm hover:shadow-md flex flex-col justify-between ${
+          className={`p-4 rounded-3xl border transition-all cursor-pointer shadow-xs hover:shadow-md flex flex-col justify-between ${
             activeMode === 'carbs'
-              ? 'bg-gradient-to-br from-amber-500/20 via-white to-transparent dark:from-amber-950/40 dark:via-slate-900 border-amber-500 ring-2 ring-amber-500/30'
+              ? 'bg-gradient-to-br from-amber-500/15 via-white to-transparent dark:from-amber-950/40 dark:via-slate-900 border-amber-500 ring-2 ring-amber-500/20'
               : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-amber-400'
           }`}
         >
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-[11px] uppercase font-black tracking-wider text-amber-500">
-              Carbohidratos
-            </span>
-            <Zap className="w-4 h-4 text-amber-500" />
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-amber-600 dark:text-amber-500">
+                Carbohidratos
+              </span>
+              <Zap className="w-4 h-4 text-amber-500" />
+            </div>
+            <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">
+              {Math.round(totalCarbsG).toLocaleString()}{' '}
+              <span className="text-xs font-normal text-slate-400">g</span>
+            </p>
+            <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">
+              Arroz, pasta, avena, plátano, granos.
+            </p>
           </div>
-          <p className="text-2xl font-black text-slate-900 dark:text-white mt-1">
-            {Math.round(totalCarbsG).toLocaleString()}{' '}
-            <span className="text-xs font-normal text-slate-400">g</span>
-          </p>
-          <p className="text-[11px] text-slate-400 mt-1">
-            Arroz, avena, pasta, tubérculos, frutas.
-          </p>
-          <div className="pt-2 flex justify-between items-center text-[10px] font-bold">
-            <span className={activeMode === 'carbs' ? 'text-amber-500' : 'text-slate-400'}>
+          <div className="pt-2 flex justify-between items-center text-[10px]">
+            <span className={activeMode === 'carbs' ? 'text-amber-600 font-bold' : 'text-slate-400'}>
               {activeMode === 'carbs' ? '● Filtro Activo' : 'Clic para filtrar'}
             </span>
             <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
@@ -434,27 +365,29 @@ export const NutritionAnalytics: React.FC<NutritionAnalyticsProps> = ({
         {/* División 4: Grasas Saludables */}
         <div
           onClick={() => setActiveMode('fat')}
-          className={`p-5 rounded-3xl border transition-all cursor-pointer shadow-sm hover:shadow-md flex flex-col justify-between ${
+          className={`p-4 rounded-3xl border transition-all cursor-pointer shadow-xs hover:shadow-md flex flex-col justify-between ${
             activeMode === 'fat'
-              ? 'bg-gradient-to-br from-blue-500/20 via-white to-transparent dark:from-blue-950/40 dark:via-slate-900 border-blue-500 ring-2 ring-blue-500/30'
+              ? 'bg-gradient-to-br from-blue-500/15 via-white to-transparent dark:from-blue-950/40 dark:via-slate-900 border-blue-500 ring-2 ring-blue-500/20'
               : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-blue-400'
           }`}
         >
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-[11px] uppercase font-black tracking-wider text-blue-500">
-              Grasas Saludables
-            </span>
-            <Droplet className="w-4 h-4 text-blue-500" />
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-blue-500">
+                Grasas Saludables
+              </span>
+              <Droplet className="w-4 h-4 text-blue-500" />
+            </div>
+            <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">
+              {Math.round(totalFatG).toLocaleString()}{' '}
+              <span className="text-xs font-normal text-slate-400">g</span>
+            </p>
+            <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">
+              Aceites, frutos secos, lácteos enteros.
+            </p>
           </div>
-          <p className="text-2xl font-black text-slate-900 dark:text-white mt-1">
-            {Math.round(totalFatG).toLocaleString()}{' '}
-            <span className="text-xs font-normal text-slate-400">g</span>
-          </p>
-          <p className="text-[11px] text-slate-400 mt-1">
-            Aceites, lácteos enteros, frutos secos.
-          </p>
-          <div className="pt-2 flex justify-between items-center text-[10px] font-bold">
-            <span className={activeMode === 'fat' ? 'text-blue-500' : 'text-slate-400'}>
+          <div className="pt-2 flex justify-between items-center text-[10px]">
+            <span className={activeMode === 'fat' ? 'text-blue-500 font-bold' : 'text-slate-400'}>
               {activeMode === 'fat' ? '● Filtro Activo' : 'Clic para filtrar'}
             </span>
             <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
@@ -463,76 +396,87 @@ export const NutritionAnalytics: React.FC<NutritionAnalyticsProps> = ({
       </div>
 
       {/* ========================================================================= */}
-      {/* 2. PRIMER PLANO CARTESIANO: VALOR POR GRAMO ($/g) VS APORTE NUTRICIONAL   */}
+      {/* 2. PLANO CARTESIANO: VALOR GRAMO ($/g) VS APORTE NUTRICIONAL               */}
       {/* ========================================================================= */}
-      <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl space-y-4 shadow-sm">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+      <div className="p-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl space-y-3 shadow-xs">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
           <div>
-            <div className="flex items-center gap-2">
-              <Activity className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-              <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                Plano Cartesiano: Valor por Gramo ($/g) vs. Aporte {themeColors.unitTitle}
-              </h3>
-            </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Eje X: Aporte Nutricional • Eje Y: Precio por Gramo ($ COP/g). El cuadrante inferior derecho refleja el mayor rendimiento nutricional por peso gastado.
+            <h3 className="text-sm font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+              <span>Plano Cartesiano: Valor por Gramo ($/g) vs. Aporte Nutricional</span>
+              <span
+                className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${themeColors.badge}`}
+              >
+                Filtro: {themeColors.unitTitle}
+              </span>
+            </h3>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Evalúa la eficiencia de compra: productos con alto aporte nutricional y bajo costo por gramo.
             </p>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span className={`text-xs font-black uppercase px-2.5 py-1 rounded-xl ${themeColors.badge}`}>
-              Filtrado por: {activeMode.toUpperCase()}
-            </span>
           </div>
         </div>
 
-        {/* Notificación Hover flotante */}
-        {hoveredPointChart1 && (
-          <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs animate-in fade-in">
-            <div className="flex items-center gap-2">
-              <strong className="font-bold text-slate-900 dark:text-white">
-                {hoveredPointChart1.name}
-              </strong>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-                {hoveredPointChart1.category}
-              </span>
+        {/* Barra de Inspección Estable (Contenedor de altura fija para evitar saltos de layout al tocar) */}
+        <div className="min-h-[58px] p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200/80 dark:border-slate-800/80 flex items-center justify-between text-xs transition-colors">
+          {activePoint1 ? (
+            <div className="w-full flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="font-semibold text-slate-900 dark:text-white">
+                  {activePoint1.name}
+                </span>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                  {activePoint1.category}
+                </span>
+                <span className="text-[11px] text-slate-400">
+                  Stock: {activePoint1.item.quantity} {activePoint1.item.unit}
+                </span>
+              </div>
+              <div className="flex items-center gap-3 flex-wrap">
+                <span className="text-slate-600 dark:text-slate-300 font-medium">
+                  Aporte: <strong className={themeColors.text}>{activePoint1.chart1NutrientLabel}</strong>
+                </span>
+                <span className="text-slate-400">•</span>
+                <span className="text-slate-600 dark:text-slate-300 font-medium">
+                  Valor/g: <strong>${activePoint1.pricePerGramCOP} COP</strong>
+                </span>
+                <span className="text-slate-400">•</span>
+                <span className="text-slate-500">
+                  Total despensa: {activePoint1.totalNutrientInStock.toLocaleString()} {themeColors.unitUnit}
+                </span>
+                <button
+                  onClick={() => onSelectProduct(activePoint1.item)}
+                  className="flex items-center gap-1 text-[11px] text-emerald-600 dark:text-emerald-400 hover:underline font-semibold ml-1"
+                >
+                  <span>Ver ficha</span>
+                  <ExternalLink className="w-3 h-3" />
+                </button>
+              </div>
             </div>
-            <div className="flex items-center gap-3">
-              <span className={`font-black ${themeColors.text}`}>
-                Aporte: {hoveredPointChart1.nutrientLabel}
-              </span>
-              <span>•</span>
-              <span className="font-bold text-emerald-600 dark:text-emerald-400">
-                ${hoveredPointChart1.pricePerGramCOP} COP / g
-              </span>
-              <button
-                onClick={() => onSelectProduct(hoveredPointChart1.item)}
-                className="text-[11px] underline text-slate-400 hover:text-slate-600 dark:hover:text-white font-semibold ml-1"
-              >
-                Ver ficha completa ↗
-              </button>
+          ) : (
+            <div className="flex items-center gap-2 text-slate-400 text-xs">
+              <Info className="w-4 h-4 text-slate-400 shrink-0" />
+              <span>Toca o haz clic sobre cualquier punto para ver su aporte nutricional y valor por gramo.</span>
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
-        {/* Gráfico SVG Plano Cartesiano 1 */}
+        {/* SVG Plano Cartesiano */}
         <div className="w-full overflow-x-auto">
           <svg
             viewBox={`0 0 ${chart1Width} ${chart1Height}`}
-            className="w-full h-auto min-w-[550px] select-none"
+            className="w-full h-auto min-w-[500px] select-none"
           >
-            {/* Fondo y Cuadrícula */}
+            {/* Fondo del área de datos */}
             <rect
               x={pad1.left}
               y={pad1.top}
               width={plot1W}
               height={plot1H}
-              className="fill-slate-50/50 dark:fill-slate-950/40 stroke-slate-200 dark:stroke-slate-800"
+              className="fill-slate-50/40 dark:fill-slate-950/30 stroke-slate-200 dark:stroke-slate-800"
               strokeWidth="1"
-              rx="8"
+              rx="6"
             />
 
-            {/* Líneas de cuadrícula horizontal (Eje Y: Precio por gramo) */}
+            {/* Líneas horizontales de cuadrícula (Eje Y: Precio por gramo) */}
             {[0, 0.25, 0.5, 0.75, 1].map((ratio, idx) => {
               const y = pad1.top + plot1H * (1 - ratio);
               const val = Math.round(maxPricePerGram1 * ratio);
@@ -544,15 +488,15 @@ export const NutritionAnalytics: React.FC<NutritionAnalyticsProps> = ({
                     x2={pad1.left + plot1W}
                     y2={y}
                     stroke="currentColor"
-                    className="text-slate-200 dark:text-slate-800/80"
+                    className="text-slate-200/80 dark:text-slate-800/80"
                     strokeWidth="1"
                     strokeDasharray={ratio === 0 || ratio === 1 ? 'none' : '3 3'}
                   />
                   <text
-                    x={pad1.left - 10}
-                    y={y + 4}
+                    x={pad1.left - 8}
+                    y={y + 3}
                     textAnchor="end"
-                    className="text-[10px] fill-slate-400 font-mono font-medium"
+                    className="text-[9px] fill-slate-400 font-sans font-normal"
                   >
                     ${val}/g
                   </text>
@@ -560,7 +504,7 @@ export const NutritionAnalytics: React.FC<NutritionAnalyticsProps> = ({
               );
             })}
 
-            {/* Líneas de cuadrícula vertical (Eje X: Aporte Nutricional) */}
+            {/* Líneas verticales de cuadrícula (Eje X: Aporte Nutricional) */}
             {[0, 0.25, 0.5, 0.75, 1].map((ratio, idx) => {
               const x = pad1.left + plot1W * ratio;
               const val = Math.round(maxNutrient1 * ratio);
@@ -572,15 +516,15 @@ export const NutritionAnalytics: React.FC<NutritionAnalyticsProps> = ({
                     x2={x}
                     y2={pad1.top + plot1H}
                     stroke="currentColor"
-                    className="text-slate-200 dark:text-slate-800/80"
+                    className="text-slate-200/80 dark:text-slate-800/80"
                     strokeWidth="1"
                     strokeDasharray={ratio === 0 || ratio === 1 ? 'none' : '3 3'}
                   />
                   <text
                     x={x}
-                    y={pad1.top + plot1H + 20}
+                    y={pad1.top + plot1H + 16}
                     textAnchor="middle"
-                    className="text-[10px] fill-slate-400 font-mono font-medium"
+                    className="text-[9px] fill-slate-400 font-sans font-normal"
                   >
                     {val} {themeColors.unitUnit}
                   </text>
@@ -588,7 +532,7 @@ export const NutritionAnalytics: React.FC<NutritionAnalyticsProps> = ({
               );
             })}
 
-            {/* Líneas divisorias de Cuadrantes (Mediana / Centro de Referencia) */}
+            {/* Líneas divisorias de referencia (Mediana) */}
             <line
               x1={pad1.left + plot1W * 0.45}
               y1={pad1.top}
@@ -596,7 +540,7 @@ export const NutritionAnalytics: React.FC<NutritionAnalyticsProps> = ({
               y2={pad1.top + plot1H}
               stroke="currentColor"
               className="text-slate-300 dark:text-slate-700"
-              strokeWidth="1.5"
+              strokeWidth="1"
               strokeDasharray="4 4"
             />
             <line
@@ -606,43 +550,35 @@ export const NutritionAnalytics: React.FC<NutritionAnalyticsProps> = ({
               y2={pad1.top + plot1H * 0.5}
               stroke="currentColor"
               className="text-slate-300 dark:text-slate-700"
-              strokeWidth="1.5"
+              strokeWidth="1"
               strokeDasharray="4 4"
             />
 
-            {/* Etiquetas de Cuadrantes */}
+            {/* Cuadrantes de orientación */}
             <text
               x={pad1.left + plot1W - 8}
-              y={pad1.top + plot1H - 10}
+              y={pad1.top + plot1H - 8}
               textAnchor="end"
-              className="text-[9px] font-bold fill-emerald-600/70 dark:fill-emerald-400/70 uppercase tracking-wider"
+              className="text-[8.5px] fill-emerald-600/70 dark:fill-emerald-400/70 font-sans font-normal"
             >
               ★ Cuadrante Óptimo (Alto Aporte / Bajo $/g)
             </text>
-            <text
-              x={pad1.left + 10}
-              y={pad1.top + 18}
-              textAnchor="start"
-              className="text-[9px] font-bold fill-rose-500/60 uppercase tracking-wider"
-            >
-              ⚠ Cuadrante Ineficiente (Bajo Aporte / Alto $/g)
-            </text>
 
-            {/* Ejes con títulos */}
+            {/* Títulos de Ejes limpios */}
             <text
               x={pad1.left + plot1W / 2}
-              y={chart1Height - 12}
+              y={chart1Height - 8}
               textAnchor="middle"
-              className="text-[11px] font-bold fill-slate-600 dark:fill-slate-300 uppercase tracking-wider"
+              className="text-[10px] font-medium fill-slate-500 dark:fill-slate-400 font-sans"
             >
               Aporte de {themeColors.unitTitle} →
             </text>
             <text
               x={-(pad1.top + plot1H / 2)}
-              y={18}
+              y={14}
               transform="rotate(-90)"
               textAnchor="middle"
-              className="text-[11px] font-bold fill-slate-600 dark:fill-slate-300 uppercase tracking-wider"
+              className="text-[10px] font-medium fill-slate-500 dark:fill-slate-400 font-sans"
             >
               Valor del Gramo ($ COP / g) →
             </text>
@@ -650,44 +586,54 @@ export const NutritionAnalytics: React.FC<NutritionAnalyticsProps> = ({
             {/* Puntos en el plano cartesiano */}
             {processedPoints.map((pt, i) => {
               const { x, y } = getChart1Coords(pt);
-              const isHovered = hoveredPointChart1?.item.id === pt.item.id;
+              const isSelected = activePoint1?.item.id === pt.item.id;
 
               return (
                 <g
                   key={pt.item.id || i}
-                  className="cursor-pointer transition-transform duration-150"
-                  onMouseEnter={() => setHoveredPointChart1(pt)}
-                  onMouseLeave={() => setHoveredPointChart1(null)}
-                  onClick={() => onSelectProduct(pt.item)}
+                  className="cursor-pointer"
+                  onMouseEnter={() => setSelectedPointChart1(pt)}
+                  onClick={() => {
+                    setSelectedPointChart1(pt);
+                    onSelectProduct(pt.item);
+                  }}
                 >
-                  {isHovered && (
+                  {/* Zona táctil amplia invisible para facilidad en pantallas táctiles */}
+                  <circle cx={x} cy={y} r={14} fill="transparent" />
+
+                  {/* Halo sutil para el punto activo */}
+                  {isSelected && (
                     <circle
                       cx={x}
                       cy={y}
-                      r={14}
+                      r={9}
                       fill={themeColors.dotColor}
                       opacity={0.25}
-                      className="animate-pulse"
+                      pointerEvents="none"
                     />
                   )}
+
+                  {/* Punto visible pequeño y refinado */}
                   <circle
                     cx={x}
                     cy={y}
-                    r={isHovered ? 7.5 : 5.5}
+                    r={isSelected ? 5 : 3.5}
                     fill={themeColors.dotColor}
                     stroke="#ffffff"
-                    strokeWidth={2}
-                    className="transition-all duration-200"
+                    strokeWidth={1.5}
+                    pointerEvents="none"
+                    className="transition-all duration-150"
                   />
-                  {/* Texto de nombre sobre los puntos clave */}
-                  {(isHovered || pt.nutrientAmount > maxNutrient1 * 0.5) && (
+
+                  {/* Etiqueta del producto solo para el punto seleccionado */}
+                  {isSelected && (
                     <text
                       x={x}
-                      y={y - 10}
+                      y={y - 8}
                       textAnchor="middle"
-                      className="text-[9px] font-bold fill-slate-700 dark:fill-slate-200 pointer-events-none drop-shadow-xs"
+                      className="text-[9px] font-medium fill-slate-800 dark:fill-slate-200 pointer-events-none drop-shadow-xs"
                     >
-                      {pt.name.slice(0, 14)}
+                      {pt.name.slice(0, 18)}
                     </text>
                   )}
                 </g>
@@ -698,66 +644,65 @@ export const NutritionAnalytics: React.FC<NutritionAnalyticsProps> = ({
       </div>
 
       {/* ========================================================================= */}
-      {/* 3. RANKING ORDENADO: MAYOR APORTE EN TU ALACENA (SEGUNDO COMPONENTE)      */}
+      {/* 3. RANKING CENTRAL: MAYOR APORTE DEL NUTRIENTE EN TU ALACENA               */}
       {/* ========================================================================= */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 space-y-4 shadow-sm">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 space-y-3 shadow-xs">
         <div className="flex justify-between items-center">
           <div>
-            <h3 className="text-base font-bold text-slate-900 dark:text-white">
+            <h3 className="text-sm font-semibold text-slate-900 dark:text-white">
               {themeColors.rankingTitle}
             </h3>
             <p className="text-xs text-slate-400 mt-0.5">
-              Ordenado de mayor a menor según el aporte total acumulado en tu despensa.
+              Productos líderes en tu despensa ordenados de mayor a menor según su aporte total acumulado.
             </p>
           </div>
-          <span className="text-xs text-slate-500 font-semibold">
-            {sortedRanking.length} alimentos líderes
+          <span className="text-xs text-slate-400 font-medium">
+            {sortedRanking.length} alimentos registrados
           </span>
         </div>
 
         {sortedRanking.length === 0 ? (
-          <p className="text-xs text-slate-400 py-4">
-            No hay productos registrados con este macronutriente en tu despensa.
+          <p className="text-xs text-slate-400 py-3">
+            No hay alimentos disponibles con este macronutriente en tu despensa.
           </p>
         ) : (
-          <div className="space-y-2.5">
+          <div className="space-y-2">
             {sortedRanking.map((pt) => {
-              const pct = totalNutrientSum > 0 ? (pt.totalNutrientInStock / totalNutrientSum) * 100 : 0;
+              const pct =
+                totalNutrientSum > 0 ? (pt.totalNutrientInStock / totalNutrientSum) * 100 : 0;
               return (
                 <div
                   key={pt.item.id}
                   onClick={() => onSelectProduct(pt.item)}
-                  className="p-3.5 bg-slate-50 dark:bg-slate-950 hover:bg-slate-100/80 dark:hover:bg-slate-800/60 rounded-2xl border border-slate-200/80 dark:border-slate-800 transition cursor-pointer group space-y-1.5"
+                  className="p-3 bg-slate-50 dark:bg-slate-950 hover:bg-slate-100/80 dark:hover:bg-slate-800/60 rounded-2xl border border-slate-200/80 dark:border-slate-800 transition cursor-pointer group space-y-1"
                 >
                   <div className="flex justify-between items-center text-xs">
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition">
+                      <span className="font-semibold text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition">
                         {pt.name}
                       </span>
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                      <span className="text-[10px] px-2 py-0.2 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
                         {pt.category}
                       </span>
-                      <span className="text-[10px] text-slate-400 font-medium">
+                      <span className="text-[10px] text-slate-400">
                         ({pt.item.quantity} {pt.item.unit})
                       </span>
                     </div>
 
                     <div className="flex items-center gap-3">
-                      <span className="text-[11px] text-slate-400">
-                        ${pt.pricePerGramCOP} COP/g
-                      </span>
-                      <span className={`font-black ${themeColors.text}`}>
+                      <span className="text-[11px] text-slate-400">${pt.pricePerGramCOP} COP/g</span>
+                      <span className={`font-semibold ${themeColors.text}`}>
                         {pt.totalNutrientInStock.toLocaleString()} {themeColors.unitUnit} ({pct.toFixed(1)}%)
                       </span>
                     </div>
                   </div>
 
-                  {/* Barra de Progreso proporcional */}
-                  <div className="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+                  {/* Barra de progreso */}
+                  <div className="w-full bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
                     <div
-                      className={`h-full rounded-full transition-all duration-500`}
+                      className="h-full rounded-full transition-all duration-300"
                       style={{
-                        width: `${Math.min(100, Math.max(4, pct))}%`,
+                        width: `${Math.min(100, Math.max(3, pct))}%`,
                         backgroundColor: themeColors.dotColor,
                       }}
                     />
@@ -767,225 +712,6 @@ export const NutritionAnalytics: React.FC<NutritionAnalyticsProps> = ({
             })}
           </div>
         )}
-      </div>
-
-      {/* ========================================================================= */}
-      {/* 4. SEGUNDO PLANO CARTESIANO: GRAMO RECOMENDADO VS COSTO DE ESA CANTIDAD   */}
-      {/* ========================================================================= */}
-      <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl space-y-4 shadow-sm">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-          <div>
-            <div className="flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-              <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                Plano Cartesiano: Cantidad Recomendada de Consumo vs. Valor Presupuestal ($)
-              </h3>
-            </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Eje X: Gramos recomendados en dieta balanceada ({recommendationPeriod === 'daily' ? 'Diario' : 'Quincenal (15 días)'}) • Eje Y: Costo económico de esa porción recomendada ($ COP).
-            </p>
-          </div>
-
-          {/* Selector de Temporalidad: Diario vs Quincenal */}
-          <div className="flex items-center p-1 bg-slate-100 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
-            <button
-              onClick={() => setRecommendationPeriod('daily')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
-                recommendationPeriod === 'daily'
-                  ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs'
-                  : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'
-              }`}
-            >
-              Consumo Diario (1d)
-            </button>
-            <button
-              onClick={() => setRecommendationPeriod('biweekly')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
-                recommendationPeriod === 'biweekly'
-                  ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs'
-                  : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'
-              }`}
-            >
-              Consumo Quincenal (15d)
-            </button>
-          </div>
-        </div>
-
-        {/* Notificación Hover flotante para Plano 2 */}
-        {hoveredPointChart2 && (
-          <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs animate-in fade-in">
-            <div className="space-y-0.5">
-              <div className="flex items-center gap-2">
-                <strong className="font-bold text-slate-900 dark:text-white">
-                  {hoveredPointChart2.name}
-                </strong>
-                <span className="text-[10px] text-slate-400">({hoveredPointChart2.servingDesc})</span>
-              </div>
-              <p className="text-[11px] text-slate-500">
-                Tu stock actual cubre aprox.{' '}
-                <strong className="text-slate-700 dark:text-slate-300 font-bold">
-                  {hoveredPointChart2.daysOfCoverage} días
-                </strong>{' '}
-                de consumo recomendado.
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="font-bold text-slate-700 dark:text-slate-300">
-                Recomendado: {hoveredPointChart2.recommendedGrams.toLocaleString()}g
-              </span>
-              <span>•</span>
-              <span className="font-black text-emerald-600 dark:text-emerald-400">
-                Costo estimado: ${hoveredPointChart2.recommendedCostCOP.toLocaleString()} COP
-              </span>
-              <button
-                onClick={() => onSelectProduct(hoveredPointChart2.item)}
-                className="text-[11px] underline text-slate-400 hover:text-slate-600 dark:hover:text-white font-semibold ml-1"
-              >
-                Ver ficha ↗
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Gráfico SVG Plano Cartesiano 2 */}
-        <div className="w-full overflow-x-auto">
-          <svg
-            viewBox={`0 0 ${chart2Width} ${chart2Height}`}
-            className="w-full h-auto min-w-[550px] select-none"
-          >
-            {/* Fondo y Cuadrícula */}
-            <rect
-              x={pad2.left}
-              y={pad2.top}
-              width={plot2W}
-              height={plot2H}
-              className="fill-slate-50/50 dark:fill-slate-950/40 stroke-slate-200 dark:stroke-slate-800"
-              strokeWidth="1"
-              rx="8"
-            />
-
-            {/* Líneas horizontales de cuadrícula (Eje Y: Costo presupuestal de la recomendación en $) */}
-            {[0, 0.25, 0.5, 0.75, 1].map((ratio, idx) => {
-              const y = pad2.top + plot2H * (1 - ratio);
-              const val = Math.round(maxRecommendedCost2 * ratio);
-              return (
-                <g key={idx}>
-                  <line
-                    x1={pad2.left}
-                    y1={y}
-                    x2={pad2.left + plot2W}
-                    y2={y}
-                    stroke="currentColor"
-                    className="text-slate-200 dark:text-slate-800/80"
-                    strokeWidth="1"
-                    strokeDasharray={ratio === 0 || ratio === 1 ? 'none' : '3 3'}
-                  />
-                  <text
-                    x={pad2.left - 10}
-                    y={y + 4}
-                    textAnchor="end"
-                    className="text-[10px] fill-slate-400 font-mono font-medium"
-                  >
-                    ${val.toLocaleString()}
-                  </text>
-                </g>
-              );
-            })}
-
-            {/* Líneas verticales de cuadrícula (Eje X: Gramos recomendados) */}
-            {[0, 0.25, 0.5, 0.75, 1].map((ratio, idx) => {
-              const x = pad2.left + plot2W * ratio;
-              const val = Math.round(maxRecommendedGrams2 * ratio);
-              return (
-                <g key={idx}>
-                  <line
-                    x1={x}
-                    y1={pad2.top}
-                    x2={x}
-                    y2={pad2.top + plot2H}
-                    stroke="currentColor"
-                    className="text-slate-200 dark:text-slate-800/80"
-                    strokeWidth="1"
-                    strokeDasharray={ratio === 0 || ratio === 1 ? 'none' : '3 3'}
-                  />
-                  <text
-                    x={x}
-                    y={pad2.top + plot2H + 20}
-                    textAnchor="middle"
-                    className="text-[10px] fill-slate-400 font-mono font-medium"
-                  >
-                    {val.toLocaleString()}g
-                  </text>
-                </g>
-              );
-            })}
-
-            {/* Ejes con títulos */}
-            <text
-              x={pad2.left + plot2W / 2}
-              y={chart2Height - 12}
-              textAnchor="middle"
-              className="text-[11px] font-bold fill-slate-600 dark:fill-slate-300 uppercase tracking-wider"
-            >
-              Gramos recomendados en dieta balanceada ({recommendationPeriod === 'daily' ? 'Diario' : 'Quincenal 15d'}) →
-            </text>
-            <text
-              x={-(pad2.top + plot2H / 2)}
-              y={20}
-              transform="rotate(-90)"
-              textAnchor="middle"
-              className="text-[11px] font-bold fill-slate-600 dark:fill-slate-300 uppercase tracking-wider"
-            >
-              Valor / Costo de esa cantidad ($ COP) →
-            </text>
-
-            {/* Puntos en el plano cartesiano 2 */}
-            {processedPoints.map((pt, i) => {
-              const { x, y } = getChart2Coords(pt);
-              const isHovered = hoveredPointChart2?.item.id === pt.item.id;
-
-              return (
-                <g
-                  key={pt.item.id || i}
-                  className="cursor-pointer transition-transform duration-150"
-                  onMouseEnter={() => setHoveredPointChart2(pt)}
-                  onMouseLeave={() => setHoveredPointChart2(null)}
-                  onClick={() => onSelectProduct(pt.item)}
-                >
-                  {isHovered && (
-                    <circle
-                      cx={x}
-                      cy={y}
-                      r={14}
-                      fill="#10b981"
-                      opacity={0.25}
-                      className="animate-pulse"
-                    />
-                  )}
-                  <circle
-                    cx={x}
-                    cy={y}
-                    r={isHovered ? 7.5 : 5.5}
-                    fill="#10b981"
-                    stroke="#ffffff"
-                    strokeWidth={2}
-                    className="transition-all duration-200"
-                  />
-                  {(isHovered || pt.recommendedGrams > maxRecommendedGrams2 * 0.4) && (
-                    <text
-                      x={x}
-                      y={y - 10}
-                      textAnchor="middle"
-                      className="text-[9px] font-bold fill-slate-700 dark:fill-slate-200 pointer-events-none drop-shadow-xs"
-                    >
-                      {pt.name.slice(0, 14)} (${pt.recommendedCostCOP.toLocaleString()})
-                    </text>
-                  )}
-                </g>
-              );
-            })}
-          </svg>
-        </div>
       </div>
     </div>
   );
