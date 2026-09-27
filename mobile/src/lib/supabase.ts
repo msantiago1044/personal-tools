@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createClient } from '@supabase/supabase-js';
 import * as WebBrowser from 'expo-web-browser';
 import * as AuthSession from 'expo-auth-session';
+import { AppState } from 'react-native';
 
 declare const process: any;
 
@@ -21,8 +22,18 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   },
 });
 
+// Auto-refresco continuo del token cuando la app pasa al primer plano o inicia
+supabase.auth.startAutoRefresh();
+AppState.addEventListener('change', (state) => {
+  if (state === 'active') {
+    supabase.auth.startAutoRefresh();
+  } else {
+    supabase.auth.stopAutoRefresh();
+  }
+});
+
 /**
- * Autenticación nativa con Google en Expo usando WebBrowser y AuthSession
+ * Autenticación nativa con Google en Expo usando WebBrowser y AuthSession con soporte para Hash y Code
  */
 export async function signInWithGoogleMobile() {
   const redirectUri = AuthSession.makeRedirectUri({
@@ -43,16 +54,42 @@ export async function signInWithGoogleMobile() {
   if (data?.url) {
     const res = await WebBrowser.openAuthSessionAsync(data.url, redirectUri);
     if (res.type === 'success' && res.url) {
-      const params = new URL(res.url).searchParams;
-      const accessToken = params.get('access_token');
-      const refreshToken = params.get('refresh_token');
+      const urlString = res.url;
+      const queryString = urlString.includes('?') ? urlString.split('?')[1].split('#')[0] : '';
+      const hashString = urlString.includes('#') ? urlString.split('#')[1] : '';
 
-      if (accessToken && refreshToken) {
-        await supabase.auth.setSession({
+      const searchParams = new URLSearchParams(queryString);
+      const hashParams = new URLSearchParams(hashString);
+
+      // Verificar si hay errores reportados por OAuth
+      const errorDesc = searchParams.get('error_description') || hashParams.get('error_description');
+      if (errorDesc) {
+        throw new Error(decodeURIComponent(errorDesc));
+      }
+
+      const accessToken = searchParams.get('access_token') || hashParams.get('access_token');
+      const refreshToken = searchParams.get('refresh_token') || hashParams.get('refresh_token');
+      const code = searchParams.get('code') || hashParams.get('code');
+
+      if (code) {
+        const { data: codeData, error: codeErr } = await supabase.auth.exchangeCodeForSession(code);
+        if (codeErr) throw codeErr;
+        if (codeData?.session) {
+          await AsyncStorage.setItem('personal_tools_session', JSON.stringify(codeData.session));
+          return codeData.session;
+        }
+      } else if (accessToken && refreshToken) {
+        const { data: sessionData, error: sessionErr } = await supabase.auth.setSession({
           access_token: accessToken,
           refresh_token: refreshToken,
         });
+        if (sessionErr) throw sessionErr;
+        if (sessionData?.session) {
+          await AsyncStorage.setItem('personal_tools_session', JSON.stringify(sessionData.session));
+          return sessionData.session;
+        }
       }
     }
   }
+  return null;
 }

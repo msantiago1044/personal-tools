@@ -32,7 +32,16 @@ import {
   Laptop,
   Eye,
   EyeOff,
-  Smartphone
+  Smartphone,
+  Trash2,
+  AlertTriangle,
+  Sparkles,
+  ChevronRight,
+  Save,
+  X,
+  Target,
+  BarChart3,
+  CalendarDays
 } from 'lucide-react';
 
 interface FinanceModuleProps {
@@ -176,6 +185,7 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
   const DEFAULT_ACTIVE_WIDGETS = {
     dailyCashflow: true,
     monthlyBalance: true,
+    savingsAccumulator: true,
     recentTransactions: true,
     budgetGauge: true,
     accountCards: true,
@@ -211,6 +221,7 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
         const widgetKeyMap: Record<string, string> = {
           dailyCashflow: 'daily_cashflow',
           monthlyBalance: 'monthly_balance',
+          savingsAccumulator: 'savings_accumulator',
           recentTransactions: 'recent_transactions',
           budgetGauge: 'budget_gauge',
           accountCards: 'account_cards',
@@ -251,6 +262,37 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
   const [newCatColor, setNewCatColor] = useState<string>('#3B82F6');
   const [categoryFormOpen, setCategoryFormOpen] = useState<boolean>(false);
 
+  // Estados para eliminación con confirmación
+  const [accountToDelete, setAccountToDelete] = useState<Account | null>(null);
+  const [deleteAccountLoading, setDeleteAccountLoading] = useState<boolean>(false);
+
+  const [txToDelete, setTxToDelete] = useState<Transaction | null>(null);
+  const [deleteTxLoading, setDeleteTxLoading] = useState<boolean>(false);
+
+  const [catToDelete, setCatToDelete] = useState<Category | null>(null);
+  const [deleteCatLoading, setDeleteCatLoading] = useState<boolean>(false);
+
+  // Estados para Presupuestos interactivos
+  const [budgetMonth, setBudgetMonth] = useState<number>(new Date().getMonth() + 1);
+  const [budgetYear, setBudgetYear] = useState<number>(new Date().getFullYear());
+  const [budgetsData, setBudgetsData] = useState<Record<string, number>>({});
+  const [savingBudgetCatId, setSavingBudgetCatId] = useState<string | null>(null);
+  const [editingBudgetValues, setEditingBudgetValues] = useState<Record<string, string>>({});
+
+  // Estados para Reporte por Fecha
+  const [dateFrom, setDateFrom] = useState<string>(() => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`;
+  });
+  const [dateTo, setDateTo] = useState<string>(() => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  });
+
+  // Estados para Reporte por Categoría
+  const [reportCatType, setReportCatType] = useState<'salida' | 'ingreso'>('salida');
+  const [drilldownCategory, setDrilldownCategory] = useState<string | null>(null);
+
   const loadAllData = async () => {
     setLoading(true);
     try {
@@ -271,6 +313,7 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
             const loadedWidgets: ActiveWidgetsState = {
               dailyCashflow: list.includes('daily_cashflow') || list.includes('dailyCashflow'),
               monthlyBalance: list.includes('monthly_balance') || list.includes('monthlyBalance'),
+              savingsAccumulator: list.includes('savings_accumulator') || list.includes('savingsAccumulator'),
               recentTransactions: list.includes('recent_transactions') || list.includes('recentTransactions'),
               budgetGauge: list.includes('budget_gauge') || list.includes('budgetGauge'),
               accountCards: list.includes('account_cards') || list.includes('accountCards'),
@@ -538,6 +581,376 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
       avgDailyNet,
     };
   }, [filteredTransactions, selectedAccountIds]);
+
+  // Acumulador de Cuentas de Ahorros
+  const savingsAccounts = useMemo(() => {
+    return accountsWithBalances.filter((acc) => acc.type === 'ahorro');
+  }, [accountsWithBalances]);
+
+  const savingsStats = useMemo(() => {
+    const totalSavings = savingsAccounts.reduce((sum, acc) => sum + (acc.current_balance || 0), 0);
+    const totalPortfolio = accountsWithBalances.reduce((sum, acc) => sum + (acc.current_balance || 0), 0);
+    const savingsPct = totalPortfolio > 0 ? (totalSavings / totalPortfolio) * 100 : 0;
+
+    // Flujo en el periodo seleccionado para cuentas de ahorro
+    const savingsIds = savingsAccounts.map((a) => a.id);
+    let periodSavingsIn = 0;
+    let periodSavingsOut = 0;
+
+    for (const tx of filteredTransactions) {
+      const amt = Number(tx.amount) || 0;
+      if (tx.type === 'ingreso' && savingsIds.includes(tx.account_id)) {
+        periodSavingsIn += amt;
+      } else if (tx.type === 'salida' && savingsIds.includes(tx.account_id)) {
+        periodSavingsOut += amt;
+      } else if (tx.type === 'transferencia') {
+        const isDestSavings = tx.destination_account_id && savingsIds.includes(tx.destination_account_id);
+        const isSourceSavings = savingsIds.includes(tx.account_id);
+        if (isDestSavings && !isSourceSavings) {
+          periodSavingsIn += amt;
+        } else if (isSourceSavings && !isDestSavings) {
+          periodSavingsOut += amt;
+        }
+      }
+    }
+
+    const netSavingsFlow = periodSavingsIn - periodSavingsOut;
+
+    return {
+      totalSavings,
+      savingsPct,
+      periodSavingsIn,
+      periodSavingsOut,
+      netSavingsFlow,
+      count: savingsAccounts.length,
+    };
+  }, [savingsAccounts, accountsWithBalances, filteredTransactions]);
+
+  // Operaciones de eliminación
+  const confirmDeleteAccount = async () => {
+    if (!accountToDelete) return;
+    setDeleteAccountLoading(true);
+    try {
+      await supabase
+        .from('transactions')
+        .delete()
+        .or(`account_id.eq.${accountToDelete.id},destination_account_id.eq.${accountToDelete.id}`);
+
+      const { error } = await supabase
+        .from('accounts')
+        .delete()
+        .eq('id', accountToDelete.id);
+
+      if (error) throw error;
+
+      setSelectedAccountIds((prev) => prev.filter((id) => id !== accountToDelete.id));
+      setAccountToDelete(null);
+      await loadAllData();
+    } catch (err) {
+      console.error('Error al eliminar cuenta:', err);
+      alert('No se pudo eliminar la cuenta. Verifica tus permisos.');
+    } finally {
+      setDeleteAccountLoading(false);
+    }
+  };
+
+  const confirmDeleteTransaction = async () => {
+    if (!txToDelete) return;
+    setDeleteTxLoading(true);
+    try {
+      const { error } = await supabase
+        .from('transactions')
+        .delete()
+        .eq('id', txToDelete.id);
+
+      if (error) throw error;
+
+      setTxToDelete(null);
+      await loadAllData();
+    } catch (err) {
+      console.error('Error al eliminar transacción:', err);
+      alert('No se pudo eliminar el movimiento.');
+    } finally {
+      setDeleteTxLoading(false);
+    }
+  };
+
+  const confirmDeleteCategory = async () => {
+    if (!catToDelete) return;
+    setDeleteCatLoading(true);
+    try {
+      const { error } = await supabase
+        .from('categories')
+        .delete()
+        .eq('id', catToDelete.id);
+
+      if (error) throw error;
+
+      setCatToDelete(null);
+      await loadAllData();
+    } catch (err) {
+      console.error('Error al eliminar categoría:', err);
+      alert('No se pudo eliminar la categoría.');
+    } finally {
+      setDeleteCatLoading(false);
+    }
+  };
+
+  // Sembrado de Categorías Sugeridas
+  const handleSeedSuggestedCategories = async () => {
+    const suggested: { name: string; type: 'salida' | 'ingreso'; color: string; icon: string }[] = [
+      { name: 'Alimentación & Supermercado', type: 'salida', color: '#10B981', icon: 'shopping-cart' },
+      { name: 'Restaurantes & Cafeterías', type: 'salida', color: '#F59E0B', icon: 'utensils' },
+      { name: 'Vivienda & Alquiler', type: 'salida', color: '#3B82F6', icon: 'home' },
+      { name: 'Servicios Públicos (Luz, Agua, Gas)', type: 'salida', color: '#6366F1', icon: 'zap' },
+      { name: 'Transporte & Gasolina', type: 'salida', color: '#8B5CF6', icon: 'car' },
+      { name: 'Salud & Farmacia', type: 'salida', color: '#EC4899', icon: 'activity' },
+      { name: 'Educación & Cursos', type: 'salida', color: '#06B6D4', icon: 'book' },
+      { name: 'Entretenimiento & Suscripciones', type: 'salida', color: '#F43F5E', icon: 'film' },
+      { name: 'Ropa & Calzado', type: 'salida', color: '#14B8A6', icon: 'tag' },
+      { name: 'Mascotas', type: 'salida', color: '#EAB308', icon: 'heart' },
+      { name: 'Cuidado Personal', type: 'salida', color: '#D946EF', icon: 'smile' },
+      { name: 'Viajes & Vacaciones', type: 'salida', color: '#0EA5E9', icon: 'plane' },
+      { name: 'Hogar & Mantenimiento', type: 'salida', color: '#64748B', icon: 'tool' },
+      { name: 'Impuestos & Seguros', type: 'salida', color: '#EF4444', icon: 'file-text' },
+      { name: 'Otros Gastos', type: 'salida', color: '#94A3B8', icon: 'more-horizontal' },
+      { name: 'Salario & Nómina', type: 'ingreso', color: '#10B981', icon: 'briefcase' },
+      { name: 'Freelance & Honorarios', type: 'ingreso', color: '#3B82F6', icon: 'award' },
+      { name: 'Inversiones & Rendimientos', type: 'ingreso', color: '#8B5CF6', icon: 'trending-up' },
+      { name: 'Ventas & Comercio', type: 'ingreso', color: '#F59E0B', icon: 'dollar-sign' },
+      { name: 'Reembolsos & Devoluciones', type: 'ingreso', color: '#06B6D4', icon: 'refresh-cw' },
+      { name: 'Otros Ingresos', type: 'ingreso', color: '#64748B', icon: 'plus-circle' },
+    ];
+
+    const existingNames = new Set(categories.map((c) => c.name.toLowerCase()));
+    const toInsert = suggested
+      .filter((s) => !existingNames.has(s.name.toLowerCase()))
+      .map((s) => ({
+        user_id: user.id,
+        name: s.name,
+        type: s.type,
+        color: s.color,
+        icon: s.icon,
+      }));
+
+    if (toInsert.length === 0) {
+      alert('Ya tienes todas las categorías sugeridas en tu cuenta.');
+      return;
+    }
+
+    const { error } = await supabase.from('categories').insert(toInsert);
+    if (error) {
+      console.error('Error insertando categorías:', error);
+      alert('Error al agregar categorías sugeridas.');
+    } else {
+      await loadAllData();
+    }
+  };
+
+  // Carga y guardado de Presupuestos
+  const loadBudgets = async (m: number, y: number) => {
+    try {
+      const { data } = await supabase
+        .from('budgets')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('month', m)
+        .eq('year', y);
+      if (data) {
+        const map: Record<string, number> = {};
+        const editingMap: Record<string, string> = {};
+        data.forEach((b) => {
+          map[b.category_id] = Number(b.estimated_amount);
+          editingMap[b.category_id] = String(b.estimated_amount);
+        });
+        setBudgetsData(map);
+        setEditingBudgetValues(editingMap);
+      }
+    } catch (e) {
+      console.error('Error cargando presupuestos:', e);
+    }
+  };
+
+  useEffect(() => {
+    loadBudgets(budgetMonth, budgetYear);
+  }, [budgetMonth, budgetYear]);
+
+  const handleSaveBudget = async (categoryId: string, amount: number) => {
+    setSavingBudgetCatId(categoryId);
+    try {
+      await supabase.from('budgets').upsert(
+        {
+          user_id: user.id,
+          category_id: categoryId,
+          month: budgetMonth,
+          year: budgetYear,
+          estimated_amount: amount,
+        },
+        { onConflict: 'user_id,category_id,month,year' }
+      );
+      setBudgetsData((prev) => ({ ...prev, [categoryId]: amount }));
+    } catch (e) {
+      console.error('Error guardando presupuesto:', e);
+    } finally {
+      setSavingBudgetCatId(null);
+    }
+  };
+
+  const expenseCategories = useMemo(() => {
+    return categories.filter((c) => c.type === 'salida');
+  }, [categories]);
+
+  const budgetStats = useMemo(() => {
+    const monthTxs = transactions.filter((tx) => {
+      if (tx.type !== 'salida') return false;
+      const [y, m] = tx.date.split('-').map(Number);
+      return y === budgetYear && m === budgetMonth;
+    });
+
+    let totalBudgeted = 0;
+    let totalSpent = 0;
+    let exceededCount = 0;
+
+    const items = expenseCategories.map((cat) => {
+      const budgeted = budgetsData[cat.id] || 0;
+      totalBudgeted += budgeted;
+
+      const spent = monthTxs
+        .filter((tx) => tx.category_id === cat.id)
+        .reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0);
+      totalSpent += spent;
+
+      const remaining = budgeted - spent;
+      const pct = budgeted > 0 ? Math.round((spent / budgeted) * 100) : spent > 0 ? 100 : 0;
+      if (budgeted > 0 && spent > budgeted) {
+        exceededCount++;
+      }
+
+      return {
+        category: cat,
+        budgeted,
+        spent,
+        remaining,
+        pct,
+      };
+    });
+
+    const totalRemaining = totalBudgeted - totalSpent;
+    const overallPct = totalBudgeted > 0 ? Math.round((totalSpent / totalBudgeted) * 100) : 0;
+
+    return {
+      items,
+      totalBudgeted,
+      totalSpent,
+      totalRemaining,
+      overallPct,
+      exceededCount,
+    };
+  }, [expenseCategories, budgetsData, transactions, budgetMonth, budgetYear]);
+
+  // Cálculos para Reporte por Fecha
+  const dateReportData = useMemo(() => {
+    const fromStr = dateFrom;
+    const toStr = dateTo;
+
+    const rangeTxs = transactions.filter((tx) => {
+      if (!tx.date) return false;
+      if (fromStr && tx.date < fromStr) return false;
+      if (toStr && tx.date > toStr) return false;
+      return true;
+    });
+
+    let income = 0;
+    let expense = 0;
+
+    const dayMap = new Map<string, { date: string; income: number; expense: number; net: number; txs: Transaction[] }>();
+
+    for (const tx of rangeTxs) {
+      const amt = Number(tx.amount) || 0;
+      if (tx.type === 'ingreso') {
+        income += amt;
+      } else if (tx.type === 'salida') {
+        expense += amt;
+      }
+
+      let dObj = dayMap.get(tx.date);
+      if (!dObj) {
+        dObj = { date: tx.date, income: 0, expense: 0, net: 0, txs: [] };
+        dayMap.set(tx.date, dObj);
+      }
+      dObj.txs.push(tx);
+      if (tx.type === 'ingreso') dObj.income += amt;
+      if (tx.type === 'salida') dObj.expense += amt;
+    }
+
+    dayMap.forEach((v) => {
+      v.net = v.income - v.expense;
+    });
+
+    const sortedDays = Array.from(dayMap.values()).sort((a, b) => b.date.localeCompare(a.date));
+    const net = income - expense;
+    const savingsRate = income > 0 ? ((net / income) * 100).toFixed(1) : '0';
+
+    return {
+      rangeTxs,
+      income,
+      expense,
+      net,
+      savingsRate,
+      txCount: rangeTxs.length,
+      days: sortedDays,
+    };
+  }, [transactions, dateFrom, dateTo]);
+
+  // Cálculos para Reporte por Categoría
+  const categoryReportData = useMemo(() => {
+    const targetTxs = filteredTransactions.filter((tx) => tx.type === reportCatType);
+    const totalAmount = targetTxs.reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0);
+
+    const relevantCategories = categories.filter((c) => c.type === reportCatType);
+
+    const stats = relevantCategories.map((cat) => {
+      const catTxs = targetTxs.filter((tx) => tx.category_id === cat.id);
+      const amount = catTxs.reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0);
+      const count = catTxs.length;
+      const pct = totalAmount > 0 ? (amount / totalAmount) * 100 : 0;
+      const avg = count > 0 ? amount / count : 0;
+
+      return {
+        category: cat,
+        amount,
+        count,
+        pct,
+        avg,
+        txs: catTxs,
+      };
+    });
+
+    const uncatTxs = targetTxs.filter((tx) => !tx.category_id);
+    if (uncatTxs.length > 0) {
+      const amount = uncatTxs.reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0);
+      const count = uncatTxs.length;
+      const pct = totalAmount > 0 ? (amount / totalAmount) * 100 : 0;
+      const avg = count > 0 ? amount / count : 0;
+      stats.push({
+        category: { id: 'uncategorized', name: 'Sin Categoría', type: reportCatType, color: '#94A3B8', icon: 'help-circle' } as any,
+        amount,
+        count,
+        pct,
+        avg,
+        txs: uncatTxs,
+      });
+    }
+
+    stats.sort((a, b) => b.amount - a.amount);
+
+    return {
+      totalAmount,
+      stats,
+      top3: stats.filter((s) => s.amount > 0).slice(0, 3),
+      txCount: targetTxs.length,
+    };
+  }, [filteredTransactions, categories, reportCatType]);
 
   const toggleAccountFilter = (accId: string) => {
     if (selectedAccountIds.includes(accId)) {
@@ -854,7 +1267,7 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
                     (Se guarda automáticamente en tu cuenta)
                   </span>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 text-xs">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-xs">
                   {Object.entries(activeWidgets).map(([key, val]) => (
                     <label
                       key={key}
@@ -871,6 +1284,8 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
                           ? 'Flujo de Caja'
                           : key === 'monthlyBalance'
                           ? 'Balance General'
+                          : key === 'savingsAccumulator'
+                          ? 'Cuentas de Ahorro'
                           : key === 'recentTransactions'
                           ? 'Últimos Registros'
                           : key === 'budgetGauge'
@@ -1131,6 +1546,160 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
               </div>
             )}
 
+            {/* Widget Acumulador de Cuentas de Ahorros */}
+            {activeWidgets.savingsAccumulator && (
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm animate-in fade-in transition-all">
+                <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-5">
+                  <div>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <div className="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
+                        <PiggyBank className="w-4 h-4" />
+                      </div>
+                      <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                        Acumulado Cuentas de Ahorro
+                      </h3>
+                      <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60">
+                        {savingsStats.count} {savingsStats.count === 1 ? 'cuenta' : 'cuentas'}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                      Balance consolidado de tus fondos de reserva y ahorro ({timeFilter === 'ano' ? 'Año' : timeFilter === 'dia' ? 'Día' : timeFilter})
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      setNewAccountType('ahorro');
+                      setAccountFormOpen(true);
+                      handleTabChange('accounts');
+                    }}
+                    className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1 self-start sm:self-auto"
+                  >
+                    <PlusCircle className="w-3.5 h-3.5" />
+                    <span>Nueva Cuenta de Ahorro</span>
+                  </button>
+                </div>
+
+                {/* Métricas clave de Ahorro */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
+                  <div className="p-4 bg-gradient-to-br from-emerald-500/10 to-teal-500/5 rounded-2xl border border-emerald-500/20">
+                    <span className="text-[10px] uppercase font-bold text-emerald-700 dark:text-emerald-400 block mb-1">
+                      Saldo Total Ahorrado
+                    </span>
+                    <h4 className="text-2xl font-black text-slate-900 dark:text-white">
+                      {formatMoney(savingsStats.totalSavings)}
+                    </h4>
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 block">
+                      Representa el {savingsStats.savingsPct.toFixed(1)}% de tu patrimonio
+                    </span>
+                  </div>
+
+                  <div className="p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800/80">
+                    <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">
+                      Flujo Neto del Periodo
+                    </span>
+                    <h4
+                      className={`text-2xl font-black ${
+                        savingsStats.netSavingsFlow >= 0
+                          ? 'text-emerald-600 dark:text-emerald-400'
+                          : 'text-rose-600 dark:text-rose-400'
+                      }`}
+                    >
+                      {savingsStats.netSavingsFlow >= 0 ? '+' : ''}
+                      {formatMoney(savingsStats.netSavingsFlow)}
+                    </h4>
+                    <span className="text-[10px] text-slate-400 mt-1 block">
+                      +{formatMoney(savingsStats.periodSavingsIn)} ent. / -{formatMoney(savingsStats.periodSavingsOut)} sal.
+                    </span>
+                  </div>
+
+                  <div className="p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800/80">
+                    <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">
+                      Participación Patrimonial
+                    </span>
+                    <div className="flex items-baseline gap-2">
+                      <h4 className="text-2xl font-black text-slate-900 dark:text-white">
+                        {savingsStats.savingsPct.toFixed(1)}%
+                      </h4>
+                      <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold">
+                        en reserva
+                      </span>
+                    </div>
+                    {/* Barra de progreso de participación */}
+                    <div className="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden mt-2">
+                      <div
+                        className="bg-emerald-500 h-full rounded-full transition-all duration-500"
+                        style={{ width: `${Math.min(savingsStats.savingsPct, 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Lista de cuentas de ahorro */}
+                {savingsAccounts.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {savingsAccounts.map((acc) => {
+                      const bal = acc.current_balance ?? acc.initial_balance;
+                      const sharePct = savingsStats.totalSavings > 0 ? ((bal / savingsStats.totalSavings) * 100).toFixed(0) : '0';
+                      const isSelected = selectedAccountIds.includes(acc.id);
+
+                      return (
+                        <div
+                          key={acc.id}
+                          className={`p-4 rounded-2xl border transition-all ${
+                            isSelected
+                              ? 'bg-emerald-50/60 dark:bg-emerald-950/30 border-emerald-500 shadow-sm'
+                              : 'bg-slate-50/70 dark:bg-slate-950/60 border-slate-200/80 dark:border-slate-800/80 hover:border-slate-300'
+                          }`}
+                        >
+                          <div className="flex justify-between items-start mb-2">
+                            <div className="flex items-center gap-2">
+                              <span className="text-xl">🏦</span>
+                              <div>
+                                <h5 className="text-xs font-bold text-slate-900 dark:text-white leading-tight">
+                                  {acc.name}
+                                </h5>
+                                <span className="text-[10px] text-slate-400">
+                                  {sharePct}% del total ahorros
+                                </span>
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => toggleAccountFilter(acc.id)}
+                              className={`text-[10px] px-2 py-0.5 rounded-lg font-bold transition ${
+                                isSelected
+                                  ? 'bg-emerald-500 text-white'
+                                  : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-300'
+                              }`}
+                            >
+                              {isSelected ? 'Filtrada ✓' : 'Filtrar'}
+                            </button>
+                          </div>
+
+                          <div className="mt-2 pt-2 border-t border-slate-200/50 dark:border-slate-800/50 flex justify-between items-baseline">
+                            <span className="text-[10px] text-slate-400 uppercase font-semibold">Saldo</span>
+                            <span className="text-base font-black text-emerald-600 dark:text-emerald-400">
+                              {formatMoney(bal)}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="py-6 text-center bg-slate-50 dark:bg-slate-950 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800">
+                    <PiggyBank className="w-8 h-8 text-slate-400 mx-auto mb-2 opacity-50" />
+                    <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                      No tienes cuentas de tipo "Ahorro" configuradas.
+                    </p>
+                    <p className="text-[11px] text-slate-400 mt-0.5">
+                      Crea una cuenta con tipo "Ahorro" en la pestaña Cuentas para monitorear tu patrimonio acumulado.
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Medidor de Presupuesto */}
             {activeWidgets.budgetGauge && (
               <BudgetGaugeCard
@@ -1192,7 +1761,7 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
                     }
 
                     return (
-                      <div key={tx.id} className="py-3 flex items-center justify-between">
+                      <div key={tx.id} className="py-3 flex items-center justify-between group">
                         <div className="flex items-center gap-3">
                           <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg ${iconBg}`}>
                             <IconComponent className="w-5 h-5" />
@@ -1224,20 +1793,30 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
                           </div>
                         </div>
 
-                        {isTransfer && selectedAccountIds.length === 0 ? (
-                          <div className="flex flex-col items-end">
-                            <div className="flex items-center gap-1.5 text-xs font-black">
-                              <span className="text-rose-600 dark:text-rose-400">-{formatMoney(tx.amount)}</span>
-                              <span className="text-slate-300 dark:text-slate-600 font-normal">/</span>
-                              <span className="text-emerald-600 dark:text-emerald-400">+{formatMoney(tx.amount)}</span>
+                        <div className="flex items-center gap-3">
+                          {isTransfer && selectedAccountIds.length === 0 ? (
+                            <div className="flex flex-col items-end">
+                              <div className="flex items-center gap-1.5 text-xs font-black">
+                                <span className="text-rose-600 dark:text-rose-400">-{formatMoney(tx.amount)}</span>
+                                <span className="text-slate-300 dark:text-slate-600 font-normal">/</span>
+                                <span className="text-emerald-600 dark:text-emerald-400">+{formatMoney(tx.amount)}</span>
+                              </div>
+                              <span className="text-[10px] text-slate-400">Transferencia</span>
                             </div>
-                            <span className="text-[10px] text-slate-400">Transferencia</span>
-                          </div>
-                        ) : (
-                          <span className={`text-sm font-black ${amountColor}`}>
-                            {amountPrefix}{formatMoney(tx.amount)}
-                          </span>
-                        )}
+                          ) : (
+                            <span className={`text-sm font-black ${amountColor}`}>
+                              {amountPrefix}{formatMoney(tx.amount)}
+                            </span>
+                          )}
+
+                          <button
+                            onClick={() => setTxToDelete(tx)}
+                            title="Eliminar movimiento"
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition opacity-80 sm:opacity-0 group-hover:opacity-100"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
                       </div>
                     );
                   })}
@@ -1332,6 +1911,7 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
                     <th className="p-4">Cuenta</th>
                     <th className="p-4">Categoría</th>
                     <th className="p-4 text-right">Monto</th>
+                    <th className="p-4 text-center w-14">Acciones</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-200">
@@ -1429,6 +2009,15 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
                                 {amountPrefix}{formatMoney(tx.amount)}
                               </span>
                             )}
+                          </td>
+                          <td className="p-4 text-center">
+                            <button
+                              onClick={() => setTxToDelete(tx)}
+                              title="Eliminar movimiento"
+                              className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
                           </td>
                         </tr>
                       );
@@ -1531,9 +2120,18 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
                         <span className="text-3xl">
                           {acc.type === 'tarjeta' ? '💳' : acc.type === 'efectivo' ? '💵' : '🏦'}
                         </span>
-                        <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold">
-                          {acc.type}
-                        </span>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold">
+                            {acc.type}
+                          </span>
+                          <button
+                            onClick={() => setAccountToDelete(acc)}
+                            title="Eliminar cuenta"
+                            className="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </div>
                       <h4 className="text-lg font-bold text-slate-900 dark:text-white">{acc.name}</h4>
 
@@ -1594,23 +2192,35 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
         {/* 4. SECCIÓN CATEGORÍAS */}
         {activeTab === 'categories' && (
           <div className="space-y-6 max-w-5xl mx-auto">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
               <div>
                 <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Categorías</h2>
-                <p className="text-sm text-slate-500 dark:text-slate-400">Clasifica tus gastos e ingresos con colores personalizados.</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">
+                  {categories.length} categorías registradas para clasificar tus movimientos.
+                </p>
               </div>
-              <button
-                onClick={() => setCategoryFormOpen(!categoryFormOpen)}
-                className="bg-emerald-500 hover:bg-emerald-400 text-white dark:text-slate-950 font-bold px-4 py-2.5 rounded-xl text-sm flex items-center gap-2"
-              >
-                <PlusCircle className="w-4 h-4" />
-                <span>{categoryFormOpen ? 'Cerrar' : 'Nueva Categoría'}</span>
-              </button>
+              <div className="flex items-center gap-2 flex-wrap">
+                <button
+                  onClick={handleSeedSuggestedCategories}
+                  title="Cargar categorías comunes predefinidas"
+                  className="bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold px-3.5 py-2.5 rounded-xl text-xs flex items-center gap-2 border border-slate-200 dark:border-slate-700 transition"
+                >
+                  <Sparkles className="w-4 h-4 text-amber-500" />
+                  <span>Cargar Categorías Sugeridas</span>
+                </button>
+                <button
+                  onClick={() => setCategoryFormOpen(!categoryFormOpen)}
+                  className="bg-emerald-500 hover:bg-emerald-400 text-white dark:text-slate-950 font-bold px-4 py-2.5 rounded-xl text-sm flex items-center gap-2 shadow-sm transition"
+                >
+                  <PlusCircle className="w-4 h-4" />
+                  <span>{categoryFormOpen ? 'Cerrar' : 'Nueva Categoría'}</span>
+                </button>
+              </div>
             </div>
 
             {categoryFormOpen && (
-              <form onSubmit={handleCreateCategory} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4 shadow-sm">
-                <h3 className="text-sm font-bold text-slate-900 dark:text-white">Crear Categoría</h3>
+              <form onSubmit={handleCreateCategory} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4 shadow-sm animate-in fade-in">
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white">Crear Categoría Personalizada</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-xs text-slate-500 dark:text-slate-400 mb-1">Nombre</label>
@@ -1644,113 +2254,746 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
                     />
                   </div>
                 </div>
-                <button type="submit" className="px-5 py-2 bg-emerald-500 text-white dark:text-slate-950 font-bold text-xs rounded-xl">
+                <button type="submit" className="px-5 py-2 bg-emerald-500 text-white dark:text-slate-950 font-bold text-xs rounded-xl shadow-sm">
                   Guardar Categoría
                 </button>
               </form>
             )}
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-              {categories.map((c) => (
-                <div key={c.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm flex items-center gap-3">
-                  <span className="w-3.5 h-3.5 rounded-full shrink-0" style={{ backgroundColor: c.color }} />
-                  <div>
-                    <p className="text-sm font-bold text-slate-900 dark:text-white">{c.name}</p>
-                    <span className="text-[10px] uppercase tracking-wider text-slate-400 capitalize">{c.type}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* 5. SECCIÓN PRESUPUESTOS */}
-        {activeTab === 'budgets' && (
-          <div className="space-y-6 max-w-5xl mx-auto">
-            <div>
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Presupuestos Mensuales</h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400">
-                Comparativa con el año anterior en {currencyCode} ({currencySymbol}).
-              </p>
-            </div>
-            <BudgetGaugeCard year={new Date().getFullYear()} month={new Date().getMonth() + 1} />
-          </div>
-        )}
-
-        {/* 6. REPORTES */}
-        {(activeTab === 'reports_date' || activeTab === 'reports_category') && (
-          <div className="space-y-6 max-w-5xl mx-auto">
-            <div>
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
-                {activeTab === 'reports_date' ? 'Reporte por Rango de Fechas' : 'Reporte Analítico por Categoría'}
-              </h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400">
-                Distribución porcentual en {currencyCode}.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm">
-                <h3 className="text-base font-bold text-slate-900 dark:text-white mb-4">Distribución de Gastos</h3>
-                <div className="space-y-3">
-                  {categories
-                    .filter((c) => c.type === 'salida')
-                    .map((cat) => {
-                      const totalCat = transactions
-                        .filter((tx) => tx.type === 'salida' && tx.category_id === cat.id)
-                        .reduce((sum, tx) => sum + Number(tx.amount), 0);
-                      const pct = totalExpense > 0 ? ((totalCat / totalExpense) * 100).toFixed(1) : '0';
-
-                      return (
-                        <div key={cat.id} className="text-xs space-y-1">
-                          <div className="flex justify-between text-slate-600 dark:text-slate-300">
-                            <span className="flex items-center gap-1.5 font-semibold">
-                              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: cat.color }} />
-                              {cat.name}
-                            </span>
-                            <span className="font-bold text-slate-900 dark:text-white">
-                              {formatMoney(totalCat)} ({pct}%)
-                            </span>
-                          </div>
-                          <div className="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                            <div
-                              className="h-full rounded-full"
-                              style={{ width: `${pct}%`, backgroundColor: cat.color }}
-                            />
-                          </div>
-                        </div>
-                      );
-                    })}
+            {/* Categorías de Salidas (Gastos) */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-rose-500" />
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider text-xs">
+                    Gastos / Salidas ({categories.filter((c) => c.type === 'salida').length})
+                  </h3>
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm flex flex-col justify-between">
-                <div>
-                  <h3 className="text-base font-bold text-slate-900 dark:text-white mb-2">Diagnóstico de Ahorro</h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                    Tu tasa de ahorro actual es de{' '}
-                    <strong className="text-emerald-600 dark:text-emerald-400">
-                      {totalIncome > 0 ? (((totalIncome - totalExpense) / totalIncome) * 100).toFixed(1) : 0}%
-                    </strong>
-                    .
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {categories
+                  .filter((c) => c.type === 'salida')
+                  .map((c) => {
+                    const count = transactions.filter((t) => t.category_id === c.id).length;
+                    return (
+                      <div
+                        key={c.id}
+                        className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm flex items-center justify-between group hover:border-slate-300 dark:hover:border-slate-700 transition"
+                      >
+                        <div className="flex items-center gap-3 overflow-hidden">
+                          <span
+                            className="w-4 h-4 rounded-full shrink-0 shadow-sm"
+                            style={{ backgroundColor: c.color }}
+                          />
+                          <div className="truncate">
+                            <p className="text-sm font-bold text-slate-900 dark:text-white truncate">{c.name}</p>
+                            <span className="text-[10px] text-slate-400">
+                              {count} {count === 1 ? 'movimiento' : 'movimientos'}
+                            </span>
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={() => setCatToDelete(c)}
+                          title={`Eliminar categoría ${c.name}`}
+                          className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition opacity-80 sm:opacity-0 group-hover:opacity-100"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>
+
+            {/* Categorías de Ingresos */}
+            <div className="space-y-3 pt-4">
+              <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider text-xs">
+                    Ingresos ({categories.filter((c) => c.type === 'ingreso').length})
+                  </h3>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {categories
+                  .filter((c) => c.type === 'ingreso')
+                  .map((c) => {
+                    const count = transactions.filter((t) => t.category_id === c.id).length;
+                    return (
+                      <div
+                        key={c.id}
+                        className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm flex items-center justify-between group hover:border-slate-300 dark:hover:border-slate-700 transition"
+                      >
+                        <div className="flex items-center gap-3 overflow-hidden">
+                          <span
+                            className="w-4 h-4 rounded-full shrink-0 shadow-sm"
+                            style={{ backgroundColor: c.color }}
+                          />
+                          <div className="truncate">
+                            <p className="text-sm font-bold text-slate-900 dark:text-white truncate">{c.name}</p>
+                            <span className="text-[10px] text-slate-400">
+                              {count} {count === 1 ? 'movimiento' : 'movimientos'}
+                            </span>
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={() => setCatToDelete(c)}
+                          title={`Eliminar categoría ${c.name}`}
+                          className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition opacity-80 sm:opacity-0 group-hover:opacity-100"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 5. SECCIÓN PRESUPUESTOS MEJORADA */}
+        {activeTab === 'budgets' && (
+          <div className="space-y-6 max-w-5xl mx-auto">
+            {/* Header con selector de Mes y Año */}
+            <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm">
+              <div>
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Planificación de Presupuestos</h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  Asigna límites máximos a cada categoría de gasto y monitorea tus desvíos en tiempo real.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <select
+                  value={budgetMonth}
+                  onChange={(e) => setBudgetMonth(Number(e.target.value))}
+                  className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300 focus:outline-none"
+                >
+                  {[
+                    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+                  ].map((mName, idx) => (
+                    <option key={idx + 1} value={idx + 1}>{mName}</option>
+                  ))}
+                </select>
+
+                <select
+                  value={budgetYear}
+                  onChange={(e) => setBudgetYear(Number(e.target.value))}
+                  className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300 focus:outline-none"
+                >
+                  {[2024, 2025, 2026, 2027, 2028].map((y) => (
+                    <option key={y} value={y}>{y}</option>
+                  ))}
+                </select>
+
+                <button
+                  onClick={() => {
+                    const n = new Date();
+                    setBudgetMonth(n.getMonth() + 1);
+                    setBudgetYear(n.getFullYear());
+                  }}
+                  className="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300 transition"
+                >
+                  Mes Actual
+                </button>
+              </div>
+            </div>
+
+            {/* KPI Cards de Resumen del Presupuesto */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
+                <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">Presupuesto Estimado</span>
+                <h4 className="text-xl font-black text-slate-900 dark:text-white">
+                  {formatMoney(budgetStats.totalBudgeted)}
+                </h4>
+                <span className="text-[10px] text-slate-400 mt-1 block">Total planificado</span>
+              </div>
+
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
+                <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">Gastado Real</span>
+                <h4 className="text-xl font-black text-rose-600 dark:text-rose-400">
+                  {formatMoney(budgetStats.totalSpent)}
+                </h4>
+                <span className="text-[10px] text-slate-400 mt-1 block">{budgetStats.overallPct}% ejecutado</span>
+              </div>
+
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
+                <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">Margen Disponible</span>
+                <h4
+                  className={`text-xl font-black ${
+                    budgetStats.totalRemaining >= 0
+                      ? 'text-emerald-600 dark:text-emerald-400'
+                      : 'text-rose-600 dark:text-rose-400'
+                  }`}
+                >
+                  {budgetStats.totalRemaining >= 0 ? '+' : ''}
+                  {formatMoney(budgetStats.totalRemaining)}
+                </h4>
+                <span className="text-[10px] text-slate-400 mt-1 block">
+                  {budgetStats.totalRemaining >= 0 ? 'Restante para gastar' : 'Exceso sobre presupuesto'}
+                </span>
+              </div>
+
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
+                <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">Estado de Categorías</span>
+                <div className="flex items-center gap-1.5 mt-1">
+                  <h4 className="text-xl font-black text-slate-900 dark:text-white">
+                    {budgetStats.exceededCount}
+                  </h4>
+                  <span className="text-xs text-rose-500 font-bold">excedidas</span>
+                </div>
+                <span className="text-[10px] text-slate-400 mt-0.5 block">
+                  de {budgetStats.items.length} categorías de gasto
+                </span>
+              </div>
+            </div>
+
+            {/* Listado de categorías con inputs editables de presupuesto */}
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white mb-4">
+                Presupuesto por Categoría de Gasto
+              </h3>
+
+              <div className="space-y-4">
+                {budgetStats.items.map((item) => {
+                  const isExceeded = item.budgeted > 0 && item.spent > item.budgeted;
+                  const isWarning = item.budgeted > 0 && item.spent >= item.budgeted * 0.8 && !isExceeded;
+                  const barColor = isExceeded
+                    ? 'bg-rose-500'
+                    : isWarning
+                    ? 'bg-amber-400'
+                    : 'bg-emerald-500';
+
+                  const currentVal = editingBudgetValues[item.category.id] ?? (item.budgeted > 0 ? String(item.budgeted) : '');
+                  const isSaving = savingBudgetCatId === item.category.id;
+
+                  return (
+                    <div
+                      key={item.category.id}
+                      className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/70 border border-slate-100 dark:border-slate-800/80 space-y-3"
+                    >
+                      <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+                        <div className="flex items-center gap-2.5">
+                          <span
+                            className="w-3.5 h-3.5 rounded-full shrink-0"
+                            style={{ backgroundColor: item.category.color }}
+                          />
+                          <h4 className="text-sm font-bold text-slate-900 dark:text-white">
+                            {item.category.name}
+                          </h4>
+                          {isExceeded && (
+                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-rose-100 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 font-bold">
+                              Excedido
+                            </span>
+                          )}
+                          {isWarning && (
+                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 font-bold">
+                              Alerta 80%+
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Input y botón para definir presupuesto estimado */}
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-slate-400 font-medium">Tope ({currencySymbol}):</span>
+                          <input
+                            type="number"
+                            step="0.01"
+                            placeholder="0.00"
+                            value={currentVal}
+                            onChange={(e) =>
+                              setEditingBudgetValues({
+                                ...editingBudgetValues,
+                                [item.category.id]: e.target.value,
+                              })
+                            }
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                handleSaveBudget(item.category.id, parseFloat(currentVal) || 0);
+                              }
+                            }}
+                            className="w-28 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500"
+                          />
+                          <button
+                            onClick={() => handleSaveBudget(item.category.id, parseFloat(currentVal) || 0)}
+                            disabled={isSaving}
+                            title="Guardar tope presupuestario"
+                            className="p-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white dark:text-slate-950 font-bold transition disabled:opacity-50"
+                          >
+                            <Save className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Progreso visual y detalle gastado vs presupuestado */}
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-xs">
+                          <span className="text-slate-500 dark:text-slate-400">
+                            Gastado: <strong className="text-slate-900 dark:text-white">{formatMoney(item.spent)}</strong>
+                          </span>
+                          <span className="text-slate-500 dark:text-slate-400">
+                            {item.budgeted > 0 ? (
+                              <>
+                                Margen:{' '}
+                                <strong
+                                  className={
+                                    item.remaining >= 0
+                                      ? 'text-emerald-600 dark:text-emerald-400'
+                                      : 'text-rose-600 dark:text-rose-400'
+                                  }
+                                >
+                                  {item.remaining >= 0 ? '+' : ''}{formatMoney(item.remaining)}
+                                </strong>{' '}
+                                ({item.pct}%)
+                              </>
+                            ) : (
+                              <span className="text-slate-400 italic">Sin tope asignado</span>
+                            )}
+                          </span>
+                        </div>
+
+                        {/* Barra de progreso */}
+                        <div className="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+                          <div
+                            className={`h-full rounded-full transition-all duration-300 ${barColor}`}
+                            style={{ width: `${Math.min(item.pct, 100)}%` }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {budgetStats.items.length === 0 && (
+                  <p className="text-xs text-slate-400 text-center py-6">
+                    No tienes categorías de gasto configuradas. Agrega categorías en la pestaña "Categorías".
                   </p>
+                )}
+              </div>
+            </div>
+
+            {/* Medidor Comparativo Histórico Año Anterior */}
+            <BudgetGaugeCard year={budgetYear} month={budgetMonth} />
+          </div>
+        )}
+
+        {/* 6. REPORTE POR FECHA MEJORADO */}
+        {activeTab === 'reports_date' && (
+          <div className="space-y-6 max-w-5xl mx-auto">
+            <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+              <div>
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Reporte por Rango de Fechas</h2>
+                <p className="text-sm text-slate-500 dark:text-slate-400">
+                  Análisis cronológico detallado de entradas, salidas y evolución del saldo neto.
+                </p>
+              </div>
+
+              {/* Controles de Selección de Rango */}
+              <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex items-center gap-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-2.5 py-1.5 text-xs shadow-sm">
+                  <span className="text-slate-400 text-[10px] font-bold uppercase">Desde:</span>
+                  <input
+                    type="date"
+                    value={dateFrom}
+                    onChange={(e) => setDateFrom(e.target.value)}
+                    className="bg-transparent text-slate-900 dark:text-white font-semibold text-xs focus:outline-none"
+                  />
                 </div>
-                <div className="p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800/80 mt-6 space-y-2">
-                  <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400">
-                    <span>Ingresos Registrados:</span>
-                    <span className="font-bold text-emerald-600 dark:text-emerald-400">{formatMoney(totalIncome)}</span>
-                  </div>
-                  <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400">
-                    <span>Salidas Registradas:</span>
-                    <span className="font-bold text-rose-600 dark:text-rose-400">{formatMoney(totalExpense)}</span>
-                  </div>
-                  <div className="flex justify-between text-xs text-slate-900 dark:text-white pt-2 border-t border-slate-200 dark:border-slate-800 font-bold">
-                    <span>Balance Neto:</span>
-                    <span className={netBalance >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}>
-                      {formatMoney(netBalance)}
-                    </span>
-                  </div>
+
+                <div className="flex items-center gap-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-2.5 py-1.5 text-xs shadow-sm">
+                  <span className="text-slate-400 text-[10px] font-bold uppercase">Hasta:</span>
+                  <input
+                    type="date"
+                    value={dateTo}
+                    onChange={(e) => setDateTo(e.target.value)}
+                    className="bg-transparent text-slate-900 dark:text-white font-semibold text-xs focus:outline-none"
+                  />
                 </div>
+              </div>
+            </div>
+
+            {/* Botones de Presets Rápidos */}
+            <div className="flex items-center gap-1.5 flex-wrap">
+              {[
+                {
+                  label: 'Este Mes',
+                  calc: () => {
+                    const now = new Date();
+                    const f = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`;
+                    const t = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+                    setDateFrom(f);
+                    setDateTo(t);
+                  },
+                },
+                {
+                  label: 'Mes Anterior',
+                  calc: () => {
+                    const now = new Date();
+                    const prevMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+                    const lastDay = new Date(now.getFullYear(), now.getMonth(), 0).getDate();
+                    const f = `${prevMonthDate.getFullYear()}-${String(prevMonthDate.getMonth() + 1).padStart(2, '0')}-01`;
+                    const t = `${prevMonthDate.getFullYear()}-${String(prevMonthDate.getMonth() + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
+                    setDateFrom(f);
+                    setDateTo(t);
+                  },
+                },
+                {
+                  label: 'Últimos 7 días',
+                  calc: () => {
+                    const now = new Date();
+                    const d7 = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7);
+                    setDateFrom(`${d7.getFullYear()}-${String(d7.getMonth() + 1).padStart(2, '0')}-${String(d7.getDate()).padStart(2, '0')}`);
+                    setDateTo(`${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`);
+                  },
+                },
+                {
+                  label: 'Últimos 30 días',
+                  calc: () => {
+                    const now = new Date();
+                    const d30 = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 30);
+                    setDateFrom(`${d30.getFullYear()}-${String(d30.getMonth() + 1).padStart(2, '0')}-${String(d30.getDate()).padStart(2, '0')}`);
+                    setDateTo(`${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`);
+                  },
+                },
+                {
+                  label: 'Este Año',
+                  calc: () => {
+                    const now = new Date();
+                    setDateFrom(`${now.getFullYear()}-01-01`);
+                    setDateTo(`${now.getFullYear()}-12-31`);
+                  },
+                },
+                {
+                  label: 'Todo',
+                  calc: () => {
+                    setDateFrom('');
+                    setDateTo('');
+                  },
+                },
+              ].map((p) => (
+                <button
+                  key={p.label}
+                  onClick={p.calc}
+                  className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:border-emerald-500 hover:text-emerald-600 transition shadow-sm"
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
+
+            {/* KPIs del Rango */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
+                <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">Total Ingresos</span>
+                <h4 className="text-xl font-black text-emerald-600 dark:text-emerald-400">
+                  +{formatMoney(dateReportData.income)}
+                </h4>
+              </div>
+
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
+                <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">Total Salidas</span>
+                <h4 className="text-xl font-black text-rose-600 dark:text-rose-400">
+                  -{formatMoney(dateReportData.expense)}
+                </h4>
+              </div>
+
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
+                <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">Resultado Neto</span>
+                <h4
+                  className={`text-xl font-black ${
+                    dateReportData.net >= 0
+                      ? 'text-emerald-600 dark:text-emerald-400'
+                      : 'text-rose-600 dark:text-rose-400'
+                  }`}
+                >
+                  {dateReportData.net >= 0 ? '+' : ''}
+                  {formatMoney(dateReportData.net)}
+                </h4>
+              </div>
+
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
+                <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">Tasa de Ahorro</span>
+                <div className="flex items-baseline gap-1.5">
+                  <h4 className="text-xl font-black text-slate-900 dark:text-white">
+                    {dateReportData.savingsRate}%
+                  </h4>
+                  <span className="text-[10px] text-slate-400 font-semibold">
+                    ({dateReportData.txCount} movs.)
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Desglose Diario Timeline */}
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white mb-4">
+                Desglose Cronológico por Día ({dateReportData.days.length} días con actividad)
+              </h3>
+
+              <div className="space-y-3">
+                {dateReportData.days.map((d) => (
+                  <div
+                    key={d.date}
+                    className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/70 border border-slate-100 dark:border-slate-800/80 space-y-2"
+                  >
+                    <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                      <div className="flex items-center gap-2">
+                        <CalendarDays className="w-4 h-4 text-emerald-500" />
+                        <span className="text-sm font-bold text-slate-900 dark:text-white">{d.date}</span>
+                        <span className="text-[11px] text-slate-400 font-medium">
+                          ({d.txs.length} {d.txs.length === 1 ? 'movimiento' : 'movimientos'})
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-4 text-xs font-bold">
+                        {d.income > 0 && (
+                          <span className="text-emerald-600 dark:text-emerald-400">
+                            +{formatMoney(d.income)}
+                          </span>
+                        )}
+                        {d.expense > 0 && (
+                          <span className="text-rose-600 dark:text-rose-400">
+                            -{formatMoney(d.expense)}
+                          </span>
+                        )}
+                        <span
+                          className={`px-2.5 py-0.5 rounded-lg ${
+                            d.net >= 0
+                              ? 'bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300'
+                              : 'bg-rose-100 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300'
+                          }`}
+                        >
+                          Neto: {d.net >= 0 ? '+' : ''}{formatMoney(d.net)}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Resumen de movimientos de ese día */}
+                    <div className="pt-2 border-t border-slate-200/50 dark:border-slate-800/50 divide-y divide-slate-100 dark:divide-slate-900 text-xs">
+                      {d.txs.map((tx) => (
+                        <div key={tx.id} className="py-1.5 flex justify-between items-center text-[11px]">
+                          <div className="flex items-center gap-2">
+                            <span
+                              className={`w-1.5 h-1.5 rounded-full ${
+                                tx.type === 'ingreso'
+                                  ? 'bg-emerald-500'
+                                  : tx.type === 'salida'
+                                  ? 'bg-rose-500'
+                                  : 'bg-blue-500'
+                              }`}
+                            />
+                            <span className="text-slate-700 dark:text-slate-300 font-medium">
+                              {tx.description || tx.category?.name || 'Movimiento'}
+                            </span>
+                            <span className="text-slate-400">({tx.account?.name})</span>
+                          </div>
+                          <span
+                            className={`font-bold ${
+                              tx.type === 'ingreso'
+                                ? 'text-emerald-600 dark:text-emerald-400'
+                                : tx.type === 'salida'
+                                ? 'text-rose-600 dark:text-rose-400'
+                                : 'text-blue-600 dark:text-blue-400'
+                            }`}
+                          >
+                            {tx.type === 'ingreso' ? '+' : tx.type === 'salida' ? '-' : ''}
+                            {formatMoney(tx.amount)}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+
+                {dateReportData.days.length === 0 && (
+                  <p className="text-xs text-slate-400 text-center py-6">
+                    No se encontraron transacciones en el rango de fechas seleccionado.
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 7. REPORTE POR CATEGORÍA MEJORADO */}
+        {activeTab === 'reports_category' && (
+          <div className="space-y-6 max-w-5xl mx-auto">
+            <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+              <div>
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Reporte Analítico por Categoría</h2>
+                <p className="text-sm text-slate-500 dark:text-slate-400">
+                  Ranking de consumo, concentración de gastos y ticket promedio ({timeFilter === 'ano' ? 'Año' : timeFilter === 'dia' ? 'Día' : timeFilter}).
+                </p>
+              </div>
+
+              {/* Selector Salidas vs Ingresos */}
+              <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-950 p-1 rounded-xl border border-slate-200 dark:border-slate-800">
+                <button
+                  onClick={() => {
+                    setReportCatType('salida');
+                    setDrilldownCategory(null);
+                  }}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+                    reportCatType === 'salida'
+                      ? 'bg-rose-500 text-white shadow-sm'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                  }`}
+                >
+                  Salidas (Gastos)
+                </button>
+                <button
+                  onClick={() => {
+                    setReportCatType('ingreso');
+                    setDrilldownCategory(null);
+                  }}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+                    reportCatType === 'ingreso'
+                      ? 'bg-emerald-500 text-white shadow-sm'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                  }`}
+                >
+                  Ingresos
+                </button>
+              </div>
+            </div>
+
+            {/* Podium / Top 3 Categorías */}
+            {categoryReportData.top3.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {categoryReportData.top3.map((top, idx) => (
+                  <div
+                    key={top.category.id}
+                    className="p-4 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden"
+                  >
+                    <div className="flex justify-between items-start">
+                      <span className="text-xl">
+                        {idx === 0 ? '🥇' : idx === 1 ? '🥈' : '🥉'}
+                      </span>
+                      <span className="text-xs font-black text-slate-400">
+                        #{idx + 1}
+                      </span>
+                    </div>
+                    <div className="mt-2">
+                      <div className="flex items-center gap-1.5">
+                        <span
+                          className="w-2.5 h-2.5 rounded-full"
+                          style={{ backgroundColor: top.category.color }}
+                        />
+                        <h4 className="text-sm font-bold text-slate-900 dark:text-white truncate">
+                          {top.category.name}
+                        </h4>
+                      </div>
+                      <h3
+                        className={`text-xl font-black mt-1 ${
+                          reportCatType === 'salida' ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'
+                        }`}
+                      >
+                        {formatMoney(top.amount)}
+                      </h3>
+                      <p className="text-[10px] text-slate-400 mt-0.5">
+                        {top.pct.toFixed(1)}% del total • {top.count} transacciones
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Distribución Completa de Categorías */}
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm space-y-4">
+              <div className="flex justify-between items-center">
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                  Distribución Porcentual ({formatMoney(categoryReportData.totalAmount)} total)
+                </h3>
+                <span className="text-xs text-slate-400">
+                  {categoryReportData.stats.length} categorías analizadas
+                </span>
+              </div>
+
+              <div className="space-y-3">
+                {categoryReportData.stats.map((s) => {
+                  const isDrill = drilldownCategory === s.category.id;
+                  return (
+                    <div
+                      key={s.category.id}
+                      className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950/70 border border-slate-100 dark:border-slate-800/80 space-y-2 cursor-pointer hover:border-slate-300 dark:hover:border-slate-700 transition"
+                      onClick={() => setDrilldownCategory(isDrill ? null : s.category.id)}
+                    >
+                      <div className="flex justify-between items-center text-xs">
+                        <div className="flex items-center gap-2">
+                          <span
+                            className="w-3 h-3 rounded-full shrink-0"
+                            style={{ backgroundColor: s.category.color }}
+                          />
+                          <span className="font-bold text-slate-900 dark:text-white">
+                            {s.category.name}
+                          </span>
+                          <span className="text-[10px] text-slate-400">
+                            ({s.count} movs. • Prom: {formatMoney(s.avg)})
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={`font-black ${
+                              reportCatType === 'salida' ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'
+                            }`}
+                          >
+                            {formatMoney(s.amount)}
+                          </span>
+                          <span className="font-bold text-slate-500 dark:text-slate-400 w-12 text-right">
+                            {s.pct.toFixed(1)}%
+                          </span>
+                          <ChevronRight
+                            className={`w-4 h-4 text-slate-400 transition-transform ${isDrill ? 'rotate-90' : ''}`}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Barra de Porcentaje */}
+                      <div className="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+                        <div
+                          className="h-full rounded-full transition-all duration-500"
+                          style={{
+                            width: `${Math.min(s.pct, 100)}%`,
+                            backgroundColor: s.category.color,
+                          }}
+                        />
+                      </div>
+
+                      {/* Drilldown de transacciones de esta categoría */}
+                      {isDrill && (
+                        <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-800 space-y-1.5 animate-in fade-in">
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                            Detalle de Movimientos en {s.category.name}:
+                          </span>
+                          {s.txs.map((tx) => (
+                            <div key={tx.id} className="flex justify-between items-center text-[11px] py-1 text-slate-600 dark:text-slate-300">
+                              <span className="truncate">
+                                {tx.date} • {tx.description || 'Sin descripción'} ({tx.account?.name})
+                              </span>
+                              <span className="font-bold text-slate-900 dark:text-white shrink-0 ml-2">
+                                {formatMoney(tx.amount)}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+
+                {categoryReportData.stats.length === 0 && (
+                  <p className="text-xs text-slate-400 text-center py-6">
+                    No se registran movimientos en el periodo seleccionado para este tipo.
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -1868,6 +3111,185 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
           </div>
         )}
       </main>
+
+      {/* Modal de Confirmación: Eliminar Cuenta */}
+      {accountToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
+            <div className="flex items-center gap-3 text-rose-600 dark:text-rose-400">
+              <div className="w-10 h-10 rounded-2xl bg-rose-50 dark:bg-rose-950/40 flex items-center justify-center font-bold">
+                <AlertTriangle className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">¿Eliminar esta cuenta?</h3>
+                <p className="text-xs text-slate-400">Esta acción es irreversible.</p>
+              </div>
+            </div>
+
+            <div className="p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800/80 space-y-2 text-xs">
+              <div className="flex justify-between">
+                <span className="text-slate-400">Cuenta:</span>
+                <strong className="text-slate-900 dark:text-white font-bold">{accountToDelete.name}</strong>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-400">Tipo:</span>
+                <span className="capitalize text-slate-700 dark:text-slate-300 font-semibold">{accountToDelete.type}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-400">Saldo actual:</span>
+                <strong className="text-slate-900 dark:text-white font-bold">
+                  {formatMoney(
+                    accountsWithBalances.find((a) => a.id === accountToDelete.id)?.current_balance ??
+                      accountToDelete.initial_balance
+                  )}
+                </strong>
+              </div>
+              {(() => {
+                const linkedCount = transactions.filter(
+                  (tx) => tx.account_id === accountToDelete.id || tx.destination_account_id === accountToDelete.id
+                ).length;
+                return (
+                  linkedCount > 0 && (
+                    <div className="pt-2 border-t border-slate-200 dark:border-slate-800 text-rose-600 dark:text-rose-400 font-semibold leading-relaxed">
+                      ⚠️ Esta cuenta tiene {linkedCount} {linkedCount === 1 ? 'movimiento asociado' : 'movimientos asociados'}. Al eliminarla, también se eliminarán estos movimientos para mantener la integridad de tus registros.
+                    </div>
+                  )
+                );
+              })()}
+            </div>
+
+            <div className="flex justify-end gap-2.5 pt-2">
+              <button
+                type="button"
+                onClick={() => setAccountToDelete(null)}
+                disabled={deleteAccountLoading}
+                className="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={confirmDeleteAccount}
+                disabled={deleteAccountLoading}
+                className="px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold shadow-md transition disabled:opacity-50 flex items-center gap-1.5"
+              >
+                <Trash2 className="w-4 h-4" />
+                <span>{deleteAccountLoading ? 'Eliminando...' : 'Sí, eliminar cuenta'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Confirmación: Eliminar Movimiento */}
+      {txToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
+            <div className="flex items-center gap-3 text-rose-600 dark:text-rose-400">
+              <div className="w-10 h-10 rounded-2xl bg-rose-50 dark:bg-rose-950/40 flex items-center justify-center font-bold">
+                <Trash2 className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">¿Eliminar este movimiento?</h3>
+                <p className="text-xs text-slate-400">Se recalcularán los saldos de tus cuentas.</p>
+              </div>
+            </div>
+
+            <div className="p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800/80 space-y-2 text-xs">
+              <div className="flex justify-between">
+                <span className="text-slate-400">Fecha:</span>
+                <span className="text-slate-900 dark:text-white font-medium">{txToDelete.date}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-400">Tipo:</span>
+                <span className="capitalize font-bold text-slate-700 dark:text-slate-300">{txToDelete.type}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-400">Descripción:</span>
+                <span className="text-slate-900 dark:text-white font-semibold">{txToDelete.description || '—'}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-400">Monto:</span>
+                <strong className="text-rose-600 dark:text-rose-400 font-bold">{formatMoney(txToDelete.amount)}</strong>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2.5 pt-2">
+              <button
+                type="button"
+                onClick={() => setTxToDelete(null)}
+                disabled={deleteTxLoading}
+                className="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={confirmDeleteTransaction}
+                disabled={deleteTxLoading}
+                className="px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold shadow-md transition disabled:opacity-50 flex items-center gap-1.5"
+              >
+                <Trash2 className="w-4 h-4" />
+                <span>{deleteTxLoading ? 'Eliminando...' : 'Sí, eliminar'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Confirmación: Eliminar Categoría */}
+      {catToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
+            <div className="flex items-center gap-3 text-rose-600 dark:text-rose-400">
+              <div className="w-10 h-10 rounded-2xl bg-rose-50 dark:bg-rose-950/40 flex items-center justify-center font-bold">
+                <AlertTriangle className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">¿Eliminar categoría?</h3>
+                <p className="text-xs text-slate-400">Se desvinculará de tus movimientos registrados.</p>
+              </div>
+            </div>
+
+            <div className="p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800/80 space-y-2 text-xs">
+              <div className="flex justify-between items-center">
+                <span className="text-slate-400">Categoría:</span>
+                <span className="flex items-center gap-1.5 font-bold text-slate-900 dark:text-white">
+                  <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: catToDelete.color }} />
+                  {catToDelete.name}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-400">Tipo:</span>
+                <span className="capitalize font-semibold text-slate-700 dark:text-slate-300">{catToDelete.type}</span>
+              </div>
+              <p className="text-slate-500 dark:text-slate-400 text-[11px] pt-1 leading-relaxed">
+                Nota: Las transacciones asociadas conservarán su registro financiero y pasarán a "Sin Categoría".
+              </p>
+            </div>
+
+            <div className="flex justify-end gap-2.5 pt-2">
+              <button
+                type="button"
+                onClick={() => setCatToDelete(null)}
+                disabled={deleteCatLoading}
+                className="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={confirmDeleteCategory}
+                disabled={deleteCatLoading}
+                className="px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold shadow-md transition disabled:opacity-50 flex items-center gap-1.5"
+              >
+                <Trash2 className="w-4 h-4" />
+                <span>{deleteCatLoading ? 'Eliminando...' : 'Sí, eliminar categoría'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal de Registro Rápido */}
       <TransactionModal

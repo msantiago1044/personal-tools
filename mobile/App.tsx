@@ -100,11 +100,45 @@ export default function App() {
         }
       }
     });
+
+    // Restaurar última vista y pestaña en móvil
+    AsyncStorage.getItem('mobile_current_view').then((savedView) => {
+      if (savedView && ['hub', 'finance', 'tehilim', 'dwg_viewer'].includes(savedView)) {
+        setCurrentView(savedView as any);
+      }
+    });
+    AsyncStorage.getItem('mobile_finance_tab').then((savedTab) => {
+      if (savedTab && ['home', 'transactions', 'accounts', 'categories', 'budgets', 'reports', 'settings'].includes(savedTab)) {
+        setFinanceTab(savedTab as any);
+      }
+    });
   }, []);
 
   const changeThemeMode = async (mode: ThemeMode) => {
     setThemeMode(mode);
     await AsyncStorage.setItem('app_theme_mode', mode);
+  };
+
+  const changeView = async (v: 'hub' | 'finance' | 'tehilim' | 'dwg_viewer') => {
+    setCurrentView(v);
+    await AsyncStorage.setItem('mobile_current_view', v);
+  };
+
+  const changeFinanceTab = async (t: FinanceTab) => {
+    setFinanceTab(t);
+    await AsyncStorage.setItem('mobile_finance_tab', t);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      await AsyncStorage.removeItem('personal_tools_session');
+      await AsyncStorage.removeItem('mobile_current_view');
+      setSession(null);
+      setCurrentView('hub');
+    } catch (e) {
+      console.error('Error cerrando sesión:', e);
+    }
   };
 
   const isDark =
@@ -138,25 +172,87 @@ export default function App() {
     return `${settings.currency_symbol} ${formattedNum}`;
   };
 
-  // Auth Supabase
+  // Auth Supabase con recuperación y persistencia reforzada en AsyncStorage
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      if (session?.user) {
-        loadUserProfile(session.user.id);
+    let isMounted = true;
+
+    const restoreSession = async () => {
+      try {
+        // 1. Verificar si Supabase ya tiene la sesión en su storage
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        if (currentSession?.user && isMounted) {
+          setSession(currentSession);
+          await AsyncStorage.setItem('personal_tools_session', JSON.stringify(currentSession));
+          loadUserProfile(currentSession.user.id);
+          if (isMounted) setLoading(false);
+          return;
+        }
+
+        // 2. Si getSession() devolvió null, recuperar del backup persistido en AsyncStorage
+        const stored = await AsyncStorage.getItem('personal_tools_session');
+        if (stored && isMounted) {
+          try {
+            const parsed = JSON.parse(stored);
+            if (parsed?.refresh_token && parsed?.access_token) {
+              const { data, error } = await supabase.auth.setSession({
+                access_token: parsed.access_token,
+                refresh_token: parsed.refresh_token,
+              });
+              if (!error && data?.session && isMounted) {
+                setSession(data.session);
+                await AsyncStorage.setItem('personal_tools_session', JSON.stringify(data.session));
+                loadUserProfile(data.session.user.id);
+                if (isMounted) setLoading(false);
+                return;
+              }
+
+              // Si setSession falló por token expirado, intentar refresco directo con refresh_token
+              if (parsed?.refresh_token) {
+                const { data: refData, error: refErr } = await supabase.auth.refreshSession({
+                  refresh_token: parsed.refresh_token,
+                });
+                if (!refErr && refData?.session && isMounted) {
+                  setSession(refData.session);
+                  await AsyncStorage.setItem('personal_tools_session', JSON.stringify(refData.session));
+                  loadUserProfile(refData.session.user.id);
+                  if (isMounted) setLoading(false);
+                  return;
+                }
+              }
+            }
+          } catch (e) {
+            console.error('Error procesando backup de sesión:', e);
+          }
+        }
+      } catch (err) {
+        console.error('Error restaurando sesión móvil:', err);
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
       }
-      setLoading(false);
+    };
+
+    restoreSession();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
+      if (!isMounted) return;
+      if (currentSession?.user) {
+        setSession(currentSession);
+        await AsyncStorage.setItem('personal_tools_session', JSON.stringify(currentSession));
+        loadUserProfile(currentSession.user.id);
+        setLoading(false);
+      } else if (event === 'SIGNED_OUT') {
+        setSession(null);
+        await AsyncStorage.removeItem('personal_tools_session');
+        setLoading(false);
+      }
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      if (session?.user) {
-        loadUserProfile(session.user.id);
-      }
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   // Cargar perfil y configuración desde Supabase
@@ -330,7 +426,22 @@ export default function App() {
                 borderColor: colors.border,
               },
             ]}
-            onPress={() => signInWithGoogleMobile()}
+            onPress={async () => {
+              try {
+                setLoading(true);
+                const newSession = await signInWithGoogleMobile();
+                if (newSession?.user) {
+                  setSession(newSession);
+                  await AsyncStorage.setItem('personal_tools_session', JSON.stringify(newSession));
+                  loadUserProfile(newSession.user.id);
+                }
+              } catch (err: any) {
+                console.error('Error al iniciar sesión:', err);
+                Alert.alert('Error de inicio de sesión', err?.message || 'No se pudo completar el inicio de sesión.');
+              } finally {
+                setLoading(false);
+              }
+            }}
           >
             <Text style={[styles.googleButtonText, { color: isDark ? '#0F172A' : '#FFFFFF' }]}>
               Continuar con Google
@@ -346,7 +457,7 @@ export default function App() {
     return (
       <TehilimScreen
         user={session.user}
-        onBack={() => setCurrentView('hub')}
+        onBack={() => changeView('hub')}
         isDark={isDark}
       />
     );
@@ -356,7 +467,7 @@ export default function App() {
   if (currentView === 'dwg_viewer') {
     return (
       <CadViewerScreen
-        onBack={() => setCurrentView('hub')}
+        onBack={() => changeView('hub')}
         isDark={isDark}
       />
     );
@@ -386,7 +497,7 @@ export default function App() {
               <Text style={{ fontSize: 18 }}>☰</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => setCurrentView('hub')}>
+            <TouchableOpacity onPress={() => changeView('hub')}>
               <Text style={{ fontSize: 12, color: colors.accent, fontWeight: '700' }}>← HUB</Text>
             </TouchableOpacity>
           </View>
@@ -465,7 +576,7 @@ export default function App() {
                     <TouchableOpacity
                       key={item.id}
                       onPress={() => {
-                        setFinanceTab(item.id as FinanceTab);
+                        changeFinanceTab(item.id as FinanceTab);
                         setIsMenuOpen(false);
                       }}
                       style={[
@@ -528,7 +639,7 @@ export default function App() {
                 <TouchableOpacity
                   onPress={() => {
                     setIsMenuOpen(false);
-                    setCurrentView('hub');
+                    changeView('hub');
                   }}
                   style={[styles.returnHubBtn, { borderColor: colors.border, backgroundColor: colors.inputBg }]}
                 >
