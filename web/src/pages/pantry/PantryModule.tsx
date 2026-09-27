@@ -520,18 +520,15 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
             </button>
 
             <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-xl text-emerald-600 dark:text-emerald-400">
+              <div className="w-9 h-9 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-lg text-emerald-600 dark:text-emerald-400">
                 🛒
               </div>
               <div>
-                <h1 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  Mercado, Despensa & Nutrición IA
-                  <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60">
-                    IA Vision
-                  </span>
+                <h1 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+                  Despensa & Mercado
                 </h1>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Control fotográfico de facturas, análisis de calorías, entropía de consumo y radar de precios.
+                  Inventario, facturas y nutrición
                 </p>
               </div>
             </div>
@@ -541,26 +538,26 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
           <div className="flex items-center gap-2">
             <button
               onClick={() => setActiveTab('scanner')}
-              className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md shadow-emerald-600/20 transition"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs shadow-xs transition"
             >
-              <Camera className="w-4 h-4" />
-              <span>Escanear Factura</span>
+              <Camera className="w-3.5 h-3.5" />
+              <span>Escanear</span>
             </button>
 
             <button
               onClick={() => setShowManualModal(true)}
-              className="flex items-center gap-2 px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold text-slate-800 dark:text-slate-200 transition"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold text-slate-800 dark:text-slate-200 transition"
             >
-              <Plus className="w-4 h-4 text-emerald-600" />
-              <span className="hidden sm:inline">Nuevo Producto</span>
+              <Plus className="w-3.5 h-3.5 text-emerald-600" />
+              <span className="hidden sm:inline">Agregar</span>
             </button>
 
             <button
               onClick={() => setShowApiKeyModal(true)}
-              title="Configuración de Gemini API Key"
-              className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 transition"
+              title="API Key Gemini"
+              className="p-1.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 transition"
             >
-              <Key className="w-4 h-4" />
+              <Key className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>
@@ -629,14 +626,14 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
 
       {/* 2. BARRA DE PESTAÑAS */}
       <nav className="border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 md:px-8">
-        <div className="max-w-7xl mx-auto flex gap-1 overflow-x-auto py-2.5 no-scrollbar">
+        <div className="max-w-7xl mx-auto flex gap-1 overflow-x-auto py-2 no-scrollbar">
           {[
-            { id: 'scanner', label: 'Escáner de Facturas Inteligente', icon: Camera, badge: 'Vision' },
-            { id: 'receipts', label: 'Historial de Facturas', icon: Layers, count: receipts.length },
-            { id: 'prices', label: 'Radar de Precios', icon: TrendingUp },
-            { id: 'inventory', label: 'Mi Despensa', icon: ShoppingBag, count: activeItems.length },
-            { id: 'nutrition', label: 'Calorías & Nutrición', icon: Flame },
-            { id: 'entropy', label: 'Entropía', icon: Zap },
+            { id: 'scanner', label: 'Escáner', icon: Camera },
+            { id: 'inventory', label: 'Despensa', icon: ShoppingBag, count: activeItems.length },
+            { id: 'receipts', label: 'Facturas', icon: Layers, count: receipts.length },
+            { id: 'prices', label: 'Precios', icon: TrendingUp },
+            { id: 'nutrition', label: 'Nutrición', icon: Flame },
+            { id: 'entropy', label: 'Consumo', icon: Zap },
           ].map((tab) => {
             const Icon = tab.icon;
             const isCurrent = activeTab === tab.id;
@@ -647,28 +644,23 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                   setActiveTab(tab.id as ActiveTab);
                   if (tab.id !== 'scanner') stopCamera();
                 }}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition whitespace-nowrap ${
                   isCurrent
                     ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60'
                 }`}
               >
-                <Icon className="w-4 h-4" />
+                <Icon className="w-3.5 h-3.5" />
                 <span>{tab.label}</span>
                 {tab.count !== undefined && (
                   <span
-                    className={`text-[10px] px-1.5 py-0.5 rounded-full ${
+                    className={`text-[10px] px-1.5 py-0.2 rounded-full ${
                       isCurrent
                         ? 'bg-emerald-200/60 dark:bg-emerald-800/60 text-emerald-900 dark:text-emerald-200'
                         : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
                     }`}
                   >
                     {tab.count}
-                  </span>
-                )}
-                {tab.badge && (
-                  <span className="text-[9px] uppercase px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-600 dark:text-amber-400 font-black">
-                    {tab.badge}
                   </span>
                 )}
               </button>

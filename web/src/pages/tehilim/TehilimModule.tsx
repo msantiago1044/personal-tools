@@ -283,19 +283,17 @@ export const TehilimModule: React.FC<TehilimModuleProps> = ({ user, onBackToHub 
             className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>{selectedPsalmNumber !== null ? 'Volver al listado' : 'Launcher Hub'}</span>
+            <span>{selectedPsalmNumber !== null ? 'Volver' : 'Hub'}</span>
           </button>
 
           <div className="h-4 w-px bg-slate-200 dark:bg-slate-800 hidden sm:block" />
 
           <div className="flex items-center gap-2">
-            <span className="text-xl">📜</span>
+            <span className="text-lg">📜</span>
             <div>
-              <h1 className="text-base sm:text-lg font-bold leading-tight text-slate-900 dark:text-white flex items-center gap-2">
-                <span>Tehilim (150 Salmos)</span>
-                <span className="text-[11px] font-medium bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 px-2 py-0.5 rounded-full border border-amber-200 dark:border-amber-800/60 hidden md:inline-block">
-                  Hebreo • Fonética • Español
-                </span>
+              <h1 className="text-base font-bold leading-tight text-slate-900 dark:text-white flex items-center gap-2">
+                <span>Tehilim</span>
+                <span className="text-xs font-normal text-slate-400">150 Salmos</span>
               </h1>
             </div>
           </div>
@@ -342,7 +340,7 @@ export const TehilimModule: React.FC<TehilimModuleProps> = ({ user, onBackToHub 
           VISTA 1: LECTOR DEL SALMO ACTIVO
          ========================================================================= */}
       {currentPsalm ? (
-        <div className="flex-1 flex flex-col max-w-4xl w-full mx-auto p-4 sm:p-6 pb-48">
+        <div className="flex-1 flex flex-col max-w-2xl w-full mx-auto p-4 sm:p-6 pb-48">
           {/* Barra de herramientas del lector */}
           <div className="bg-white dark:bg-slate-900 rounded-2xl p-4 mb-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-wrap items-center justify-between gap-4">
             <div>
@@ -470,8 +468,8 @@ export const TehilimModule: React.FC<TehilimModuleProps> = ({ user, onBackToHub 
           </div>
 
           {/* BARRA INFERIOR PERSISTENTE PARA MARCAR COMPLETADO Y NAVEGACIÓN */}
-          <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 px-4 sm:px-8 py-3.5 shadow-2xl">
-            <div className="max-w-4xl mx-auto flex items-center justify-between gap-3">
+          <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 px-4 sm:px-8 py-3 shadow-2xl">
+            <div className="max-w-2xl mx-auto flex items-center justify-between gap-3">
               {/* Botón Salmo Anterior */}
               <button
                 disabled={currentPsalm.number <= 1}
@@ -545,29 +543,28 @@ export const TehilimModule: React.FC<TehilimModuleProps> = ({ user, onBackToHub 
         /* =========================================================================
             VISTA 2: LISTADO / CATÁLOGO DE LOS 150 SALMOS CON FILTROS Y ESTADÍSTICAS
            ========================================================================= */
-        <main className="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-8">
+        <main className="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-8">
           {/* Tarjeta Banner de Resumen y Progreso */}
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-600 via-teal-700 to-cyan-800 text-white p-6 sm:p-8 mb-8 shadow-xl shadow-emerald-900/10">
-            <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-600 via-teal-700 to-cyan-800 text-white p-5 sm:p-7 mb-6 shadow-lg shadow-emerald-900/10">
+            <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
               <div>
                 <div className="flex flex-wrap items-center gap-2 mb-2">
-                  <span className="text-xs font-bold uppercase tracking-wider bg-white/20 backdrop-blur-md px-3 py-1 rounded-full">
-                    Vuelta #{stats.currentCycle} en curso
+                  <span className="text-xs font-bold uppercase tracking-wider bg-white/20 backdrop-blur-md px-3 py-0.5 rounded-full">
+                    Vuelta #{stats.currentCycle}
                   </span>
                   {stats.completedCycles > 0 && (
-                    <span className="text-xs font-bold bg-amber-400 text-slate-950 px-3 py-1 rounded-full flex items-center gap-1 shadow-sm">
-                      🏆 {stats.completedCycles} {stats.completedCycles === 1 ? 'Vuelta Completa' : 'Vueltas Completas'}
+                    <span className="text-xs font-bold bg-amber-400 text-slate-950 px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-xs">
+                      🏆 {stats.completedCycles} {stats.completedCycles === 1 ? 'vuelta' : 'vueltas'}
                     </span>
                   )}
-                  <span className="text-xs font-semibold text-emerald-200">150 Capítulos</span>
                 </div>
-                <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-                  Tu progreso en el Libro de los Salmos
+                <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
+                  Progreso de Salmos
                 </h2>
-                <p className="text-emerald-100 text-sm mt-1 max-w-xl">
+                <p className="text-emerald-100 text-xs sm:text-sm mt-0.5 max-w-xl">
                   {stats.completedCycles > 0
-                    ? `¡Llevas ${stats.completedCycles} ${stats.completedCycles === 1 ? 'vuelta completa' : 'vueltas completas'}! Estás completando la Vuelta #${stats.currentCycle}. Cada lectura suma a tu récord histórico.`
-                    : 'Lee cada salmo en hebreo con su fonética y significado en español. Marca cada lectura para completar tus 150 salmos y sumar nuevas vueltas.'}
+                    ? `${stats.completedCycles} ${stats.completedCycles === 1 ? 'vuelta completada' : 'vueltas completadas'}. Vuelta #${stats.currentCycle} en curso.`
+                    : 'Lectura completa en hebreo, fonética y español.'}
                 </p>
               </div>
 
@@ -606,10 +603,10 @@ export const TehilimModule: React.FC<TehilimModuleProps> = ({ user, onBackToHub 
           {/* Barra de Filtros y Búsqueda */}
           <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 mb-6">
             {/* Filtros de lectura: Todos / No leídos / Completados */}
-            <div className="flex items-center gap-1.5 bg-white dark:bg-slate-900 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs">
+            <div className="flex items-center gap-1 bg-white dark:bg-slate-900 p-1 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs">
               <button
                 onClick={() => setStatusFilter('all')}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
                   statusFilter === 'all'
                     ? 'bg-emerald-600 text-white shadow-xs'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
@@ -619,25 +616,25 @@ export const TehilimModule: React.FC<TehilimModuleProps> = ({ user, onBackToHub 
               </button>
               <button
                 onClick={() => setStatusFilter('unread')}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition ${
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
                   statusFilter === 'unread'
                     ? 'bg-amber-600 text-white shadow-xs'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 <Clock className="w-3.5 h-3.5" />
-                <span>No leídos ({stats.unreadCount})</span>
+                <span>Pendientes ({stats.unreadCount})</span>
               </button>
               <button
                 onClick={() => setStatusFilter('completed')}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition ${
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
                   statusFilter === 'completed'
                     ? 'bg-teal-600 text-white shadow-xs'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>Completados ({stats.completedCount})</span>
+                <span>Leídos ({stats.completedCount})</span>
               </button>
             </div>
 
@@ -654,78 +651,41 @@ export const TehilimModule: React.FC<TehilimModuleProps> = ({ user, onBackToHub 
             </div>
           </div>
 
-          {/* Sub-filtros por Libro de Tehilim (1 al 5) y Tikún Haklalí */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-6 no-scrollbar">
+          {/* Sub-filtros por Libro */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-2.5 mb-6 no-scrollbar">
             <button
               onClick={() => setBookFilter('all')}
-              className={`px-3 py-1 rounded-xl text-xs font-semibold whitespace-nowrap transition ${
+              className={`px-2.5 py-1 rounded-xl text-xs font-medium whitespace-nowrap transition ${
                 bookFilter === 'all'
-                  ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900'
+                  ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-semibold'
                   : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800'
               }`}
             >
-              Todos los Libros
+              Todos
             </button>
-            <button
-              onClick={() => setBookFilter(1)}
-              className={`px-3 py-1 rounded-xl text-xs font-semibold whitespace-nowrap transition ${
-                bookFilter === 1
-                  ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900'
-                  : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800'
-              }`}
-            >
-              Libro 1 (1-41)
-            </button>
-            <button
-              onClick={() => setBookFilter(2)}
-              className={`px-3 py-1 rounded-xl text-xs font-semibold whitespace-nowrap transition ${
-                bookFilter === 2
-                  ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900'
-                  : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800'
-              }`}
-            >
-              Libro 2 (42-72)
-            </button>
-            <button
-              onClick={() => setBookFilter(3)}
-              className={`px-3 py-1 rounded-xl text-xs font-semibold whitespace-nowrap transition ${
-                bookFilter === 3
-                  ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900'
-                  : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800'
-              }`}
-            >
-              Libro 3 (73-89)
-            </button>
-            <button
-              onClick={() => setBookFilter(4)}
-              className={`px-3 py-1 rounded-xl text-xs font-semibold whitespace-nowrap transition ${
-                bookFilter === 4
-                  ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900'
-                  : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800'
-              }`}
-            >
-              Libro 4 (90-106)
-            </button>
-            <button
-              onClick={() => setBookFilter(5)}
-              className={`px-3 py-1 rounded-xl text-xs font-semibold whitespace-nowrap transition ${
-                bookFilter === 5
-                  ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900'
-                  : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800'
-              }`}
-            >
-              Libro 5 (107-150)
-            </button>
+            {[1, 2, 3, 4, 5].map((b) => (
+              <button
+                key={b}
+                onClick={() => setBookFilter(b as any)}
+                className={`px-2.5 py-1 rounded-xl text-xs font-medium whitespace-nowrap transition ${
+                  bookFilter === b
+                    ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-semibold'
+                    : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800'
+                }`}
+              >
+                Libro {b}
+              </button>
+            ))}
             <button
               onClick={() => setBookFilter('tikkun')}
-              className={`flex items-center gap-1 px-3 py-1 rounded-xl text-xs font-semibold whitespace-nowrap transition ${
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-medium whitespace-nowrap transition ${
                 bookFilter === 'tikkun'
-                  ? 'bg-purple-600 text-white'
+                  ? 'bg-purple-600 text-white font-semibold'
                   : 'bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800'
               }`}
             >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Tikún Haklalí (10 Salmos)</span>
+              <Sparkles className="w-3 h-3" />
+              <span>Tikún Haklalí</span>
             </button>
           </div>
 

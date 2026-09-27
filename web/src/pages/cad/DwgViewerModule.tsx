@@ -518,24 +518,24 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
       className="flex flex-col h-screen w-screen bg-slate-900 text-slate-100 select-none overflow-hidden relative font-sans"
     >
       {/* 1. BARRA SUPERIOR DE HERRAMIENTAS Y ARCHIVO */}
-      <header className="h-14 bg-slate-950 border-b border-slate-800 px-4 flex items-center justify-between z-20 shrink-0">
+      <header className="h-13 bg-slate-950 border-b border-slate-800 px-4 flex items-center justify-between z-20 shrink-0">
         <div className="flex items-center gap-3">
           <button
             onClick={onBackToHub}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 transition"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 transition"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>Launcher Hub</span>
+            <span>Hub</span>
           </button>
 
           <div className="h-4 w-px bg-slate-800" />
 
           <div className="flex items-center gap-2">
-            <span className="text-xl">📐</span>
+            <span className="text-lg">📐</span>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-bold text-sm text-white tracking-wide">
-                  {drawing ? drawing.filename : 'Visor de Planos DWG / CAD'}
+                <span className="font-bold text-xs sm:text-sm text-white tracking-wide">
+                  {drawing ? drawing.filename : 'Planos CAD'}
                 </span>
                 {drawing && (
                   <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-blue-900/60 text-blue-300 border border-blue-700/50">
@@ -560,10 +560,10 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
 
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition shadow-sm"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold transition shadow-xs"
           >
             <Upload className="w-3.5 h-3.5" />
-            <span>{drawing ? 'Abrir otro plano' : 'Abrir DWG / DXF'}</span>
+            <span>{drawing ? 'Cambiar' : 'Abrir DWG'}</span>
           </button>
 
           {drawing && (

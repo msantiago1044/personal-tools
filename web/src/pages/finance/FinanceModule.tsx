@@ -1036,30 +1036,30 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
           </div>
 
           {/* Botón Volver al HUB */}
-          <div className="p-3">
+          <div className="p-2.5">
             <button
               onClick={onBackToHub}
-              title="Volver al Hub de Aplicaciones"
-              className={`w-full flex items-center gap-2 p-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition ${
+              title="Volver al Hub"
+              className={`w-full flex items-center gap-2 p-2 rounded-xl text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition ${
                 sidebarCollapsed ? 'justify-center' : ''
               }`}
             >
               <ArrowLeft className="w-4 h-4 shrink-0" />
-              {!sidebarCollapsed && <span>Volver al Hub</span>}
+              {!sidebarCollapsed && <span>Hub</span>}
             </button>
           </div>
 
           {/* Navegación */}
-          <nav className="px-3 space-y-1">
+          <nav className="px-2.5 space-y-0.5">
             {[
-              { id: 'home', label: 'Panel Principal', icon: Layers },
+              { id: 'home', label: 'Inicio', icon: Layers },
               { id: 'transactions', label: 'Movimientos', icon: ArrowLeftRight },
               { id: 'accounts', label: 'Cuentas', icon: CreditCard },
               { id: 'categories', label: 'Categorías', icon: PieChart },
               { id: 'budgets', label: 'Presupuestos', icon: PiggyBank },
-              { id: 'reports_date', label: 'Por Fecha', icon: Calendar },
-              { id: 'reports_category', label: 'Por Categoría', icon: Filter },
-              { id: 'settings', label: 'Configuración', icon: Settings },
+              { id: 'reports_date', label: 'Por Fechas', icon: Calendar },
+              { id: 'reports_category', label: 'Por Categorías', icon: Filter },
+              { id: 'settings', label: 'Ajustes', icon: Settings },
             ].map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -1071,7 +1071,7 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
                     setMobileMenuOpen(false);
                   }}
                   title={item.label}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition ${
+                  className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-medium transition ${
                     sidebarCollapsed ? 'justify-center' : ''
                   } ${
                     isActive
@@ -1138,11 +1138,11 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
             >
               ☰
             </button>
-            <h1 className="text-xl font-bold text-slate-900 dark:text-white capitalize">
+            <h1 className="text-lg font-bold text-slate-900 dark:text-white capitalize">
               {activeTab === 'home'
-                ? 'Panel Principal'
+                ? 'Inicio'
                 : activeTab === 'transactions'
-                ? 'Historial de Movimientos'
+                ? 'Movimientos'
                 : activeTab === 'accounts'
                 ? 'Cuentas'
                 : activeTab === 'categories'
@@ -1150,10 +1150,10 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
                 : activeTab === 'budgets'
                 ? 'Presupuestos'
                 : activeTab === 'reports_date'
-                ? 'Reporte por Fecha'
+                ? 'Por Fechas'
                 : activeTab === 'reports_category'
-                ? 'Reporte por Categoría'
-                : 'Configuración del Sistema'}
+                ? 'Por Categorías'
+                : 'Ajustes'}
             </h1>
           </div>
 
@@ -1837,17 +1837,17 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
           <div className="space-y-6 max-w-6xl mx-auto">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div>
-                <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Historial de Movimientos</h2>
-                <p className="text-sm text-slate-500 dark:text-slate-400">
-                  {transactions.length} movimientos registrados en {currencyCode} ({currencySymbol}).
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white">Movimientos</h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  {transactions.length} registros en {currencyCode} ({currencySymbol})
                 </p>
               </div>
               <button
                 onClick={() => setIsModalOpen(true)}
-                className="bg-emerald-500 hover:bg-emerald-400 text-white dark:text-slate-950 font-bold px-4 py-2.5 rounded-xl text-sm flex items-center gap-2 shadow-sm"
+                className="bg-emerald-500 hover:bg-emerald-400 text-white dark:text-slate-950 font-semibold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-xs transition"
               >
-                <PlusCircle className="w-4 h-4" />
-                <span>Nuevo Movimiento</span>
+                <PlusCircle className="w-3.5 h-3.5" />
+                <span>Nuevo</span>
               </button>
             </div>
 
@@ -2033,17 +2033,17 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
           <div className="space-y-6 max-w-5xl mx-auto">
             <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
               <div>
-                <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Mis Cuentas</h2>
-                <p className="text-sm text-slate-500 dark:text-slate-400">
-                  Saldos calculados en tiempo real en {currencyCode} ({currencySymbol}).
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white">Cuentas</h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  Saldos en tiempo real en {currencyCode} ({currencySymbol})
                 </p>
               </div>
               <button
                 onClick={() => setAccountFormOpen(!accountFormOpen)}
-                className="bg-emerald-500 hover:bg-emerald-400 text-white dark:text-slate-950 font-bold px-4 py-2.5 rounded-xl text-sm flex items-center gap-2 shadow-sm"
+                className="bg-emerald-500 hover:bg-emerald-400 text-white dark:text-slate-950 font-semibold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-xs transition"
               >
-                <PlusCircle className="w-4 h-4" />
-                <span>{accountFormOpen ? 'Cerrar' : 'Agregar Cuenta'}</span>
+                <PlusCircle className="w-3.5 h-3.5" />
+                <span>{accountFormOpen ? 'Cerrar' : 'Nueva Cuenta'}</span>
               </button>
             </div>
 
@@ -2194,9 +2194,9 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
           <div className="space-y-6 max-w-5xl mx-auto">
             <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
               <div>
-                <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Categorías</h2>
-                <p className="text-sm text-slate-500 dark:text-slate-400">
-                  {categories.length} categorías registradas para clasificar tus movimientos.
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white">Categorías</h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  {categories.length} categorías registradas
                 </p>
               </div>
               <div className="flex items-center gap-2 flex-wrap">
@@ -2362,9 +2362,9 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
             {/* Header con selector de Mes y Año */}
             <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm">
               <div>
-                <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Planificación de Presupuestos</h2>
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white">Presupuestos</h2>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                  Asigna límites máximos a cada categoría de gasto y monitorea tus desvíos en tiempo real.
+                  Límites mensuales por categoría
                 </p>
               </div>
 
@@ -2588,9 +2588,9 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
           <div className="space-y-6 max-w-5xl mx-auto">
             <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
               <div>
-                <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Reporte por Rango de Fechas</h2>
-                <p className="text-sm text-slate-500 dark:text-slate-400">
-                  Análisis cronológico detallado de entradas, salidas y evolución del saldo neto.
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white">Reporte por Fechas</h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  Evolución y balance cronológico
                 </p>
               </div>
 
@@ -2826,9 +2826,9 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
           <div className="space-y-6 max-w-5xl mx-auto">
             <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
               <div>
-                <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Reporte Analítico por Categoría</h2>
-                <p className="text-sm text-slate-500 dark:text-slate-400">
-                  Ranking de consumo, concentración de gastos y ticket promedio ({timeFilter === 'ano' ? 'Año' : timeFilter === 'dia' ? 'Día' : timeFilter}).
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white">Reporte por Categorías</h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  Concentración y distribución de gastos ({timeFilter === 'ano' ? 'Año' : timeFilter === 'dia' ? 'Día' : timeFilter})
                 </p>
               </div>
 
@@ -3003,9 +3003,9 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
         {activeTab === 'settings' && (
           <div className="space-y-6 max-w-4xl mx-auto">
             <div>
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Configuración del Sistema</h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400">
-                Personaliza la divisa, formato numérico y preferencias visuales.
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Ajustes</h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                Divisas, formato y preferencias visuales
               </p>
             </div>
 

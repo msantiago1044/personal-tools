@@ -104,30 +104,30 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
       <div className="w-full max-w-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl text-slate-900 dark:text-slate-100 transition-colors">
         {/* Cabecera */}
         <div className="flex justify-between items-center pb-4 border-b border-slate-200 dark:border-slate-800">
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white">Registrar Movimiento</h2>
+          <h2 className="text-lg font-bold text-slate-900 dark:text-white">Nuevo Movimiento</h2>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-700 dark:hover:text-white p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+            className="text-slate-400 hover:text-slate-700 dark:hover:text-white p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"
           >
             ✕
           </button>
         </div>
 
-        {/* Selector de Tipo (Ingreso, Salida, Transferencia) */}
-        <div className="grid grid-cols-3 gap-2 mt-4 p-1.5 bg-slate-100 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800">
+        {/* Selector de Tipo (Gasto, Ingreso, Transferencia) */}
+        <div className="grid grid-cols-3 gap-1.5 mt-4 p-1 bg-slate-100 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800">
           <button
             type="button"
             onClick={() => {
               setType('salida');
               setCategoryId('');
             }}
-            className={`py-2 text-sm font-semibold rounded-xl transition ${
+            className={`py-2 text-xs font-semibold rounded-lg transition ${
               type === 'salida'
-                ? 'bg-rose-100 dark:bg-rose-500/20 text-rose-700 dark:text-rose-400 border border-rose-300 dark:border-rose-500/40 shadow-sm font-bold'
+                ? 'bg-rose-100 dark:bg-rose-500/20 text-rose-700 dark:text-rose-400 border border-rose-300 dark:border-rose-500/40 shadow-xs font-bold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
-            - Salida
+            Gasto
           </button>
           <button
             type="button"
@@ -135,13 +135,13 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
               setType('ingreso');
               setCategoryId('');
             }}
-            className={`py-2 text-sm font-semibold rounded-xl transition ${
+            className={`py-2 text-xs font-semibold rounded-lg transition ${
               type === 'ingreso'
-                ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-500/40 shadow-sm font-bold'
+                ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-500/40 shadow-xs font-bold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
-            + Ingreso
+            Ingreso
           </button>
           <button
             type="button"
@@ -149,13 +149,13 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
               setType('transferencia');
               setCategoryId('');
             }}
-            className={`py-2 text-sm font-semibold rounded-xl transition ${
+            className={`py-2 text-xs font-semibold rounded-lg transition ${
               type === 'transferencia'
-                ? 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 border border-blue-300 dark:border-blue-500/40 shadow-sm font-bold'
+                ? 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 border border-blue-300 dark:border-blue-500/40 shadow-xs font-bold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
-            ⇄ Transf.
+            Transferencia
           </button>
         </div>
 
@@ -166,12 +166,12 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
         )}
 
         {/* Formulario */}
-        <form onSubmit={handleSubmit} className="mt-5 space-y-4">
+        <form onSubmit={handleSubmit} className="mt-4 space-y-3.5">
           {/* Monto */}
           <div>
             <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Monto</label>
             <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg font-bold">$</span>
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-base font-bold">$</span>
               <input
                 type="number"
                 step="0.01"
@@ -179,29 +179,29 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
                 placeholder="0.00"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl pl-8 pr-4 py-3 text-lg font-bold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500 focus:bg-white dark:focus:bg-slate-900 transition"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl pl-8 pr-4 py-2.5 text-base font-bold text-slate-900 dark:text-white focus:outline-hidden focus:border-emerald-500 focus:bg-white dark:focus:bg-slate-900 transition"
               />
             </div>
           </div>
 
           {/* Cuentas */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                {type === 'transferencia' ? 'Cuenta de Salida (Origen)' : 'Cuenta'}
+                {type === 'transferencia' ? 'Cuenta Origen' : 'Cuenta'}
               </label>
               <select
                 value={accountId}
                 onChange={(e) => setAccountId(e.target.value)}
-                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-emerald-500 focus:bg-white dark:focus:bg-slate-900 transition"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-2.5 text-xs text-slate-900 dark:text-slate-100 focus:outline-hidden focus:border-emerald-500 transition"
               >
-                <option value="" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">Selecciona cuenta...</option>
+                <option value="" className="bg-white dark:bg-slate-900">Seleccionar cuenta...</option>
                 {accounts.map((acc) => {
                   const bal = acc.current_balance ?? acc.initial_balance;
                   const balFormatted = bal.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                   return (
-                    <option key={acc.id} value={acc.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">
-                      {acc.name} ({acc.type} • Saldo: {currencySymbol} {balFormatted})
+                    <option key={acc.id} value={acc.id} className="bg-white dark:bg-slate-900">
+                      {acc.name} · {currencySymbol}{balFormatted}
                     </option>
                   );
                 })}
@@ -211,22 +211,22 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
             {type === 'transferencia' && (
               <div>
                 <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                  Cuenta de Ingreso (Destino)
+                  Cuenta Destino
                 </label>
                 <select
                   value={destinationAccountId}
                   onChange={(e) => setDestinationAccountId(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 transition"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-2.5 text-xs text-slate-900 dark:text-slate-100 focus:outline-hidden focus:border-blue-500 transition"
                 >
-                  <option value="" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">Selecciona destino...</option>
+                  <option value="" className="bg-white dark:bg-slate-900">Seleccionar destino...</option>
                   {accounts
                     .filter((acc) => acc.id !== accountId)
                     .map((acc) => {
                       const bal = acc.current_balance ?? acc.initial_balance;
                       const balFormatted = bal.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                       return (
-                        <option key={acc.id} value={acc.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">
-                          {acc.name} ({acc.type} • Saldo: {currencySymbol} {balFormatted})
+                        <option key={acc.id} value={acc.id} className="bg-white dark:bg-slate-900">
+                          {acc.name} · {currencySymbol}{balFormatted}
                         </option>
                       );
                     })}
@@ -241,11 +241,11 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
                 <select
                   value={categoryId}
                   onChange={(e) => setCategoryId(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-emerald-500 focus:bg-white dark:focus:bg-slate-900 transition"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-2.5 text-xs text-slate-900 dark:text-slate-100 focus:outline-hidden focus:border-emerald-500 transition"
                 >
-                  <option value="" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">Selecciona categoría...</option>
+                  <option value="" className="bg-white dark:bg-slate-900">Seleccionar categoría...</option>
                   {filteredCategories.map((cat) => (
-                    <option key={cat.id} value={cat.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">
+                    <option key={cat.id} value={cat.id} className="bg-white dark:bg-slate-900">
                       {cat.name}
                     </option>
                   ))}
@@ -254,44 +254,44 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
             )}
           </div>
 
-          {/* Fecha automática (con opción de editar) */}
+          {/* Fecha */}
           <div>
             <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Fecha</label>
             <input
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-emerald-500 focus:bg-white dark:focus:bg-slate-900 transition"
+              className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-2.5 text-xs text-slate-900 dark:text-slate-100 focus:outline-hidden focus:border-emerald-500 transition"
             />
           </div>
 
           {/* Descripción opcional */}
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Descripción (opcional)</label>
+            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Descripción</label>
             <input
               type="text"
-              placeholder="Ej. Almuerzo de trabajo, Taxi, Pago quincena..."
+              placeholder="Detalle o nota opcional..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-emerald-500 focus:bg-white dark:focus:bg-slate-900 transition"
+              className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-2.5 text-xs text-slate-900 dark:text-slate-100 focus:outline-hidden focus:border-emerald-500 transition"
             />
           </div>
 
           {/* Botones de acción */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-800">
+          <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-200 dark:border-slate-800">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+              className="px-3.5 py-2 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={isLoading}
-              className="px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm shadow-md disabled:opacity-50 transition"
+              className="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs shadow-xs disabled:opacity-50 transition"
             >
-              {isLoading ? 'Guardando...' : 'Guardar Movimiento'}
+              {isLoading ? 'Guardando...' : 'Guardar'}
             </button>
           </div>
         </form>
