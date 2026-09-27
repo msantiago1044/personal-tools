@@ -11,7 +11,6 @@ import {
   calculatePantryEntropy,
   calculatePriceTrends,
   calculateConsumptionVelocity,
-  SAMPLE_RECEIPTS,
   ExtractedReceiptData,
   FREE_TIER_MODELS,
 } from '../../lib/pantryAiEngine';
@@ -43,6 +42,8 @@ import {
   Utensils,
   ChevronRight,
   ShieldCheck,
+  Save,
+  FileText,
 } from 'lucide-react';
 
 interface PantryModuleProps {
@@ -84,12 +85,19 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
   const [apiKeySavedNotice, setApiKeySavedNotice] = useState(false);
 
   // Escáner & Cámara
-  const [scannerMode, setScannerMode] = useState<'upload' | 'camera' | 'sample'>('upload');
+  const [scannerMode, setScannerMode] = useState<'upload' | 'camera'>('upload');
   const [isScanning, setIsScanning] = useState(false);
   const [scanError, setScanError] = useState<string | null>(null);
   const [cameraActive, setCameraActive] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
+
+  // Factura seleccionada para ver/editar detalle y productos
+  const [selectedReceipt, setSelectedReceipt] = useState<GroceryReceipt | null>(null);
+  const [editingReceiptData, setEditingReceiptData] = useState<GroceryReceipt | null>(null);
+  const [receiptEditItems, setReceiptEditItems] = useState<PantryItem[]>([]);
+  const [isSavingReceiptChanges, setIsSavingReceiptChanges] = useState(false);
+  const [receiptSavedNotice, setReceiptSavedNotice] = useState(false);
 
   // Datos extraídos listos para revisar antes de guardar
   const [extractedData, setExtractedData] = useState<ExtractedReceiptData | null>(null);
@@ -318,12 +326,155 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
     reader.readAsDataURL(file);
   };
 
-  // 7. CARGAR FACTURA DE EJEMPLO (1-CLICK DEMO)
-  const loadSampleReceipt = (index: number) => {
-    const sample = SAMPLE_RECEIPTS[index];
-    if (sample) {
-      setExtractedData(JSON.parse(JSON.stringify(sample.data)));
-      setScanError(null);
+  // 7. GESTIÓN Y EDICIÓN DE FACTURAS Y PRODUCTOS
+  const openReceiptDetails = (rc: GroceryReceipt) => {
+    setSelectedReceipt(rc);
+    setEditingReceiptData({ ...rc });
+    const items = pantryItems.filter((i) => i.receipt_id === rc.id);
+    setReceiptEditItems(JSON.parse(JSON.stringify(items)));
+    setReceiptSavedNotice(false);
+  };
+
+  const closeReceiptDetails = () => {
+    setSelectedReceipt(null);
+    setEditingReceiptData(null);
+    setReceiptEditItems([]);
+    setReceiptSavedNotice(false);
+  };
+
+  const handleUpdateReceiptItem = (index: number, field: keyof PantryItem, value: any) => {
+    setReceiptEditItems((prev) => {
+      const next = [...prev];
+      const item = { ...next[index], [field]: value };
+
+      if (field === 'quantity' || field === 'unit_price') {
+        const q = field === 'quantity' ? Number(value) || 0 : Number(item.quantity) || 0;
+        const u = field === 'unit_price' ? Number(value) || 0 : Number(item.unit_price) || 0;
+        item.total_price = q * u;
+        item.total_calories = (Number(item.calories_per_unit) || 0) * q;
+      }
+
+      if (field === 'calories_per_unit') {
+        item.total_calories = (Number(value) || 0) * (Number(item.quantity) || 0);
+      }
+
+      next[index] = item;
+      return next;
+    });
+  };
+
+  const handleAddProductToReceipt = () => {
+    if (!editingReceiptData) return;
+    const newItem: PantryItem = {
+      id: crypto.randomUUID(),
+      user_id: user.id,
+      receipt_id: editingReceiptData.id,
+      name: '',
+      category: 'Despensa',
+      quantity: 1,
+      initial_quantity: 1,
+      unit: 'un',
+      unit_price: 0,
+      total_price: 0,
+      purchase_date: editingReceiptData.purchase_date || new Date().toISOString().split('T')[0],
+      shelf_life_days: 14,
+      calories_per_unit: 0,
+      total_calories: 0,
+      protein_g: 0,
+      carbs_g: 0,
+      fat_g: 0,
+      status: 'disponible',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+    setReceiptEditItems((prev) => [...prev, newItem]);
+  };
+
+  const handleRemoveProductFromReceipt = (index: number) => {
+    setReceiptEditItems((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleSaveReceiptChanges = async () => {
+    if (!selectedReceipt || !editingReceiptData) return;
+    setIsSavingReceiptChanges(true);
+
+    try {
+      const calculatedTotal = receiptEditItems.reduce(
+        (acc, it) => acc + (Number(it.total_price) || (Number(it.unit_price) * Number(it.quantity)) || 0),
+        0
+      );
+      const updatedReceipt: GroceryReceipt = {
+        ...editingReceiptData,
+        total_amount: calculatedTotal > 0 ? calculatedTotal : editingReceiptData.total_amount,
+        items_count: receiptEditItems.length,
+      };
+
+      try {
+        await supabase.from('grocery_receipts').upsert({
+          id: updatedReceipt.id,
+          user_id: updatedReceipt.user_id,
+          store_name: updatedReceipt.store_name,
+          purchase_date: updatedReceipt.purchase_date,
+          total_amount: updatedReceipt.total_amount,
+          items_count: updatedReceipt.items_count,
+          notes: updatedReceipt.notes,
+        });
+
+        const originalItemIds = pantryItems
+          .filter((it) => it.receipt_id === selectedReceipt.id)
+          .map((it) => it.id);
+        const currentItemIds = new Set(receiptEditItems.map((it) => it.id));
+        const deletedItemIds = originalItemIds.filter((id) => !currentItemIds.has(id));
+
+        if (deletedItemIds.length > 0) {
+          await supabase.from('pantry_items').delete().in('id', deletedItemIds);
+        }
+
+        if (receiptEditItems.length > 0) {
+          await supabase.from('pantry_items').upsert(
+            receiptEditItems.map((it) => ({
+              id: it.id,
+              user_id: user.id,
+              receipt_id: updatedReceipt.id,
+              name: it.name || 'Producto sin nombre',
+              category: it.category || 'Despensa',
+              quantity: Number(it.quantity) || 0,
+              initial_quantity: Number(it.initial_quantity) || Number(it.quantity) || 0,
+              unit: it.unit || 'un',
+              unit_price: Number(it.unit_price) || 0,
+              total_price: Number(it.total_price) || (Number(it.unit_price) * Number(it.quantity)) || 0,
+              purchase_date: updatedReceipt.purchase_date || it.purchase_date,
+              shelf_life_days: Number(it.shelf_life_days) || 14,
+              calories_per_unit: Number(it.calories_per_unit) || 0,
+              total_calories: Number(it.total_calories) || (Number(it.calories_per_unit) * Number(it.quantity)) || 0,
+              protein_g: Number(it.protein_g) || 0,
+              carbs_g: Number(it.carbs_g) || 0,
+              fat_g: Number(it.fat_g) || 0,
+              status: it.status || 'disponible',
+              updated_at: new Date().toISOString(),
+            }))
+          );
+        }
+      } catch (dbErr) {
+        console.warn('Error sincronizando con Supabase, respaldando localmente:', dbErr);
+      }
+
+      const newReceipts = receipts.map((r) => (r.id === updatedReceipt.id ? updatedReceipt : r));
+      const remainingItems = pantryItems.filter((it) => it.receipt_id !== selectedReceipt.id);
+      const newItems = [...receiptEditItems, ...remainingItems];
+
+      setReceipts(newReceipts);
+      setPantryItems(newItems);
+      persistLocally(newItems, newReceipts);
+
+      setSelectedReceipt(updatedReceipt);
+      setEditingReceiptData(updatedReceipt);
+      setReceiptSavedNotice(true);
+      setTimeout(() => setReceiptSavedNotice(false), 3000);
+    } catch (err) {
+      console.error('Error guardando cambios de factura:', err);
+    } finally {
+      setIsSavingReceiptChanges(false);
     }
   };
 
@@ -629,9 +780,9 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
         <div className="max-w-7xl mx-auto flex gap-1 overflow-x-auto py-2 no-scrollbar">
           {[
             { id: 'scanner', label: 'Escáner', icon: Camera },
-            { id: 'inventory', label: 'Despensa', icon: ShoppingBag, count: activeItems.length },
             { id: 'receipts', label: 'Facturas', icon: Layers, count: receipts.length },
             { id: 'prices', label: 'Precios', icon: TrendingUp },
+            { id: 'inventory', label: 'Despensa', icon: ShoppingBag, count: activeItems.length },
             { id: 'nutrition', label: 'Nutrición', icon: Flame },
             { id: 'entropy', label: 'Consumo', icon: Zap },
           ].map((tab) => {
@@ -643,6 +794,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                 onClick={() => {
                   setActiveTab(tab.id as ActiveTab);
                   if (tab.id !== 'scanner') stopCamera();
+                  if (tab.id !== 'receipts') closeReceiptDetails();
                 }}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition whitespace-nowrap ${
                   isCurrent
@@ -762,11 +914,11 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                     <span>Escanear Factura</span>
                   </button>
                   <button
-                    onClick={() => loadSampleReceipt(0)}
-                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 transition"
+                    onClick={() => setShowManualModal(true)}
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition"
                   >
-                    <Sparkles className="w-4 h-4 text-amber-500" />
-                    <span>Cargar Factura de Prueba</span>
+                    <Plus className="w-4 h-4" />
+                    <span>Añadir Manualmente</span>
                   </button>
                 </div>
               </div>
@@ -909,7 +1061,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
             <div>
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">Escáner de Facturas Inteligente</h2>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                Toma una foto con tu cámara, sube una imagen de factura o prueba con un ejemplo predefinido.
+                Toma una foto con tu cámara o sube una imagen de tu factura de compra.
               </p>
             </div>
 
@@ -944,21 +1096,6 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                 <Camera className="w-4 h-4" />
                 <span>Cámara en Vivo</span>
               </button>
-
-              <button
-                onClick={() => {
-                  setScannerMode('sample');
-                  stopCamera();
-                }}
-                className={`flex-1 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 ${
-                  scannerMode === 'sample'
-                    ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm'
-                    : 'text-slate-600 dark:text-slate-400'
-                }`}
-              >
-                <Sparkles className="w-4 h-4 text-amber-500" />
-                <span>Facturas de Ejemplo</span>
-              </button>
             </div>
 
             {/* Error banner si hubo problema */}
@@ -972,15 +1109,9 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                 <div className="flex gap-2 pt-1">
                   <button
                     onClick={() => setShowApiKeyModal(true)}
-                    className="px-3 py-1 rounded-lg bg-rose-600 text-white font-bold"
+                    className="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-bold"
                   >
                     Configurar Gemini API Key
-                  </button>
-                  <button
-                    onClick={() => loadSampleReceipt(0)}
-                    className="px-3 py-1 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-semibold"
-                  >
-                    Usar Factura de Prueba
                   </button>
                 </div>
               </div>
@@ -1048,38 +1179,6 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                     className="hidden"
                   />
                 </label>
-              </div>
-            )}
-
-            {/* Modo Factura de Ejemplo */}
-            {scannerMode === 'sample' && !isScanning && !extractedData && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {SAMPLE_RECEIPTS.map((sample, idx) => (
-                  <div
-                    key={sample.label}
-                    onClick={() => loadSampleReceipt(idx)}
-                    className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 rounded-3xl cursor-pointer transition space-y-3 group shadow-sm"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
-                        {sample.data.store_name}
-                      </span>
-                      <span className="text-xs font-black text-slate-900 dark:text-white">
-                        ${sample.data.total_amount.toLocaleString()}
-                      </span>
-                    </div>
-                    <h4 className="text-base font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 transition">
-                      {sample.label}
-                    </h4>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
-                      Incluye {sample.data.items.length} productos (pollo, leche, huevos, arroz, frutas y aseo).
-                    </p>
-                    <div className="pt-2 flex justify-between items-center text-xs font-bold text-emerald-600">
-                      <span>Probar con esta factura</span>
-                      <span>➔</span>
-                    </div>
-                  </div>
-                ))}
               </div>
             )}
 
@@ -1515,10 +1614,10 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                   si los productos subieron o bajaron de costo.
                 </p>
                 <button
-                  onClick={() => loadSampleReceipt(0)}
-                  className="px-4 py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs"
+                  onClick={() => setActiveTab('scanner')}
+                  className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition"
                 >
-                  Cargar Facturas de Prueba para Ver Radar
+                  Escanear Factura para Comenzar
                 </button>
               </div>
             ) : (
@@ -1612,81 +1711,417 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
         {/* ========================================================================= */}
         {activeTab === 'receipts' && (
           <div className="space-y-6">
-            <div className="flex justify-between items-center">
-              <div>
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white">Historial de Facturas de Compra</h2>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Todas las facturas escaneadas y almacenadas en tu base de datos.
-                </p>
-              </div>
-              <button
-                onClick={() => setActiveTab('scanner')}
-                className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-600 text-white font-bold text-xs"
-              >
-                <Camera className="w-4 h-4" />
-                <span>Nueva Factura</span>
-              </button>
-            </div>
+            {selectedReceipt && editingReceiptData ? (
+              <div className="space-y-6 animate-in fade-in">
+                {/* 1. BARRA SUPERIOR DE ACCIONES DE FACTURA */}
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-slate-200 dark:border-slate-800">
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <button
+                      onClick={closeReceiptDetails}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition shadow-sm"
+                    >
+                      <ArrowLeft className="w-4 h-4" />
+                      <span>Volver a Facturas</span>
+                    </button>
+                    {receiptSavedNotice && (
+                      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-bold border border-emerald-500/30 animate-in fade-in">
+                        <Check className="w-3.5 h-3.5" />
+                        <span>Factura y productos guardados</span>
+                      </span>
+                    )}
+                  </div>
 
-            {receipts.length === 0 ? (
-              <div className="p-12 text-center bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800">
-                <p className="text-xs text-slate-400">No hay facturas registradas aún.</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {receipts.map((rc) => (
-                  <div
-                    key={rc.id}
-                    className="p-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl space-y-3 shadow-sm"
-                  >
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">
-                          Factura de Mercado
-                        </span>
-                        <h4 className="text-base font-bold text-slate-900 dark:text-white">{rc.store_name}</h4>
-                        <div className="flex items-center gap-2 text-xs text-slate-400 mt-0.5">
-                          <Calendar className="w-3.5 h-3.5" />
-                          <span>{rc.purchase_date}</span>
-                          <span>•</span>
-                          <span>{rc.items_count} productos</span>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-base font-black text-slate-900 dark:text-white">
-                          ${Number(rc.total_amount).toLocaleString()}
-                        </span>
-                      </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={handleAddProductToReceipt}
+                      className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-emerald-500/30 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 text-xs font-bold hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span>Agregar Producto</span>
+                    </button>
+                    <button
+                      onClick={handleSaveReceiptChanges}
+                      disabled={isSavingReceiptChanges}
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition shadow-sm disabled:opacity-50"
+                    >
+                      <Save className="w-4 h-4" />
+                      <span>{isSavingReceiptChanges ? 'Guardando...' : 'Guardar Cambios'}</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* 2. DATOS DE CABECERA DE LA FACTURA */}
+                <div className="p-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl space-y-4 shadow-sm">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <FileText className="w-5 h-5 text-emerald-600" />
+                      <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                        Factura: {editingReceiptData.store_name || 'Sin especificar'}
+                      </h3>
+                    </div>
+                    <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                      {receiptEditItems.length} {receiptEditItems.length === 1 ? 'producto' : 'productos'}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1">
+                        Supermercado / Tienda
+                      </label>
+                      <input
+                        type="text"
+                        value={editingReceiptData.store_name}
+                        onChange={(e) =>
+                          setEditingReceiptData({ ...editingReceiptData, store_name: e.target.value })
+                        }
+                        className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-medium focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                        placeholder="Ej: Éxito, D1, Jumbo..."
+                      />
                     </div>
 
-                    {rc.notes && <p className="text-xs text-slate-500 italic">{rc.notes}</p>}
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1">
+                        Fecha de Compra
+                      </label>
+                      <input
+                        type="date"
+                        value={editingReceiptData.purchase_date}
+                        onChange={(e) =>
+                          setEditingReceiptData({ ...editingReceiptData, purchase_date: e.target.value })
+                        }
+                        className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-medium focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                      />
+                    </div>
 
-                    <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-xs">
-                      <span className="text-slate-400 text-[11px]">ID: {rc.id.slice(0, 8)}...</span>
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1">
+                        Notas / Medio de Pago
+                      </label>
+                      <input
+                        type="text"
+                        value={editingReceiptData.notes || ''}
+                        onChange={(e) =>
+                          setEditingReceiptData({ ...editingReceiptData, notes: e.target.value })
+                        }
+                        className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-medium focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                        placeholder="Ej: Efectivo, Tarjeta, etc."
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1">
+                        Total Registrado Factura ($)
+                      </label>
+                      <input
+                        type="number"
+                        value={editingReceiptData.total_amount}
+                        onChange={(e) =>
+                          setEditingReceiptData({
+                            ...editingReceiptData,
+                            total_amount: Number(e.target.value) || 0,
+                          })
+                        }
+                        className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-black text-right focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* 3. TABLA EDITABLE DE PRODUCTOS */}
+                <div className="space-y-3">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center px-1 gap-1">
+                    <div>
+                      <h4 className="text-sm font-bold text-slate-900 dark:text-white">
+                        Productos de la Factura
+                      </h4>
+                      <p className="text-xs text-slate-400">
+                        Modifica directamente en la tabla los nombres, categorías, cantidades, precios unitarios y estados.
+                      </p>
+                    </div>
+                    <button
+                      onClick={handleAddProductToReceipt}
+                      className="text-xs font-bold text-emerald-600 hover:text-emerald-500 flex items-center gap-1"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Añadir fila</span>
+                    </button>
+                  </div>
+
+                  <div className="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
+                    <table className="w-full text-left text-xs border-collapse">
+                      <thead>
+                        <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 text-slate-500 font-bold uppercase text-[10px] tracking-wider">
+                          <th className="py-3 px-3 text-center w-10">#</th>
+                          <th className="py-3 px-3 min-w-[200px]">Producto</th>
+                          <th className="py-3 px-3 min-w-[150px]">Categoría</th>
+                          <th className="py-3 px-3 w-20">Cant.</th>
+                          <th className="py-3 px-3 w-24">Unidad</th>
+                          <th className="py-3 px-3 w-28 text-right">Precio Unit. ($)</th>
+                          <th className="py-3 px-3 w-28 text-right">Subtotal ($)</th>
+                          <th className="py-3 px-3 w-32">Estado</th>
+                          <th className="py-3 px-3 text-center w-12">Acción</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
+                        {receiptEditItems.length === 0 ? (
+                          <tr>
+                            <td colSpan={9} className="py-8 text-center text-slate-400 text-xs">
+                              No hay productos registrados en esta factura.{' '}
+                              <button
+                                onClick={handleAddProductToReceipt}
+                                className="text-emerald-600 font-bold hover:underline"
+                              >
+                                Haz clic aquí para agregar uno
+                              </button>
+                            </td>
+                          </tr>
+                        ) : (
+                          receiptEditItems.map((item, idx) => (
+                            <tr key={item.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition">
+                              <td className="py-2.5 px-3 text-center text-slate-400 text-[11px] font-mono">
+                                {idx + 1}
+                              </td>
+                              <td className="py-2.5 px-3">
+                                <input
+                                  type="text"
+                                  value={item.name}
+                                  onChange={(e) => handleUpdateReceiptItem(idx, 'name', e.target.value)}
+                                  placeholder="Nombre del producto"
+                                  className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-medium focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                                />
+                              </td>
+                              <td className="py-2.5 px-3">
+                                <select
+                                  value={item.category}
+                                  onChange={(e) => handleUpdateReceiptItem(idx, 'category', e.target.value)}
+                                  className="w-full px-2 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-medium focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                                >
+                                  {CATEGORIES.filter((c) => c !== 'Todas').map((cat) => (
+                                    <option key={cat} value={cat}>
+                                      {cat}
+                                    </option>
+                                  ))}
+                                </select>
+                              </td>
+                              <td className="py-2.5 px-3">
+                                <input
+                                  type="number"
+                                  min="0"
+                                  step="any"
+                                  value={item.quantity}
+                                  onChange={(e) =>
+                                    handleUpdateReceiptItem(idx, 'quantity', Number(e.target.value) || 0)
+                                  }
+                                  className="w-full px-2 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-bold text-center focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                                />
+                              </td>
+                              <td className="py-2.5 px-3">
+                                <input
+                                  type="text"
+                                  value={item.unit}
+                                  onChange={(e) => handleUpdateReceiptItem(idx, 'unit', e.target.value)}
+                                  placeholder="un, kg..."
+                                  className="w-full px-2 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-medium text-center focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                                />
+                              </td>
+                              <td className="py-2.5 px-3">
+                                <input
+                                  type="number"
+                                  min="0"
+                                  step="any"
+                                  value={item.unit_price}
+                                  onChange={(e) =>
+                                    handleUpdateReceiptItem(idx, 'unit_price', Number(e.target.value) || 0)
+                                  }
+                                  className="w-full px-2 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-medium text-right focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                                />
+                              </td>
+                              <td className="py-2.5 px-3">
+                                <input
+                                  type="number"
+                                  min="0"
+                                  step="any"
+                                  value={item.total_price}
+                                  onChange={(e) =>
+                                    handleUpdateReceiptItem(idx, 'total_price', Number(e.target.value) || 0)
+                                  }
+                                  className="w-full px-2 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-bold text-right focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                                />
+                              </td>
+                              <td className="py-2.5 px-3">
+                                <select
+                                  value={item.status}
+                                  onChange={(e) =>
+                                    handleUpdateReceiptItem(idx, 'status', e.target.value as PantryItemStatus)
+                                  }
+                                  className="w-full px-2 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-semibold focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                                >
+                                  <option value="disponible">En Stock</option>
+                                  <option value="consumiendo">Consumiendo</option>
+                                  <option value="agotado">Agotado</option>
+                                  <option value="vencido">Vencido</option>
+                                </select>
+                              </td>
+                              <td className="py-2.5 px-3 text-center">
+                                <button
+                                  onClick={() => handleRemoveProductFromReceipt(idx)}
+                                  title="Eliminar producto de factura"
+                                  className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Pie de tabla con totales y botón sincronizar */}
+                  <div className="flex flex-col sm:flex-row justify-between items-center p-4 bg-slate-50 dark:bg-slate-950/60 rounded-2xl border border-slate-200 dark:border-slate-800 gap-3">
+                    <div className="flex items-center gap-4 text-xs">
+                      <span className="text-slate-500">
+                        Total productos en tabla:{' '}
+                        <strong className="text-slate-900 dark:text-white">{receiptEditItems.length}</strong>
+                      </span>
+                      <span className="text-slate-500">
+                        Suma productos:{' '}
+                        <strong className="text-emerald-600 dark:text-emerald-400 font-black">
+                          $
+                          {receiptEditItems
+                            .reduce(
+                              (acc, it) =>
+                                acc +
+                                (Number(it.total_price) || (Number(it.unit_price) * Number(it.quantity)) || 0),
+                              0
+                            )
+                            .toLocaleString()}
+                        </strong>
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
                       <button
-                        onClick={async () => {
-                          if (confirm('¿Eliminar esta factura y sus ítems asociados?')) {
-                            const newRcs = receipts.filter((r) => r.id !== rc.id);
-                            const newItems = pantryItems.filter((i) => i.receipt_id !== rc.id);
-                            setReceipts(newRcs);
-                            setPantryItems(newItems);
-                            persistLocally(newItems, newRcs);
-                            try {
-                              await supabase.from('grocery_receipts').delete().eq('id', rc.id);
-                            } catch (e) {
-                              console.warn('Error borrando en Supabase');
-                            }
-                          }
+                        onClick={() => {
+                          const sum = receiptEditItems.reduce(
+                            (acc, it) =>
+                              acc +
+                              (Number(it.total_price) || (Number(it.unit_price) * Number(it.quantity)) || 0),
+                            0
+                          );
+                          setEditingReceiptData({
+                            ...editingReceiptData,
+                            total_amount: sum,
+                          });
                         }}
-                        className="text-slate-400 hover:text-rose-500 font-semibold transition flex items-center gap-1"
+                        className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
-                        <span>Eliminar</span>
+                        Sincronizar Total
+                      </button>
+                      <button
+                        onClick={handleSaveReceiptChanges}
+                        disabled={isSavingReceiptChanges}
+                        className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition shadow-sm disabled:opacity-50"
+                      >
+                        <Save className="w-3.5 h-3.5" />
+                        <span>{isSavingReceiptChanges ? 'Guardando...' : 'Guardar Factura'}</span>
                       </button>
                     </div>
                   </div>
-                ))}
+                </div>
               </div>
+            ) : (
+              /* LISTADO DE FACTURAS REGISTRADAS */
+              <>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h2 className="text-xl font-bold text-slate-900 dark:text-white">Historial de Facturas de Compra</h2>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                      Haz clic sobre cualquier factura para entrar a verla y modificar sus productos.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setActiveTab('scanner')}
+                    className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-sm transition"
+                  >
+                    <Camera className="w-4 h-4" />
+                    <span>Nueva Factura</span>
+                  </button>
+                </div>
+
+                {receipts.length === 0 ? (
+                  <div className="p-12 text-center bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800">
+                    <p className="text-xs text-slate-400">No hay facturas registradas aún.</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {receipts.map((rc) => (
+                      <div
+                        key={rc.id}
+                        onClick={() => openReceiptDetails(rc)}
+                        className="p-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 rounded-3xl space-y-3 shadow-sm cursor-pointer transition group"
+                      >
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">
+                              Factura de Mercado
+                            </span>
+                            <h4 className="text-base font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 transition">
+                              {rc.store_name}
+                            </h4>
+                            <div className="flex items-center gap-2 text-xs text-slate-400 mt-0.5">
+                              <Calendar className="w-3.5 h-3.5" />
+                              <span>{rc.purchase_date}</span>
+                              <span>•</span>
+                              <span>{rc.items_count} productos</span>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="text-right">
+                              <span className="text-base font-black text-slate-900 dark:text-white">
+                                ${Number(rc.total_amount).toLocaleString()}
+                              </span>
+                            </div>
+                            <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-emerald-500 group-hover:translate-x-0.5 transition" />
+                          </div>
+                        </div>
+
+                        {rc.notes && <p className="text-xs text-slate-500 italic">{rc.notes}</p>}
+
+                        <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-xs">
+                          <span className="text-emerald-600 dark:text-emerald-400 font-bold text-[11px] group-hover:underline flex items-center gap-1">
+                            <span>Modificar productos de esta factura</span>
+                            <span>➔</span>
+                          </span>
+                          <button
+                            onClick={async (e) => {
+                              e.stopPropagation();
+                              if (confirm('¿Eliminar esta factura y sus ítems asociados?')) {
+                                const newRcs = receipts.filter((r) => r.id !== rc.id);
+                                const newItems = pantryItems.filter((i) => i.receipt_id !== rc.id);
+                                setReceipts(newRcs);
+                                setPantryItems(newItems);
+                                persistLocally(newItems, newRcs);
+                                try {
+                                  await supabase.from('grocery_receipts').delete().eq('id', rc.id);
+                                } catch (err) {
+                                  console.warn('Error borrando en Supabase');
+                                }
+                              }
+                            }}
+                            className="text-slate-400 hover:text-rose-500 font-semibold transition flex items-center gap-1 py-1 px-2 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/40"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>Eliminar</span>
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
             )}
           </div>
         )}
