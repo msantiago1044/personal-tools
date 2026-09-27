@@ -308,16 +308,28 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
       } else if (tx.type === 'salida') {
         expense += amt;
       } else if (tx.type === 'transferencia') {
-        if (selectedAccountIds.length > 0) {
+        if (selectedAccountIds.length === 0) {
+          // Balance General (todas las cuentas): refleja el ingreso en la cuenta destino (+) y la salida en la cuenta origen (-)
+          income += amt;
+          transfersIn += amt;
+          expense += amt;
+          transfersOut += amt;
+        } else {
           const isSourceSelected = selectedAccountIds.includes(tx.account_id);
           const isDestSelected = tx.destination_account_id ? selectedAccountIds.includes(tx.destination_account_id) : false;
 
           if (isDestSelected && !isSourceSelected) {
-            // Transferencia recibida en la cuenta seleccionada
+            // Transferencia recibida en la cuenta seleccionada (+)
             income += amt;
             transfersIn += amt;
           } else if (isSourceSelected && !isDestSelected) {
-            // Transferencia enviada desde la cuenta seleccionada
+            // Transferencia enviada desde la cuenta seleccionada (-)
+            expense += amt;
+            transfersOut += amt;
+          } else if (isSourceSelected && isDestSelected) {
+            // Ambas cuentas seleccionadas
+            income += amt;
+            transfersIn += amt;
             expense += amt;
             transfersOut += amt;
           }
@@ -871,19 +883,41 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
                                 (tx.type === 'transferencia' ? 'Transferencia' : tx.category?.name || 'Movimiento')}
                             </p>
                             <p className="text-[11px] text-slate-400">
-                              {tx.date} • {tx.account?.name}{' '}
-                              {tx.destination_account && (
-                                <span className="font-semibold text-slate-600 dark:text-slate-300">
-                                  ➔ {tx.destination_account.name}
-                                </span>
+                              {tx.date} •{' '}
+                              {isTransfer && selectedAccountIds.length === 0 ? (
+                                <>
+                                  <span className="text-rose-500 dark:text-rose-400 font-semibold">{tx.account?.name} (-)</span>
+                                  {' ➔ '}
+                                  <span className="text-emerald-500 dark:text-emerald-400 font-semibold">{tx.destination_account?.name} (+)</span>
+                                </>
+                              ) : (
+                                <>
+                                  {tx.account?.name}{' '}
+                                  {tx.destination_account && (
+                                    <span className="font-semibold text-slate-600 dark:text-slate-300">
+                                      ➔ {tx.destination_account.name}
+                                    </span>
+                                  )}
+                                </>
                               )}
                             </p>
                           </div>
                         </div>
 
-                        <span className={`text-sm font-black ${amountColor}`}>
-                          {amountPrefix}{formatMoney(tx.amount)}
-                        </span>
+                        {isTransfer && selectedAccountIds.length === 0 ? (
+                          <div className="flex flex-col items-end">
+                            <div className="flex items-center gap-1.5 text-xs font-black">
+                              <span className="text-rose-600 dark:text-rose-400">-{formatMoney(tx.amount)}</span>
+                              <span className="text-slate-300 dark:text-slate-600 font-normal">/</span>
+                              <span className="text-emerald-600 dark:text-emerald-400">+{formatMoney(tx.amount)}</span>
+                            </div>
+                            <span className="text-[10px] text-slate-400">Transferencia</span>
+                          </div>
+                        ) : (
+                          <span className={`text-sm font-black ${amountColor}`}>
+                            {amountPrefix}{formatMoney(tx.amount)}
+                          </span>
+                        )}
                       </div>
                     );
                   })}
@@ -1033,11 +1067,21 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
                           </td>
                           <td className="p-4 font-semibold text-slate-900 dark:text-white">{tx.description || '—'}</td>
                           <td className="p-4 text-xs text-slate-500 dark:text-slate-300">
-                            {tx.account?.name}{' '}
-                            {tx.destination_account && (
-                              <span className="font-semibold text-slate-700 dark:text-slate-200">
-                                ➔ {tx.destination_account.name}
-                              </span>
+                            {isTransfer && txAccountFilter === 'todas' ? (
+                              <>
+                                <span className="text-rose-500 dark:text-rose-400 font-semibold">{tx.account?.name} (-)</span>
+                                {' ➔ '}
+                                <span className="text-emerald-500 dark:text-emerald-400 font-semibold">{tx.destination_account?.name} (+)</span>
+                              </>
+                            ) : (
+                              <>
+                                {tx.account?.name}{' '}
+                                {tx.destination_account && (
+                                  <span className="font-semibold text-slate-700 dark:text-slate-200">
+                                    ➔ {tx.destination_account.name}
+                                  </span>
+                                )}
+                              </>
                             )}
                           </td>
                           <td className="p-4 text-xs text-slate-400">
@@ -1053,8 +1097,18 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
                               '—'
                             )}
                           </td>
-                          <td className={`p-4 text-right font-black text-sm ${amountColor}`}>
-                            {amountPrefix}{formatMoney(tx.amount)}
+                          <td className="p-4 text-right font-black text-sm">
+                            {isTransfer && txAccountFilter === 'todas' ? (
+                              <div className="flex items-center justify-end gap-1.5 text-xs">
+                                <span className="text-rose-600 dark:text-rose-400">-{formatMoney(tx.amount)}</span>
+                                <span className="text-slate-300 dark:text-slate-600 font-normal">/</span>
+                                <span className="text-emerald-600 dark:text-emerald-400">+{formatMoney(tx.amount)}</span>
+                              </div>
+                            ) : (
+                              <span className={amountColor}>
+                                {amountPrefix}{formatMoney(tx.amount)}
+                              </span>
+                            )}
                           </td>
                         </tr>
                       );
