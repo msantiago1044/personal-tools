@@ -218,13 +218,25 @@ export const SAMPLE_RECEIPTS: Array<{ label: string; data: ExtractedReceiptData 
 ];
 
 // ============================================================================
-// 2. PARSER OCR DE FACTURAS CON GEMINI VISION
+// 2. PARSER OCR DE FACTURAS CON GEMINI VISION (MODELOS GRATUITOS FLASH-LITE)
 // ============================================================================
+// Modelos gratuitos de Google con menor consumo de tokens y mayor cuota gratuita
+export const FREE_TIER_MODELS = [
+  'gemini-flash-lite-latest', // Modelo oficial gratuito de menor consumo y mayor velocidad
+  'gemini-3.5-flash-lite',    // Respaldo gratuito ultrarrápido
+  'gemini-3.1-flash-lite',    // Respaldo secundario de cuota ligera
+];
+
 export async function parseReceiptWithGemini(
   base64Image: string,
   apiKey?: string
 ): Promise<ExtractedReceiptData> {
-  const key = apiKey || localStorage.getItem('gemini_api_key') || '';
+  const envKey = (import.meta as any).env?.VITE_GEMINI_API_KEY;
+  const key =
+    apiKey?.trim() ||
+    localStorage.getItem('gemini_api_key')?.trim() ||
+    envKey?.trim() ||
+    '';
 
   if (!key) {
     throw new Error(
@@ -274,8 +286,6 @@ Reglas clave:
 3. Estima "shelf_life_days" considerando si es alimento perecedero (carnes/aves: 3-5 días, lácteos: 7-10 días, frutas/verduras: 5-14 días, no perecederos/enlatados: 180-720 días, aseo: 365 días).
 `;
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`;
-
   const requestBody = {
     contents: [
       {
@@ -296,31 +306,50 @@ Reglas clave:
     },
   };
 
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(requestBody),
-  });
+  let lastError: any = null;
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => null);
-    throw new Error(
-      errorData?.error?.message || `Error en la API de Gemini (Código ${response.status})`
-    );
+  // Cascada de modelos gratuitos para garantizar disponibilidad continua
+  for (const model of FREE_TIER_MODELS) {
+    try {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        lastError = new Error(
+          errorData?.error?.message || `Error en el modelo ${model} (Código ${response.status})`
+        );
+        // Si el modelo está sobrecargado (503/429) o no disponible (404), intentamos el siguiente modelo gratuito
+        if (response.status === 503 || response.status === 429 || response.status === 404) {
+          console.warn(`Modelo ${model} no disponible (${response.status}), probando siguiente modelo gratuito...`);
+          continue;
+        } else {
+          throw lastError;
+        }
+      }
+
+      const jsonRes = await response.json();
+      const textOutput = jsonRes?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+      if (!textOutput) {
+        throw new Error('No se pudo extraer texto de la factura recibida.');
+      }
+
+      // Parsear JSON limpio
+      const cleanedText = textOutput.replace(/```json/gi, '').replace(/```/g, '').trim();
+      const parsed = JSON.parse(cleanedText) as ExtractedReceiptData;
+      return parsed;
+    } catch (err: any) {
+      lastError = err;
+      console.warn(`Fallo al consultar ${model}:`, err.message);
+    }
   }
 
-  const jsonRes = await response.json();
-  const textOutput = jsonRes?.candidates?.[0]?.content?.parts?.[0]?.text;
-
-  if (!textOutput) {
-    throw new Error('No se pudo extraer texto de la factura recibida.');
-  }
-
-  // Parsear JSON limpio
-  const cleanedText = textOutput.replace(/```json/gi, '').replace(/```/g, '').trim();
-  const parsed = JSON.parse(cleanedText) as ExtractedReceiptData;
-
-  return parsed;
+  throw lastError || new Error('No se pudo procesar la factura con los modelos gratuitos de Gemini.');
 }
 
 // ============================================================================

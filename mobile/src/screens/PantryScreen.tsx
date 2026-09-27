@@ -34,6 +34,9 @@ const CATEGORIES = [
   'Despensa',
 ];
 
+// Configuración de Modelos Gratuitos de Google Gemini (Menor consumo de tokens y 1,500 req/día gratis)
+const FREE_TIER_MODELS = ['gemini-flash-lite-latest', 'gemini-3.5-flash-lite', 'gemini-3.1-flash-lite'];
+
 // Muestras de prueba para móvil
 const MOBILE_SAMPLE_RECEIPTS = [
   {
@@ -139,6 +142,11 @@ export const PantryScreen: React.FC<PantryScreenProps> = ({ user, onBack, isDark
   const [manPrice, setManPrice] = useState('');
   const [manDays, setManDays] = useState('10');
   const [manCal, setManCal] = useState('250');
+
+  // AI Modal (Gemini Flash-Lite)
+  const [showAiModal, setShowAiModal] = useState(false);
+  const [aiTextReceipt, setAiTextReceipt] = useState('');
+  const [isProcessingAi, setIsProcessingAi] = useState(false);
 
   // Colors
   const colors = {
@@ -318,6 +326,151 @@ export const PantryScreen: React.FC<PantryScreenProps> = ({ user, onBack, isDark
     }
 
     Alert.alert('¡Factura Registrada!', `Se han cargado ${newItems.length} productos a tu despensa.`);
+    setActiveTab('inventory');
+  };
+
+  // 4b. Procesar texto de factura con Gemini Flash-Lite (Modo Gratuito)
+  const handleProcessAiText = async () => {
+    if (!aiTextReceipt.trim()) {
+      Alert.alert('Texto vacío', 'Pega o escribe los productos de tu factura o compra.');
+      return;
+    }
+
+    const key = ((globalThis as any).process?.env?.EXPO_PUBLIC_GEMINI_API_KEY as string) || '';
+    if (!key) {
+      Alert.alert(
+        'Gemini API Key',
+        'Configura tu EXPO_PUBLIC_GEMINI_API_KEY en mobile/.env o sube tus recibos en la versión Web.'
+      );
+      return;
+    }
+
+    setIsProcessingAi(true);
+
+    const systemPrompt = `Eres un sistema experto en despensa, OCR y nutricion para compras de supermercado.
+Analiza el siguiente texto de compra o factura y extrae TODOS los productos en JSON estructurado.
+Texto de compra:
+"""${aiTextReceipt.trim()}"""
+
+Responde UNICAMENTE con un JSON con la estructura:
+{
+  "store_name": "Nombre del supermercado o 'Mercado General'",
+  "total_amount": 0,
+  "items": [
+    {
+      "name": "Nombre normalizado del producto",
+      "category": "Proteínas | Lácteos | Granos & Cereales | Frutas & Verduras | Aseo & Limpieza | Snacks & Bebidas | Despensa",
+      "quantity": 1,
+      "unit": "kg | litro | unidad | paquete | lata",
+      "unit_price": 0,
+      "total_price": 0,
+      "shelf_life_days": 7,
+      "calories_per_unit": 100,
+      "protein_g": 0,
+      "carbs_g": 0,
+      "fat_g": 0
+    }
+  ]
+}`;
+
+    const requestBody = {
+      contents: [{ parts: [{ text: systemPrompt }] }],
+      generationConfig: {
+        temperature: 0.1,
+        responseMimeType: 'application/json',
+      },
+    };
+
+    let parsedResult: any = null;
+    let lastErr: any = null;
+
+    for (const model of FREE_TIER_MODELS) {
+      try {
+        const response = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestBody),
+          }
+        );
+
+        if (!response.ok) {
+          if (response.status === 503 || response.status === 429 || response.status === 404) {
+            continue;
+          }
+          throw new Error(`Error en modelo ${model} (${response.status})`);
+        }
+
+        const json = await response.json();
+        const rawText = json?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (rawText) {
+          const cleanText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
+          parsedResult = JSON.parse(cleanText);
+          break;
+        }
+      } catch (e: any) {
+        lastErr = e;
+      }
+    }
+
+    setIsProcessingAi(false);
+
+    if (!parsedResult || !parsedResult.items || parsedResult.items.length === 0) {
+      Alert.alert('Error IA', lastErr?.message || 'No se pudieron extraer productos. Verifica el texto ingresado.');
+      return;
+    }
+
+    const receiptId = 'rc_' + Date.now();
+    const newReceipt: GroceryReceipt = {
+      id: receiptId,
+      user_id: user.id,
+      store_name: parsedResult.store_name || 'Mercado Inteligente IA',
+      purchase_date: new Date().toISOString().split('T')[0],
+      total_amount: parsedResult.total_amount || parsedResult.items.reduce((s: number, i: any) => s + (i.total_price || 0), 0),
+      items_count: parsedResult.items.length,
+      created_at: new Date().toISOString(),
+    };
+
+    const newItems: PantryItem[] = parsedResult.items.map((it: any, idx: number) => ({
+      id: 'item_' + Date.now() + '_' + idx,
+      user_id: user.id,
+      receipt_id: receiptId,
+      name: it.name,
+      category: it.category || 'Despensa',
+      quantity: it.quantity || 1,
+      initial_quantity: it.quantity || 1,
+      unit: it.unit || 'unidad',
+      unit_price: it.unit_price || 0,
+      total_price: it.total_price || (it.unit_price ? it.unit_price * (it.quantity || 1) : 0),
+      purchase_date: new Date().toISOString().split('T')[0],
+      shelf_life_days: it.shelf_life_days || 14,
+      calories_per_unit: it.calories_per_unit || 0,
+      total_calories: (it.calories_per_unit || 0) * (it.quantity || 1),
+      protein_g: it.protein_g || 0,
+      carbs_g: it.carbs_g || 0,
+      fat_g: it.fat_g || 0,
+      status: 'disponible',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    }));
+
+    const updatedItems = [...newItems, ...items];
+    const updatedRcs = [newReceipt, ...receipts];
+    setItems(updatedItems);
+    setReceipts(updatedRcs);
+    persistItemsLocally(updatedItems, updatedRcs);
+
+    try {
+      await supabase.from('grocery_receipts').insert([newReceipt]);
+      await supabase.from('pantry_items').insert(newItems);
+    } catch (e) {
+      console.warn('Guardado en AsyncStorage local');
+    }
+
+    setAiTextReceipt('');
+    setShowAiModal(false);
+    Alert.alert('¡Procesado con Éxito!', `Se agregaron ${newItems.length} productos con análisis nutricional y entropía.`);
     setActiveTab('inventory');
   };
 
@@ -625,26 +778,45 @@ export const PantryScreen: React.FC<PantryScreenProps> = ({ user, onBack, isDark
               Almacena automáticamente cada producto de la factura para llevar el control de consumo, calorías y precios.
             </Text>
 
+            {/* Banner de Modelo Gratuito Activo */}
+            <View style={{ backgroundColor: colors.accentBg, padding: 12, borderRadius: 14, marginBottom: 16, width: '100%' }}>
+              <Text style={{ color: colors.accentText, fontWeight: '800', fontSize: 13 }}>
+                ⚡ Gemini Flash-Lite Activo (Modo Gratuito)
+              </Text>
+              <Text style={{ color: colors.subtext, fontSize: 11, marginTop: 3, lineHeight: 16 }}>
+                1,500 peticiones diarias gratis. Consumo mínimo de tokens con respuestas estructuradas instantáneas.
+              </Text>
+            </View>
+
             <TouchableOpacity
-              onPress={handleLoadSample}
-              style={[styles.scanActionBtn, { backgroundColor: colors.accent }]}
+              onPress={() => setShowAiModal(true)}
+              style={[styles.scanActionBtn, { backgroundColor: colors.accent, marginBottom: 10 }]}
             >
               <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 14 }}>
-                ⚡ Cargar Factura de Ejemplo Éxito
+                ✨ Extraer con IA Gemini Flash-Lite
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={handleLoadSample}
+              style={[styles.scanActionBtn, { backgroundColor: colors.inputBg, borderWidth: 1, borderColor: colors.border, marginBottom: 10 }]}
+            >
+              <Text style={{ color: colors.text, fontWeight: '700', fontSize: 13 }}>
+                📋 Cargar Factura de Ejemplo Éxito
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               onPress={() => {
                 Alert.alert(
-                  'Escaneo con Foto',
-                  'Para escanear con la cámara y visión OCR de Gemini, también puedes usar la versión Web o subir tus fotos directamente al módulo.'
+                  'Escaneo con Foto OCR',
+                  'Para fotos y OCR visual de tiquetes físicos con Gemini Vision, puedes usar la cámara en la versión Web.'
                 );
               }}
-              style={[styles.scanActionBtn, { backgroundColor: colors.inputBg, borderWidth: 1, borderColor: colors.border, marginTop: 10 }]}
+              style={[styles.scanActionBtn, { backgroundColor: colors.inputBg, borderWidth: 1, borderColor: colors.border }]}
             >
-              <Text style={{ color: colors.text, fontWeight: '700', fontSize: 13 }}>
-                📷 Capturar con Cámara
+              <Text style={{ color: colors.subtext, fontWeight: '600', fontSize: 13 }}>
+                📷 Capturar con Foto (Web Vision)
               </Text>
             </TouchableOpacity>
           </View>
@@ -783,6 +955,73 @@ export const PantryScreen: React.FC<PantryScreenProps> = ({ user, onBack, isDark
                 style={[styles.saveBtn, { backgroundColor: colors.accent }]}
               >
                 <Text style={{ color: '#FFFFFF', fontWeight: '800' }}>Guardar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* MODAL: PROCESAR CON IA GEMINI FLASH-LITE (GRATIS) */}
+      <Modal visible={showAiModal} transparent animationType="slide">
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+              <View>
+                <Text style={[styles.modalTitle, { color: colors.text, marginBottom: 2 }]}>
+                  ✨ Extraer Mercado con IA
+                </Text>
+                <Text style={{ color: colors.accentText, fontSize: 11, fontWeight: '700' }}>
+                  Gemini Flash-Lite • Modelo Gratuito
+                </Text>
+              </View>
+              <TouchableOpacity onPress={() => !isProcessingAi && setShowAiModal(false)}>
+                <Text style={{ fontSize: 18, color: colors.subtext }}>✕</Text>
+              </TouchableOpacity>
+            </View>
+
+            <Text style={{ fontSize: 12, color: colors.subtext, marginBottom: 10, lineHeight: 16 }}>
+              Pega o escribe los productos de tu tiquete o mercado. La IA calculará automáticamente categorías, calorías, macros, precios y vida útil.
+            </Text>
+
+            <TextInput
+              multiline
+              numberOfLines={5}
+              placeholder="ejemplo:&#10;1kg pechuga de pollo $18.000&#10;2 bolsas de leche alquería $9.000&#10;1 cubeta huevos AA $19.000&#10;3 atunes lomitos $16.500"
+              placeholderTextColor={colors.subtext}
+              value={aiTextReceipt}
+              onChangeText={setAiTextReceipt}
+              editable={!isProcessingAi}
+              style={[
+                styles.input,
+                {
+                  height: 110,
+                  textAlignVertical: 'top',
+                  backgroundColor: colors.inputBg,
+                  borderColor: colors.border,
+                  color: colors.text,
+                  fontSize: 12,
+                },
+              ]}
+            />
+
+            <View style={styles.modalActions}>
+              <TouchableOpacity
+                onPress={() => setShowAiModal(false)}
+                disabled={isProcessingAi}
+                style={styles.cancelBtn}
+              >
+                <Text style={{ color: colors.subtext, fontWeight: '600' }}>Cancelar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleProcessAiText}
+                disabled={isProcessingAi}
+                style={[styles.saveBtn, { backgroundColor: colors.accent, opacity: isProcessingAi ? 0.7 : 1 }]}
+              >
+                {isProcessingAi ? (
+                  <ActivityIndicator size="small" color="#FFFFFF" />
+                ) : (
+                  <Text style={{ color: '#FFFFFF', fontWeight: '800' }}>Analizar con IA (Gratis)</Text>
+                )}
               </TouchableOpacity>
             </View>
           </View>

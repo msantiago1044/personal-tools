@@ -13,6 +13,7 @@ import {
   calculateConsumptionVelocity,
   SAMPLE_RECEIPTS,
   ExtractedReceiptData,
+  FREE_TIER_MODELS,
 } from '../../lib/pantryAiEngine';
 import {
   ShoppingBag,
@@ -75,7 +76,11 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
 
   // Modal API Key
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
-  const [apiKeyInput, setApiKeyInput] = useState(localStorage.getItem('gemini_api_key') || '');
+  const [apiKeyInput, setApiKeyInput] = useState(
+    localStorage.getItem('gemini_api_key') ||
+    (import.meta as any).env?.VITE_GEMINI_API_KEY ||
+    ''
+  );
   const [apiKeySavedNotice, setApiKeySavedNotice] = useState(false);
 
   // Escáner & Cámara
@@ -287,7 +292,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
     setIsScanning(true);
     setScanError(null);
     try {
-      const apiKey = localStorage.getItem('gemini_api_key') || '';
+      const apiKey = localStorage.getItem('gemini_api_key') || (import.meta as any).env?.VITE_GEMINI_API_KEY || '';
       const result = await parseReceiptWithGemini(base64Image, apiKey);
       setExtractedData(result);
     } catch (err: any) {
@@ -1715,9 +1720,15 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
             </div>
 
             <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-              Para extraer facturas reales automáticamente con IA Vision, puedes ingresar tu API Key gratuita de Google
-              AI Studio. Se guardará de forma segura en tu navegador.
+              El sistema utiliza por defecto los <strong>modelos gratuitos de Google AI Studio</strong> con menor consumo de tokens y cuota amplia (hasta 1,500 peticiones diarias gratis).
             </p>
+
+            <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl flex items-start gap-2.5">
+              <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+              <div className="text-[11px] text-emerald-800 dark:text-emerald-300">
+                <span className="font-bold">Modelo activo sin costo:</span> Gemini Flash-Lite (Google AI). Consumo mínimo de tokens, respuesta instantánea y soporte multimodal para lectura de facturas.
+              </div>
+            </div>
 
             {apiKeySavedNotice && (
               <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/30 rounded-xl text-emerald-800 dark:text-emerald-300 text-xs font-bold flex items-center gap-1.5">
@@ -1730,7 +1741,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
               <label className="block text-[11px] font-bold text-slate-400">Tu API Key (Google AI Studio)</label>
               <input
                 type="password"
-                placeholder="AIzaSy..."
+                placeholder="AIzaSy... o AQ.Ab8..."
                 value={apiKeyInput}
                 onChange={(e) => setApiKeyInput(e.target.value)}
                 className="w-full px-3 py-2.5 rounded-xl text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:border-emerald-500 text-slate-900 dark:text-white"
@@ -1739,15 +1750,10 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
 
             <div className="text-[11px] text-slate-400 flex items-center gap-1.5">
               <Info className="w-3.5 h-3.5" />
-              <span>¿No tienes una clave?</span>
-              <a
-                href="https://aistudio.google.com/app/apikey"
-                target="_blank"
-                rel="noreferrer"
-                className="text-emerald-600 dark:text-emerald-400 font-bold hover:underline"
-              >
-                Obtén una gratis aquí ➔
-              </a>
+              <span>Modelos en cascada:</span>
+              <span className="font-mono text-[10px] text-emerald-600 dark:text-emerald-400">
+                {FREE_TIER_MODELS.join(' → ')}
+              </span>
             </div>
 
             <div className="flex justify-end gap-2 pt-2">
