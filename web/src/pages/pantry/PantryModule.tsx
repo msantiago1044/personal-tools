@@ -45,10 +45,14 @@ import {
   Save,
   FileText,
   Pencil,
+  ArrowUp,
+  ArrowDown,
+  ArrowUpDown,
 } from 'lucide-react';
 import { PriceEvolutionModal } from '../../components/pantry/PriceEvolutionModal';
 import { ProductDetailModal } from '../../components/pantry/ProductDetailModal';
 import { NutritionAnalytics } from '../../components/pantry/NutritionAnalytics';
+import { IsaSection } from '../../components/pantry/IsaSection';
 import { getFoodIntelligence, calculateFoodMacroTotals } from '../../lib/pantryFoodIntelligence';
 import { inferProductPhysicalPresentation } from '../../lib/productPresentationInferrer';
 
@@ -102,7 +106,9 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
   // Factura seleccionada para ver/editar detalle y productos
   const [selectedReceipt, setSelectedReceipt] = useState<GroceryReceipt | null>(null);
   const [editingReceiptData, setEditingReceiptData] = useState<GroceryReceipt | null>(null);
-  const [receiptEditItems, setReceiptEditItems] = useState<PantryItem[]>([]);
+  const [receiptEditItems, setReceiptEditItems] = useState<(PantryItem & { _originalIndex?: number })[]>([]);
+  const [receiptSortCol, setReceiptSortCol] = useState<string | null>(null);
+  const [receiptSortDir, setReceiptSortDir] = useState<'asc' | 'desc'>('asc');
   const [isSavingReceiptChanges, setIsSavingReceiptChanges] = useState(false);
   const [receiptSavedNotice, setReceiptSavedNotice] = useState(false);
   const [receiptSaveError, setReceiptSaveError] = useState<string | null>(null);
@@ -511,9 +517,61 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
   const openReceiptDetails = (rc: GroceryReceipt) => {
     setSelectedReceipt(rc);
     setEditingReceiptData({ ...rc });
-    const items = pantryItems.filter((i) => i.receipt_id === rc.id);
+    const items = pantryItems
+      .filter((i) => i.receipt_id === rc.id)
+      .map((item, idx) => ({
+        ...item,
+        _originalIndex: idx + 1,
+      }));
     setReceiptEditItems(JSON.parse(JSON.stringify(items)));
+    setReceiptSortCol(null);
+    setReceiptSortDir('asc');
     setReceiptSavedNotice(false);
+  };
+
+  // Ordenar columnas de menor a mayor / mayor a menor en la tabla de edición de factura
+  const handleSortReceiptColumn = (col: string) => {
+    const nextDir: 'asc' | 'desc' =
+      receiptSortCol === col && receiptSortDir === 'asc' ? 'desc' : 'asc';
+    setReceiptSortCol(col);
+    setReceiptSortDir(nextDir);
+
+    setReceiptEditItems((prev) => {
+      const list = [...prev];
+      list.sort((a: any, b: any) => {
+        if (col === '_originalIndex') {
+          const idxA = a._originalIndex ?? 0;
+          const idxB = b._originalIndex ?? 0;
+          return nextDir === 'asc' ? idxA - idxB : idxB - idxA;
+        }
+
+        const numFields = [
+          'quantity',
+          'unit_price',
+          'total_price',
+          'shelf_life_days',
+          'calories_per_unit',
+          'fat_g',
+          'protein_g',
+          'carbs_g',
+        ];
+
+        const valA = a[col];
+        const valB = b[col];
+
+        if (numFields.includes(col)) {
+          const numA = Number(valA) || 0;
+          const numB = Number(valB) || 0;
+          return nextDir === 'asc' ? numA - numB : numB - numA;
+        }
+
+        const strA = (valA ?? '').toString().trim().toLowerCase();
+        const strB = (valB ?? '').toString().trim().toLowerCase();
+        const cmp = strA.localeCompare(strB, 'es', { numeric: true });
+        return nextDir === 'asc' ? cmp : -cmp;
+      });
+      return list;
+    });
   };
 
   const closeReceiptDetails = () => {
@@ -674,7 +732,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
 
   const handleAddProductToReceipt = () => {
     if (!editingReceiptData) return;
-    const newItem: PantryItem = {
+    const newItem: PantryItem & { _originalIndex?: number } = {
       id: crypto.randomUUID(),
       user_id: user.id,
       receipt_id: editingReceiptData.id,
@@ -695,6 +753,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
       status: 'disponible',
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
+      _originalIndex: receiptEditItems.length + 1,
     };
     setReceiptEditItems((prev) => [...prev, newItem]);
   };
@@ -1903,6 +1962,12 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                 </div>
               )}
             </div>
+
+            {/* SECCIÓN DEL ÍNDICE DE SOSTENIBILIDAD ALIMENTARIA (ISA) */}
+            <IsaSection
+              pantryItems={pantryItems}
+              onSelectProduct={(item) => setSelectedPantryItemDetail(item)}
+            />
           </div>
         )}
 
@@ -2232,19 +2297,319 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                     <table className="w-full text-left text-xs border-collapse">
                       <thead>
                         <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 text-slate-500 font-bold uppercase text-[10px] tracking-wider whitespace-nowrap">
-                          <th className="py-3 px-2 text-center w-8">#</th>
-                          <th className="py-3 px-2 min-w-[170px]">Producto</th>
-                          <th className="py-3 px-2 min-w-[130px]">Categoría</th>
-                          <th className="py-3 px-2 w-20 text-center">Cant.</th>
-                          <th className="py-3 px-2 w-28 text-center">Unidad</th>
-                          <th className="py-3 px-2 w-24 text-right">Precio U. ($)</th>
-                          <th className="py-3 px-2 w-24 text-right">Subtotal ($)</th>
-                          <th className="py-3 px-2 w-18 text-center">Vida Útil (d)</th>
-                          <th className="py-3 px-2 w-20 text-center">Cal/Porc (kcal)</th>
-                          <th className="py-3 px-2 w-16 text-center">Grasas (g)</th>
-                          <th className="py-3 px-2 w-16 text-center">Prot (g)</th>
-                          <th className="py-3 px-2 w-16 text-center">Carb (g)</th>
-                          <th className="py-3 px-2 w-28">Estado</th>
+                          {/* Columna # (Orden Original) */}
+                          <th
+                            onClick={() => handleSortReceiptColumn('_originalIndex')}
+                            title="Ordenar por orden original (#). Clic para menor a mayor / mayor a menor."
+                            className={`py-3 px-2 text-center w-10 cursor-pointer select-none transition group hover:bg-slate-100 dark:hover:bg-slate-800 ${
+                              receiptSortCol === '_originalIndex'
+                                ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50/60 dark:bg-emerald-950/20'
+                                : ''
+                            }`}
+                          >
+                            <div className="flex items-center justify-center gap-1">
+                              <span>#</span>
+                              {receiptSortCol === '_originalIndex' ? (
+                                receiptSortDir === 'asc' ? (
+                                  <ArrowUp className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                                ) : (
+                                  <ArrowDown className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                                )
+                              ) : (
+                                <ArrowUpDown className="w-2.5 h-2.5 text-slate-300 dark:text-slate-600 opacity-0 group-hover:opacity-100 transition shrink-0" />
+                              )}
+                            </div>
+                          </th>
+
+                          {/* Columna Producto */}
+                          <th
+                            onClick={() => handleSortReceiptColumn('name')}
+                            title="Ordenar por Producto (A-Z / Z-A)"
+                            className={`py-3 px-2 min-w-[170px] cursor-pointer select-none transition group hover:bg-slate-100 dark:hover:bg-slate-800 ${
+                              receiptSortCol === 'name'
+                                ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50/60 dark:bg-emerald-950/20'
+                                : ''
+                            }`}
+                          >
+                            <div className="flex items-center gap-1">
+                              <span>Producto</span>
+                              {receiptSortCol === 'name' ? (
+                                receiptSortDir === 'asc' ? (
+                                  <ArrowUp className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                                ) : (
+                                  <ArrowDown className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                                )
+                              ) : (
+                                <ArrowUpDown className="w-2.5 h-2.5 text-slate-300 dark:text-slate-600 opacity-0 group-hover:opacity-100 transition shrink-0" />
+                              )}
+                            </div>
+                          </th>
+
+                          {/* Columna Categoría */}
+                          <th
+                            onClick={() => handleSortReceiptColumn('category')}
+                            title="Ordenar por Categoría (A-Z / Z-A)"
+                            className={`py-3 px-2 min-w-[130px] cursor-pointer select-none transition group hover:bg-slate-100 dark:hover:bg-slate-800 ${
+                              receiptSortCol === 'category'
+                                ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50/60 dark:bg-emerald-950/20'
+                                : ''
+                            }`}
+                          >
+                            <div className="flex items-center gap-1">
+                              <span>Categoría</span>
+                              {receiptSortCol === 'category' ? (
+                                receiptSortDir === 'asc' ? (
+                                  <ArrowUp className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                                ) : (
+                                  <ArrowDown className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                                )
+                              ) : (
+                                <ArrowUpDown className="w-2.5 h-2.5 text-slate-300 dark:text-slate-600 opacity-0 group-hover:opacity-100 transition shrink-0" />
+                              )}
+                            </div>
+                          </th>
+
+                          {/* Columna Cantidad */}
+                          <th
+                            onClick={() => handleSortReceiptColumn('quantity')}
+                            title="Ordenar por Cantidad (Menor a mayor / Mayor a menor)"
+                            className={`py-3 px-2 w-20 text-center cursor-pointer select-none transition group hover:bg-slate-100 dark:hover:bg-slate-800 ${
+                              receiptSortCol === 'quantity'
+                                ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50/60 dark:bg-emerald-950/20'
+                                : ''
+                            }`}
+                          >
+                            <div className="flex items-center justify-center gap-1">
+                              <span>Cant.</span>
+                              {receiptSortCol === 'quantity' ? (
+                                receiptSortDir === 'asc' ? (
+                                  <ArrowUp className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                                ) : (
+                                  <ArrowDown className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                                )
+                              ) : (
+                                <ArrowUpDown className="w-2.5 h-2.5 text-slate-300 dark:text-slate-600 opacity-0 group-hover:opacity-100 transition shrink-0" />
+                              )}
+                            </div>
+                          </th>
+
+                          {/* Columna Unidad */}
+                          <th
+                            onClick={() => handleSortReceiptColumn('unit')}
+                            title="Ordenar por Unidad (A-Z / Z-A)"
+                            className={`py-3 px-2 w-28 text-center cursor-pointer select-none transition group hover:bg-slate-100 dark:hover:bg-slate-800 ${
+                              receiptSortCol === 'unit'
+                                ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50/60 dark:bg-emerald-950/20'
+                                : ''
+                            }`}
+                          >
+                            <div className="flex items-center justify-center gap-1">
+                              <span>Unidad</span>
+                              {receiptSortCol === 'unit' ? (
+                                receiptSortDir === 'asc' ? (
+                                  <ArrowUp className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                                ) : (
+                                  <ArrowDown className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                                )
+                              ) : (
+                                <ArrowUpDown className="w-2.5 h-2.5 text-slate-300 dark:text-slate-600 opacity-0 group-hover:opacity-100 transition shrink-0" />
+                              )}
+                            </div>
+                          </th>
+
+                          {/* Columna Precio U. */}
+                          <th
+                            onClick={() => handleSortReceiptColumn('unit_price')}
+                            title="Ordenar por Precio Unitario (Menor a mayor / Mayor a menor)"
+                            className={`py-3 px-2 w-24 text-right cursor-pointer select-none transition group hover:bg-slate-100 dark:hover:bg-slate-800 ${
+                              receiptSortCol === 'unit_price'
+                                ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50/60 dark:bg-emerald-950/20'
+                                : ''
+                            }`}
+                          >
+                            <div className="flex items-center justify-end gap-1">
+                              <span>Precio U. ($)</span>
+                              {receiptSortCol === 'unit_price' ? (
+                                receiptSortDir === 'asc' ? (
+                                  <ArrowUp className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                                ) : (
+                                  <ArrowDown className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                                )
+                              ) : (
+                                <ArrowUpDown className="w-2.5 h-2.5 text-slate-300 dark:text-slate-600 opacity-0 group-hover:opacity-100 transition shrink-0" />
+                              )}
+                            </div>
+                          </th>
+
+                          {/* Columna Subtotal */}
+                          <th
+                            onClick={() => handleSortReceiptColumn('total_price')}
+                            title="Ordenar por Subtotal (Menor a mayor / Mayor a menor)"
+                            className={`py-3 px-2 w-24 text-right cursor-pointer select-none transition group hover:bg-slate-100 dark:hover:bg-slate-800 ${
+                              receiptSortCol === 'total_price'
+                                ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50/60 dark:bg-emerald-950/20'
+                                : ''
+                            }`}
+                          >
+                            <div className="flex items-center justify-end gap-1">
+                              <span>Subtotal ($)</span>
+                              {receiptSortCol === 'total_price' ? (
+                                receiptSortDir === 'asc' ? (
+                                  <ArrowUp className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                                ) : (
+                                  <ArrowDown className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                                )
+                              ) : (
+                                <ArrowUpDown className="w-2.5 h-2.5 text-slate-300 dark:text-slate-600 opacity-0 group-hover:opacity-100 transition shrink-0" />
+                              )}
+                            </div>
+                          </th>
+
+                          {/* Columna Vida Útil */}
+                          <th
+                            onClick={() => handleSortReceiptColumn('shelf_life_days')}
+                            title="Ordenar por Días de Vida Útil (Menor a mayor / Mayor a menor)"
+                            className={`py-3 px-2 w-18 text-center cursor-pointer select-none transition group hover:bg-slate-100 dark:hover:bg-slate-800 ${
+                              receiptSortCol === 'shelf_life_days'
+                                ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50/60 dark:bg-emerald-950/20'
+                                : ''
+                            }`}
+                          >
+                            <div className="flex items-center justify-center gap-1">
+                              <span>Vida Útil (d)</span>
+                              {receiptSortCol === 'shelf_life_days' ? (
+                                receiptSortDir === 'asc' ? (
+                                  <ArrowUp className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                                ) : (
+                                  <ArrowDown className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                                )
+                              ) : (
+                                <ArrowUpDown className="w-2.5 h-2.5 text-slate-300 dark:text-slate-600 opacity-0 group-hover:opacity-100 transition shrink-0" />
+                              )}
+                            </div>
+                          </th>
+
+                          {/* Columna Cal/Porc */}
+                          <th
+                            onClick={() => handleSortReceiptColumn('calories_per_unit')}
+                            title="Ordenar por Calorías por Porción (Menor a mayor / Mayor a menor)"
+                            className={`py-3 px-2 w-20 text-center cursor-pointer select-none transition group hover:bg-slate-100 dark:hover:bg-slate-800 ${
+                              receiptSortCol === 'calories_per_unit'
+                                ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50/60 dark:bg-emerald-950/20'
+                                : ''
+                            }`}
+                          >
+                            <div className="flex items-center justify-center gap-1">
+                              <span>Cal/Porc (kcal)</span>
+                              {receiptSortCol === 'calories_per_unit' ? (
+                                receiptSortDir === 'asc' ? (
+                                  <ArrowUp className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                                ) : (
+                                  <ArrowDown className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                                )
+                              ) : (
+                                <ArrowUpDown className="w-2.5 h-2.5 text-slate-300 dark:text-slate-600 opacity-0 group-hover:opacity-100 transition shrink-0" />
+                              )}
+                            </div>
+                          </th>
+
+                          {/* Columna Grasas */}
+                          <th
+                            onClick={() => handleSortReceiptColumn('fat_g')}
+                            title="Ordenar por Grasas en gramos (Menor a mayor / Mayor a menor)"
+                            className={`py-3 px-2 w-16 text-center cursor-pointer select-none transition group hover:bg-slate-100 dark:hover:bg-slate-800 ${
+                              receiptSortCol === 'fat_g'
+                                ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50/60 dark:bg-emerald-950/20'
+                                : ''
+                            }`}
+                          >
+                            <div className="flex items-center justify-center gap-1">
+                              <span>Grasas (g)</span>
+                              {receiptSortCol === 'fat_g' ? (
+                                receiptSortDir === 'asc' ? (
+                                  <ArrowUp className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                                ) : (
+                                  <ArrowDown className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                                )
+                              ) : (
+                                <ArrowUpDown className="w-2.5 h-2.5 text-slate-300 dark:text-slate-600 opacity-0 group-hover:opacity-100 transition shrink-0" />
+                              )}
+                            </div>
+                          </th>
+
+                          {/* Columna Proteína */}
+                          <th
+                            onClick={() => handleSortReceiptColumn('protein_g')}
+                            title="Ordenar por Proteína en gramos (Menor a mayor / Mayor a menor)"
+                            className={`py-3 px-2 w-16 text-center cursor-pointer select-none transition group hover:bg-slate-100 dark:hover:bg-slate-800 ${
+                              receiptSortCol === 'protein_g'
+                                ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50/60 dark:bg-emerald-950/20'
+                                : ''
+                            }`}
+                          >
+                            <div className="flex items-center justify-center gap-1">
+                              <span>Prot (g)</span>
+                              {receiptSortCol === 'protein_g' ? (
+                                receiptSortDir === 'asc' ? (
+                                  <ArrowUp className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                                ) : (
+                                  <ArrowDown className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                                )
+                              ) : (
+                                <ArrowUpDown className="w-2.5 h-2.5 text-slate-300 dark:text-slate-600 opacity-0 group-hover:opacity-100 transition shrink-0" />
+                              )}
+                            </div>
+                          </th>
+
+                          {/* Columna Carbohidratos */}
+                          <th
+                            onClick={() => handleSortReceiptColumn('carbs_g')}
+                            title="Ordenar por Carbohidratos en gramos (Menor a mayor / Mayor a menor)"
+                            className={`py-3 px-2 w-16 text-center cursor-pointer select-none transition group hover:bg-slate-100 dark:hover:bg-slate-800 ${
+                              receiptSortCol === 'carbs_g'
+                                ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50/60 dark:bg-emerald-950/20'
+                                : ''
+                            }`}
+                          >
+                            <div className="flex items-center justify-center gap-1">
+                              <span>Carb (g)</span>
+                              {receiptSortCol === 'carbs_g' ? (
+                                receiptSortDir === 'asc' ? (
+                                  <ArrowUp className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                                ) : (
+                                  <ArrowDown className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                                )
+                              ) : (
+                                <ArrowUpDown className="w-2.5 h-2.5 text-slate-300 dark:text-slate-600 opacity-0 group-hover:opacity-100 transition shrink-0" />
+                              )}
+                            </div>
+                          </th>
+
+                          {/* Columna Estado */}
+                          <th
+                            onClick={() => handleSortReceiptColumn('status')}
+                            title="Ordenar por Estado (A-Z / Z-A)"
+                            className={`py-3 px-2 w-28 cursor-pointer select-none transition group hover:bg-slate-100 dark:hover:bg-slate-800 ${
+                              receiptSortCol === 'status'
+                                ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50/60 dark:bg-emerald-950/20'
+                                : ''
+                            }`}
+                          >
+                            <div className="flex items-center gap-1">
+                              <span>Estado</span>
+                              {receiptSortCol === 'status' ? (
+                                receiptSortDir === 'asc' ? (
+                                  <ArrowUp className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                                ) : (
+                                  <ArrowDown className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                                )
+                              ) : (
+                                <ArrowUpDown className="w-2.5 h-2.5 text-slate-300 dark:text-slate-600 opacity-0 group-hover:opacity-100 transition shrink-0" />
+                              )}
+                            </div>
+                          </th>
+
+                          {/* Columna Acción (fija) */}
                           <th className="py-3 px-2 text-center w-10">Acción</th>
                         </tr>
                       </thead>
@@ -2265,7 +2630,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                           receiptEditItems.map((item, idx) => (
                             <tr key={item.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition">
                               <td className="py-2 px-2 text-center text-slate-400 text-[11px] font-mono">
-                                {idx + 1}
+                                {(item as any)._originalIndex || idx + 1}
                               </td>
                               <td className="py-2 px-2">
                                 <input
