@@ -48,6 +48,8 @@ import {
   ArrowUp,
   ArrowDown,
   ArrowUpDown,
+  Globe,
+  Droplet,
 } from 'lucide-react';
 import { PriceEvolutionModal } from '../../components/pantry/PriceEvolutionModal';
 import { ProductDetailModal } from '../../components/pantry/ProductDetailModal';
@@ -112,6 +114,10 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
   const [isSavingReceiptChanges, setIsSavingReceiptChanges] = useState(false);
   const [receiptSavedNotice, setReceiptSavedNotice] = useState(false);
   const [receiptSaveError, setReceiptSaveError] = useState<string | null>(null);
+
+  // División interactiva seleccionada en la pestaña Consumo ('isa' | 'entropy' | 'velocity' | 'footprint')
+  const [consumoDivision, setConsumoDivision] = useState<'isa' | 'entropy' | 'velocity' | 'footprint'>('isa');
+  const [showAllConsumoSections, setShowAllConsumoSections] = useState(false);
 
   // Estado de Normalización Global de Despensa (Deducción por Tienda y Precios)
   const [isNormalizingAll, setIsNormalizingAll] = useState(false);
@@ -294,6 +300,63 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
   const totalStockValue = useMemo(() => {
     return activeItems.reduce((acc, item) => acc + Number(item.total_price || item.unit_price * item.quantity), 0);
   }, [activeItems]);
+
+  // Resumen Global de Sostenibilidad (ISA) para la cabecera interactiva de Consumo
+  const globalIsaSummary = useMemo(() => {
+    const active = pantryItems.filter((i) => i.status !== 'agotado');
+    let sumIsa = 0;
+    let count = 0;
+    let totalWater = 0;
+    let totalCarbon = 0;
+
+    for (const item of active) {
+      const cat = (item.category || '').toLowerCase();
+      const name = (item.name || '').toLowerCase();
+      const isNonFood =
+        cat.includes('aseo') ||
+        cat.includes('limpieza') ||
+        cat.includes('higiene') ||
+        cat.includes('mascota') ||
+        cat.includes('perro') ||
+        cat.includes('gato') ||
+        [
+          'jabon', 'detergente', 'limpido', 'cloro', 'papel higienico', 'shampoo',
+          'crema dental', 'varsol', 'suavizante', 'chunky', 'ringo', 'arena gato'
+        ].some((kw) => name.includes(kw));
+
+      if (isNonFood) continue;
+
+      const intel = getFoodIntelligence(item);
+      sumIsa += intel.isaScore;
+      count++;
+
+      const kg = (intel.economics.totalItemGrams || 1000) / 1000;
+      totalWater += (intel.isa.waterLitersPerKg || 1000) * kg;
+      totalCarbon += (intel.isa.carbonKgCO2ePerKg || 1.5) * kg;
+    }
+
+    const avgIsa = count > 0 ? Math.round(sumIsa / count) : 0;
+    let grade: 'A+' | 'A' | 'B' | 'C' | 'D' = 'B';
+    if (avgIsa >= 85) grade = 'A+';
+    else if (avgIsa >= 70) grade = 'A';
+    else if (avgIsa >= 50) grade = 'B';
+    else if (avgIsa >= 35) grade = 'C';
+    else grade = 'D';
+
+    return {
+      avgIsa,
+      grade,
+      totalWaterLiters: Math.round(totalWater),
+      totalCarbonKg: Math.round(totalCarbon * 10) / 10,
+      foodCount: count,
+    };
+  }, [pantryItems]);
+
+  const avgConsumptionDays = useMemo(() => {
+    if (consumptionVelocities.length === 0) return 14;
+    const sum = consumptionVelocities.reduce((acc, v) => acc + (v.average_days_to_consume || 0), 0);
+    return Math.round(sum / consumptionVelocities.length);
+  }, [consumptionVelocities]);
 
   // 3. ACCIONES DE CONSUMO (CONSUMIR 1 UNIDAD O AGOTAR)
   const handleConsumeItem = async (item: PantryItem, full: boolean = false) => {
@@ -1812,162 +1875,350 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
         )}
 
         {/* ========================================================================= */}
-        {/* PESTAÑA 3: ENTROPÍA & DESPERDICIO (TERMODINÁMICA DE LA DESPENSA)           */}
+        {/* PESTAÑA 3: CONSUMO & SOSTENIBILIDAD (DIVISIONES INTERACTIVAS)             */}
         {/* ========================================================================= */}
         {activeTab === 'entropy' && (
           <div className="space-y-6">
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 md:p-8 space-y-6 shadow-sm">
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            {/* 1. DIVISIONES INTERACTIVAS: ISA | ENTROPÍA | VELOCIDAD | HUELLA ECOLÓGICA */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {/* División 1: Sostenibilidad ISA */}
+              <div
+                onClick={() => {
+                  setConsumoDivision('isa');
+                  setShowAllConsumoSections(false);
+                }}
+                className={`p-4 rounded-3xl border transition-all cursor-pointer shadow-xs hover:shadow-md flex flex-col justify-between ${
+                  consumoDivision === 'isa' && !showAllConsumoSections
+                    ? 'bg-gradient-to-br from-emerald-500/15 via-white to-transparent dark:from-emerald-950/40 dark:via-slate-900 border-emerald-500 ring-2 ring-emerald-500/20'
+                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-emerald-400'
+                }`}
+              >
                 <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse" />
-                    <span className="text-xs uppercase tracking-wider text-slate-400 font-bold">
-                      Termodinámica de la Despensa
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-emerald-600 dark:text-emerald-400">
+                      Sostenibilidad ISA
                     </span>
+                    <Globe className="w-4 h-4 text-emerald-500" />
                   </div>
-                  <h3 className="text-xl font-black text-slate-900 dark:text-white">
-                    Índice de Entropía & Eficiencia de Alimentos
+                  <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">
+                    {globalIsaSummary.avgIsa}{' '}
+                    <span className="text-xs font-normal text-slate-400">/ 100</span>
+                  </p>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                    Grado <strong className="text-slate-800 dark:text-slate-200 font-semibold">{globalIsaSummary.grade}</strong>. Nutrición limpia (40%), ecosistema (35%) y economía (25%).
+                  </p>
+                </div>
+                <div className="pt-2 flex justify-between items-center text-[10px]">
+                  <span
+                    className={
+                      consumoDivision === 'isa' && !showAllConsumoSections
+                        ? 'text-emerald-600 dark:text-emerald-400 font-bold'
+                        : 'text-slate-400'
+                    }
+                  >
+                    {consumoDivision === 'isa' && !showAllConsumoSections ? '● Filtro Activo' : 'Clic para filtrar'}
+                  </span>
+                  <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                </div>
+              </div>
+
+              {/* División 2: Entropía & Desperdicio */}
+              <div
+                onClick={() => {
+                  setConsumoDivision('entropy');
+                  setShowAllConsumoSections(false);
+                }}
+                className={`p-4 rounded-3xl border transition-all cursor-pointer shadow-xs hover:shadow-md flex flex-col justify-between ${
+                  consumoDivision === 'entropy' && !showAllConsumoSections
+                    ? 'bg-gradient-to-br from-blue-500/15 via-white to-transparent dark:from-blue-950/40 dark:via-slate-900 border-blue-500 ring-2 ring-blue-500/20'
+                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-blue-400'
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-blue-600 dark:text-blue-400">
+                      Entropía & Desperdicio
+                    </span>
+                    <Zap className="w-4 h-4 text-blue-500" />
+                  </div>
+                  <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">
+                    {entropyMetrics.entropy_score}%{' '}
+                    <span className="text-xs font-normal text-slate-400">({entropyMetrics.freshness_level})</span>
+                  </p>
+                  <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">
+                    {entropyMetrics.risk_items_count > 0
+                      ? `${entropyMetrics.risk_items_count} alimentos en riesgo de vencimiento.`
+                      : 'Despensa óptima con flujo fresco y sin desperdicios.'}
+                  </p>
+                </div>
+                <div className="pt-2 flex justify-between items-center text-[10px]">
+                  <span
+                    className={
+                      consumoDivision === 'entropy' && !showAllConsumoSections
+                        ? 'text-blue-600 dark:text-blue-400 font-bold'
+                        : 'text-slate-400'
+                    }
+                  >
+                    {consumoDivision === 'entropy' && !showAllConsumoSections ? '● Filtro Activo' : 'Clic para filtrar'}
+                  </span>
+                  <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                </div>
+              </div>
+
+              {/* División 3: Velocidad & Duración */}
+              <div
+                onClick={() => {
+                  setConsumoDivision('velocity');
+                  setShowAllConsumoSections(false);
+                }}
+                className={`p-4 rounded-3xl border transition-all cursor-pointer shadow-xs hover:shadow-md flex flex-col justify-between ${
+                  consumoDivision === 'velocity' && !showAllConsumoSections
+                    ? 'bg-gradient-to-br from-indigo-500/15 via-white to-transparent dark:from-indigo-950/40 dark:via-slate-900 border-indigo-500 ring-2 ring-indigo-500/20'
+                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-indigo-400'
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-indigo-600 dark:text-indigo-400">
+                      Velocidad & Duración
+                    </span>
+                    <Clock className="w-4 h-4 text-indigo-500" />
+                  </div>
+                  <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">
+                    {avgConsumptionDays}{' '}
+                    <span className="text-xs font-normal text-slate-400">días prom.</span>
+                  </p>
+                  <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">
+                    Rotación del {entropyMetrics.turnover_rate_pct}%. Tiempos de consumo y reabastecimiento.
+                  </p>
+                </div>
+                <div className="pt-2 flex justify-between items-center text-[10px]">
+                  <span
+                    className={
+                      consumoDivision === 'velocity' && !showAllConsumoSections
+                        ? 'text-indigo-600 dark:text-indigo-400 font-bold'
+                        : 'text-slate-400'
+                    }
+                  >
+                    {consumoDivision === 'velocity' && !showAllConsumoSections ? '● Filtro Activo' : 'Clic para filtrar'}
+                  </span>
+                  <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                </div>
+              </div>
+
+              {/* División 4: Huella Ecológica en Stock */}
+              <div
+                onClick={() => {
+                  setConsumoDivision('footprint');
+                  setShowAllConsumoSections(false);
+                }}
+                className={`p-4 rounded-3xl border transition-all cursor-pointer shadow-xs hover:shadow-md flex flex-col justify-between ${
+                  consumoDivision === 'footprint' && !showAllConsumoSections
+                    ? 'bg-gradient-to-br from-cyan-500/15 via-white to-transparent dark:from-cyan-950/40 dark:via-slate-900 border-cyan-500 ring-2 ring-cyan-500/20'
+                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-cyan-400'
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-cyan-600 dark:text-cyan-400">
+                      Huella Ecológica
+                    </span>
+                    <Droplet className="w-4 h-4 text-cyan-500" />
+                  </div>
+                  <p className="text-2xl font-bold text-cyan-600 dark:text-cyan-400 mt-1">
+                    {globalIsaSummary.totalWaterLiters.toLocaleString()}{' '}
+                    <span className="text-xs font-normal text-slate-400">L agua</span>
+                  </p>
+                  <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">
+                    {globalIsaSummary.totalCarbonKg} kg CO₂e. Huella hídrica y carbono virtual en despensa.
+                  </p>
+                </div>
+                <div className="pt-2 flex justify-between items-center text-[10px]">
+                  <span
+                    className={
+                      consumoDivision === 'footprint' && !showAllConsumoSections
+                        ? 'text-cyan-600 dark:text-cyan-400 font-bold'
+                        : 'text-slate-400'
+                    }
+                  >
+                    {consumoDivision === 'footprint' && !showAllConsumoSections ? '● Filtro Activo' : 'Clic para filtrar'}
+                  </span>
+                  <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                </div>
+              </div>
+            </div>
+
+            {/* SECCIÓN 1: SOSTENIBILIDAD ISA */}
+            {(consumoDivision === 'isa' || showAllConsumoSections) && (
+              <IsaSection
+                pantryItems={pantryItems}
+                compact={true}
+                onSelectProduct={(item) => setSelectedPantryItemDetail(item)}
+              />
+            )}
+
+            {/* SECCIÓN 2: ENTROPÍA & DESPERDICIO (TERMODINÁMICA DE LA DESPENSA) */}
+            {(consumoDivision === 'entropy' || showAllConsumoSections) && (
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 md:p-8 space-y-6 shadow-sm animate-in fade-in">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse" />
+                      <span className="text-xs uppercase tracking-wider text-slate-400 font-bold">
+                        Termodinámica de la Despensa
+                      </span>
+                    </div>
+                    <h3 className="text-xl font-black text-slate-900 dark:text-white">
+                      Índice de Entropía & Eficiencia de Alimentos
+                    </h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-2xl leading-relaxed">
+                      La entropía cuantifica el desorden, el estancamiento y la degradación irreversible de los alimentos
+                      en tu hogar. Un valor bajo (0-30%) indica un flujo óptimo, alimentos frescos y cero desperdicio.
+                    </p>
+                  </div>
+
+                  <div className="p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 flex items-center gap-4 min-w-[200px]">
+                    <div className="w-14 h-14 rounded-2xl bg-blue-500/10 dark:bg-blue-500/20 flex items-center justify-center text-2xl font-black text-blue-600 dark:text-blue-400">
+                      {entropyMetrics.entropy_score}%
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-400 font-semibold">Estado Global</p>
+                      <p className="text-sm font-black text-slate-900 dark:text-white uppercase">
+                        Frescura {entropyMetrics.freshness_level}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Barra termómetro de Entropía */}
+                <div className="space-y-2">
+                  <div className="flex justify-between text-xs font-semibold">
+                    <span className="text-emerald-600 dark:text-emerald-400">0% Óptimo (Frescura Total)</span>
+                    <span className="text-amber-500">50% Moderado</span>
+                    <span className="text-rose-500">100% Alta Entropía (Riesgo Vencimiento)</span>
+                  </div>
+                  <div className="w-full bg-slate-100 dark:bg-slate-800 h-3 rounded-full overflow-hidden flex">
+                    <div
+                      className={`h-full transition-all duration-500 ${
+                        entropyMetrics.entropy_score < 30
+                          ? 'bg-emerald-500'
+                          : entropyMetrics.entropy_score < 60
+                          ? 'bg-amber-500'
+                          : 'bg-rose-500'
+                      }`}
+                      style={{ width: `${entropyMetrics.entropy_score}%` }}
+                    />
+                  </div>
+                </div>
+
+                {/* Diagnósticos y Consejos Inteligentes */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+                  <div className="p-5 bg-amber-50/50 dark:bg-amber-950/20 border border-amber-500/20 rounded-2xl space-y-2">
+                    <div className="flex items-center gap-2 text-amber-700 dark:text-amber-300 font-bold text-xs">
+                      <AlertTriangle className="w-4 h-4" />
+                      <span>Alimentos con Alta Entropía (Consumir Hoy)</span>
+                    </div>
+                    {entropyMetrics.risk_items_count === 0 && entropyMetrics.expired_items_count === 0 ? (
+                      <p className="text-xs text-slate-600 dark:text-slate-300">
+                        No tienes alimentos en riesgo crítico de vencerse. ¡Excelente rotación!
+                      </p>
+                    ) : (
+                      <div className="space-y-1 pt-1 text-xs text-slate-700 dark:text-slate-300">
+                        {entropyMetrics.recommendations.map((rec, i) => (
+                          <p key={i} className="leading-relaxed">
+                            {rec}
+                          </p>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="p-5 bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-500/20 rounded-2xl space-y-2">
+                    <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-300 font-bold text-xs">
+                      <ShieldCheck className="w-4 h-4" />
+                      <span>Métricas de Rotación & Cero Desperdicio</span>
+                    </div>
+                    <div className="space-y-1.5 text-xs text-slate-700 dark:text-slate-300">
+                      <div className="flex justify-between">
+                        <span className="text-slate-500">Tasa de Rotación Histórica:</span>
+                        <strong className="font-bold">{entropyMetrics.turnover_rate_pct}%</strong>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-500">Ítems Vencidos / Descartados:</span>
+                        <strong className="font-bold text-rose-500">{entropyMetrics.expired_items_count}</strong>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-500">Ítems en Riesgo de Descomposición:</span>
+                        <strong className="font-bold text-amber-500">{entropyMetrics.risk_items_count}</strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* SECCIÓN 3: VELOCIDAD & TIEMPO DE CONSUMO */}
+            {(consumoDivision === 'velocity' || showAllConsumoSections) && (
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 space-y-4 shadow-sm animate-in fade-in">
+                <div>
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                    Velocidad & Tiempo de Consumo por Alimento
                   </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-2xl leading-relaxed">
-                    La entropía cuantifica el desorden, el estancamiento y la degradación irreversible de los alimentos
-                    en tu hogar. Un valor bajo (0-30%) indica un flujo óptimo, alimentos frescos y cero desperdicio.
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    Promedio de días que tarda tu hogar en consumir cada producto antes de que se agote.
                   </p>
                 </div>
 
-                <div className="p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 flex items-center gap-4 min-w-[200px]">
-                  <div className="w-14 h-14 rounded-2xl bg-blue-500/10 dark:bg-blue-500/20 flex items-center justify-center text-2xl font-black text-blue-600 dark:text-blue-400">
-                    {entropyMetrics.entropy_score}%
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-400 font-semibold">Estado Global</p>
-                    <p className="text-sm font-black text-slate-900 dark:text-white uppercase">
-                      Frescura {entropyMetrics.freshness_level}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Barra termómetro de Entropía */}
-              <div className="space-y-2">
-                <div className="flex justify-between text-xs font-semibold">
-                  <span className="text-emerald-600 dark:text-emerald-400">0% Óptimo (Frescura Total)</span>
-                  <span className="text-amber-500">50% Moderado</span>
-                  <span className="text-rose-500">100% Alta Entropía (Riesgo Vencimiento)</span>
-                </div>
-                <div className="w-full bg-slate-100 dark:bg-slate-800 h-3 rounded-full overflow-hidden flex">
-                  <div
-                    className={`h-full transition-all duration-500 ${
-                      entropyMetrics.entropy_score < 30
-                        ? 'bg-emerald-500'
-                        : entropyMetrics.entropy_score < 60
-                        ? 'bg-amber-500'
-                        : 'bg-rose-500'
-                    }`}
-                    style={{ width: `${entropyMetrics.entropy_score}%` }}
-                  />
-                </div>
-              </div>
-
-              {/* Diagnósticos y Consejos Inteligentes */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-slate-100 dark:border-slate-800">
-                <div className="p-5 bg-amber-50/50 dark:bg-amber-950/20 border border-amber-500/20 rounded-2xl space-y-2">
-                  <div className="flex items-center gap-2 text-amber-700 dark:text-amber-300 font-bold text-xs">
-                    <AlertTriangle className="w-4 h-4" />
-                    <span>Alimentos con Alta Entropía (Consumir Hoy)</span>
-                  </div>
-                  {entropyMetrics.risk_items_count === 0 && entropyMetrics.expired_items_count === 0 ? (
-                    <p className="text-xs text-slate-600 dark:text-slate-300">
-                      No tienes alimentos en riesgo crítico de vencerse. ¡Excelente rotación!
-                    </p>
-                  ) : (
-                    <div className="space-y-1 pt-1 text-xs text-slate-700 dark:text-slate-300">
-                      {entropyMetrics.recommendations.map((rec, i) => (
-                        <p key={i} className="leading-relaxed">
-                          {rec}
-                        </p>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                <div className="p-5 bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-500/20 rounded-2xl space-y-2">
-                  <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-300 font-bold text-xs">
-                    <ShieldCheck className="w-4 h-4" />
-                    <span>Métricas de Rotación & Cero Desperdicio</span>
-                  </div>
-                  <div className="space-y-1.5 text-xs text-slate-700 dark:text-slate-300">
-                    <div className="flex justify-between">
-                      <span className="text-slate-500">Tasa de Rotación Histórica:</span>
-                      <strong className="font-bold">{entropyMetrics.turnover_rate_pct}%</strong>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-500">Ítems Vencidos / Descartados:</span>
-                      <strong className="font-bold text-rose-500">{entropyMetrics.expired_items_count}</strong>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-500">Ítems en Riesgo de Descomposición:</span>
-                      <strong className="font-bold text-amber-500">{entropyMetrics.risk_items_count}</strong>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Velocidad de Consumo (En cuánto tiempo se agotan) */}
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 space-y-4 shadow-sm">
-              <div>
-                <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                  Velocidad & Tiempo de Consumo por Alimento
-                </h3>
-                <p className="text-xs text-slate-400 mt-0.5">
-                  Promedio de días que tarda tu hogar en consumir cada producto antes de que se agote.
-                </p>
-              </div>
-
-              {consumptionVelocities.length === 0 ? (
-                <p className="text-xs text-slate-400 py-4">
-                  Registra consumos en la despensa para calcular tus tiempos de duración promedio.
-                </p>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                  {consumptionVelocities.map((v) => (
-                    <div
-                      key={v.product_name}
-                      className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200/80 dark:border-slate-800/80 space-y-2 text-xs"
-                    >
-                      <div className="flex justify-between items-start">
-                        <strong className="font-bold text-slate-900 dark:text-white truncate max-w-[150px]">
-                          {v.product_name}
-                        </strong>
-                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-                          {v.category}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-black text-sm">
-                        <Clock className="w-4 h-4" />
-                        <span>Dura aprox. {v.average_days_to_consume} días</span>
-                      </div>
-                      {v.estimated_depletion_date && (
-                        <p className="text-[11px] text-slate-500">
-                          Agotamiento estimado: <strong className="text-slate-700 dark:text-slate-300">{v.estimated_depletion_date}</strong>
-                        </p>
-                      )}
-                      {v.is_low_stock && (
-                        <div className="text-[10px] text-amber-600 dark:text-amber-400 font-bold bg-amber-50 dark:bg-amber-950/40 p-1 rounded border border-amber-500/20">
-                          ⚠️ Reabastecimiento recomendado
+                {consumptionVelocities.length === 0 ? (
+                  <p className="text-xs text-slate-400 py-4">
+                    Registra consumos en la despensa para calcular tus tiempos de duración promedio.
+                  </p>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                    {consumptionVelocities.map((v) => (
+                      <div
+                        key={v.product_name}
+                        className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200/80 dark:border-slate-800/80 space-y-2 text-xs"
+                      >
+                        <div className="flex justify-between items-start">
+                          <strong className="font-bold text-slate-900 dark:text-white truncate max-w-[150px]">
+                            {v.product_name}
+                          </strong>
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                            {v.category}
+                          </span>
                         </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+                        <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-black text-sm">
+                          <Clock className="w-4 h-4" />
+                          <span>Dura aprox. {v.average_days_to_consume} días</span>
+                        </div>
+                        {v.estimated_depletion_date && (
+                          <p className="text-[11px] text-slate-500">
+                            Agotamiento estimado: <strong className="text-slate-700 dark:text-slate-300">{v.estimated_depletion_date}</strong>
+                          </p>
+                        )}
+                        {v.is_low_stock && (
+                          <div className="text-[10px] text-amber-600 dark:text-amber-400 font-bold bg-amber-50 dark:bg-amber-950/40 p-1 rounded border border-amber-500/20">
+                            ⚠️ Reabastecimiento recomendado
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
 
-            {/* SECCIÓN DEL ÍNDICE DE SOSTENIBILIDAD ALIMENTARIA (ISA) */}
-            <IsaSection
-              pantryItems={pantryItems}
-              onSelectProduct={(item) => setSelectedPantryItemDetail(item)}
-            />
+            {/* SECCIÓN 4: HUELLA ECOLÓGICA EN STOCK (ISA CON FOCO HÍDRICO Y CARBONO) */}
+            {consumoDivision === 'footprint' && !showAllConsumoSections && (
+              <IsaSection
+                pantryItems={pantryItems}
+                compact={true}
+                initialSortBy="water_asc"
+                initialGroupBy="grade"
+                onSelectProduct={(item) => setSelectedPantryItemDetail(item)}
+              />
+            )}
           </div>
         )}
 

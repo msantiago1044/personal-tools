@@ -25,6 +25,10 @@ import { getFoodIntelligence, FoodIntelligenceData } from '../../lib/pantryFoodI
 interface IsaSectionProps {
   pantryItems: PantryItem[];
   onSelectProduct: (item: PantryItem) => void;
+  compact?: boolean;
+  initialSortBy?: IsaSortOption;
+  initialGroupBy?: IsaGroupByOption;
+  initialGradeFilter?: IsaGradeFilter;
 }
 
 export type IsaSortOption =
@@ -58,12 +62,19 @@ interface IsaGroupData {
   totalCarbonKg: number;
 }
 
-export const IsaSection: React.FC<IsaSectionProps> = ({ pantryItems, onSelectProduct }) => {
+export const IsaSection: React.FC<IsaSectionProps> = ({
+  pantryItems,
+  onSelectProduct,
+  compact = false,
+  initialSortBy = 'isa_desc',
+  initialGroupBy = 'none',
+  initialGradeFilter = 'all',
+}) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [gradeFilter, setGradeFilter] = useState<IsaGradeFilter>('all');
+  const [gradeFilter, setGradeFilter] = useState<IsaGradeFilter>(initialGradeFilter);
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
-  const [sortBy, setSortBy] = useState<IsaSortOption>('isa_desc');
-  const [groupBy, setGroupBy] = useState<IsaGroupByOption>('none');
+  const [sortBy, setSortBy] = useState<IsaSortOption>(initialSortBy);
+  const [groupBy, setGroupBy] = useState<IsaGroupByOption>(initialGroupBy);
   const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({});
   const [showInfoModal, setShowInfoModal] = useState(false);
 
@@ -589,126 +600,166 @@ export const IsaSection: React.FC<IsaSectionProps> = ({ pantryItems, onSelectPro
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       {/* ========================================================================= */}
-      {/* 1. CABECERA & INTRODUCCIÓN AL ISA                                         */}
+      {/* 1. CABECERA DEL ISA (COMPACTA O EXTENDIDA SEGÚN MODO)                     */}
       {/* ========================================================================= */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 md:p-8 space-y-6 shadow-sm">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-slate-100 dark:border-slate-800">
+      {compact ? (
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 md:p-6 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <div className="flex items-center gap-2 mb-1.5">
+            <div className="flex items-center gap-2 mb-1">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
               <span className="text-xs uppercase tracking-wider text-emerald-600 dark:text-emerald-400 font-bold">
                 Triple Equilibrio: Nutrición • Ecosistema • Economía
               </span>
             </div>
-            <h2 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+            <h2 className="text-lg md:text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
               <span>Índice de Sostenibilidad Alimentaria (ISA)</span>
               <button
                 onClick={() => setShowInfoModal(true)}
                 title="¿Cómo funciona el ISA?"
                 className="text-slate-400 hover:text-emerald-600 transition"
               >
-                <HelpCircle className="w-5 h-5" />
+                <HelpCircle className="w-4 h-4" />
               </button>
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-3xl leading-relaxed">
-              El ISA califica cada alimento de tu despensa de 0 a 100 evaluando simultáneamente su{' '}
-              <strong className="text-slate-700 dark:text-slate-300">densidad nutricional limpia (40%)</strong>, su{' '}
-              <strong className="text-slate-700 dark:text-slate-300">huella ecológica de agua, carbono y suelo (35%)</strong>, y su{' '}
-              <strong className="text-slate-700 dark:text-slate-300">costo por gramo de nutriente útil (25%)</strong>.
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 max-w-2xl leading-relaxed">
+              Califica cada alimento de 0 a 100 integrando nutrición limpia (40%), huella ecológica de agua y carbono (35%), y retorno por peso gastado (25%).
             </p>
           </div>
 
-          {/* Medidor Global Promedio */}
-          <div className="p-4 bg-gradient-to-br from-emerald-50 via-teal-50 to-white dark:from-slate-950 dark:via-slate-900 dark:to-slate-900 rounded-2xl border border-emerald-500/20 flex items-center gap-4 min-w-[220px]">
-            <div
-              className={`w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-black ${currentGradeStyle.badge}`}
+          <div className="flex items-center gap-3 self-stretch sm:self-auto justify-between sm:justify-end flex-wrap">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/20">
+              <span className={`w-7 h-7 rounded-xl flex items-center justify-center font-black text-xs ${currentGradeStyle.badge}`}>
+                {globalMetrics.avgGrade}
+              </span>
+              <div>
+                <span className="text-[9px] uppercase font-bold text-slate-400 block leading-tight">Promedio</span>
+                <span className="text-xs font-black text-slate-900 dark:text-white">{globalMetrics.avgIsa}/100</span>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setShowInfoModal(true)}
+              className="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5 px-3 py-2 rounded-2xl border border-emerald-500/20 bg-emerald-50/50 dark:bg-emerald-950/30 hover:bg-emerald-100 transition shadow-2xs"
             >
-              {globalMetrics.avgGrade}
-            </div>
+              <HelpCircle className="w-3.5 h-3.5" />
+              <span>Metodología ISA</span>
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 md:p-8 space-y-6 shadow-sm">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-slate-100 dark:border-slate-800">
             <div>
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Promedio Despensa</p>
-              <p className="text-2xl font-black text-slate-900 dark:text-white">
-                {globalMetrics.avgIsa}
-                <span className="text-xs font-normal text-slate-400">/100</span>
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-xs uppercase tracking-wider text-emerald-600 dark:text-emerald-400 font-bold">
+                  Triple Equilibrio: Nutrición • Ecosistema • Economía
+                </span>
+              </div>
+              <h2 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+                <span>Índice de Sostenibilidad Alimentaria (ISA)</span>
+                <button
+                  onClick={() => setShowInfoModal(true)}
+                  title="¿Cómo funciona el ISA?"
+                  className="text-slate-400 hover:text-emerald-600 transition"
+                >
+                  <HelpCircle className="w-5 h-5" />
+                </button>
+              </h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-3xl leading-relaxed">
+                El ISA califica cada alimento de tu despensa de 0 a 100 evaluando simultáneamente su{' '}
+                <strong className="text-slate-700 dark:text-slate-300">densidad nutricional limpia (40%)</strong>, su{' '}
+                <strong className="text-slate-700 dark:text-slate-300">huella ecológica de agua, carbono y suelo (35%)</strong>, y su{' '}
+                <strong className="text-slate-700 dark:text-slate-300">costo por gramo de nutriente útil (25%)</strong>.
               </p>
-              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${currentGradeStyle.pill}`}>
-                {currentGradeStyle.label}
-              </span>
+            </div>
+
+            {/* Medidor Global Promedio */}
+            <div className="p-4 bg-gradient-to-br from-emerald-50 via-teal-50 to-white dark:from-slate-950 dark:via-slate-900 dark:to-slate-900 rounded-2xl border border-emerald-500/20 flex items-center gap-4 min-w-[220px]">
+              <div
+                className={`w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-black ${currentGradeStyle.badge}`}
+              >
+                {globalMetrics.avgGrade}
+              </div>
+              <div>
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Promedio Despensa</p>
+                <p className="text-2xl font-black text-slate-900 dark:text-white">
+                  {globalMetrics.avgIsa}
+                  <span className="text-xs font-normal text-slate-400">/100</span>
+                </p>
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${currentGradeStyle.pill}`}>
+                  {currentGradeStyle.label}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* KPIS DE IMPACTO ECOLÓGICO & DISTRIBUCIÓN POR GRADOS */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="p-4 bg-slate-50 dark:bg-slate-950/60 rounded-2xl border border-slate-200/80 dark:border-slate-800">
+              <div className="flex items-center justify-between text-slate-400 text-xs mb-1">
+                <span>Líderes Sostenibles (A+/A)</span>
+                <Award className="w-4 h-4 text-emerald-500" />
+              </div>
+              <p className="text-xl font-black text-slate-900 dark:text-white">
+                {globalMetrics.countAplus + globalMetrics.countA}{' '}
+                <span className="text-xs font-normal text-slate-400">
+                  ({Math.round(((globalMetrics.countAplus + globalMetrics.countA) / (processedItems.length || 1)) * 100)}%)
+                </span>
+              </p>
+              <p className="text-[10px] text-slate-400 mt-1">
+                {globalMetrics.countAplus} con Grado A+ • {globalMetrics.countA} con Grado A
+              </p>
+            </div>
+
+            <div className="p-4 bg-slate-50 dark:bg-slate-950/60 rounded-2xl border border-slate-200/80 dark:border-slate-800">
+              <div className="flex items-center justify-between text-slate-400 text-xs mb-1">
+                <span>Balance Equilibrado (B)</span>
+                <Scale className="w-4 h-4 text-blue-500" />
+              </div>
+              <p className="text-xl font-black text-slate-900 dark:text-white">
+                {globalMetrics.countB}{' '}
+                <span className="text-xs font-normal text-slate-400">
+                  ({Math.round((globalMetrics.countB / (processedItems.length || 1)) * 100)}%)
+                </span>
+              </p>
+              <p className="text-[10px] text-slate-400 mt-1">
+                Canasta básica regular
+              </p>
+            </div>
+
+            <div className="p-4 bg-slate-50 dark:bg-slate-950/60 rounded-2xl border border-slate-200/80 dark:border-slate-800">
+              <div className="flex items-center justify-between text-slate-400 text-xs mb-1">
+                <span>Huella Hídrica en Stock</span>
+                <Droplet className="w-4 h-4 text-cyan-500" />
+              </div>
+              <p className="text-xl font-black text-slate-900 dark:text-white">
+                {globalMetrics.totalWaterLiters.toLocaleString()}{' '}
+                <span className="text-xs font-normal text-slate-400">L agua</span>
+              </p>
+              <p className="text-[10px] text-slate-400 mt-1">
+                Agua virtual contenida en despensa
+              </p>
+            </div>
+
+            <div className="p-4 bg-slate-50 dark:bg-slate-950/60 rounded-2xl border border-slate-200/80 dark:border-slate-800">
+              <div className="flex items-center justify-between text-slate-400 text-xs mb-1">
+                <span>En Observación (C/D)</span>
+                <span className="w-2.5 h-2.5 rounded-full bg-rose-500" />
+              </div>
+              <p className="text-xl font-black text-rose-600 dark:text-rose-400">
+                {globalMetrics.countC + globalMetrics.countD}{' '}
+                <span className="text-xs font-normal text-slate-400">
+                  ({Math.round(((globalMetrics.countC + globalMetrics.countD) / (processedItems.length || 1)) * 100)}%)
+                </span>
+              </p>
+              <p className="text-[10px] text-slate-400 mt-1">
+                Alta huella o bajo retorno nutricional
+              </p>
             </div>
           </div>
         </div>
-
-        {/* ======================================================================= */}
-        {/* 2. KPIS DE IMPACTO ECOLÓGICO & DISTRIBUCIÓN POR GRADOS                   */}
-        {/* ======================================================================= */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {/* Card 1: Alimentos Líderes A+/A */}
-          <div className="p-4 bg-slate-50 dark:bg-slate-950/60 rounded-2xl border border-slate-200/80 dark:border-slate-800">
-            <div className="flex items-center justify-between text-slate-400 text-xs mb-1">
-              <span>Líderes Sostenibles (A+/A)</span>
-              <Award className="w-4 h-4 text-emerald-500" />
-            </div>
-            <p className="text-xl font-black text-slate-900 dark:text-white">
-              {globalMetrics.countAplus + globalMetrics.countA}{' '}
-              <span className="text-xs font-normal text-slate-400">
-                ({Math.round(((globalMetrics.countAplus + globalMetrics.countA) / (processedItems.length || 1)) * 100)}%)
-              </span>
-            </p>
-            <p className="text-[10px] text-slate-400 mt-1">
-              {globalMetrics.countAplus} con Grado A+ • {globalMetrics.countA} con Grado A
-            </p>
-          </div>
-
-          {/* Card 2: Alimentos B (Estándar) */}
-          <div className="p-4 bg-slate-50 dark:bg-slate-950/60 rounded-2xl border border-slate-200/80 dark:border-slate-800">
-            <div className="flex items-center justify-between text-slate-400 text-xs mb-1">
-              <span>Balance Equilibrado (B)</span>
-              <Scale className="w-4 h-4 text-blue-500" />
-            </div>
-            <p className="text-xl font-black text-slate-900 dark:text-white">
-              {globalMetrics.countB}{' '}
-              <span className="text-xs font-normal text-slate-400">
-                ({Math.round((globalMetrics.countB / (processedItems.length || 1)) * 100)}%)
-              </span>
-            </p>
-            <p className="text-[10px] text-slate-400 mt-1">
-              Canasta básica regular
-            </p>
-          </div>
-
-          {/* Card 3: Huella Hídrica Total */}
-          <div className="p-4 bg-slate-50 dark:bg-slate-950/60 rounded-2xl border border-slate-200/80 dark:border-slate-800">
-            <div className="flex items-center justify-between text-slate-400 text-xs mb-1">
-              <span>Huella Hídrica en Stock</span>
-              <Droplet className="w-4 h-4 text-cyan-500" />
-            </div>
-            <p className="text-xl font-black text-slate-900 dark:text-white">
-              {globalMetrics.totalWaterLiters.toLocaleString()}{' '}
-              <span className="text-xs font-normal text-slate-400">L agua</span>
-            </p>
-            <p className="text-[10px] text-slate-400 mt-1">
-              Agua virtual contenida en despensa
-            </p>
-          </div>
-
-          {/* Card 4: Alimentos en Observación C/D */}
-          <div className="p-4 bg-slate-50 dark:bg-slate-950/60 rounded-2xl border border-slate-200/80 dark:border-slate-800">
-            <div className="flex items-center justify-between text-slate-400 text-xs mb-1">
-              <span>En Observación (C/D)</span>
-              <span className="w-2.5 h-2.5 rounded-full bg-rose-500" />
-            </div>
-            <p className="text-xl font-black text-rose-600 dark:text-rose-400">
-              {globalMetrics.countC + globalMetrics.countD}{' '}
-              <span className="text-xs font-normal text-slate-400">
-                ({Math.round(((globalMetrics.countC + globalMetrics.countD) / (processedItems.length || 1)) * 100)}%)
-              </span>
-            </p>
-            <p className="text-[10px] text-slate-400 mt-1">
-              Alta huella o bajo retorno nutricional
-            </p>
-          </div>
-        </div>
-      </div>
+      )}
 
       {/* ========================================================================= */}
       {/* 3. BARRA DE HERRAMIENTAS: BÚSQUEDA, FILTROS, AGRUPACIÓN Y ORDEN           */}
