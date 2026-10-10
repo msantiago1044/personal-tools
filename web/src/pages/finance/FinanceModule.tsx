@@ -3,7 +3,6 @@ import { supabase, signOut } from '../../lib/supabase';
 import { Account, Category, Transaction } from '../../../../packages/shared/src/types';
 import { TransactionModal } from '../../components/finance/TransactionModal';
 import { BudgetGaugeCard } from '../../components/finance/BudgetGaugeCard';
-import { InstallPwaModal } from '../../components/InstallPwaModal';
 import { ExportTransactionsModal } from '../../components/finance/ExportTransactionsModal';
 import { ThemeMode, getStoredTheme, applyTheme } from '../../lib/theme';
 import {
@@ -33,7 +32,6 @@ import {
   Laptop,
   Eye,
   EyeOff,
-  Smartphone,
   Trash2,
   AlertTriangle,
   Sparkles,
@@ -112,7 +110,6 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
   // Menú colapsable / expandible
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
-  const [showInstallModal, setShowInstallModal] = useState<boolean>(false);
 
   // Selector de tema
   const [theme, setTheme] = useState<ThemeMode>(getStoredTheme());
@@ -1172,19 +1169,6 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
           </nav>
         </div>
 
-        {/* Botón Instalar App PWA en Sidebar */}
-        <div className="p-3 border-t border-slate-200 dark:border-slate-800">
-          <button
-            onClick={() => setShowInstallModal(true)}
-            title="Instalar App en Celular (PWA)"
-            className={`w-full flex items-center gap-2.5 p-2 rounded-xl text-xs font-semibold bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 transition shadow-sm ${
-              sidebarCollapsed ? 'justify-center' : ''
-            }`}
-          >
-            <Smartphone className="w-4 h-4 shrink-0" />
-            {!sidebarCollapsed && <span>Instalar App</span>}
-          </button>
-        </div>
 
         {/* Footer del usuario */}
         <div className="p-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
@@ -1243,15 +1227,6 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Botón Instalar App PWA */}
-            <button
-              onClick={() => setShowInstallModal(true)}
-              title="Instalar App en Celular (PWA)"
-              className="flex items-center gap-1.5 p-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/60 border border-emerald-200 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300 shadow-sm transition text-xs font-semibold"
-            >
-              <Smartphone className="w-4 h-4" />
-              <span className="hidden sm:inline">Instalar</span>
-            </button>
 
             {/* Botón Ocultar/Mostrar Saldos (Modo Discreto) */}
             <button
@@ -3512,11 +3487,6 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
         onSuccess={() => loadAllData()}
       />
 
-      {/* Modal de Instalación de App Web Progresiva (PWA) */}
-      <InstallPwaModal
-        isOpen={showInstallModal}
-        onClose={() => setShowInstallModal(false)}
-      />
 
       {/* Modal de Exportación de Movimientos */}
       <ExportTransactionsModal
