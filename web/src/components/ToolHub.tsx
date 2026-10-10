@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { ToolModule } from '../../../packages/shared/src/types';
 import { ThemeMode, getStoredTheme, applyTheme } from '../lib/theme';
-import { Sun, Moon, Laptop, Smartphone } from 'lucide-react';
-import { InstallPwaModal } from './InstallPwaModal';
+import { Sun, Moon, Laptop } from 'lucide-react';
 
 const AVAILABLE_TOOLS: ToolModule[] = [
   {
@@ -66,7 +65,6 @@ export const ToolHub: React.FC<ToolHubProps> = ({
   onLogout,
 }) => {
   const [theme, setTheme] = useState<ThemeMode>(getStoredTheme());
-  const [showInstallModal, setShowInstallModal] = useState(false);
 
   const handleThemeChange = (newTheme: ThemeMode) => {
     setTheme(newTheme);
@@ -125,16 +123,6 @@ export const ToolHub: React.FC<ToolHubProps> = ({
               <Laptop className="w-3.5 h-3.5" />
             </button>
           </div>
-
-          {/* Botón Instalar App PWA */}
-          <button
-            onClick={() => setShowInstallModal(true)}
-            title="Instalar App en el Celular (PWA)"
-            className="flex items-center gap-1.5 text-xs bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 px-3 py-2 rounded-xl border border-emerald-200 dark:border-emerald-800/60 font-semibold transition shadow-xs"
-          >
-            <Smartphone className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-            <span className="hidden sm:inline">Instalar App</span>
-          </button>
 
           {avatarUrl ? (
             <img src={avatarUrl} alt="Avatar" className="w-9 h-9 rounded-full border border-slate-200 dark:border-slate-700" />
@@ -224,11 +212,6 @@ export const ToolHub: React.FC<ToolHubProps> = ({
           })}
         </div>
       </main>
-
-      <InstallPwaModal
-        isOpen={showInstallModal}
-        onClose={() => setShowInstallModal(false)}
-      />
     </div>
   );
 };

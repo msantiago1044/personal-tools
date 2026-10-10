@@ -6,6 +6,7 @@ import {
   parseDxfContent,
   parseDwgBinary,
 } from '../../lib/cadParser';
+import { ThemeMode, getStoredTheme, applyTheme } from '../../lib/theme';
 import {
   Layers,
   ZoomIn,
@@ -17,6 +18,7 @@ import {
   RotateCcw,
   Sun,
   Moon,
+  Laptop,
   ArrowLeft,
   FileCode,
   Check,
@@ -36,10 +38,26 @@ interface DwgViewerModuleProps {
 }
 
 export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub }) => {
-  // Estado del dibujo cargado: Inicialmente null (sin plano demo por defecto)
+  // Estado del tema global y sincronización con el lienzo CAD
+  const [theme, setTheme] = useState<ThemeMode>(getStoredTheme());
   const [drawing, setDrawing] = useState<CadDrawing | null>(null);
   const [layersState, setLayersState] = useState<Record<string, boolean>>({});
-  const [isDarkCanvas, setIsDarkCanvas] = useState<boolean>(true);
+  const [isDarkCanvas, setIsDarkCanvas] = useState<boolean>(() => {
+    const cur = getStoredTheme();
+    if (cur === 'dark') return true;
+    if (cur === 'light') return false;
+    return typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
+
+  const handleThemeChange = (newTheme: ThemeMode) => {
+    setTheme(newTheme);
+    applyTheme(newTheme);
+    if (newTheme === 'dark') {
+      setIsDarkCanvas(true);
+    } else if (newTheme === 'light') {
+      setIsDarkCanvas(false);
+    }
+  };
   const [layersPanelOpen, setLayersPanelOpen] = useState<boolean>(true);
   const [measureMode, setMeasureMode] = useState<boolean>(false);
   const [measurePoints, setMeasurePoints] = useState<CadPoint[]>([]);
@@ -190,7 +208,14 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
       if (layersState[ent.layer] === false) return;
 
       const layerColor = drawing.layers[ent.layer]?.color || '#38bdf8';
-      const color = ent.color || layerColor;
+      let color = ent.color || layerColor;
+
+      // Invertir colores que se pierden con el fondo del lienzo CAD (AutoCAD ACI 7)
+      if (!isDarkCanvas && (color === '#ffffff' || color === '#FFFFFF' || color.toLowerCase() === 'white' || color === '#fff')) {
+        color = '#0f172a';
+      } else if (isDarkCanvas && (color === '#000000' || color.toLowerCase() === 'black' || color === '#000')) {
+        color = '#f8fafc';
+      }
 
       ctx.strokeStyle = color;
       ctx.fillStyle = color;
@@ -515,40 +540,83 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
       }}
       onDragLeave={() => setIsDragOver(false)}
       onDrop={handleDrop}
-      className="flex flex-col h-screen w-screen bg-slate-900 text-slate-100 select-none overflow-hidden relative font-sans"
+      className="flex flex-col h-screen w-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 select-none overflow-hidden relative font-sans transition-colors duration-200"
     >
       {/* 1. BARRA SUPERIOR DE HERRAMIENTAS Y ARCHIVO */}
-      <header className="h-13 bg-slate-950 border-b border-slate-800 px-4 flex items-center justify-between z-20 shrink-0">
+      <header className="h-14 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-4 flex items-center justify-between z-20 shrink-0 shadow-2xs">
         <div className="flex items-center gap-3">
           <button
             onClick={onBackToHub}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 transition"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition"
+            title="Volver al inicio"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>Hub</span>
+            <span className="hidden sm:inline">Hub</span>
           </button>
 
-          <div className="h-4 w-px bg-slate-800" />
+          <div className="h-5 w-px bg-slate-200 dark:bg-slate-800" />
 
-          <div className="flex items-center gap-2">
-            <span className="text-lg">📐</span>
+          <div className="flex items-center gap-2.5">
+            <span className="text-xl">📐</span>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-bold text-xs sm:text-sm text-white tracking-wide">
+                <span className="font-bold text-xs sm:text-sm text-slate-900 dark:text-white tracking-tight">
                   {drawing ? drawing.filename : 'Planos CAD'}
                 </span>
                 {drawing && (
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-blue-900/60 text-blue-300 border border-blue-700/50">
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60 font-semibold">
                     {drawing.version || drawing.fileFormat}
                   </span>
                 )}
               </div>
+              {!drawing && (
+                <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
+                  Visor vectorial de planos DWG & DXF
+                </p>
+              )}
             </div>
           </div>
         </div>
 
         {/* Acciones principales */}
         <div className="flex items-center gap-2">
+          {/* Selector de Tema */}
+          <div className="flex items-center gap-0.5 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl">
+            <button
+              onClick={() => handleThemeChange('light')}
+              title="Modo Claro"
+              className={`p-1.5 rounded-lg text-xs transition ${
+                theme === 'light'
+                  ? 'bg-white dark:bg-slate-700 text-amber-600 font-bold shadow-2xs'
+                  : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+              }`}
+            >
+              <Sun className="w-3.5 h-3.5" />
+            </button>
+            <button
+              onClick={() => handleThemeChange('dark')}
+              title="Modo Oscuro"
+              className={`p-1.5 rounded-lg text-xs transition ${
+                theme === 'dark'
+                  ? 'bg-white dark:bg-slate-700 text-blue-500 font-bold shadow-2xs'
+                  : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+              }`}
+            >
+              <Moon className="w-3.5 h-3.5" />
+            </button>
+            <button
+              onClick={() => handleThemeChange('system')}
+              title="Automático"
+              className={`p-1.5 rounded-lg text-xs transition ${
+                theme === 'system'
+                  ? 'bg-white dark:bg-slate-700 text-emerald-600 font-bold shadow-2xs'
+                  : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+              }`}
+            >
+              <Laptop className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
           {/* Input oculto para abrir archivo */}
           <input
             type="file"
@@ -560,7 +628,7 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
 
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold transition shadow-xs"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold transition shadow-xs"
           >
             <Upload className="w-3.5 h-3.5" />
             <span>{drawing ? 'Cambiar' : 'Abrir DWG'}</span>
@@ -570,16 +638,16 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
             <>
               <button
                 onClick={() => setIsDarkCanvas(!isDarkCanvas)}
-                title={isDarkCanvas ? 'Fondo Espacio Papel (Claro)' : 'Fondo Espacio Modelo (Oscuro)'}
-                className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition"
+                title={isDarkCanvas ? 'Fondo Espacio Papel (Lienzo Claro)' : 'Fondo Espacio Modelo (Lienzo Oscuro)'}
+                className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition"
               >
-                {isDarkCanvas ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-blue-400" />}
+                {isDarkCanvas ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4 text-blue-500" />}
               </button>
 
               <button
                 onClick={toggleFullscreen}
                 title="Pantalla Completa"
-                className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition"
+                className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition"
               >
                 {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
               </button>
@@ -603,30 +671,30 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
           />
 
           {/* BARRA DE HERRAMIENTAS FLOTANTE CAD */}
-          <div className="absolute top-4 left-4 z-10 flex flex-col gap-1.5 bg-slate-900/90 backdrop-blur-md p-1.5 rounded-2xl border border-slate-800 shadow-xl">
+          <div className="absolute top-4 left-4 z-10 flex flex-col gap-1.5 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl">
             <button
               onClick={zoomIn}
               title="Acercar (Zoom In)"
-              className="p-2 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition"
+              className="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition"
             >
               <ZoomIn className="w-4 h-4" />
             </button>
             <button
               onClick={zoomOut}
               title="Alejar (Zoom Out)"
-              className="p-2 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition"
+              className="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition"
             >
               <ZoomOut className="w-4 h-4" />
             </button>
             <button
               onClick={() => fitToScreen(drawing)}
               title="Ajustar a Pantalla (Zoom Extents)"
-              className="p-2 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition"
+              className="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition"
             >
               <RotateCcw className="w-4 h-4" />
             </button>
 
-            <div className="h-px bg-slate-800 my-1" />
+            <div className="h-px bg-slate-200 dark:bg-slate-800 my-1" />
 
             {/* Medición */}
             <button
@@ -637,7 +705,7 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
               }}
               title="Medir Distancia"
               className={`p-2 rounded-xl transition ${
-                measureMode ? 'bg-amber-500 text-slate-950 font-bold shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                measureMode ? 'bg-amber-500 text-slate-950 font-bold shadow-md' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               <Ruler className="w-4 h-4" />
@@ -648,7 +716,7 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
               onClick={() => setLayersPanelOpen(!layersPanelOpen)}
               title="Mostrar / Ocultar Capas"
               className={`p-2 rounded-xl transition ${
-                layersPanelOpen ? 'bg-blue-600 text-white shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                layersPanelOpen ? 'bg-blue-600 text-white shadow-md' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               <Layers className="w-4 h-4" />
@@ -657,22 +725,22 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
 
           {/* PANEL LATERAL DE CAPAS */}
           {layersPanelOpen && (
-            <aside className="absolute top-4 right-4 z-10 w-72 max-h-[calc(100%-80px)] bg-slate-900/95 backdrop-blur-md rounded-2xl border border-slate-800 shadow-2xl flex flex-col overflow-hidden">
-              <div className="p-3.5 border-b border-slate-800 flex items-center justify-between">
+            <aside className="absolute top-4 right-4 z-10 w-72 max-h-[calc(100%-80px)] bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col overflow-hidden">
+              <div className="p-3.5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Layers className="w-4 h-4 text-blue-400" />
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-white">Capas del Plano</h3>
+                  <Layers className="w-4 h-4 text-blue-500" />
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">Capas del Plano</h3>
                 </div>
-                <span className="text-[11px] font-semibold text-slate-400">
+                <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">
                   {Object.keys(drawing.layers).length} capas
                 </span>
               </div>
 
-              <div className="px-3 py-2 bg-slate-950/60 border-b border-slate-800 flex items-center justify-between text-[11px]">
-                <button onClick={() => toggleAllLayers(true)} className="text-blue-400 hover:underline font-semibold">
+              <div className="px-3 py-2 bg-slate-50 dark:bg-slate-950/60 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between text-[11px]">
+                <button onClick={() => toggleAllLayers(true)} className="text-blue-600 dark:text-blue-400 hover:underline font-semibold">
                   Mostrar todas
                 </button>
-                <button onClick={() => toggleAllLayers(false)} className="text-slate-400 hover:underline font-semibold">
+                <button onClick={() => toggleAllLayers(false)} className="text-slate-500 dark:text-slate-400 hover:underline font-semibold">
                   Ocultar todas
                 </button>
               </div>
@@ -687,27 +755,29 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
                       key={layerName}
                       onClick={() => toggleLayer(layerName)}
                       className={`flex items-center justify-between p-2 rounded-xl text-xs cursor-pointer transition ${
-                        isVisible ? 'bg-slate-800/60 text-slate-200 hover:bg-slate-800' : 'bg-slate-950/40 text-slate-500 opacity-50'
+                        isVisible
+                          ? 'bg-slate-100/80 dark:bg-slate-800/60 text-slate-800 dark:text-slate-200 hover:bg-slate-200/70 dark:hover:bg-slate-800'
+                          : 'bg-slate-50 dark:bg-slate-950/40 text-slate-400 dark:text-slate-500 opacity-50'
                       }`}
                     >
                       <div className="flex items-center gap-2.5 truncate">
                         <span
-                          className="w-3.5 h-3.5 rounded-full shrink-0 border border-white/20"
+                          className="w-3.5 h-3.5 rounded-full shrink-0 border border-black/10 dark:border-white/20"
                           style={{ backgroundColor: layer.color }}
                         />
                         <span className="truncate font-mono">{layerName}</span>
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className="text-[10px] text-slate-500">{layer.entityCount} ent.</span>
+                        <span className="text-[10px] text-slate-400 dark:text-slate-500">{layer.entityCount} ent.</span>
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             toggleLayer(layerName);
                           }}
-                          className="p-1 text-slate-400 hover:text-white"
+                          className="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-white"
                         >
-                          {isVisible ? <Eye className="w-3.5 h-3.5 text-blue-400" /> : <EyeOff className="w-3.5 h-3.5 text-slate-600" />}
+                          {isVisible ? <Eye className="w-3.5 h-3.5 text-blue-500" /> : <EyeOff className="w-3.5 h-3.5 text-slate-400 dark:text-slate-600" />}
                         </button>
                       </div>
                     </div>
@@ -719,7 +789,7 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
 
           {/* ESTADO EN VIVO */}
           {statusMessage && (
-            <div className="absolute bottom-10 left-4 z-10 bg-slate-900/90 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-slate-800 text-xs font-medium text-slate-300 shadow-lg flex items-center gap-2">
+            <div className="absolute bottom-10 left-4 z-10 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-medium text-slate-700 dark:text-slate-300 shadow-lg flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               <span>{statusMessage}</span>
             </div>
@@ -732,18 +802,18 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
             onClick={() => fileInputRef.current?.click()}
             className={`w-full max-w-2xl p-10 sm:p-14 rounded-3xl border-2 border-dashed transition-all cursor-pointer flex flex-col items-center justify-center ${
               isDragOver
-                ? 'border-emerald-500 bg-emerald-950/20 scale-[1.02]'
-                : 'border-slate-800 hover:border-slate-600 bg-slate-950/60 hover:bg-slate-950'
+                ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/20 scale-[1.01]'
+                : 'border-slate-300 hover:border-emerald-500 dark:border-slate-800 dark:hover:border-slate-600 bg-white hover:bg-slate-50/80 dark:bg-slate-900/60 dark:hover:bg-slate-900 shadow-sm'
             }`}
           >
-            <div className="w-20 h-20 rounded-3xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-4xl mb-6">
+            <div className="w-20 h-20 rounded-3xl bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 flex items-center justify-center text-4xl mb-6 shadow-2xs">
               📐
             </div>
 
-            <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-2">
               Abre o arrastra tu plano DWG o DXF aquí
             </h2>
-            <p className="text-sm text-slate-400 max-w-lg mb-6 leading-relaxed">
+            <p className="text-sm text-slate-600 dark:text-slate-400 max-w-lg mb-6 leading-relaxed">
               Compatible con planos de <strong>AutoCAD</strong> (R11 hasta <strong>2026</strong>), <strong>Civil 3D</strong> (curvas de nivel, polilíneas 3D, triangulación TIN) y <strong>DXF</strong>.
             </p>
 
@@ -752,26 +822,26 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
                 e.stopPropagation();
                 fileInputRef.current?.click();
               }}
-              className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl font-bold text-sm transition shadow-lg shadow-emerald-600/20 flex items-center gap-2"
+              className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl font-bold text-sm transition shadow-md shadow-emerald-600/20 flex items-center gap-2"
             >
               <FolderOpen className="w-4 h-4" />
               <span>Seleccionar archivo desde mi equipo</span>
             </button>
 
-            <span className="text-xs text-slate-500 mt-4">
+            <span className="text-xs text-slate-500 dark:text-slate-400 mt-4">
               Formatos soportados: <strong>.dwg</strong> (AutoCAD / Civil 3D 2018-2026), <strong>.dxf</strong>
             </span>
           </div>
 
           {/* Opción secundaria para cargar un plano de muestra si el usuario desea probar */}
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-xs text-slate-400">
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-xs text-slate-500 dark:text-slate-400">
             <span>¿Deseas probar con un plano de demostración?</span>
             <button
               onClick={() => {
                 setDrawing(getSampleCivil3DDrawing());
                 setStatusMessage('Plano de Topografía Civil 3D cargado');
               }}
-              className="text-emerald-400 hover:underline font-semibold"
+              className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs text-emerald-600 dark:text-emerald-400 hover:border-emerald-500 font-semibold transition"
             >
               ⛰️ Cargar Civil 3D Topo
             </button>
@@ -781,19 +851,19 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
                 setDrawing(getSampleArchitecturalDrawing());
                 setStatusMessage('Plano Arquitectónico Residencial cargado');
               }}
-              className="text-blue-400 hover:underline font-semibold"
+              className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs text-blue-600 dark:text-blue-400 hover:border-blue-500 font-semibold transition"
             >
               🏢 Cargar Arquitectónico
             </button>
           </div>
 
           {/* Consejo profesional para usuarios de Civil 3D */}
-          <div className="mt-6 p-4 rounded-2xl bg-slate-950/70 border border-slate-800/80 max-w-xl text-left text-xs text-slate-400 flex items-start gap-3">
+          <div className="mt-6 p-4 rounded-2xl bg-white dark:bg-slate-900/70 border border-slate-200 dark:border-slate-800/80 max-w-xl text-left text-xs text-slate-600 dark:text-slate-400 flex items-start gap-3 shadow-2xs">
             <span className="text-base shrink-0">💡</span>
             <div>
-              <span className="font-semibold text-slate-200">Consejo para planos de Civil 3D 2026:</span>
-              <p className="mt-1 text-slate-400 leading-normal">
-                Para que las curvas de nivel y superficies TIN de Civil 3D se dibujen con máxima nitidez vectorial en la web, asegúrate de tener la variable <code className="text-emerald-400 font-mono bg-emerald-950/50 px-1 py-0.5 rounded">PROXYGRAPHICS = 1</code> al guardar, o utiliza el comando <code className="text-emerald-400 font-mono bg-emerald-950/50 px-1 py-0.5 rounded">EXPORTTOAUTOCAD</code>.
+              <span className="font-semibold text-slate-900 dark:text-slate-200">Consejo para planos de Civil 3D 2026:</span>
+              <p className="mt-1 text-slate-600 dark:text-slate-400 leading-normal">
+                Para que las curvas de nivel y superficies TIN de Civil 3D se dibujen con máxima nitidez vectorial en la web, asegúrate de tener la variable <code className="text-emerald-600 dark:text-emerald-400 font-mono bg-emerald-50 dark:bg-emerald-950/50 px-1 py-0.5 rounded border border-emerald-200 dark:border-transparent">PROXYGRAPHICS = 1</code> al guardar, o utiliza el comando <code className="text-emerald-600 dark:text-emerald-400 font-mono bg-emerald-50 dark:bg-emerald-950/50 px-1 py-0.5 rounded border border-emerald-200 dark:border-transparent">EXPORTTOAUTOCAD</code>.
               </p>
             </div>
           </div>
@@ -801,47 +871,48 @@ export const DwgViewerModule: React.FC<DwgViewerModuleProps> = ({ onBackToHub })
       )}
 
       {/* 3. BARRA INFERIOR DE ESTADO CAD */}
-      <footer className="h-8 bg-slate-950 border-t border-slate-800 px-4 flex items-center justify-between text-[11px] font-mono text-slate-400 z-20 shrink-0">
+      <footer className="h-8 bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 px-4 flex items-center justify-between text-[11px] font-mono text-slate-500 dark:text-slate-400 z-20 shrink-0">
         <div className="flex items-center gap-4">
-          <span className="flex items-center gap-1 text-slate-300">
-            <Crosshair className="w-3.5 h-3.5 text-slate-500" />
+          <span className="flex items-center gap-1 text-slate-700 dark:text-slate-300">
+            <Crosshair className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
             <span>X: {activeCursorPos.x.toFixed(3)}</span>
             <span className="ml-2">Y: {activeCursorPos.y.toFixed(3)}</span>
           </span>
-          <span className="hidden sm:inline text-slate-600">|</span>
+          <span className="hidden sm:inline text-slate-300 dark:text-slate-700">|</span>
           <span className="hidden sm:inline">Zoom: {(scale * 100).toFixed(0)}%</span>
         </div>
 
         <div className="flex items-center gap-3">
           <span>{drawing ? `${drawing.entities.length} entidades` : 'Sin archivo abierto'}</span>
-          <span className="hidden md:inline text-slate-600">|</span>
-          <span className="hidden md:inline">AutoCAD & Civil 3D 2026 Engine</span>
+          <span className="hidden md:inline text-slate-300 dark:text-slate-700">|</span>
+          <span className="hidden md:inline">Motor Vectorial CAD 2026</span>
         </div>
       </footer>
 
       {/* MODAL DE PROGRESO Y BARRA DE CARGA */}
       {isLoading && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-6">
-          <div className="bg-slate-900 border border-slate-800 p-8 rounded-3xl max-w-md w-full shadow-2xl flex flex-col items-center text-center">
-            <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-2xl mb-4 animate-bounce">
+        <div className="fixed inset-0 z-50 bg-slate-950/40 dark:bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-6">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-3xl max-w-md w-full shadow-2xl flex flex-col items-center text-center">
+            <div className="w-14 h-14 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 flex items-center justify-center text-2xl mb-4 animate-bounce">
               ⚙️
             </div>
 
-            <h3 className="text-lg font-bold text-white mb-1">Cargando Plano CAD</h3>
-            <p className="text-xs text-slate-400 mb-6 min-h-[36px]">{loadingStage}</p>
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1">Cargando Plano CAD</h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 min-h-[36px]">{loadingStage}</p>
 
             {/* Barra de progreso visual */}
-            <div className="w-full bg-slate-800 h-3 rounded-full overflow-hidden p-0.5 border border-slate-700 mb-2">
+            <div className="w-full bg-slate-100 dark:bg-slate-800 h-3 rounded-full overflow-hidden p-0.5 border border-slate-200 dark:border-slate-700 mb-2">
               <div
                 className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all duration-200"
                 style={{ width: `${loadingProgress}%` }}
               />
             </div>
 
-            <span className="text-xs font-mono text-emerald-400 font-bold">{loadingProgress}%</span>
+            <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-bold">{loadingProgress}%</span>
           </div>
         </div>
       )}
     </div>
   );
 };
+
