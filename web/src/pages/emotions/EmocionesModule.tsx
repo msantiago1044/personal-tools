@@ -14,7 +14,7 @@ import {
   Trash2,
   Calendar,
   Sparkles,
-  TrendingUp,
+  Activity,
   Clock,
   Sun,
   Moon,
@@ -59,13 +59,14 @@ export const EmocionesModule: React.FC<EmocionesModuleProps> = ({ user, onBackTo
     setDeleteConfirmId(null);
   };
 
-  // Métricas y estadísticas calculadas
+  // Métricas y estadísticas calculadas (sin etiquetas morales de positivo/negativo)
   const stats = useMemo(() => {
     if (records.length === 0) {
       return {
         predominant: null,
         total: 0,
-        positivePct: 0,
+        uniqueCount: 0,
+        uniqueDays: 0,
         counts: {} as Record<EmotionKey, number>,
       };
     }
@@ -95,13 +96,14 @@ export const EmocionesModule: React.FC<EmocionesModuleProps> = ({ user, onBackTo
       }
     });
 
-    const positiveCount = counts.excelente + counts.bien + counts.calma;
-    const positivePct = Math.round((positiveCount / records.length) * 100);
+    const uniqueCount = (Object.keys(counts) as EmotionKey[]).filter((key) => counts[key] > 0).length;
+    const uniqueDays = new Set(records.map((r) => r.created_at.slice(0, 10))).size;
 
     return {
       predominant: topEmotion ? EMOTIONS_CONFIG[topEmotion] : null,
       total: records.length,
-      positivePct,
+      uniqueCount,
+      uniqueDays,
       counts,
     };
   }, [records]);
@@ -232,20 +234,22 @@ export const EmocionesModule: React.FC<EmocionesModuleProps> = ({ user, onBackTo
             </div>
           </div>
 
-          {/* Card 2: Balance Positivo */}
+          {/* Card 2: Variabilidad Emocional (Emodiversidad) */}
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-xs flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-xl bg-teal-50 dark:bg-teal-950/40 border border-teal-200/60 dark:border-teal-800/60 flex items-center justify-center text-teal-600 dark:text-teal-400 shrink-0">
-              <TrendingUp className="w-6 h-6" />
+            <div className="w-12 h-12 rounded-xl bg-violet-50 dark:bg-violet-950/40 border border-violet-200/60 dark:border-violet-800/60 flex items-center justify-center text-violet-600 dark:text-violet-400 shrink-0">
+              <Activity className="w-6 h-6" />
             </div>
             <div>
               <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
-                Balance Positivo
+                Variabilidad Emocional
               </span>
               <p className="text-sm font-bold text-slate-900 dark:text-white mt-0.5">
-                {stats.total > 0 ? `${stats.positivePct}% favorable` : 'N/A'}
+                {stats.total > 0 ? `${stats.uniqueCount} de 6 estados` : '0 de 6 estados'}
               </p>
               <p className="text-[11px] text-slate-400 dark:text-slate-500">
-                Excelente, bien o en calma
+                {stats.total > 0
+                  ? `${stats.uniqueDays} ${stats.uniqueDays === 1 ? 'día registrado' : 'días registrados'}`
+                  : 'Amplitud de estados reconocidos'}
               </p>
             </div>
           </div>
