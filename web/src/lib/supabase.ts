@@ -1,11 +1,9 @@
 import { createClient, Session } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn('[Supabase] Advertencia: VITE_SUPABASE_URL o VITE_SUPABASE_ANON_KEY no están configuradas.');
-}
+const supabaseUrl =
+  import.meta.env.VITE_SUPABASE_URL || 'https://phczdxbtquxwfqnrakcz.supabase.co';
+const supabaseAnonKey =
+  import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_ThVP291edlMvGoeLw2182w_sb7hmslN';
 
 export const SESSION_BACKUP_KEY = 'personal_tools_session_backup';
 
