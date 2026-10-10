@@ -12,35 +12,44 @@ import { shouldPromptMoodCheck } from './lib/emotions';
 
 type ViewType = 'hub' | 'finance' | 'tehilim' | 'dwg_viewer' | 'pantry' | 'emotions';
 
-function getViewFromLocation(): ViewType {
-  const hash = window.location.hash.toLowerCase();
-  const path = window.location.pathname.toLowerCase();
-
-  if (hash.includes('finance') || path.startsWith('/finance')) return 'finance';
-  if (hash.includes('tehilim') || path.startsWith('/tehilim')) return 'tehilim';
-  if (hash.includes('cad') || hash.includes('dwg') || path.startsWith('/cad') || path.startsWith('/dwg')) return 'dwg_viewer';
-  if (hash.includes('pantry') || hash.includes('mercado') || path.startsWith('/pantry')) return 'pantry';
-  if (hash.includes('emocion') || hash.includes('emotion') || path.startsWith('/emotions')) return 'emotions';
-  if (hash.includes('hub')) return 'hub';
-
-  // Fallback con localStorage si el hash está vacío
-  const saved = localStorage.getItem('app_current_view') as ViewType;
-  if (saved && ['hub', 'finance', 'tehilim', 'dwg_viewer', 'pantry', 'emotions'].includes(saved)) {
-    return saved;
-  }
-
-  return 'hub';
-}
-
 export default function App() {
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [currentView, setCurrentView] = useState<ViewType>(getViewFromLocation);
+  const [currentView, setCurrentView] = useState<ViewType>('hub');
   const [showMoodPrompt, setShowMoodPrompt] = useState(false);
+
+  // Al abrir o entrar a la app (en móvil o PC), siempre asegurar que inicie en el Home / Inicio
+  useEffect(() => {
+    try {
+      localStorage.removeItem('app_current_view');
+    } catch (e) {}
+
+    // Limpiar cualquier hash persistido para arrancar limpio en el Home
+    if (window.location.hash) {
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+    setCurrentView('hub');
+
+    // Al cerrar o suspender la pestaña/app en el móvil, dejar la URL en el Home
+    const handleResetToHome = () => {
+      try {
+        localStorage.removeItem('app_current_view');
+      } catch (e) {}
+      if (window.location.hash) {
+        window.history.replaceState(null, '', window.location.pathname);
+      }
+    };
+
+    window.addEventListener('pagehide', handleResetToHome);
+    window.addEventListener('beforeunload', handleResetToHome);
+    return () => {
+      window.removeEventListener('pagehide', handleResetToHome);
+      window.removeEventListener('beforeunload', handleResetToHome);
+    };
+  }, []);
 
   const changeView = useCallback((view: ViewType) => {
     setCurrentView(view);
-    localStorage.setItem('app_current_view', view);
     if (view === 'hub') {
       if (window.location.hash) {
         window.history.replaceState(null, '', window.location.pathname);
@@ -52,11 +61,23 @@ export default function App() {
     }
   }, []);
 
-  // Sincronizar vista ante cambios en el hash del navegador (Atrás / Adelante)
+  // Sincronizar vista ante eventos del navegador (botón Atrás / Adelante dentro de la sesión activa)
   useEffect(() => {
     const handleHashChange = () => {
-      const detected = getViewFromLocation();
-      setCurrentView(detected);
+      const hash = window.location.hash.toLowerCase();
+      if (!hash || hash === '#' || hash === '#/' || hash.includes('hub')) {
+        setCurrentView('hub');
+      } else if (hash.includes('finance')) {
+        setCurrentView('finance');
+      } else if (hash.includes('tehilim')) {
+        setCurrentView('tehilim');
+      } else if (hash.includes('cad') || hash.includes('dwg')) {
+        setCurrentView('dwg_viewer');
+      } else if (hash.includes('pantry') || hash.includes('mercado')) {
+        setCurrentView('pantry');
+      } else if (hash.includes('emocion') || hash.includes('emotion')) {
+        setCurrentView('emotions');
+      }
     };
 
     window.addEventListener('hashchange', handleHashChange);
