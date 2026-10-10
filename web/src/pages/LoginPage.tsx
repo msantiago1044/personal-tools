@@ -33,6 +33,7 @@ export const LoginPage: React.FC = () => {
         <button
           onClick={() => handleThemeChange('light')}
           title="Tema Claro"
+          aria-label="Cambiar a tema claro"
           className={`p-1.5 rounded-xl text-xs transition ${
             theme === 'light'
               ? 'bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 font-bold'
@@ -44,6 +45,7 @@ export const LoginPage: React.FC = () => {
         <button
           onClick={() => handleThemeChange('dark')}
           title="Tema Oscuro"
+          aria-label="Cambiar a tema oscuro"
           className={`p-1.5 rounded-xl text-xs transition ${
             theme === 'dark'
               ? 'bg-blue-100 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 font-bold'
@@ -55,6 +57,7 @@ export const LoginPage: React.FC = () => {
         <button
           onClick={() => handleThemeChange('system')}
           title="Tema del Sistema"
+          aria-label="Cambiar a tema del sistema"
           className={`p-1.5 rounded-xl text-xs transition ${
             theme === 'system'
               ? 'bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 font-bold'

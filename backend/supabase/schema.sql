@@ -53,7 +53,7 @@ BEGIN
 
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, auth;
 
 CREATE OR REPLACE TRIGGER on_auth_user_created
     AFTER INSERT ON auth.users
@@ -170,7 +170,7 @@ RETURNS TABLE (
     actual_amount NUMERIC,
     percentage_used NUMERIC,
     spent_previous_year NUMERIC
-) LANGUAGE plpgsql SECURITY DEFINER AS $$
+) LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, auth AS $$
 BEGIN
     RETURN QUERY
     WITH current_month_expenses AS (

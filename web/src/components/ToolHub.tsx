@@ -1,53 +1,7 @@
 import React, { useState } from 'react';
-import { ToolModule } from '../../../packages/shared/src/types';
 import { ThemeMode, getStoredTheme, applyTheme } from '../lib/theme';
 import { Sun, Moon, Laptop } from 'lucide-react';
-
-const AVAILABLE_TOOLS: ToolModule[] = [
-  {
-    id: 'finance',
-    name: 'Finanzas',
-    description: 'Flujo de caja, cuentas y presupuestos.',
-    icon: 'wallet',
-    route: '/finance/home',
-    status: 'active',
-    badge: 'Principal',
-  },
-  {
-    id: 'pantry',
-    name: 'Despensa & Mercado',
-    description: 'Inventario, escaneo de facturas y nutrición.',
-    icon: 'shopping-bag',
-    route: '/pantry',
-    status: 'active',
-    badge: 'IA Vision',
-  },
-  {
-    id: 'tehilim',
-    name: 'Tehilim',
-    description: '150 salmos con hebreo, fonética y traducción.',
-    icon: 'book-open',
-    route: '/tehilim',
-    status: 'active',
-  },
-  {
-    id: 'dwg_viewer',
-    name: 'Planos CAD',
-    description: 'Visor de archivos DWG y DXF con capas y regla.',
-    icon: 'layers',
-    route: '/cad-viewer',
-    status: 'active',
-  },
-  {
-    id: 'emotions',
-    name: 'Emociones',
-    description: 'Registro de estado de ánimo, bienestar y balance diario.',
-    icon: 'smile',
-    route: '/emotions',
-    status: 'active',
-    badge: 'Bienestar',
-  },
-];
+import { MODULE_REGISTRY } from '../modules/moduleRegistry';
 
 interface ToolHubProps {
   userEmail: string;
@@ -92,6 +46,7 @@ export const ToolHub: React.FC<ToolHubProps> = ({
             <button
               onClick={() => handleThemeChange('light')}
               title="Claro"
+              aria-label="Cambiar a tema claro"
               className={`p-1.5 rounded-lg text-xs transition ${
                 theme === 'light'
                   ? 'bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 font-bold'
@@ -103,6 +58,7 @@ export const ToolHub: React.FC<ToolHubProps> = ({
             <button
               onClick={() => handleThemeChange('dark')}
               title="Oscuro"
+              aria-label="Cambiar a tema oscuro"
               className={`p-1.5 rounded-lg text-xs transition ${
                 theme === 'dark'
                   ? 'bg-blue-100 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 font-bold'
@@ -114,6 +70,7 @@ export const ToolHub: React.FC<ToolHubProps> = ({
             <button
               onClick={() => handleThemeChange('system')}
               title="Sistema"
+              aria-label="Cambiar a tema del sistema"
               className={`p-1.5 rounded-lg text-xs transition ${
                 theme === 'system'
                   ? 'bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 font-bold'
@@ -135,6 +92,7 @@ export const ToolHub: React.FC<ToolHubProps> = ({
           <button
             onClick={onLogout}
             title="Cerrar sesión"
+            aria-label="Cerrar sesión"
             className="text-xs bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 transition"
           >
             Salir
@@ -145,7 +103,7 @@ export const ToolHub: React.FC<ToolHubProps> = ({
       {/* Grid de Herramientas Minimalista */}
       <main className="max-w-5xl mx-auto mt-6 sm:mt-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {AVAILABLE_TOOLS.map((tool) => {
+          {MODULE_REGISTRY.map((tool) => {
             const isActive = tool.status === 'active';
 
             return (

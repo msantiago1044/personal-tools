@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
 import { initPwaListeners } from './lib/pwa';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 // Inicializar listeners de instalación PWA
 initPwaListeners();
@@ -23,6 +24,8 @@ if ('serviceWorker' in navigator) {
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <App />
+    <ErrorBoundary fallbackTitle="Error crítico al iniciar Personal Tools">
+      <App />
+    </ErrorBoundary>
   </React.StrictMode>
 );
