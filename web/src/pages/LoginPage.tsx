@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { signInWithGoogle } from '../lib/supabase';
 import { ThemeMode, getStoredTheme, applyTheme } from '../lib/theme';
 import { Sun, Moon, Laptop } from 'lucide-react';
-import { DownloadApkModal } from '../components/DownloadApkModal';
+import { InstallPwaModal } from '../components/InstallPwaModal';
 
 export const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [theme, setTheme] = useState<ThemeMode>(getStoredTheme());
-  const [showDownloadModal, setShowDownloadModal] = useState(false);
+  const [showInstallModal, setShowInstallModal] = useState(false);
 
   const handleThemeChange = (newTheme: ThemeMode) => {
     setTheme(newTheme);
@@ -120,26 +120,26 @@ export const LoginPage: React.FC = () => {
           </button>
         </div>
 
-        {/* Sección de Descarga de App Android */}
+        {/* Sección de Instalación Web App (PWA) */}
         <div className="mt-6 pt-5 border-t border-slate-200 dark:border-slate-800 text-center">
           <button
             type="button"
-            onClick={() => setShowDownloadModal(true)}
+            onClick={() => setShowInstallModal(true)}
             className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 transition shadow-sm"
           >
-            <span>📱</span>
-            <span>Descargar App Nativa Android (.APK)</span>
+            <span>📲</span>
+            <span>Instalar en el Celular (App de Inicio)</span>
           </button>
 
           <p className="text-[11px] text-slate-400 dark:text-slate-500 leading-relaxed mt-4">
-            Acceso seguro mediante Google OAuth. Datos protegidos con Row Level Security (RLS) en Supabase PostgreSQL.
+            Acceso seguro mediante Google OAuth. Tu sesión permanecerá iniciada automáticamente.
           </p>
         </div>
       </div>
 
-      <DownloadApkModal
-        isOpen={showDownloadModal}
-        onClose={() => setShowDownloadModal(false)}
+      <InstallPwaModal
+        isOpen={showInstallModal}
+        onClose={() => setShowInstallModal(false)}
       />
     </div>
   );

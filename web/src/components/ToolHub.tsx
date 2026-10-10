@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ToolModule } from '../../../packages/shared/src/types';
 import { ThemeMode, getStoredTheme, applyTheme } from '../lib/theme';
 import { Sun, Moon, Laptop, Smartphone } from 'lucide-react';
-import { DownloadApkModal } from './DownloadApkModal';
+import { InstallPwaModal } from './InstallPwaModal';
 
 const AVAILABLE_TOOLS: ToolModule[] = [
   {
@@ -40,29 +40,13 @@ const AVAILABLE_TOOLS: ToolModule[] = [
     status: 'active',
   },
   {
-    id: 'investments',
-    name: 'Inversiones',
-    description: 'Seguimiento de portafolio y rendimientos.',
-    icon: 'trending-up',
-    route: '/investments',
-    status: 'coming_soon',
-    badge: 'Pronto',
-  },
-  {
-    id: 'invoicing',
-    name: 'Facturación',
-    description: 'Facturas, cotizaciones y cobros.',
-    icon: 'file-text',
-    route: '/invoicing',
-    status: 'coming_soon',
-  },
-  {
-    id: 'tasks',
-    name: 'Metas',
-    description: 'Objetivos de ahorro y productividad.',
-    icon: 'check-circle',
-    route: '/goals',
-    status: 'coming_soon',
+    id: 'emotions',
+    name: 'Emociones',
+    description: 'Registro de estado de ánimo, bienestar y balance diario.',
+    icon: 'smile',
+    route: '/emotions',
+    status: 'active',
+    badge: 'Bienestar',
   },
 ];
 
@@ -82,7 +66,7 @@ export const ToolHub: React.FC<ToolHubProps> = ({
   onLogout,
 }) => {
   const [theme, setTheme] = useState<ThemeMode>(getStoredTheme());
-  const [showDownloadModal, setShowDownloadModal] = useState(false);
+  const [showInstallModal, setShowInstallModal] = useState(false);
 
   const handleThemeChange = (newTheme: ThemeMode) => {
     setTheme(newTheme);
@@ -142,14 +126,14 @@ export const ToolHub: React.FC<ToolHubProps> = ({
             </button>
           </div>
 
-          {/* Botón Descargar APK */}
+          {/* Botón Instalar App PWA */}
           <button
-            onClick={() => setShowDownloadModal(true)}
-            title="App Android (.APK)"
-            className="flex items-center gap-1.5 text-xs bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 font-medium transition shadow-xs"
+            onClick={() => setShowInstallModal(true)}
+            title="Instalar App en el Celular (PWA)"
+            className="flex items-center gap-1.5 text-xs bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 px-3 py-2 rounded-xl border border-emerald-200 dark:border-emerald-800/60 font-semibold transition shadow-xs"
           >
             <Smartphone className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-            <span className="hidden sm:inline">App</span>
+            <span className="hidden sm:inline">Instalar App</span>
           </button>
 
           {avatarUrl ? (
@@ -203,11 +187,9 @@ export const ToolHub: React.FC<ToolHubProps> = ({
                         ? '📐'
                         : tool.id === 'pantry'
                         ? '🛒'
-                        : tool.id === 'investments'
-                        ? '📈'
-                        : tool.id === 'invoicing'
-                        ? '🧾'
-                        : '🎯'}
+                        : tool.id === 'emotions'
+                        ? '✨'
+                        : '💎'}
                     </div>
 
                     {tool.badge && (
@@ -243,9 +225,9 @@ export const ToolHub: React.FC<ToolHubProps> = ({
         </div>
       </main>
 
-      <DownloadApkModal
-        isOpen={showDownloadModal}
-        onClose={() => setShowDownloadModal(false)}
+      <InstallPwaModal
+        isOpen={showInstallModal}
+        onClose={() => setShowInstallModal(false)}
       />
     </div>
   );
