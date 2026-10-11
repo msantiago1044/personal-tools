@@ -95,7 +95,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
               className={`p-1.5 rounded-full transition-opacity duration-150 ${
                 note.is_pinned
                   ? 'opacity-100 text-amber-500 bg-amber-500/10'
-                  : 'opacity-0 group-hover:opacity-100 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-black/5 dark:hover:bg-white/10'
+                  : 'opacity-70 sm:opacity-0 sm:group-hover:opacity-100 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-black/5 dark:hover:bg-white/10'
               }`}
             >
               <Pin className={`w-4 h-4 ${note.is_pinned ? 'fill-amber-500' : ''}`} />
@@ -166,7 +166,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
       <div
         onClick={(e) => e.stopPropagation()}
         className={`pt-2 border-t border-black/5 dark:border-white/5 flex items-center justify-between text-slate-500 dark:text-slate-400 transition-opacity duration-150 ${
-          isTrashView ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 sm:opacity-0 sm:group-hover:opacity-100 group-hover:pointer-events-auto'
+          isTrashView ? 'opacity-100' : 'opacity-100 sm:opacity-0 sm:group-hover:opacity-100'
         }`}
       >
         {!isTrashView ? (
