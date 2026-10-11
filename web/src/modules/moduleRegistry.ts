@@ -41,6 +41,10 @@ const EmocionesModule = React.lazy(() =>
   import('../pages/emotions/EmocionesModule').then((m) => ({ default: m.EmocionesModule }))
 );
 
+const NotesModule = React.lazy(() =>
+  import('../pages/notes/NotesModule').then((m) => ({ default: m.NotesModule }))
+);
+
 /**
  * Registro Central Desacoplado de Módulos (Architecture RFC - OCP)
  * Para añadir un nuevo módulo, solo regístralo en esta lista.
@@ -98,6 +102,17 @@ export const MODULE_REGISTRY: ModuleManifest[] = [
     status: 'active',
     badge: 'Bienestar',
     component: EmocionesModule,
+  },
+  {
+    id: 'notes',
+    name: 'Notas & Keep',
+    description: 'Notas rápidas, listas de tareas, colores y etiquetas.',
+    icon: 'sticky-note',
+    route: '/notes',
+    hashAliases: ['notes', 'notas', 'keep'],
+    status: 'active',
+    badge: 'Nuevo',
+    component: NotesModule,
   },
 ];
 
