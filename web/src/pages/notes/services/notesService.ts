@@ -47,8 +47,8 @@ export async function fetchNotes(userId: string): Promise<Note[]> {
       .eq('user_id', userId)
       .order('updated_at', { ascending: false });
 
-    if (!error && data) {
-      const mappedNotes: Note[] = data.map((row: any) => ({
+    if (!error && Array.isArray(data)) {
+      const serverNotes: Note[] = data.map((row: any) => ({
         id: row.id,
         user_id: row.user_id,
         title: row.title || '',
@@ -65,11 +65,49 @@ export async function fetchNotes(userId: string): Promise<Note[]> {
         updated_at: row.updated_at || new Date().toISOString(),
       }));
 
-      setCachedNotes(userId, mappedNotes);
-      return mappedNotes;
+      // Si tenemos notas locales creadas previamente que aún no están en Supabase,
+      // las subimos inmediatamente a Supabase para que estén disponibles en el celular
+      const serverIdSet = new Set(serverNotes.map((n) => n.id));
+      const localOnly = cached.filter((c) => !serverIdSet.has(c.id));
+
+      if (localOnly.length > 0) {
+        try {
+          const payload = localOnly.map((n) => ({
+            id: n.id,
+            user_id: userId,
+            title: n.title,
+            content: n.content,
+            is_checklist: n.is_checklist,
+            checklist_items: n.checklist_items,
+            color: n.color,
+            is_pinned: n.is_pinned,
+            is_archived: n.is_archived,
+            is_trashed: n.is_trashed,
+            tags: n.tags,
+            reminder: n.reminder,
+            created_at: n.created_at,
+            updated_at: n.updated_at,
+          }));
+          await supabase.from('user_notes').upsert(payload, { onConflict: 'id' });
+        } catch (uploadErr) {
+          console.warn('[NotesService] Error sincronizando notas locales pendientes a Supabase:', uploadErr);
+        }
+      }
+
+      // Combinar notas de servidor + notas locales no sincronizadas
+      const mergedMap = new Map<string, Note>();
+      serverNotes.forEach((n) => mergedMap.set(n.id, n));
+      localOnly.forEach((n) => mergedMap.set(n.id, n));
+
+      const mergedList = Array.from(mergedMap.values()).sort(
+        (a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+      );
+
+      setCachedNotes(userId, mergedList);
+      return mergedList;
     }
   } catch (err) {
-    console.warn('[NotesService] Supabase no disponible o tabla user_notes en preparación. Usando local storage:', err);
+    console.warn('[NotesService] Supabase no disponible o tabla en preparación. Usando local storage:', err);
   }
 
   // Si no hay notas aún en caché ni en Supabase, podemos suministrar un par de notas de bienvenida tipo Keep

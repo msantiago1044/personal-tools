@@ -15,6 +15,8 @@ import {
   generateId,
 } from '../services/notesService';
 
+import { supabase } from '../../../lib/supabase';
+
 export function useNotesData(userId: string) {
   const [notes, setNotes] = useState<Note[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -24,7 +26,7 @@ export function useNotesData(userId: string) {
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<NoteColorKey | null>(null);
 
-  // Carga inicial
+  // Carga inicial y sincronización
   const refreshNotes = useCallback(async () => {
     setLoading(true);
     const data = await fetchNotes(userId);
@@ -34,7 +36,31 @@ export function useNotesData(userId: string) {
 
   useEffect(() => {
     refreshNotes();
-  }, [refreshNotes]);
+
+    // Suscripción Realtime a cambios en Supabase (sincronización instantánea Desktop <-> Celular)
+    if (userId && userId !== 'local_user') {
+      const channel = supabase
+        .channel(`user_notes_channel_${userId}`)
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'user_notes',
+            filter: `user_id=eq.${userId}`,
+          },
+          async () => {
+            const data = await fetchNotes(userId);
+            setNotes(data);
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    }
+  }, [userId, refreshNotes]);
 
   // Colección de todas las etiquetas únicas existentes en notas no enviadas a papelera
   const allTags = useMemo(() => {
