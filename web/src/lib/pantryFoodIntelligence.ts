@@ -128,7 +128,7 @@ export const KNOWN_FOODS: KnownFoodDefinition[] = [
     landM2: 0.4,
     soilRisk: 'Bajo',
     co2Kg: 0.4,
-    shelfLifeTypicalDays: 14,
+    shelfLifeTypicalDays: 30,
     packaging: 'A granel / Malla vegetal (baja entropía)',
   },
   {
@@ -154,7 +154,7 @@ export const KNOWN_FOODS: KnownFoodDefinition[] = [
     landM2: 0.6,
     soilRisk: 'Bajo',
     co2Kg: 0.5,
-    shelfLifeTypicalDays: 60,
+    shelfLifeTypicalDays: 90,
     packaging: 'Malla / Granel',
   },
   {
@@ -205,7 +205,7 @@ export const KNOWN_FOODS: KnownFoodDefinition[] = [
     landM2: 0.3,
     soilRisk: 'Bajo',
     co2Kg: 0.5,
-    shelfLifeTypicalDays: 20,
+    shelfLifeTypicalDays: 30,
     packaging: 'A granel',
   },
   {
@@ -230,7 +230,7 @@ export const KNOWN_FOODS: KnownFoodDefinition[] = [
     landM2: 0.5,
     soilRisk: 'Moderado',
     co2Kg: 0.4,
-    shelfLifeTypicalDays: 25,
+    shelfLifeTypicalDays: 30,
     packaging: 'Costal o bolsa de papel',
   },
   // Frutas
@@ -283,7 +283,7 @@ export const KNOWN_FOODS: KnownFoodDefinition[] = [
     landM2: 0.7,
     soilRisk: 'Bajo',
     co2Kg: 0.8,
-    shelfLifeTypicalDays: 7,
+    shelfLifeTypicalDays: 6,
     packaging: 'Cáscara biodegradable natural (Cero empaque)',
   },
   {
@@ -309,7 +309,7 @@ export const KNOWN_FOODS: KnownFoodDefinition[] = [
     landM2: 1.8,
     soilRisk: 'Moderado',
     co2Kg: 1.3,
-    shelfLifeTypicalDays: 8,
+    shelfLifeTypicalDays: 5,
     packaging: 'A granel',
   },
   // Proteínas & Carnes
@@ -363,7 +363,7 @@ export const KNOWN_FOODS: KnownFoodDefinition[] = [
     landM2: 326.0,
     soilRisk: 'Muy Alto',
     co2Kg: 27.0, // Alta huella de carbono
-    shelfLifeTypicalDays: 4,
+    shelfLifeTypicalDays: 5,
     packaging: 'Bandeja / Papel encerado',
   },
   {
@@ -442,7 +442,7 @@ export const KNOWN_FOODS: KnownFoodDefinition[] = [
     landM2: 8.9,
     soilRisk: 'Moderado',
     co2Kg: 3.0,
-    shelfLifeTypicalDays: 8,
+    shelfLifeTypicalDays: 10,
     packaging: 'Bolsa de polietileno o Tetrapak',
   },
   {
@@ -468,7 +468,7 @@ export const KNOWN_FOODS: KnownFoodDefinition[] = [
     landM2: 21.0,
     soilRisk: 'Alto',
     co2Kg: 13.5,
-    shelfLifeTypicalDays: 15,
+    shelfLifeTypicalDays: 10,
     packaging: 'Plástico al vacío',
   },
   // Granos & Cereales
@@ -571,7 +571,7 @@ export const KNOWN_FOODS: KnownFoodDefinition[] = [
     landM2: 1.9,
     soilRisk: 'Bajo',
     co2Kg: 1.6,
-    shelfLifeTypicalDays: 14,
+    shelfLifeTypicalDays: 8,
     packaging: 'Bolsa plástica con alambre / clip',
   },
   // Condimentos & Aceites
@@ -722,7 +722,7 @@ export const KNOWN_FOODS: KnownFoodDefinition[] = [
     landM2: 0.3,
     soilRisk: 'Bajo',
     co2Kg: 0.5,
-    shelfLifeTypicalDays: 20,
+    shelfLifeTypicalDays: 30,
     packaging: 'A granel / Malla vegetal',
   },
   {
@@ -747,7 +747,7 @@ export const KNOWN_FOODS: KnownFoodDefinition[] = [
     landM2: 0.3,
     soilRisk: 'Bajo',
     co2Kg: 0.5,
-    shelfLifeTypicalDays: 20,
+    shelfLifeTypicalDays: 30,
     packaging: 'A granel',
   },
   {
@@ -773,7 +773,7 @@ export const KNOWN_FOODS: KnownFoodDefinition[] = [
     landM2: 0.3,
     soilRisk: 'Bajo',
     co2Kg: 0.4,
-    shelfLifeTypicalDays: 14,
+    shelfLifeTypicalDays: 18,
     packaging: 'Manojo a granel',
   },
   {
@@ -799,7 +799,7 @@ export const KNOWN_FOODS: KnownFoodDefinition[] = [
     landM2: 0.3,
     soilRisk: 'Bajo',
     co2Kg: 0.5,
-    shelfLifeTypicalDays: 14,
+    shelfLifeTypicalDays: 10,
     packaging: 'Atado / Malla',
   },
   {
@@ -825,7 +825,7 @@ export const KNOWN_FOODS: KnownFoodDefinition[] = [
     landM2: 0.6,
     soilRisk: 'Bajo',
     co2Kg: 0.7,
-    shelfLifeTypicalDays: 21,
+    shelfLifeTypicalDays: 28,
     packaging: 'A granel / Malla vegetal',
   },
   {
@@ -851,7 +851,7 @@ export const KNOWN_FOODS: KnownFoodDefinition[] = [
     landM2: 0.8,
     soilRisk: 'Moderado',
     co2Kg: 0.8,
-    shelfLifeTypicalDays: 14,
+    shelfLifeTypicalDays: 12,
     packaging: 'Malla plástica / Granel',
   },
   {
@@ -877,7 +877,7 @@ export const KNOWN_FOODS: KnownFoodDefinition[] = [
     landM2: 0.9,
     soilRisk: 'Moderado',
     co2Kg: 0.4,
-    shelfLifeTypicalDays: 21,
+    shelfLifeTypicalDays: 28,
     packaging: 'A granel o bolsa',
   },
   {
@@ -928,7 +928,7 @@ export const KNOWN_FOODS: KnownFoodDefinition[] = [
     landM2: 0.5,
     soilRisk: 'Moderado',
     co2Kg: 0.4,
-    shelfLifeTypicalDays: 28,
+    shelfLifeTypicalDays: 30,
     packaging: 'Costal o bolsa de papel',
   },
   {
@@ -979,7 +979,7 @@ export const KNOWN_FOODS: KnownFoodDefinition[] = [
     landM2: 0.7,
     soilRisk: 'Moderado',
     co2Kg: 0.6,
-    shelfLifeTypicalDays: 14,
+    shelfLifeTypicalDays: 10,
     packaging: 'A granel parafinada / Bolsa',
   },
   {
@@ -1210,6 +1210,430 @@ export const KNOWN_FOODS: KnownFoodDefinition[] = [
     packaging: 'Bolsa plástica sellada',
   },
 ];
+
+// ============================================================================
+// BASE DE DATOS Y CALCULADOR OFICIAL DE VIDA ÚTIL WEB (USDA FOODKEEPER, FDA, ICBF)
+// ============================================================================
+export function getWebEstimatedShelfLifeDays(productName: string, category?: string): number {
+  if (!productName && !category) return 14;
+
+  const raw = (productName || '').toLowerCase().trim();
+  const clean = raw
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim();
+
+  // 1. Coincidencia directa con alimentos calibrados en KNOWN_FOODS
+  const matched = KNOWN_FOODS.find((kf) =>
+    kf.keywords.some((kw) => {
+      const cleanKw = kw.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+      return clean.includes(cleanKw);
+    })
+  );
+  if (matched && matched.shelfLifeTypicalDays) {
+    return matched.shelfLifeTypicalDays;
+  }
+
+  // 2. Mapeo heurístico granular según referencias oficiales de conservación (USDA / ICBF)
+  
+  // Aseo & Limpieza (no perecedero a corto plazo)
+  if (
+    clean.includes('detergente') ||
+    clean.includes('jabon') ||
+    clean.includes('limpido') ||
+    clean.includes('cloro') ||
+    clean.includes('desinfectante') ||
+    clean.includes('suavizante') ||
+    clean.includes('lavaplatos') ||
+    clean.includes('blanqueador') ||
+    clean.includes('papel higienico') ||
+    clean.includes('toalla de cocina') ||
+    clean.includes('servilleta') ||
+    clean.includes('crema dental') ||
+    clean.includes('shampoo') ||
+    clean.includes('champu') ||
+    category === 'Aseo & Limpieza'
+  ) {
+    return 730; // 2 años
+  }
+
+  // Mascotas
+  if (
+    clean.includes('perro') ||
+    clean.includes('gato') ||
+    clean.includes('mascota') ||
+    clean.includes('chunky') ||
+    clean.includes('ringo') ||
+    clean.includes('pedigree') ||
+    clean.includes('whiskas') ||
+    clean.includes('cat chow') ||
+    clean.includes('dog chow') ||
+    category === 'Mascotas'
+  ) {
+    return 180;
+  }
+
+  // Proteínas & Carnes frescas / pescados
+  if (
+    clean.includes('pescado') ||
+    clean.includes('salmon') ||
+    clean.includes('trucha') ||
+    clean.includes('camaron') ||
+    clean.includes('marisco') ||
+    clean.includes('corvina') ||
+    clean.includes('tilapia') ||
+    clean.includes('filete de pescado')
+  ) {
+    return 2; // Pescados y mariscos frescos: máx 1-2 días refrigerados
+  }
+
+  if (
+    clean.includes('carne molida') ||
+    clean.includes('higado') ||
+    clean.includes('menudencias')
+  ) {
+    return 3; // Carnes picadas o vísceras: 2-3 días
+  }
+
+  if (
+    clean.includes('pollo') ||
+    clean.includes('pechuga') ||
+    clean.includes('muslo') ||
+    clean.includes('alas') ||
+    clean.includes('pernil')
+  ) {
+    return 4; // Pollo fresco en nevera: 2-4 días
+  }
+
+  if (
+    clean.includes('carne') ||
+    clean.includes('res') ||
+    clean.includes('cerdo') ||
+    clean.includes('lomo') ||
+    clean.includes('costilla') ||
+    clean.includes('chuleta') ||
+    clean.includes('posta') ||
+    clean.includes('sobrebarriga')
+  ) {
+    return 5; // Cortes enteros de carne roja: 3-5 días
+  }
+
+  if (
+    clean.includes('jamon') ||
+    clean.includes('salchicha') ||
+    clean.includes('tocineta') ||
+    clean.includes('mortadela') ||
+    clean.includes('cabano') ||
+    clean.includes('salami') ||
+    clean.includes('chorizo') ||
+    clean.includes('embutido')
+  ) {
+    return 14; // Embutidos refrigerados en paquete sellado: ~14 días
+  }
+
+  if (
+    clean.includes('atun') ||
+    clean.includes('sardina') ||
+    clean.includes('enlatado') ||
+    clean.includes('conserva')
+  ) {
+    return 720; // 2 años
+  }
+
+  // Huevos
+  if (clean.includes('huevo') || clean.includes('huevos')) {
+    return 30; // 30 días según estándar USDA
+  }
+
+  // Lácteos
+  if (clean.includes('leche en polvo') || clean.includes('leche polvo')) {
+    return 365;
+  }
+
+  if (
+    clean.includes('leche') ||
+    clean.includes('kumis') ||
+    clean.includes('yogurt') ||
+    clean.includes('yogur')
+  ) {
+    return 10;
+  }
+
+  if (
+    clean.includes('cuajada') ||
+    clean.includes('quesito') ||
+    clean.includes('queso fresco') ||
+    clean.includes('queso campesino') ||
+    clean.includes('ricotta') ||
+    clean.includes('requeson')
+  ) {
+    return 10;
+  }
+
+  if (
+    clean.includes('queso') ||
+    clean.includes('mozzarella') ||
+    clean.includes('parmesano') ||
+    clean.includes('cheddar') ||
+    clean.includes('gouda') ||
+    clean.includes('doble crema')
+  ) {
+    return 30;
+  }
+
+  if (clean.includes('mantequilla')) return 90;
+  if (clean.includes('margarina')) return 120;
+  if (clean.includes('crema de leche')) return 20;
+
+  // Frutas & Verduras
+  if (clean.includes('aguacate') || clean.includes('palta')) {
+    return 5;
+  }
+
+  if (clean.includes('banano') || clean.includes('guineo') || clean.includes('cambur')) {
+    return 6;
+  }
+
+  if (clean.includes('platano') || clean.includes('harton')) {
+    return 12;
+  }
+
+  if (clean.includes('tomate') || clean.includes('chonto') || clean.includes('cherry')) {
+    return 8;
+  }
+
+  if (
+    clean.includes('cebollin') ||
+    clean.includes('cebolla larga') ||
+    clean.includes('cebolla de rama') ||
+    clean.includes('ciboulette')
+  ) {
+    return 10;
+  }
+
+  if (
+    clean.includes('cebolla') ||
+    clean.includes('cebolla roja') ||
+    clean.includes('cebolla morada') ||
+    clean.includes('cebolla blanca') ||
+    clean.includes('cebolla cabezona')
+  ) {
+    return 30; // Cebolla entera en alacena seca: 30-60 días
+  }
+
+  if (clean.includes('ajo')) {
+    return 90; // Ajo entero en ambiente seco: 90 días
+  }
+
+  if (clean.includes('papa criolla')) {
+    return 14;
+  }
+
+  if (
+    clean.includes('papa') ||
+    clean.includes('pastusa') ||
+    clean.includes('capira') ||
+    clean.includes('r12') ||
+    clean.includes('sabana')
+  ) {
+    return 30; // Papa pastusa / negra: 30 días
+  }
+
+  if (clean.includes('yuca') || clean.includes('mandioca')) {
+    return 10;
+  }
+
+  if (clean.includes('zanahoria')) {
+    return 21; // Zanahorias en refrigeración: 3 semanas
+  }
+
+  if (clean.includes('apio') || clean.includes('celery')) {
+    return 18;
+  }
+
+  if (clean.includes('limon') || clean.includes('lima')) {
+    return 28; // Limones refrigerados: 4 semanas
+  }
+
+  if (clean.includes('manzana')) {
+    return 28; // Manzanas refrigeradas: 4 semanas
+  }
+
+  if (clean.includes('pera')) {
+    return 14;
+  }
+
+  if (clean.includes('melon') || clean.includes('sandia') || clean.includes('patilla')) {
+    return 10;
+  }
+
+  if (clean.includes('pimenton') || clean.includes('pimiento')) {
+    return 14;
+  }
+
+  if (clean.includes('pepino') || clean.includes('cohombro')) {
+    return 10;
+  }
+
+  if (
+    clean.includes('lechuga') ||
+    clean.includes('espinaca') ||
+    clean.includes('acelga') ||
+    clean.includes('rugula') ||
+    clean.includes('cilantro') ||
+    clean.includes('perejil') ||
+    clean.includes('albahaca') ||
+    clean.includes('hierba')
+  ) {
+    return 7; // Hojas verdes e hierbas frescas: 5-7 días
+  }
+
+  if (clean.includes('brocoli') || clean.includes('coliflor')) {
+    return 10;
+  }
+
+  if (
+    clean.includes('fresa') ||
+    clean.includes('arandano') ||
+    clean.includes('mora') ||
+    clean.includes('frambuesa')
+  ) {
+    return 7;
+  }
+
+  if (clean.includes('naranja') || clean.includes('mandarina') || clean.includes('toronja')) {
+    return 21;
+  }
+
+  if (
+    clean.includes('pina') ||
+    clean.includes('papaya') ||
+    clean.includes('mango') ||
+    clean.includes('maracuya') ||
+    clean.includes('lulo') ||
+    clean.includes('guayaba')
+  ) {
+    return 7;
+  }
+
+  if (clean.includes('ahuyama') || clean.includes('auyama') || clean.includes('calabaza')) {
+    return 30;
+  }
+
+  if (clean.includes('champinon') || clean.includes('setas') || clean.includes('hongos')) {
+    return 7;
+  }
+
+  if (clean.includes('remolacha')) {
+    return 21;
+  }
+
+  // Panadería
+  if (
+    clean.includes('pan tajado') ||
+    clean.includes('pan bimbo') ||
+    clean.includes('pan molde') ||
+    clean.includes('pan integral') ||
+    clean.includes('pan blanco')
+  ) {
+    return 8;
+  }
+
+  if (clean.includes('arepa') || clean.includes('arepas')) {
+    return 12;
+  }
+
+  if (clean.includes('tortilla') || clean.includes('rapiditas')) {
+    return 20;
+  }
+
+  if (
+    clean.includes('pan') ||
+    clean.includes('croissant') ||
+    clean.includes('baguette') ||
+    clean.includes('mogolla')
+  ) {
+    return 5;
+  }
+
+  // Granos & Cereales
+  if (clean.includes('arroz')) return 365;
+  if (
+    clean.includes('lenteja') ||
+    clean.includes('frijol') ||
+    clean.includes('garbanzo') ||
+    clean.includes('arveja') ||
+    clean.includes('blanquillo')
+  ) {
+    return 365;
+  }
+
+  if (
+    clean.includes('pasta') ||
+    clean.includes('spaghetti') ||
+    clean.includes('fideo') ||
+    clean.includes('macarron') ||
+    clean.includes('doria')
+  ) {
+    return 365;
+  }
+
+  if (clean.includes('avena') || clean.includes('granola')) return 180;
+  if (
+    clean.includes('harina') ||
+    clean.includes('maizena') ||
+    clean.includes('masa') ||
+    clean.includes('fecula') ||
+    clean.includes('donarepa') ||
+    clean.includes('promasa')
+  ) {
+    return 180;
+  }
+
+  // Despensa & Condimentos
+  if (clean.includes('panela')) return 365;
+  if (clean.includes('sal')) return 1800;
+  if (clean.includes('azucar')) return 730;
+  if (clean.includes('cafe')) return 180;
+  if (clean.includes('cereal') || clean.includes('corn flakes')) return 180;
+  if (clean.includes('galleta') || clean.includes('tostada')) return 120;
+
+  if (clean.includes('aceite')) return 365;
+  if (clean.includes('vinagre')) return 730;
+  if (clean.includes('salsa de tomate') || clean.includes('ketchup') || clean.includes('mayonesa') || clean.includes('mostaza')) {
+    return 180;
+  }
+  if (clean.includes('salsa de soya') || clean.includes('salsa negra') || clean.includes('salsa inglesa')) {
+    return 365;
+  }
+  if (clean.includes('especias') || clean.includes('pimienta') || clean.includes('comino') || clean.includes('oregano')) {
+    return 365;
+  }
+  if (clean.includes('miel') || clean.includes('mermelada')) return 365;
+
+  // Snacks & Bebidas
+  if (clean.includes('lonchera') || clean.includes('snack') || clean.includes('papas fritas') || clean.includes('doritos') || clean.includes('platanitos')) {
+    return 90;
+  }
+  if (clean.includes('chocolate') || clean.includes('chocolatina')) return 180;
+  if (clean.includes('agua')) return 365;
+  if (clean.includes('gaseosa') || clean.includes('jugo') || clean.includes('te')) return 180;
+
+  // 3. Fallback por Categoría
+  const cat = (category || '').toLowerCase();
+  if (cat.includes('proteina') || cat.includes('carne')) return 5;
+  if (cat.includes('lacteo') || cat.includes('huevo')) return 10;
+  if (cat.includes('fruta') || cat.includes('verdura')) return 12;
+  if (cat.includes('panaderia')) return 8;
+  if (cat.includes('grano') || cat.includes('cereal')) return 365;
+  if (cat.includes('aceite') || cat.includes('condimento')) return 365;
+  if (cat.includes('snack') || cat.includes('bebida')) return 90;
+  if (cat.includes('aseo') || cat.includes('limpieza')) return 730;
+  if (cat.includes('mascota')) return 180;
+  if (cat.includes('despensa')) return 180;
+
+  return 14;
+}
 
 // ============================================================================
 // MOTOR DE CÁLCULO E INFERENCIA NUTRI-ECO E ISA
@@ -1469,7 +1893,7 @@ export function getFoodIntelligence(item: PantryItem): FoodIntelligenceData {
   const carbonEquivalenceKmCar = Math.round((co2Kg / 0.18) * 10) / 10; // Auto promedio emite ~0.18 kg CO2/km
 
   // 5. Tasa de Entropía del Sistema Doméstico
-  const shelfLife = item.shelf_life_days || matched?.shelfLifeTypicalDays || 14;
+  const shelfLife = item.shelf_life_days || matched?.shelfLifeTypicalDays || getWebEstimatedShelfLifeDays(item.name, item.category);
   let entropyScore = 20; // 0 (baja entropía) a 100 (alta entropía)
   let entropyLevel: 'Baja' | 'Media' | 'Alta' = 'Baja';
   let perishabilityRisk = 'Estable en alacena';

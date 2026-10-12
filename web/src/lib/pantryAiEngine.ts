@@ -1,5 +1,6 @@
 import { PantryItem, GroceryReceipt, ProductPriceHistory, PantryEntropyMetrics } from '../../../packages/shared/src/types';
 import { inferProductPhysicalPresentation } from './productPresentationInferrer';
+import { getWebEstimatedShelfLifeDays } from './pantryFoodIntelligence';
 
 export interface ExtractedReceiptData {
   store_name: string;
@@ -392,7 +393,7 @@ Debes responder ÚNICAMENTE con un JSON válido sin texto previo o markdown fuer
             unit: inferred.unit,
             unit_price: inferred.unit_price,
             total_price: totPrice > 0 ? totPrice : inferred.total_price,
-            shelf_life_days: inferred.shelf_life_days || it.shelf_life_days || 14,
+            shelf_life_days: inferred.shelf_life_days || getWebEstimatedShelfLifeDays(it.name, it.category),
             calories_per_unit: inferred.calories_per_unit,
             protein_g: inferred.protein_g,
             carbs_g: inferred.carbs_g,

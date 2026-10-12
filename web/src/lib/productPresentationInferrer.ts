@@ -7,7 +7,7 @@
  * el precio total pagado en caja ($ COP) y la tienda.
  */
 
-import { KNOWN_FOODS } from './pantryFoodIntelligence';
+import { KNOWN_FOODS, getWebEstimatedShelfLifeDays } from './pantryFoodIntelligence';
 
 export interface InferredProductPresentation {
   name: string;
@@ -245,7 +245,7 @@ export function inferProductPhysicalPresentation(
       unit: finalUnit,
       unit_price: unitPrice,
       total_price: price,
-      shelf_life_days: matchedFood.shelfLifeTypicalDays || 14,
+      shelf_life_days: matchedFood.shelfLifeTypicalDays || getWebEstimatedShelfLifeDays(rawName, cat),
       serving_size: matchedFood.servingSize,
       calories_per_unit: calsPerUnit,
       total_calories: totalCals,
@@ -293,7 +293,7 @@ export function inferProductPhysicalPresentation(
       unit: 'mililitros',
       unit_price: unitPrice,
       total_price: price,
-      shelf_life_days: 180,
+      shelf_life_days: getWebEstimatedShelfLifeDays(rawName, 'Condimentos & Aceites'),
       serving_size: '1 cucharada (14g / 15ml)',
       calories_per_unit: calsPerServing,
       total_calories: totalCals,
@@ -607,7 +607,7 @@ export function inferProductPhysicalPresentation(
       unit: 'gramos',
       unit_price: unitPrice,
       total_price: price,
-      shelf_life_days: 14,
+      shelf_life_days: getWebEstimatedShelfLifeDays(rawName, 'Panadería'),
       serving_size: '2 rebanadas (50g)',
       calories_per_unit: 130,
       total_calories: servings * 130,
@@ -712,7 +712,7 @@ export function inferProductPhysicalPresentation(
       unit: inferredUnit,
       unit_price: unitPrice,
       total_price: price,
-      shelf_life_days: 365,
+      shelf_life_days: getWebEstimatedShelfLifeDays(rawName, 'Aseo & Limpieza'),
       serving_size: 'Uso de limpieza',
       calories_per_unit: 0,
       total_calories: 0,
@@ -751,7 +751,7 @@ export function inferProductPhysicalPresentation(
     unit: finalUnit,
     unit_price: unitPrice,
     total_price: price,
-    shelf_life_days: 14,
+    shelf_life_days: getWebEstimatedShelfLifeDays(rawName, 'Despensa'),
     serving_size: finalUnit === 'gramos' ? '100g' : '1 porción estándar',
     calories_per_unit: calsPerPortion,
     total_calories: totalCals,
@@ -787,7 +787,7 @@ function buildPresentation(args: {
   let protein_g = 2;
   let carbs_g = 15;
   let fat_g = 2;
-  let shelfLife = 14;
+  let shelfLife = getWebEstimatedShelfLifeDays(name, category);
 
   if (isCookingOil) {
     category = 'Condimentos & Aceites';

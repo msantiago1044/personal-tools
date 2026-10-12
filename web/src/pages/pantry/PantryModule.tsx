@@ -55,7 +55,7 @@ import { PriceEvolutionModal } from '../../components/pantry/PriceEvolutionModal
 import { ProductDetailModal } from '../../components/pantry/ProductDetailModal';
 import { NutritionAnalytics } from '../../components/pantry/NutritionAnalytics';
 import { IsaSection } from '../../components/pantry/IsaSection';
-import { getFoodIntelligence, calculateFoodMacroTotals } from '../../lib/pantryFoodIntelligence';
+import { getFoodIntelligence, calculateFoodMacroTotals, getWebEstimatedShelfLifeDays } from '../../lib/pantryFoodIntelligence';
 import { inferProductPhysicalPresentation } from '../../lib/productPresentationInferrer';
 
 interface PantryModuleProps {
@@ -141,7 +141,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
   const [manualQty, setManualQty] = useState('1');
   const [manualUnit, setManualUnit] = useState('unidad');
   const [manualPrice, setManualPrice] = useState('');
-  const [manualShelfLife, setManualShelfLife] = useState('14');
+  const [manualShelfLife, setManualShelfLife] = useState('5');
   const [manualCalories, setManualCalories] = useState('200');
 
   // Modal de Confirmación de Borrado
@@ -175,24 +175,26 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
           const hasAbnormalCalories = Number(item.total_calories) > 3000 && !item.name.toLowerCase().includes('aceite');
           const hasAbnormalPrice = Number(item.unit_price) >= 500000;
           const hasNonStandardUnit = u === 'gran' || u === 'unid';
-          const needsCalibration = (isGenericUnit && totPrice >= 5000) || hasAbnormalCalories || hasAbnormalPrice || hasNonStandardUnit;
+          const webShelfLife = getWebEstimatedShelfLifeDays(item.name, item.category);
+          const hasOutdatedShelfLife = !item.shelf_life_days || item.shelf_life_days !== webShelfLife;
+          const needsPresentationCalibration = (isGenericUnit && totPrice >= 5000) || hasAbnormalCalories || hasAbnormalPrice || hasNonStandardUnit;
 
-          if (needsCalibration) {
+          if (needsPresentationCalibration || hasOutdatedShelfLife) {
             const inferred = inferProductPhysicalPresentation(item.name, totPrice, undefined, item.unit, item.quantity);
             const updated: PantryItem = {
               ...item,
               category: item.category || inferred.category,
-              quantity: inferred.quantity,
-              initial_quantity: inferred.quantity,
-              unit: inferred.unit,
-              unit_price: inferred.unit_price,
+              quantity: needsPresentationCalibration ? inferred.quantity : item.quantity,
+              initial_quantity: needsPresentationCalibration ? inferred.quantity : (item.initial_quantity || item.quantity),
+              unit: needsPresentationCalibration ? inferred.unit : item.unit,
+              unit_price: needsPresentationCalibration ? inferred.unit_price : item.unit_price,
               total_price: totPrice > 0 ? totPrice : inferred.total_price,
-              shelf_life_days: item.shelf_life_days || inferred.shelf_life_days,
-              calories_per_unit: inferred.calories_per_unit,
-              total_calories: inferred.total_calories,
-              protein_g: inferred.protein_g,
-              carbs_g: inferred.carbs_g,
-              fat_g: inferred.fat_g,
+              shelf_life_days: webShelfLife,
+              calories_per_unit: needsPresentationCalibration ? inferred.calories_per_unit : (item.calories_per_unit || inferred.calories_per_unit),
+              total_calories: needsPresentationCalibration ? inferred.total_calories : (item.total_calories || inferred.total_calories),
+              protein_g: needsPresentationCalibration ? inferred.protein_g : (item.protein_g || inferred.protein_g),
+              carbs_g: needsPresentationCalibration ? inferred.carbs_g : (item.carbs_g || inferred.carbs_g),
+              fat_g: needsPresentationCalibration ? inferred.fat_g : (item.fat_g || inferred.fat_g),
               updated_at: new Date().toISOString(),
             };
             itemsToUpdateInDb.push(updated);
@@ -246,20 +248,25 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
               const hasAbnormalCalories = Number(item.total_calories) > 3000 && !item.name.toLowerCase().includes('aceite');
               const hasAbnormalPrice = Number(item.unit_price) >= 500000;
               const hasNonStandardUnit = u === 'gran' || u === 'unid';
-              if ((isGenericUnit && totPrice >= 5000) || hasAbnormalCalories || hasAbnormalPrice || hasNonStandardUnit) {
+              const webShelfLife = getWebEstimatedShelfLifeDays(item.name, item.category);
+              const hasOutdatedShelfLife = !item.shelf_life_days || item.shelf_life_days !== webShelfLife;
+              const needsPresentationCalibration = (isGenericUnit && totPrice >= 5000) || hasAbnormalCalories || hasAbnormalPrice || hasNonStandardUnit;
+
+              if (needsPresentationCalibration || hasOutdatedShelfLife) {
                 const inferred = inferProductPhysicalPresentation(item.name, totPrice, undefined, item.unit, item.quantity);
                 return {
                   ...item,
                   category: item.category || inferred.category,
-                  quantity: inferred.quantity,
-                  unit: inferred.unit,
-                  unit_price: inferred.unit_price,
+                  quantity: needsPresentationCalibration ? inferred.quantity : item.quantity,
+                  unit: needsPresentationCalibration ? inferred.unit : item.unit,
+                  unit_price: needsPresentationCalibration ? inferred.unit_price : item.unit_price,
                   total_price: totPrice > 0 ? totPrice : inferred.total_price,
-                  calories_per_unit: inferred.calories_per_unit,
-                  total_calories: inferred.total_calories,
-                  protein_g: inferred.protein_g,
-                  carbs_g: inferred.carbs_g,
-                  fat_g: inferred.fat_g,
+                  shelf_life_days: webShelfLife,
+                  calories_per_unit: needsPresentationCalibration ? inferred.calories_per_unit : (item.calories_per_unit || inferred.calories_per_unit),
+                  total_calories: needsPresentationCalibration ? inferred.total_calories : (item.total_calories || inferred.total_calories),
+                  protein_g: needsPresentationCalibration ? inferred.protein_g : (item.protein_g || inferred.protein_g),
+                  carbs_g: needsPresentationCalibration ? inferred.carbs_g : (item.carbs_g || inferred.carbs_g),
+                  fat_g: needsPresentationCalibration ? inferred.fat_g : (item.fat_g || inferred.fat_g),
                 };
               }
               return item;
@@ -733,6 +740,20 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
         }
       }
 
+      if (field === 'name') {
+        const newName = String(value || '');
+        if (newName.trim().length >= 2) {
+          item.shelf_life_days = getWebEstimatedShelfLifeDays(newName, item.category);
+        }
+      }
+
+      if (field === 'category') {
+        const newCat = String(value || '');
+        if (!item.name || item.name.trim().length < 2) {
+          item.shelf_life_days = getWebEstimatedShelfLifeDays(item.name || '', newCat);
+        }
+      }
+
       next[index] = item;
       return next;
     });
@@ -755,7 +776,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
         unit: inferred.unit,
         unit_price: inferred.unit_price,
         total_price: currentTotal > 0 ? currentTotal : inferred.total_price,
-        shelf_life_days: inferred.shelf_life_days || item.shelf_life_days || 14,
+        shelf_life_days: getWebEstimatedShelfLifeDays(item.name, item.category),
         calories_per_unit: inferred.calories_per_unit,
         total_calories: inferred.total_calories,
         protein_g: inferred.protein_g,
@@ -791,10 +812,12 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
           item.quantity
         );
 
+        const webDays = getWebEstimatedShelfLifeDays(item.name, item.category);
         const hasChanged =
           item.unit !== inferred.unit ||
           Math.abs(Number(item.quantity) - inferred.quantity) > 0.01 ||
-          Math.abs(Number(item.calories_per_unit || 0) - inferred.calories_per_unit) > 1;
+          Math.abs(Number(item.calories_per_unit || 0) - inferred.calories_per_unit) > 1 ||
+          item.shelf_life_days !== webDays;
 
         if (hasChanged) updatedCount++;
 
@@ -806,7 +829,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
           unit: inferred.unit,
           unit_price: inferred.unit_price,
           total_price: currentTotal > 0 ? currentTotal : inferred.total_price,
-          shelf_life_days: inferred.shelf_life_days || item.shelf_life_days || 14,
+          shelf_life_days: webDays,
           calories_per_unit: inferred.calories_per_unit,
           total_calories: inferred.total_calories,
           protein_g: inferred.protein_g,
@@ -848,7 +871,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
         console.warn('Error al guardar normalización en Supabase:', upsertErr);
         setNormalizationNotice(`⚠️ Ajustados ${normalizedItems.length} productos localmente (${upsertErr.message})`);
       } else {
-        setNormalizationNotice(`✅ Se normalizaron y guardaron en Base de Datos ${normalizedItems.length} productos con unidades reales (ml, g, kg, un).`);
+        setNormalizationNotice(`✅ Se normalizaron y guardaron en Base de Datos ${normalizedItems.length} productos con vidas útiles estimadas según la web y unidades reales.`);
       }
 
       setTimeout(() => setNormalizationNotice(null), 6000);
@@ -875,7 +898,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
       unit_price: 0,
       total_price: 0,
       purchase_date: editingReceiptData.purchase_date || new Date().toISOString().split('T')[0],
-      shelf_life_days: 14,
+      shelf_life_days: getWebEstimatedShelfLifeDays('', 'Despensa'),
       calories_per_unit: 0,
       total_calories: 0,
       protein_g: 0,
@@ -947,7 +970,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
               unit_price: Number(it.unit_price) || 0,
               total_price: Number(it.total_price) || (Number(it.unit_price) * Number(it.quantity)) || 0,
               purchase_date: updatedReceipt.purchase_date || it.purchase_date,
-              shelf_life_days: Number(it.shelf_life_days) || 14,
+              shelf_life_days: Number(it.shelf_life_days) || getWebEstimatedShelfLifeDays(it.name, it.category),
               calories_per_unit: Number(it.calories_per_unit) || 0,
               total_calories: Number(it.total_calories) || (Number(it.calories_per_unit) * Number(it.quantity)) || 0,
               protein_g: Number(it.protein_g) || 0,
@@ -1031,7 +1054,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
           unit_price: inferred.unit_price,
           total_price: currentTotal > 0 ? currentTotal : inferred.total_price,
           purchase_date: extractedData.purchase_date,
-          shelf_life_days: inferred.shelf_life_days || item.shelf_life_days || 14,
+          shelf_life_days: inferred.shelf_life_days || getWebEstimatedShelfLifeDays(item.name, item.category),
           calories_per_unit: inferred.calories_per_unit,
           total_calories: inferred.total_calories,
           protein_g: inferred.protein_g,
@@ -1107,7 +1130,8 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
 
     const qty = parseFloat(manualQty.replace(',', '.')) || 1;
     const price = parseFloat(manualPrice.replace(',', '.')) || 0;
-    const shelfLife = parseInt(manualShelfLife) || 14;
+    const webShelfLife = getWebEstimatedShelfLifeDays(manualName.trim(), manualCategory);
+    const shelfLife = parseInt(manualShelfLife) || webShelfLife;
     const cal = parseFloat(manualCalories.replace(',', '.')) || 0;
 
     const newItem: PantryItem = {
@@ -1219,7 +1243,16 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
             </button>
 
             <button
-              onClick={() => setShowManualModal(true)}
+              onClick={() => {
+                setManualName('');
+                setManualCategory('Proteínas');
+                setManualQty('1');
+                setManualUnit('unidad');
+                setManualPrice('');
+                setManualShelfLife(getWebEstimatedShelfLifeDays('', 'Proteínas').toString());
+                setManualCalories('200');
+                setShowManualModal(true);
+              }}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold text-slate-800 dark:text-slate-200 transition"
             >
               <Plus className="w-3.5 h-3.5 text-emerald-600" />
@@ -1454,7 +1487,16 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                     <span>Escanear Factura</span>
                   </button>
                   <button
-                    onClick={() => setShowManualModal(true)}
+                    onClick={() => {
+                      setManualName('');
+                      setManualCategory('Proteínas');
+                      setManualQty('1');
+                      setManualUnit('unidad');
+                      setManualPrice('');
+                      setManualShelfLife(getWebEstimatedShelfLifeDays('', 'Proteínas').toString());
+                      setManualCalories('200');
+                      setShowManualModal(true);
+                    }}
                     className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition"
                   >
                     <Plus className="w-4 h-4" />
@@ -1468,7 +1510,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                   const today = new Date();
                   const pDate = new Date(item.purchase_date);
                   const daysInPantry = Math.max(0, Math.floor((today.getTime() - pDate.getTime()) / (1000 * 86400)));
-                  const shelfLife = item.shelf_life_days || 14;
+                  const shelfLife = item.shelf_life_days || getWebEstimatedShelfLifeDays(item.name, item.category);
                   const ratio = Math.min(1.0, daysInPantry / shelfLife);
 
                   let urgencyColor = 'bg-emerald-500';
@@ -1780,7 +1822,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                             unit: inf.unit,
                             unit_price: inf.unit_price,
                             total_price: tot > 0 ? tot : inf.total_price,
-                            shelf_life_days: inf.shelf_life_days || it.shelf_life_days,
+                            shelf_life_days: inf.shelf_life_days || getWebEstimatedShelfLifeDays(it.name, it.category),
                             calories_per_unit: inf.calories_per_unit,
                             protein_g: inf.protein_g,
                             carbs_g: inf.carbs_g,
@@ -1939,7 +1981,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                             ${Number(item.total_price || item.unit_price * item.quantity).toLocaleString()}
                           </td>
                           <td className="py-2.5 px-2 text-center">
-                            <span className="text-[11px] text-slate-500">{item.shelf_life_days}d</span>
+                            <span className="text-[11px] text-slate-500">{item.shelf_life_days || getWebEstimatedShelfLifeDays(item.name, item.category)}d</span>
                           </td>
                           <td className="py-2.5 px-2 text-right text-amber-600 font-bold">
                             {item.calories_per_unit} kcal
@@ -3055,7 +3097,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                                 <input
                                   type="number"
                                   min="1"
-                                  value={item.shelf_life_days || 14}
+                                  value={item.shelf_life_days || getWebEstimatedShelfLifeDays(item.name, item.category)}
                                   onChange={(e) =>
                                     handleUpdateReceiptItem(idx, 'shelf_life_days', parseInt(e.target.value) || 14)
                                   }
@@ -3401,7 +3443,13 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                   required
                   placeholder="ej. Manzanas Verdes, Avena, Leche Deslactosada"
                   value={manualName}
-                  onChange={(e) => setManualName(e.target.value)}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setManualName(val);
+                    if (val.trim().length >= 2) {
+                      setManualShelfLife(getWebEstimatedShelfLifeDays(val, manualCategory).toString());
+                    }
+                  }}
                   className="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white"
                 />
               </div>
@@ -3411,7 +3459,11 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                   <label className="block text-[11px] font-bold text-slate-400 mb-1">Categoría</label>
                   <select
                     value={manualCategory}
-                    onChange={(e) => setManualCategory(e.target.value)}
+                    onChange={(e) => {
+                      const cat = e.target.value;
+                      setManualCategory(cat);
+                      setManualShelfLife(getWebEstimatedShelfLifeDays(manualName, cat).toString());
+                    }}
                     className="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white"
                   >
                     {CATEGORIES.filter((c) => c !== 'Todas').map((c) => (

@@ -25,7 +25,7 @@ import {
   Check,
 } from 'lucide-react';
 import { PantryItem } from '../../../../packages/shared/src/types';
-import { getFoodIntelligence, FoodIntelligenceData } from '../../lib/pantryFoodIntelligence';
+import { getFoodIntelligence, FoodIntelligenceData, getWebEstimatedShelfLifeDays } from '../../lib/pantryFoodIntelligence';
 
 const PANTRY_CATEGORIES = [
   'Proteínas',
@@ -140,7 +140,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
       ? String(Math.round(Number(item.unit_price) * Number(item.quantity) * 100) / 100)
       : ''
   );
-  const [editShelfLife, setEditShelfLife] = useState(String(item.shelf_life_days || 14));
+  const [editShelfLife, setEditShelfLife] = useState(String(item.shelf_life_days || getWebEstimatedShelfLifeDays(item.name, item.category)));
 
   // Datos nutricionales editables (Base: Porción oficial de etiqueta)
   const [editServingSize, setEditServingSize] = useState(initialServingSizeStr);
@@ -503,7 +503,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 Comprado: {currentItem.purchase_date}
               </span>
               <span>•</span>
-              <span>Vida útil: ~{currentItem.shelf_life_days || 14} días</span>
+              <span>Vida útil: ~{currentItem.shelf_life_days || getWebEstimatedShelfLifeDays(currentItem.name, currentItem.category)} días</span>
               {Number(currentItem.unit_price) > 0 && (
                 <>
                   <span>•</span>
