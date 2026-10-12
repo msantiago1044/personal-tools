@@ -506,6 +506,97 @@ export function calculatePantryEntropy(items: PantryItem[]): PantryEntropyMetric
 // ============================================================================
 // 4. RADAR DE PRECIOS: ¿SUBE O BAJA EL PRODUCTO? (INFLACIÓN Y TENDENCIAS)
 // ============================================================================
+/**
+ * Normaliza el precio a una unidad de referencia estándar (ej. $/kg, $/L o $/unidad)
+ * para evitar comparar precios en gramos ($3.94/g) directamente con precios en kilos ($3,940/kg)
+ * lo cual generaba caídas ficticias de -99.9%.
+ */
+export function normalizeItemComparablePrice(item: PantryItem): {
+  normalizedPrice: number;
+  displayUnit: string;
+} {
+  const unit = (item.unit || '').toLowerCase().trim();
+  let rawPrice = Number(item.unit_price) || 0;
+
+  // Sanitizar precios absurdos por multiplicación o OCR erróneo (ej. $2,000,000 para harina/masa)
+  if (rawPrice >= 500000) {
+    rawPrice = rawPrice / 1000;
+  }
+
+  // Si unit es peso
+  const isGrams =
+    unit === 'g' ||
+    unit === 'gr' ||
+    unit === 'gran' ||
+    unit === 'gramo' ||
+    unit === 'gramos';
+  const isKg =
+    unit === 'kg' ||
+    unit === 'kilo' ||
+    unit === 'kilos' ||
+    unit === 'kilogramo' ||
+    unit === 'kilogramos';
+  const isLb = unit === 'lb' || unit === 'libra' || unit === 'libras';
+
+  if (isGrams) {
+    // Si el precio unitario es < 500, está expresado en $/gramo (ej: $3.94/g o $4.6/g).
+    // Para comparar en base $/kg se multiplica por 1000.
+    // Si ya era >= 500 (ej: $3940/kg guardado por error con unidad gramos), se mantiene.
+    const pricePerKg = rawPrice < 500 ? rawPrice * 1000 : rawPrice;
+    return {
+      normalizedPrice: Math.round(pricePerKg),
+      displayUnit: 'kg',
+    };
+  }
+
+  if (isKg) {
+    return {
+      normalizedPrice: Math.round(rawPrice),
+      displayUnit: 'kg',
+    };
+  }
+
+  if (isLb) {
+    return {
+      normalizedPrice: Math.round(rawPrice * 2),
+      displayUnit: 'kg',
+    };
+  }
+
+  // Si unit es volumen
+  const isMl =
+    unit === 'ml' ||
+    unit === 'cm3' ||
+    unit === 'mililitro' ||
+    unit === 'mililitros';
+  const isLiter =
+    unit === 'l' ||
+    unit === 'litro' ||
+    unit === 'litros' ||
+    unit === 'lt';
+
+  if (isMl) {
+    const pricePerL = rawPrice < 50 ? rawPrice * 1000 : rawPrice;
+    return {
+      normalizedPrice: Math.round(pricePerL),
+      displayUnit: 'L',
+    };
+  }
+
+  if (isLiter) {
+    return {
+      normalizedPrice: Math.round(rawPrice),
+      displayUnit: 'L',
+    };
+  }
+
+  // Si es unidad, paquete, lata, etc.
+  return {
+    normalizedPrice: Math.round(rawPrice),
+    displayUnit: 'un',
+  };
+}
+
 export function calculatePriceTrends(items: PantryItem[]): ProductPriceHistory[] {
   const grouped: Record<string, PantryItem[]> = {};
 
@@ -526,14 +617,18 @@ export function calculatePriceTrends(items: PantryItem[]): ProductPriceHistory[]
       (a, b) => new Date(a.purchase_date).getTime() - new Date(b.purchase_date).getTime()
     );
 
-    const history = groupItems.map((g) => ({
-      date: g.purchase_date,
-      price: Number(g.unit_price) || 0,
-      store: g.category || 'Mercado',
-    }));
+    const history = groupItems.map((g) => {
+      const norm = normalizeItemComparablePrice(g);
+      return {
+        date: g.purchase_date,
+        price: norm.normalizedPrice,
+        store: g.category || 'Mercado',
+      };
+    });
 
     const latest = groupItems[groupItems.length - 1];
-    const currentPrice = Number(latest.unit_price) || 0;
+    const latestNorm = normalizeItemComparablePrice(latest);
+    const currentPrice = latestNorm.normalizedPrice;
 
     let previousPrice: number | undefined;
     let priceChangePct: number | undefined;
@@ -541,7 +636,8 @@ export function calculatePriceTrends(items: PantryItem[]): ProductPriceHistory[]
 
     if (groupItems.length > 1) {
       const prev = groupItems[groupItems.length - 2];
-      previousPrice = Number(prev.unit_price) || 0;
+      const prevNorm = normalizeItemComparablePrice(prev);
+      previousPrice = prevNorm.normalizedPrice;
       if (previousPrice > 0) {
         priceChangePct = Number((((currentPrice - previousPrice) / previousPrice) * 100).toFixed(1));
         if (priceChangePct > 1) trend = 'up';
@@ -558,6 +654,7 @@ export function calculatePriceTrends(items: PantryItem[]): ProductPriceHistory[]
       previous_price: previousPrice,
       price_change_pct: priceChangePct,
       trend,
+      unit_label: latestNorm.displayUnit,
     });
   });
 

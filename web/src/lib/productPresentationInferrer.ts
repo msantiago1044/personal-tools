@@ -7,6 +7,8 @@
  * el precio total pagado en caja ($ COP) y la tienda.
  */
 
+import { KNOWN_FOODS } from './pantryFoodIntelligence';
+
 export interface InferredProductPresentation {
   name: string;
   category: string;
@@ -125,7 +127,136 @@ export function inferProductPhysicalPresentation(
     });
   }
 
-  // 2. INFERENCIA INTELIGENTE POR CATEGORÍA DE PRODUCTO, PRECIO ($ COP) Y TIENDA COLOMBIANA
+  // Normalizar unidad existente si es imprecisa o abreviada ("gran", "gr", "g", "unid", "und")
+  const uClean = (existingUnit || '').toLowerCase().trim();
+  let normalizedUnit: 'mililitros' | 'gramos' | 'litros' | 'kg' | 'unidades' | 'latas' | 'paquete' =
+    uClean === 'ml' || uClean === 'cc' || uClean.includes('mili')
+      ? 'mililitros'
+      : uClean === 'l' || uClean === 'lt' || uClean.includes('litro')
+      ? 'litros'
+      : uClean.startsWith('kg') || uClean.includes('kilo')
+      ? 'kg'
+      : uClean === 'g' || uClean === 'gr' || uClean.startsWith('gra') || uClean.includes('gram') || uClean.includes('gran')
+      ? 'gramos'
+      : uClean.includes('lata')
+      ? 'latas'
+      : uClean.includes('paquete')
+      ? 'paquete'
+      : 'unidades';
+
+  let calibratedQty = existingQty && existingQty > 0 ? existingQty : 1;
+
+  // Calibración de cantidades truncadas por scanners OCR en productos pesables de fruver/granos
+  // Ej: Cebolla Roja subtotal $736 con cant 16 -> 736/16 = 46 (10x el precio real de 4.6 COP/g) -> 160g
+  // Ej: Melón subtotal $7772 con cant 13 -> 7772/13 = 597 (100x el precio real de 5.8 COP/g) -> 1340g
+  if (normalizedUnit === 'gramos' && price > 0 && existingQty && existingQty > 0) {
+    const ratio = price / existingQty;
+    if (ratio >= 25 && ratio <= 150) {
+      calibratedQty = Math.round(existingQty * 10);
+    } else if (ratio > 150 && ratio <= 1200) {
+      calibratedQty = Math.round(existingQty * 100);
+    }
+  }
+
+  // 2. INFERENCIA INTELIGENTE POR BASE DE CONOCIMIENTO NUTRICIONAL WEB (KNOWN_FOODS)
+  const matchedFood = KNOWN_FOODS.find((kf) =>
+    kf.keywords.some((kw) => cleanName.includes(kw))
+  );
+
+  // Si coincide con base de datos nutricional web y no es uno de los productos con lógica específica de empaque por precio
+  const hasDedicatedPackLogic =
+    cleanName.includes('aceite') ||
+    (cleanName.includes('arroz') && price >= 8000) ||
+    cleanName.includes('huevo') ||
+    cleanName.includes('perro') ||
+    cleanName.includes('gato') ||
+    cleanName.includes('jabon') ||
+    cleanName.includes('detergente') ||
+    cleanName.includes('clorox') ||
+    cleanName.includes('limpido');
+
+  if (matchedFood && !hasDedicatedPackLogic) {
+    const cat = matchedFood.category;
+    let finalUnit = normalizedUnit;
+    let finalQty = calibratedQty;
+
+    // Si la unidad era genérica pero es un alimento pesable (hortalizas, frutas, tubérculos, granos a granel), fijar a gramos
+    const isPesable =
+      cat.includes('Frutas') ||
+      cat.includes('Granos') ||
+      cleanName.includes('cebolla') ||
+      cleanName.includes('papa') ||
+      cleanName.includes('tomate') ||
+      cleanName.includes('limon') ||
+      cleanName.includes('limón') ||
+      cleanName.includes('apio') ||
+      cleanName.includes('zanahoria') ||
+      cleanName.includes('yuca') ||
+      cleanName.includes('melon') ||
+      cleanName.includes('pimenton');
+
+    if (isPesable && (finalUnit === 'unidades' || !existingUnit) && price >= 1000 && !cleanName.includes('malla') && !cleanName.includes('bandeja')) {
+      finalUnit = 'gramos';
+      if (finalQty <= 5) {
+        const typicalCOPPerGram = cleanName.includes('papa') ? 3.5 : cleanName.includes('cebolla') ? 4.6 : 6.0;
+        finalQty = Math.round(price / typicalCOPPerGram);
+      }
+    }
+
+    // Porción estándar en gramos/ml según el alimento
+    let servingGrams = 100;
+    if (matchedFood.servingSize.includes('14g') || matchedFood.servingSize.includes('15ml')) servingGrams = 14;
+    else if (matchedFood.servingSize.includes('25g')) servingGrams = 25;
+    else if (matchedFood.servingSize.includes('40g')) servingGrams = 40;
+    else if (matchedFood.servingSize.includes('50g')) servingGrams = 50;
+    else if (matchedFood.servingSize.includes('60g')) servingGrams = 60;
+    else if (matchedFood.servingSize.includes('80g')) servingGrams = 80;
+    else if (matchedFood.servingSize.includes('120g')) servingGrams = 120;
+    else if (matchedFood.servingSize.includes('150g')) servingGrams = 150;
+    else if (matchedFood.servingSize.includes('180g')) servingGrams = 180;
+    else if (matchedFood.servingSize.includes('200ml') || matchedFood.servingSize.includes('250ml')) servingGrams = 200;
+    else if (cat.includes('Fruta') || cat.includes('Verdura')) servingGrams = 50;
+
+    const calsPerUnit = Math.round((matchedFood.cals100g / 100) * servingGrams);
+    const protein_g = Math.round(((matchedFood.prot100g / 100) * servingGrams) * 10) / 10;
+    const carbs_g = Math.round(((matchedFood.carbs100g / 100) * servingGrams) * 10) / 10;
+    const fat_g = Math.round(((matchedFood.fat100g / 100) * servingGrams) * 10) / 10;
+
+    const density = cleanName.includes('aceite') ? 0.92 : cleanName.includes('leche') ? 1.03 : 1.0;
+    let totalCals = 0;
+    if (finalUnit === 'gramos') {
+      totalCals = Math.round((matchedFood.cals100g / 100) * finalQty);
+    } else if (finalUnit === 'mililitros') {
+      totalCals = Math.round((matchedFood.cals100g / 100) * finalQty * density);
+    } else if (finalUnit === 'kg') {
+      totalCals = Math.round(matchedFood.cals100g * 10 * finalQty);
+    } else if (finalUnit === 'litros') {
+      totalCals = Math.round(matchedFood.cals100g * 10 * finalQty * density);
+    } else {
+      totalCals = Math.round(calsPerUnit * finalQty);
+    }
+
+    const unitPrice = finalQty > 0 && price > 0 ? Math.round((price / finalQty) * 100) / 100 : 0;
+
+    return {
+      name: rawName,
+      category: cat,
+      quantity: finalQty,
+      unit: finalUnit,
+      unit_price: unitPrice,
+      total_price: price,
+      shelf_life_days: matchedFood.shelfLifeTypicalDays || 14,
+      serving_size: matchedFood.servingSize,
+      calories_per_unit: calsPerUnit,
+      total_calories: totalCals,
+      protein_g,
+      carbs_g,
+      fat_g,
+      is_human_food: matchedFood.isNatural || !cat.includes('Aseo'),
+      confidence: 'price_and_store_inferred',
+      explanation: `Deducido de base de nutrición web: ${matchedFood.cals100g} kcal/100g, porción ${matchedFood.servingSize}.`,
+    };
+  }
 
   // --- ACEITES Y GRASAS CULINARIAS ---
   if (cleanName.includes('aceite')) {
@@ -594,10 +725,24 @@ export function inferProductPhysicalPresentation(
     };
   }
 
-  // 3. HEURÍSTICA POR DEFECTO PARA CUALQUIER OTRO PRODUCTO
-  const finalQty = existingQty && existingQty > 0 ? existingQty : 1;
-  const finalUnit: any = existingUnit || 'un';
+  // 3. HEURÍSTICA POR DEFECTO PARA CUALQUIER OTRO PRODUCTO NO CATALOGADO
+  const finalQty = calibratedQty;
+  const finalUnit = normalizedUnit;
   const unitPrice = price > 0 ? Math.round((price / finalQty) * 100) / 100 : 0;
+
+  // Estimar calorías según unidad y tipo
+  let calsPerPortion = 80;
+  let totalCals = 80;
+  if (finalUnit === 'gramos') {
+    calsPerPortion = 50; // promedio 50 kcal por 100g para vegetales/despensa general
+    totalCals = Math.round((50 / 100) * finalQty);
+  } else if (finalUnit === 'mililitros') {
+    calsPerPortion = 50;
+    totalCals = Math.round((50 / 100) * finalQty);
+  } else {
+    calsPerPortion = 80;
+    totalCals = Math.round(finalQty * 80);
+  }
 
   return {
     name: rawName,
@@ -607,15 +752,15 @@ export function inferProductPhysicalPresentation(
     unit_price: unitPrice,
     total_price: price,
     shelf_life_days: 14,
-    serving_size: '1 porción estándar',
-    calories_per_unit: 100,
-    total_calories: finalQty * 100,
+    serving_size: finalUnit === 'gramos' ? '100g' : '1 porción estándar',
+    calories_per_unit: calsPerPortion,
+    total_calories: totalCals,
     protein_g: 2,
     carbs_g: 15,
-    fat_g: 2,
+    fat_g: 1.5,
     is_human_food: true,
     confidence: 'heuristic_default',
-    explanation: 'Presentación estándar estimada por precio base.',
+    explanation: 'Presentación estándar estimada por categoría base.',
   };
 }
 

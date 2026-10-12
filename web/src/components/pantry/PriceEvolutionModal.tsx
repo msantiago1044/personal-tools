@@ -19,6 +19,7 @@ import {
   GroceryReceipt,
   ProductPriceHistory,
 } from '../../../../packages/shared/src/types';
+import { normalizeItemComparablePrice } from '../../lib/pantryAiEngine';
 
 interface PriceEvolutionModalProps {
   productTrend: ProductPriceHistory;
@@ -65,16 +66,16 @@ export const PriceEvolutionModal: React.FC<PriceEvolutionModalProps> = ({
       return sorted.map((item) => {
         const rc = receipts.find((r) => r.id === item.receipt_id);
         const storeName = rc?.store_name || item.category || 'Mercado';
-        const unitPrice = Number(item.unit_price) || 0;
+        const norm = normalizeItemComparablePrice(item);
         const qty = Number(item.quantity) || 1;
-        const total = Number(item.total_price) || unitPrice * qty;
+        const total = Number(item.total_price) || (Number(item.unit_price) * qty);
 
         return {
           id: item.id,
           date: item.purchase_date,
-          price: unitPrice,
+          price: norm.normalizedPrice,
           quantity: qty,
-          unit: item.unit || 'un',
+          unit: norm.displayUnit,
           totalPrice: total,
           store: storeName,
           status: item.status || 'disponible',

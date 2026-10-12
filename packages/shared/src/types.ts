@@ -213,6 +213,7 @@ export interface ProductPriceHistory {
   previous_price?: number;
   price_change_pct?: number;
   trend: 'up' | 'down' | 'stable';
+  unit_label?: string;
 }
 
 export interface PantryEntropyMetrics {

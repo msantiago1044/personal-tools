@@ -171,14 +171,19 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
         const normalizedItems = dbItems.map((item) => {
           const totPrice = Number(item.total_price) || (Number(item.unit_price) * Number(item.quantity)) || 0;
           const u = (item.unit || '').toLowerCase().trim();
-          const isGenericUnit = !u || u === 'unidad' || u === 'unidades' || u === 'un' || u === 'und';
-          const needsCalibration = isGenericUnit && totPrice >= 5000;
+          const isGenericUnit = !u || u === 'unidad' || u === 'unidades' || u === 'un' || u === 'und' || u === 'unid';
+          const hasAbnormalCalories = Number(item.total_calories) > 3000 && !item.name.toLowerCase().includes('aceite');
+          const hasAbnormalPrice = Number(item.unit_price) >= 500000;
+          const hasNonStandardUnit = u === 'gran' || u === 'unid';
+          const needsCalibration = (isGenericUnit && totPrice >= 5000) || hasAbnormalCalories || hasAbnormalPrice || hasNonStandardUnit;
 
           if (needsCalibration) {
             const inferred = inferProductPhysicalPresentation(item.name, totPrice, undefined, item.unit, item.quantity);
             const updated: PantryItem = {
               ...item,
+              category: item.category || inferred.category,
               quantity: inferred.quantity,
+              initial_quantity: inferred.quantity,
               unit: inferred.unit,
               unit_price: inferred.unit_price,
               total_price: totPrice > 0 ? totPrice : inferred.total_price,
@@ -188,6 +193,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
               protein_g: inferred.protein_g,
               carbs_g: inferred.carbs_g,
               fat_g: inferred.fat_g,
+              updated_at: new Date().toISOString(),
             };
             itemsToUpdateInDb.push(updated);
             return updated;
@@ -230,7 +236,40 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
       } else {
         // Fallback a localStorage
         const local = localStorage.getItem(`pantry_items_${user.id}`);
-        if (local) setPantryItems(JSON.parse(local));
+        if (local) {
+          try {
+            const parsed = JSON.parse(local);
+            const normalizedLocal = parsed.map((item: PantryItem) => {
+              const totPrice = Number(item.total_price) || (Number(item.unit_price) * Number(item.quantity)) || 0;
+              const u = (item.unit || '').toLowerCase().trim();
+              const isGenericUnit = !u || u === 'unidad' || u === 'unidades' || u === 'un' || u === 'und' || u === 'unid';
+              const hasAbnormalCalories = Number(item.total_calories) > 3000 && !item.name.toLowerCase().includes('aceite');
+              const hasAbnormalPrice = Number(item.unit_price) >= 500000;
+              const hasNonStandardUnit = u === 'gran' || u === 'unid';
+              if ((isGenericUnit && totPrice >= 5000) || hasAbnormalCalories || hasAbnormalPrice || hasNonStandardUnit) {
+                const inferred = inferProductPhysicalPresentation(item.name, totPrice, undefined, item.unit, item.quantity);
+                return {
+                  ...item,
+                  category: item.category || inferred.category,
+                  quantity: inferred.quantity,
+                  unit: inferred.unit,
+                  unit_price: inferred.unit_price,
+                  total_price: totPrice > 0 ? totPrice : inferred.total_price,
+                  calories_per_unit: inferred.calories_per_unit,
+                  total_calories: inferred.total_calories,
+                  protein_g: inferred.protein_g,
+                  carbs_g: inferred.carbs_g,
+                  fat_g: inferred.fat_g,
+                };
+              }
+              return item;
+            });
+            setPantryItems(normalizedLocal);
+            localStorage.setItem(`pantry_items_${user.id}`, JSON.stringify(normalizedLocal));
+          } catch (err) {
+            console.error('Error parsing local pantry items', err);
+          }
+        }
       }
 
       if (!rcErr && dbReceipts) {
@@ -650,12 +689,23 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
       const next = [...prev];
       const item = { ...next[index], [field]: value };
 
+      const uStr = (item.unit || '').toLowerCase().trim();
+      const isGrams = uStr === 'gramos' || uStr === 'gran' || uStr === 'g' || uStr === 'gr';
+      const isMl = uStr === 'mililitros' || uStr === 'ml';
+      const isKg = uStr === 'kg' || uStr === 'kilo';
+
       if (field === 'quantity' || field === 'unit_price') {
         const q = field === 'quantity' ? (typeof value === 'string' ? parseFloat(value.replace(',', '.')) || 0 : Number(value) || 0) : Number(item.quantity) || 0;
         const u = field === 'unit_price' ? (typeof value === 'string' ? parseFloat(value.replace(',', '.')) || 0 : Number(value) || 0) : Number(item.unit_price) || 0;
         item.total_price = Math.round(q * u * 100) / 100;
-        const servings = item.unit === 'mililitros' ? Math.round(q / 15) : item.unit === 'gramos' ? Math.round(q / 50) : q;
-        item.total_calories = Math.round((Number(item.calories_per_unit) || 0) * (servings || 1));
+        const c = Number(item.calories_per_unit) || 0;
+        if (isGrams || isMl) {
+          item.total_calories = Math.round((c / 100) * q);
+        } else if (isKg) {
+          item.total_calories = Math.round(c * 10 * q);
+        } else {
+          item.total_calories = Math.round(c * q);
+        }
       } else if (field === 'total_price') {
         const t = typeof value === 'string' ? parseFloat(value.replace(',', '.')) || 0 : Number(value) || 0;
         const q = Number(item.quantity) || 1;
@@ -665,8 +715,22 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
       if (field === 'calories_per_unit') {
         const c = typeof value === 'string' ? parseFloat(value.replace(',', '.')) || 0 : Number(value) || 0;
         const q = Number(item.quantity) || 1;
-        const servings = item.unit === 'mililitros' ? Math.round(q / 15) : item.unit === 'gramos' ? Math.round(q / 50) : q;
-        item.total_calories = Math.round(c * (servings || 1));
+        if (isGrams || isMl) {
+          item.total_calories = Math.round((c / 100) * q);
+        } else if (isKg) {
+          item.total_calories = Math.round(c * 10 * q);
+        } else {
+          item.total_calories = Math.round(c * q);
+        }
+      }
+
+      if (field === 'unit') {
+        const rawUnit = (value || '').toString().toLowerCase().trim();
+        if (rawUnit === 'gran' || rawUnit === 'g' || rawUnit === 'gr') {
+          item.unit = 'gramos';
+        } else if (rawUnit === 'unid' || rawUnit === 'un' || rawUnit === 'und') {
+          item.unit = 'unidades';
+        }
       }
 
       next[index] = item;
@@ -701,6 +765,10 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
     });
 
     setReceiptEditItems(normalized);
+    setReceiptSavedNotice(true);
+    setTimeout(() => {
+      setReceiptSavedNotice(false);
+    }, 4000);
   };
 
   // Normalizar todos los productos de la despensa deduciendo presentación real (ml, g, kg, un)
@@ -1296,7 +1364,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                 />
               </div>
 
-              <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
+              <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0 flex-wrap">
                 <button
                   onClick={() => setStatusFilter('disponible')}
                   className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
@@ -1327,8 +1395,25 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                 >
                   Todos ({pantryItems.length})
                 </button>
+                <button
+                  onClick={handleNormalizeAllProducts}
+                  disabled={isNormalizingAll || pantryItems.length === 0}
+                  title="Recalcula con la base de datos nutricional web y calibra las calorías, porciones, unidades y precios de toda tu despensa"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border border-indigo-500/30 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition shadow-xs whitespace-nowrap"
+                >
+                  <Sparkles className={`w-3.5 h-3.5 ${isNormalizingAll ? 'animate-spin' : ''}`} />
+                  <span>{isNormalizingAll ? 'Calibrando...' : 'Normalizar Nutrición (IA)'}</span>
+                </button>
               </div>
             </div>
+
+            {/* Notificación de normalización si fue ejecutada */}
+            {normalizationNotice && (
+              <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/30 rounded-2xl text-xs text-emerald-800 dark:text-emerald-300 font-bold flex items-center gap-2 animate-in fade-in">
+                <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>{normalizationNotice}</span>
+              </div>
+            )}
 
             {/* Categorías Pills */}
             <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
@@ -1430,7 +1515,12 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                             {item.quantity} {item.unit}
                           </span>
                           <span>•</span>
-                          <span>${Number(item.unit_price || 0).toLocaleString()} c/u</span>
+                          <span>
+                            ${Number(item.unit_price || 0).toLocaleString()}
+                            {(item.unit === 'gramos' || item.unit === 'gran' || item.unit === 'g') && Number(item.unit_price || 0) < 50
+                              ? ' / g'
+                              : ' c/u'}
+                          </span>
                         </div>
 
                         {/* Barra de frescura y degradación */}
@@ -1456,6 +1546,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                           <span className="flex items-center gap-1 font-bold text-amber-600 dark:text-amber-400">
                             <Flame className="w-3 h-3" />
                             {Math.round(
+                              calculateFoodMacroTotals(item).totalCalories ||
                               Number(item.total_calories) ||
                               getFoodIntelligence(item).nutrition.totalPackageCalories ||
                               (item.calories_per_unit * item.quantity)
@@ -2323,6 +2414,9 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                             <span className="text-[10px] text-slate-400 font-semibold">Precio Actual</span>
                             <p className="text-lg font-black text-slate-900 dark:text-white">
                               ${trend.current_price.toLocaleString()}
+                              {trend.unit_label && (
+                                <span className="text-xs font-semibold text-slate-500"> / {trend.unit_label}</span>
+                              )}
                             </p>
                           </div>
                           {trend.previous_price && (
@@ -2330,6 +2424,9 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                               <span className="text-[10px] text-slate-400 font-semibold">Compra Anterior</span>
                               <p className="text-xs font-semibold text-slate-500 line-through">
                                 ${trend.previous_price.toLocaleString()}
+                                {trend.unit_label && (
+                                  <span className="text-[10px] font-normal"> / {trend.unit_label}</span>
+                                )}
                               </p>
                             </div>
                           )}
@@ -2350,6 +2447,9 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                             <span>{h.date}</span>
                             <span className="font-bold text-slate-700 dark:text-slate-300">
                               ${h.price.toLocaleString()}
+                              {trend.unit_label && (
+                                <span className="text-[10px] font-normal text-slate-400"> /{trend.unit_label}</span>
+                              )}
                             </span>
                           </div>
                         ))}
@@ -2624,7 +2724,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                           <th
                             onClick={() => handleSortReceiptColumn('quantity')}
                             title="Ordenar por Cantidad (Menor a mayor / Mayor a menor)"
-                            className={`py-3 px-2 w-20 text-center cursor-pointer select-none transition group hover:bg-slate-100 dark:hover:bg-slate-800 ${
+                            className={`py-3 px-2 w-24 min-w-[95px] text-center cursor-pointer select-none transition group hover:bg-slate-100 dark:hover:bg-slate-800 ${
                               receiptSortCol === 'quantity'
                                 ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50/60 dark:bg-emerald-950/20'
                                 : ''
@@ -2905,7 +3005,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                                   ))}
                                 </select>
                               </td>
-                              <td className="py-2 px-2">
+                              <td className="py-2 px-2 w-24 min-w-[95px]">
                                 <input
                                   type="number"
                                   min="0"
@@ -2914,10 +3014,10 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                                   onChange={(e) =>
                                     handleUpdateReceiptItem(idx, 'quantity', e.target.value)
                                   }
-                                  className="w-full px-2 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-bold text-center focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                                  className="w-full px-2 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-bold text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none focus:ring-1 focus:ring-emerald-500 focus:outline-none"
                                 />
                               </td>
-                              <td className="py-2 px-2">
+                              <td className="py-2 px-2 w-28">
                                 <input
                                   list="pantry-units-list"
                                   type="text"
@@ -2927,7 +3027,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                                   className="w-full px-2 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-medium text-center focus:ring-1 focus:ring-emerald-500 focus:outline-none"
                                 />
                               </td>
-                              <td className="py-2 px-2">
+                              <td className="py-2 px-2 w-24 min-w-[95px]">
                                 <input
                                   type="number"
                                   min="0"
@@ -2936,10 +3036,10 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                                   onChange={(e) =>
                                     handleUpdateReceiptItem(idx, 'unit_price', e.target.value)
                                   }
-                                  className="w-full px-2 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-medium text-right focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                                  className="w-full px-2 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-medium text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none focus:ring-1 focus:ring-emerald-500 focus:outline-none"
                                 />
                               </td>
-                              <td className="py-2 px-2">
+                              <td className="py-2 px-2 w-24 min-w-[95px]">
                                 <input
                                   type="number"
                                   min="0"
@@ -2948,7 +3048,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                                   onChange={(e) =>
                                     handleUpdateReceiptItem(idx, 'total_price', e.target.value)
                                   }
-                                  className="w-full px-2 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-bold text-right text-emerald-600 dark:text-emerald-400 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                                  className="w-full px-2 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-bold text-right text-emerald-600 dark:text-emerald-400 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none focus:ring-1 focus:ring-emerald-500 focus:outline-none"
                                 />
                               </td>
                               <td className="py-2 px-2">
@@ -2959,7 +3059,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                                   onChange={(e) =>
                                     handleUpdateReceiptItem(idx, 'shelf_life_days', parseInt(e.target.value) || 14)
                                   }
-                                  className="w-full px-1.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-medium text-center focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                                  className="w-full px-1.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-medium text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none focus:ring-1 focus:ring-emerald-500 focus:outline-none"
                                 />
                               </td>
                               <td className="py-2 px-2">
@@ -2971,7 +3071,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                                   onChange={(e) =>
                                     handleUpdateReceiptItem(idx, 'calories_per_unit', e.target.value)
                                   }
-                                  className="w-full px-1.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-amber-600 dark:text-amber-400 font-bold text-center focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                                  className="w-full px-1.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-amber-600 dark:text-amber-400 font-bold text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none focus:ring-1 focus:ring-emerald-500 focus:outline-none"
                                 />
                               </td>
                               <td className="py-2 px-2">
@@ -2983,7 +3083,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                                   onChange={(e) =>
                                     handleUpdateReceiptItem(idx, 'fat_g', parseFloat(e.target.value) || 0)
                                   }
-                                  className="w-full px-1 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 text-center focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                                  className="w-full px-1 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none focus:ring-1 focus:ring-emerald-500 focus:outline-none"
                                 />
                               </td>
                               <td className="py-2 px-2">
@@ -2995,7 +3095,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                                   onChange={(e) =>
                                     handleUpdateReceiptItem(idx, 'protein_g', parseFloat(e.target.value) || 0)
                                   }
-                                  className="w-full px-1 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 text-center focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                                  className="w-full px-1 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none focus:ring-1 focus:ring-emerald-500 focus:outline-none"
                                 />
                               </td>
                               <td className="py-2 px-2">
@@ -3007,7 +3107,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                                   onChange={(e) =>
                                     handleUpdateReceiptItem(idx, 'carbs_g', parseFloat(e.target.value) || 0)
                                   }
-                                  className="w-full px-1 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 text-center focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                                  className="w-full px-1 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none focus:ring-1 focus:ring-emerald-500 focus:outline-none"
                                 />
                               </td>
                               <td className="py-2 px-2">
