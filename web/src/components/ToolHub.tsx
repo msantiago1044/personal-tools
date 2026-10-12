@@ -137,6 +137,8 @@ export const ToolHub: React.FC<ToolHubProps> = ({
                         ? '✨'
                         : tool.id === 'notes'
                         ? '📝'
+                        : tool.id === 'pgn'
+                        ? '⚖️'
                         : '💎'}
                     </div>
 

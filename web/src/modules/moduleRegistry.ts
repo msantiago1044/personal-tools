@@ -45,6 +45,10 @@ const NotesModule = React.lazy(() =>
   import('../pages/notes/NotesModule').then((m) => ({ default: m.NotesModule }))
 );
 
+const PgnPrepModule = React.lazy(() =>
+  import('../pages/pgn/PgnPrepModule').then((m) => ({ default: m.PgnPrepModule }))
+);
+
 /**
  * Registro Central Desacoplado de Módulos (Architecture RFC - OCP)
  * Para añadir un nuevo módulo, solo regístralo en esta lista.
@@ -113,6 +117,17 @@ export const MODULE_REGISTRY: ModuleManifest[] = [
     status: 'active',
     badge: 'Nuevo',
     component: NotesModule,
+  },
+  {
+    id: 'pgn',
+    name: 'Concurso PGN 3PU-15',
+    description: 'Preparación intensiva al mérito: 40 clases, microlearning y simulacros.',
+    icon: 'scale',
+    route: '/pgn',
+    hashAliases: ['pgn', 'concurso', '3pu15', 'merito'],
+    status: 'active',
+    badge: 'Mérito 2026',
+    component: PgnPrepModule,
   },
 ];
 
