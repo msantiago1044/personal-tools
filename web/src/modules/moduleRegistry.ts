@@ -49,6 +49,10 @@ const PgnPrepModule = React.lazy(() =>
   import('../pages/pgn/PgnPrepModule').then((m) => ({ default: m.PgnPrepModule }))
 );
 
+const HebrewSrsModule = React.lazy(() =>
+  import('../pages/hebrew_srs/HebrewSrsModule').then((m) => ({ default: m.HebrewSrsModule }))
+);
+
 /**
  * Registro Central Desacoplado de Módulos (Architecture RFC - OCP)
  * Para añadir un nuevo módulo, solo regístralo en esta lista.
@@ -128,6 +132,17 @@ export const MODULE_REGISTRY: ModuleManifest[] = [
     status: 'active',
     badge: 'Mérito 2026',
     component: PgnPrepModule,
+  },
+  {
+    id: 'hebrew_srs',
+    name: 'Hebreo Bíblico SRS',
+    description: 'Decodificación de Niqqud, evaluación psicométrica y repetición espaciada.',
+    icon: 'book-open',
+    route: '/hebrew-srs',
+    hashAliases: ['hebrew', 'hebreo', 'srs', 'niqqud'],
+    status: 'active',
+    badge: 'Niqqud Lab',
+    component: HebrewSrsModule,
   },
 ];
 
