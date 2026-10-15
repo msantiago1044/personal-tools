@@ -53,6 +53,10 @@ const HebrewSrsModule = React.lazy(() =>
   import('../pages/hebrew_srs/HebrewSrsModule').then((m) => ({ default: m.HebrewSrsModule }))
 );
 
+const SleepModule = React.lazy(() =>
+  import('../pages/sleep/SleepModule').then((m) => ({ default: m.SleepModule }))
+);
+
 /**
  * Registro Central Desacoplado de Módulos (Architecture RFC - OCP)
  * Para añadir un nuevo módulo, solo regístralo en esta lista.
@@ -143,6 +147,17 @@ export const MODULE_REGISTRY: ModuleManifest[] = [
     status: 'active',
     badge: 'Niqqud Lab',
     component: HebrewSrsModule,
+  },
+  {
+    id: 'sleep',
+    name: 'Sueño & Descanso',
+    description: 'Registro de horarios de sueño, duración, calidad (1 al 5) y correlación anímica.',
+    icon: 'moon',
+    route: '/sleep',
+    hashAliases: ['sleep', 'sueno', 'descanso', 'dormir'],
+    status: 'active',
+    badge: 'Bienestar',
+    component: SleepModule,
   },
 ];
 
