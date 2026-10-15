@@ -32,26 +32,3 @@ jobs:
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || 'https://mock.supabase.co' }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || 'mock_anon_key' }}
-
-  mobile-quality:
-    name: Mobile Typecheck
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: mobile
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
-          cache-dependency-path: mobile/package-lock.json
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Verify TypeScript types
-        run: npx tsc --noEmit

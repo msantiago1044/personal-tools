@@ -21,16 +21,6 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Expo / React Native
-.expo/
-.expo-shared/
-*.jks
-*.p8
-*.p12
-*.key
-*.mobileprovision
-*.orig.*
-web-build/
 
 # Editor directories and files
 .vscode/*

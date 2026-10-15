@@ -6,6 +6,7 @@ import { MoodCheckModal } from './components/MoodCheckModal';
 import { shouldPromptMoodCheck } from './lib/emotions';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { MODULE_REGISTRY, findModuleByHash, getModuleById, ModuleManifest } from './modules/moduleRegistry';
+import { recordModuleUsage } from './modules/moduleUsage';
 
 function ModuleLoadingFallback({ moduleName }: { moduleName?: string }) {
   return (
@@ -32,6 +33,7 @@ export default function App() {
     const initialMod = findModuleByHash(hash);
     if (initialMod) {
       setCurrentView(initialMod.id);
+      recordModuleUsage(initialMod.id);
     } else {
       setCurrentView('hub');
     }
@@ -46,10 +48,11 @@ export default function App() {
     } else {
       const mod = getModuleById(viewId);
       if (mod) {
+        recordModuleUsage(mod.id, session?.user?.email || session?.user?.id);
         window.location.hash = `#/${mod.hashAliases[0] || mod.id}`;
       }
     }
-  }, []);
+  }, [session]);
 
   // Sincronizar vista ante navegación del navegador (Atrás / Adelante)
   useEffect(() => {
@@ -61,13 +64,14 @@ export default function App() {
         const matched = findModuleByHash(hash);
         if (matched) {
           setCurrentView(matched.id);
+          recordModuleUsage(matched.id, session?.user?.email || session?.user?.id);
         }
       }
     };
 
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
-  }, []);
+  }, [session]);
 
   // Autenticación con Supabase
   useEffect(() => {

@@ -1,18 +1,18 @@
-# Finanzas & Suite Modular (Web + Mobile + Supabase)
+# Finanzas & Suite Modular (Web PWA + Supabase)
 
-Plataforma integral y modular de gestión financiera y herramientas personales desarrollada con arquitectura híbrida:
-- **`/web`**: Panel de control administrativo y financiero desarrollado en **React + Vite + TailwindCSS**.
-- **`/mobile`**: Aplicación móvil multiplataforma desarrollada con **React Native & Expo**.
+Plataforma integral y modular de gestión financiera y herramientas personales desarrollada como Progressive Web App (PWA):
+- **`/web`**: Aplicación Web PWA desarrollada en **React 19 + Vite + TailwindCSS**, instalable en escritorio, iOS y Android con soporte offline y diseño ultra responsivo.
 - **`/backend`**: Configuración de base de datos **Supabase (PostgreSQL)** con **Row Level Security (RLS)** y autenticación mediante **Google OAuth**.
-- **`/packages/shared`**: Tipos e interfaces TypeScript compartidas entre clientes.
+- **`/packages/shared`**: Tipos e interfaces TypeScript del dominio compartido.
 
 ---
 
 ## 🌟 Características Principales
 
 1. **Launcher / Tool Hub Multi-Herramienta:**
-   - Acceso con **Google Accounts** mediante Supabase Auth.
-   - Panel de bienvenida con selector de módulos activos y futuros (Finanzas, Inversiones, Facturación, Metas).
+   - Acceso seguro con **Google Accounts** mediante Supabase Auth.
+   - Panel de bienvenida con selector dinámico de ordenación por uso (`Más usados`, `Recientes`, `Predeterminado`) y soporte para fijar favoritos (Pin).
+   - Experiencia nativa instalable (**PWA**) en dispositivos móviles y de escritorio.
 2. **Módulo de Finanzas & Gastos Diarios:**
    - **Home Dinámico:** Selector múltiple de cuentas (Efectivo, Tarjetas, Ahorro), widgets personalizables y filtro temporal rápido (Día, Semana, Mes, Año, Todo).
    - **Registro Rápido de Movimientos:**
@@ -29,8 +29,7 @@ Plataforma integral y modular de gestión financiera y herramientas personales d
 2. Dirígete a **SQL Editor** y ejecuta el archivo [`backend/supabase/schema.sql`](./backend/supabase/schema.sql).
 3. En **Authentication > Providers**, habilita el proveedor **Google** ingresando el *Client ID* y *Client Secret* de Google Cloud Console.
 4. Agrega los redirects autorizados:
-   - Web: `http://localhost:5173/hub` (o tu dominio de producción).
-   - Mobile: `gestiongastos://auth/callback`.
+   - Web: `http://localhost:5173/hub` (o tu dominio de producción en Vercel/Cloudflare).
 
 ---
 
@@ -42,8 +41,3 @@ VITE_SUPABASE_URL=https://TU_PROYECTO.supabase.co
 VITE_SUPABASE_ANON_KEY=TU_ANON_KEY
 ```
 
-### `/mobile/.env`
-```env
-EXPO_PUBLIC_SUPABASE_URL=https://TU_PROYECTO.supabase.co
-EXPO_PUBLIC_SUPABASE_ANON_KEY=TU_ANON_KEY
-```
