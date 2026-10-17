@@ -81,32 +81,123 @@ export function getStoredPirkeiAvotProgress(userId?: string): Record<number, Pir
 }
 
 /**
- * Guarda el progreso de una mishná o capítulo
+ * Estadísticas de lectura para una Mishná individual
+ */
+export interface MishnaReadingStats {
+  count: number;
+  lastReadAt?: string;
+  wasReadLastYear: boolean;
+  wasReadThisYear: boolean;
+  lastReadYear?: number;
+  isCompleted: boolean;
+}
+
+/**
+ * Obtiene las estadísticas de lectura acumulada y anual de una mishná
+ */
+export function getMishnaStats(
+  progress: PirkeiAvotProgress | undefined,
+  mishnaNumber: number
+): MishnaReadingStats {
+  const currentYear = new Date().getFullYear();
+  const lastYear = currentYear - 1;
+
+  if (!progress) {
+    return {
+      count: 0,
+      wasReadLastYear: false,
+      wasReadThisYear: false,
+      isCompleted: false,
+    };
+  }
+
+  const isCompleted = progress.completed_mishnayot?.includes(mishnaNumber) || false;
+  const count = progress.mishna_counts?.[mishnaNumber] || (isCompleted ? 1 : 0);
+  const lastReadAt = progress.mishna_last_read?.[mishnaNumber] || (isCompleted ? progress.last_read_at : undefined);
+
+  let lastReadYear: number | undefined = undefined;
+  if (lastReadAt) {
+    try {
+      lastReadYear = new Date(lastReadAt).getFullYear();
+    } catch {}
+  }
+
+  const years = Object.keys(progress.years_history || {}).filter((yr) =>
+    progress.years_history?.[yr]?.includes(mishnaNumber)
+  );
+
+  const wasReadThisYear = years.includes(String(currentYear)) || lastReadYear === currentYear;
+  const wasReadLastYear = years.includes(String(lastYear)) || lastReadYear === lastYear;
+
+  return {
+    count,
+    lastReadAt,
+    wasReadLastYear,
+    wasReadThisYear,
+    lastReadYear,
+    isCompleted,
+  };
+}
+
+/**
+ * Guarda el progreso de una mishná o capítulo con conteo acumulado y por año
  */
 export async function savePirkeiAvotProgress(
   chapterNum: number,
   completedMishnayot: number[],
-  userId?: string
+  userId?: string,
+  mishnaJustRead?: number
 ): Promise<Record<number, PirkeiAvotProgress>> {
   const currentMap = getStoredPirkeiAvotProgress(userId);
   const chapterData = PIRKEI_AVOT_DATA.find((c) => c.chapter === chapterNum);
   const totalMishnayot = chapterData ? chapterData.mishnayot.length : 1;
   const isCompleted = completedMishnayot.length >= totalMishnayot;
-  const now = new Date().toISOString();
+  const now = new Date();
+  const nowISO = now.toISOString();
+  const currentYearStr = String(now.getFullYear());
 
   const prev = currentMap[chapterNum] || {
     chapter_number: chapterNum,
     completed_mishnayot: [],
     completed_count: 0,
     is_completed: false,
+    mishna_counts: {},
+    mishna_last_read: {},
+    years_history: {},
+    cycle: 1,
   };
+
+  const mishnaCounts = { ...(prev.mishna_counts || {}) };
+  const mishnaLastRead = { ...(prev.mishna_last_read || {}) };
+  const yearsHistory = { ...(prev.years_history || {}) };
+  const currentYearList = new Set(yearsHistory[currentYearStr] || []);
+
+  if (mishnaJustRead !== undefined) {
+    // Si se marcó una mishná específica, incrementar su conteo
+    mishnaCounts[mishnaJustRead] = (mishnaCounts[mishnaJustRead] || 0) + 1;
+    mishnaLastRead[mishnaJustRead] = nowISO;
+    currentYearList.add(mishnaJustRead);
+  } else {
+    // Si se marcó el capítulo completo
+    completedMishnayot.forEach((m) => {
+      mishnaCounts[m] = (mishnaCounts[m] || 0) + 1;
+      mishnaLastRead[m] = nowISO;
+      currentYearList.add(m);
+    });
+  }
+
+  yearsHistory[currentYearStr] = Array.from(currentYearList).sort((a, b) => a - b);
 
   const updated: PirkeiAvotProgress = {
     chapter_number: chapterNum,
     completed_mishnayot: Array.from(new Set(completedMishnayot)).sort((a, b) => a - b),
     completed_count: isCompleted && !prev.is_completed ? prev.completed_count + 1 : prev.completed_count,
     is_completed: isCompleted,
-    last_read_at: now,
+    last_read_at: nowISO,
+    mishna_counts: mishnaCounts,
+    mishna_last_read: mishnaLastRead,
+    years_history: yearsHistory,
+    cycle: prev.cycle || 1,
   };
 
   const newMap = { ...currentMap, [chapterNum]: updated };
@@ -123,7 +214,11 @@ export async function savePirkeiAvotProgress(
         completed_mishnayot: updated.completed_mishnayot,
         completed_count: updated.completed_count,
         is_completed: updated.is_completed,
-        last_read_at: now,
+        mishna_counts: updated.mishna_counts,
+        mishna_last_read: updated.mishna_last_read,
+        years_history: updated.years_history,
+        cycle: updated.cycle,
+        last_read_at: nowISO,
       });
     } catch (e) {
       console.warn('Nota: Progreso de Pirkei Avot guardado localmente');

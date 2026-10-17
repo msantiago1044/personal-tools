@@ -6,11 +6,13 @@ import {
   ParashaDailySchedule,
   ParashaProgress,
 } from '../../../../packages/shared/src/types';
+import { supabase } from '../../lib/supabase';
 import {
   getWeeklyParasha,
   getDiasporaDailySchedule,
   getParashaProgress,
   markDailyAliyahCompletedToday,
+  getAliyahStats,
 } from '../../lib/parashaService';
 import { ThemeMode, getStoredTheme, applyTheme } from '../../lib/theme';
 import {
@@ -26,6 +28,8 @@ import {
   RotateCcw,
   Calendar,
   Share2,
+  Clock,
+  History,
 } from 'lucide-react';
 
 interface ParashaModuleProps {
@@ -62,6 +66,10 @@ export const ParashaModule: React.FC<ParashaModuleProps> = ({
     parasha_id: '',
     completed_aliyot: [],
     full_parasha_completed: false,
+    completed_count: 0,
+    aliyot_counts: {},
+    aliyot_last_read: {},
+    years_history: {},
   });
 
   const [completedSuccessMsg, setCompletedSuccessMsg] = useState<string | null>(null);
@@ -87,6 +95,34 @@ export const ParashaModule: React.FC<ParashaModuleProps> = ({
     };
   }, [user]);
 
+  // Sincronizar progreso remoto de Supabase
+  useEffect(() => {
+    if (user?.id && parasha?.id) {
+      supabase
+        .from('parasha_progress')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('parasha_id', parasha.id)
+        .single()
+        .then(({ data, error }) => {
+          if (!error && data) {
+            const remoteProg: ParashaProgress = {
+              parasha_id: data.parasha_id,
+              completed_aliyot: data.completed_aliyot || [],
+              full_parasha_completed: data.is_completed || false,
+              completed_count: data.completed_count || 0,
+              last_read_at: data.last_read_at,
+              aliyot_counts: data.aliyot_counts || {},
+              aliyot_last_read: data.aliyot_last_read || {},
+              years_history: data.years_history || {},
+            };
+            setProgress(remoteProg);
+            localStorage.setItem(`parasha_progress_${parasha.id}_${user.id}`, JSON.stringify(remoteProg));
+          }
+        });
+    }
+  }, [user?.id, parasha?.id]);
+
   const handleThemeChange = (newTheme: ThemeMode) => {
     setTheme(newTheme);
     applyTheme(newTheme);
@@ -94,15 +130,27 @@ export const ParashaModule: React.FC<ParashaModuleProps> = ({
 
   const handleMarkAsRead = async (aliyahNum: number) => {
     if (!parasha) return;
-    await markDailyAliyahCompletedToday(aliyahNum, parasha.id, user?.id);
-    setProgress(getParashaProgress(parasha.id, user?.id));
+    const updated = await markDailyAliyahCompletedToday(aliyahNum, parasha.id, user?.id);
+    setProgress(updated);
 
     const name = aliyahNum === 0 ? 'Parashá Completa' : `${aliyahNum}ª Aliyá`;
-    setCompletedSuccessMsg(`¡${name} marcada como leída! Se ha actualizado tu inicio.`);
+    setCompletedSuccessMsg(`¡${name} marcada como leída! Se ha registrado en tu historial.`);
     setTimeout(() => {
       setCompletedSuccessMsg(null);
     }, 4000);
   };
+
+  // Estadísticas acumuladas y ciclo
+  const totalReadings = React.useMemo(() => {
+    const counts = Object.values(progress.aliyot_counts || {});
+    const sum = counts.reduce((acc, c) => acc + (c || 0), 0);
+    return sum + (progress.completed_count || 0);
+  }, [progress]);
+
+  const studiedYears = React.useMemo(() => {
+    const years = Object.keys(progress.years_history || {}).sort((a, b) => Number(b) - Number(a));
+    return years;
+  }, [progress.years_history]);
 
   // Versículos a mostrar según la pestaña activa
   const currentVerses: ParashaVerse[] = React.useMemo(() => {
@@ -126,6 +174,10 @@ export const ParashaModule: React.FC<ParashaModuleProps> = ({
     }
     return parasha.aliyot.find((al) => al.aliyahNumber === selectedAliyah) || null;
   }, [parasha, selectedAliyah]);
+
+  const currentAliyahStats = React.useMemo(() => {
+    return getAliyahStats(progress, selectedAliyah);
+  }, [progress, selectedAliyah]);
 
   const isCurrentAliyahDone = React.useMemo(() => {
     if (selectedAliyah === 0) return progress.full_parasha_completed;
@@ -299,13 +351,47 @@ export const ParashaModule: React.FC<ParashaModuleProps> = ({
         </div>
       )}
 
-      {/* Pestañas de Aliyot */}
+      {/* Barra de Estadísticas Multianuales de Lectura */}
+      <div className="max-w-4xl mx-auto px-4 mt-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-xs">
+          <div className="flex flex-col">
+            <span className="text-[10px] font-bold uppercase text-slate-400">Ciclo {new Date().getFullYear()}</span>
+            <span className="text-sm font-extrabold text-emerald-600 dark:text-emerald-400">
+              {progress.completed_aliyot.length} / 7 Aliyot
+            </span>
+          </div>
+
+          <div className="flex flex-col">
+            <span className="text-[10px] font-bold uppercase text-slate-400">Lecturas Acumuladas</span>
+            <span className="text-sm font-extrabold text-slate-800 dark:text-slate-100 flex items-center gap-1">
+              <History className="w-3.5 h-3.5 text-blue-500" />
+              {totalReadings} {totalReadings === 1 ? 'lectura' : 'lecturas'}
+            </span>
+          </div>
+
+          <div className="flex flex-col">
+            <span className="text-[10px] font-bold uppercase text-slate-400">Parashá Completa</span>
+            <span className="text-sm font-extrabold text-purple-600 dark:text-purple-400">
+              {progress.completed_count || 0} {progress.completed_count === 1 ? 'año/vuelta' : 'años/vueltas'}
+            </span>
+          </div>
+
+          <div className="flex flex-col">
+            <span className="text-[10px] font-bold uppercase text-slate-400">Historial de Años</span>
+            <span className="text-xs font-semibold text-slate-600 dark:text-slate-300 truncate">
+              {studiedYears.length > 0 ? studiedYears.join(', ') : 'Año actual'}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Pestañas de Aliyot con indicador de lecturas y años anteriores */}
       <div className="max-w-4xl mx-auto px-4 mt-4">
         <div className="flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-none">
           {parasha.aliyot.map((al) => {
             const isSelected = selectedAliyah === al.aliyahNumber;
             const isToday = schedule.targetAliyahNumber === al.aliyahNumber;
-            const isDone = progress.completed_aliyot.includes(al.aliyahNumber);
+            const alStats = getAliyahStats(progress, al.aliyahNumber);
 
             return (
               <button
@@ -318,7 +404,24 @@ export const ParashaModule: React.FC<ParashaModuleProps> = ({
                 }`}
               >
                 <span>{al.aliyahNumber}ª Aliyá</span>
-                {isDone && <CheckCircle2 className={`w-3.5 h-3.5 ${isSelected ? 'text-white' : 'text-emerald-500'}`} />}
+                {alStats.count > 0 && (
+                  <span
+                    className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                      isSelected ? 'bg-white/20 text-white' : 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300'
+                    }`}
+                    title={`Leída ${alStats.count} ${alStats.count === 1 ? 'vez' : 'veces'}`}
+                  >
+                    x{alStats.count}
+                  </span>
+                )}
+                {alStats.wasReadLastYear && (
+                  <span
+                    className="text-[9px] px-1 py-0.2 rounded bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 font-bold"
+                    title={`Leída el año anterior (${new Date().getFullYear() - 1})`}
+                  >
+                    {new Date().getFullYear() - 1}
+                  </span>
+                )}
                 {isToday && (
                   <span
                     className={`text-[9px] uppercase px-1 py-0.2 rounded font-bold ${
@@ -335,46 +438,85 @@ export const ParashaModule: React.FC<ParashaModuleProps> = ({
           })}
 
           {/* Opción de Lectura Completa */}
-          <button
-            onClick={() => setSelectedAliyah(0)}
-            className={`px-3 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 border ${
-              selectedAliyah === 0
-                ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
-                : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:border-emerald-400/50'
-            }`}
-          >
-            <span>📜 Completa</span>
-            {progress.full_parasha_completed && (
-              <CheckCircle2 className={`w-3.5 h-3.5 ${selectedAliyah === 0 ? 'text-white' : 'text-emerald-500'}`} />
-            )}
-            {schedule.targetAliyahNumber === 0 && (
-              <span
-                className={`text-[9px] uppercase px-1 py-0.2 rounded font-bold ${
+          {(() => {
+            const fullStats = getAliyahStats(progress, 0);
+            return (
+              <button
+                onClick={() => setSelectedAliyah(0)}
+                className={`px-3 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 border ${
                   selectedAliyah === 0
-                    ? 'bg-white/30 text-white'
-                    : 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400'
+                    ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
+                    : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:border-emerald-400/50'
                 }`}
               >
-                Shabat
-              </span>
-            )}
-          </button>
+                <span>📜 Completa</span>
+                {fullStats.count > 0 && (
+                  <span
+                    className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                      selectedAliyah === 0 ? 'bg-white/20 text-white' : 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300'
+                    }`}
+                  >
+                    x{fullStats.count}
+                  </span>
+                )}
+                {schedule.targetAliyahNumber === 0 && (
+                  <span
+                    className={`text-[9px] uppercase px-1 py-0.2 rounded font-bold ${
+                      selectedAliyah === 0
+                        ? 'bg-white/30 text-white'
+                        : 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400'
+                    }`}
+                  >
+                    Shabat
+                  </span>
+                )}
+              </button>
+            );
+          })()}
         </div>
       </div>
 
       {/* Contenido de la Aliyá */}
       <main className="max-w-4xl mx-auto px-4 mt-3">
-        {/* Cabecera de la porción activa */}
+        {/* Cabecera de la porción activa con insignias de conteo e historial anual */}
         <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800/80 rounded-2xl p-4 sm:p-5 mb-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2 mb-1">
               <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
                 {currentAliyahInfo?.nameSpanish}
               </span>
               <span className="text-xs text-slate-400 dark:text-slate-500 font-serif">
                 {currentAliyahInfo?.nameHebrew}
               </span>
+
+              {/* Insignia: Veces leída */}
+              {currentAliyahStats.count > 0 ? (
+                <span className="text-[11px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/50 px-2 py-0.5 rounded-lg flex items-center gap-1">
+                  <CheckCircle2 className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+                  <span>Leída {currentAliyahStats.count} {currentAliyahStats.count === 1 ? 'vez' : 'veces'}</span>
+                </span>
+              ) : (
+                <span className="text-[11px] font-medium text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/50 px-2 py-0.5 rounded-lg flex items-center gap-1">
+                  <Clock className="w-3 h-3 text-amber-600 dark:text-amber-400" />
+                  <span>Pendiente este ciclo</span>
+                </span>
+              )}
+
+              {/* Insignia: Si se leyó el año anterior */}
+              {currentAliyahStats.wasReadLastYear && (
+                <span className="text-[11px] font-bold text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800/50 px-2 py-0.5 rounded-lg flex items-center gap-1">
+                  <span>📅 Leída el año pasado ({new Date().getFullYear() - 1})</span>
+                </span>
+              )}
+
+              {/* Insignia: Si se leyó este año */}
+              {currentAliyahStats.isReadThisYear && (
+                <span className="text-[11px] font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/50 px-2 py-0.5 rounded-lg">
+                  ⭐ Leída en ciclo {new Date().getFullYear()}
+                </span>
+              )}
             </div>
+
             <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
               Rango: <span className="font-semibold text-slate-700 dark:text-slate-300">{currentAliyahInfo?.refRange}</span>
             </p>
@@ -382,14 +524,20 @@ export const ParashaModule: React.FC<ParashaModuleProps> = ({
 
           <button
             onClick={() => handleMarkAsRead(selectedAliyah)}
-            className={`w-full sm:w-auto px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition shadow-xs ${
-              isCurrentAliyahDone
-                ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800'
+            className={`w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition shadow-xs cursor-pointer ${
+              currentAliyahStats.isReadToday
+                ? 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700 hover:bg-emerald-100'
                 : 'bg-emerald-600 hover:bg-emerald-700 text-white'
             }`}
           >
             <CheckCircle2 className="w-4 h-4" />
-            <span>{isCurrentAliyahDone ? 'Completada ✓ (Repetir)' : 'Marcar como leída hoy'}</span>
+            <span>
+              {currentAliyahStats.isReadToday
+                ? `✓ Leída hoy (+1) • Total: ${currentAliyahStats.count}`
+                : currentAliyahStats.count > 0
+                ? `Marcar leída hoy (+1) • Total: ${currentAliyahStats.count}`
+                : 'Marcar como leída hoy (+1)'}
+            </span>
           </button>
         </div>
 

@@ -331,13 +331,17 @@ CREATE POLICY "Users can CRUD their own pantry consumptions"
     WITH CHECK (auth.uid() = user_id);
 
 -- ==============================================================================
--- 13. MÓDULO: PARASHÁ DE LA SEMANA (DIÁSPORA) - SEGUIMIENTO DE ALIYOT
+-- 13. MÓDULO: PARASHÁ DE LA SEMANA (DIÁSPORA) - SEGUIMIENTO DE ALIYOT Y CICLOS
 -- ==============================================================================
 CREATE TABLE IF NOT EXISTS public.parasha_progress (
     user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     parasha_id VARCHAR(50) NOT NULL,
     completed_aliyot INT[] DEFAULT '{}',
     is_completed BOOLEAN NOT NULL DEFAULT FALSE,
+    completed_count INT NOT NULL DEFAULT 0,
+    aliyot_counts JSONB DEFAULT '{}'::jsonb,
+    aliyot_last_read JSONB DEFAULT '{}'::jsonb,
+    years_history JSONB DEFAULT '{}'::jsonb,
     date_key VARCHAR(20),
     last_read_at TIMESTAMPTZ DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
     created_at TIMESTAMPTZ DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
@@ -350,6 +354,48 @@ ALTER TABLE public.parasha_progress ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users can CRUD their own parasha progress"
     ON public.parasha_progress FOR ALL
+    USING (auth.uid() = user_id)
+    WITH CHECK (auth.uid() = user_id);
+
+-- ==============================================================================
+-- 14. MÓDULO: PIRKEI AVOT (ÉTICA DE LOS PADRES) - SEGUIMIENTO DE MISHNAYOT
+-- ==============================================================================
+CREATE TABLE IF NOT EXISTS public.pirkei_avot_progress (
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    chapter_number SMALLINT NOT NULL CHECK (chapter_number BETWEEN 1 AND 6),
+    completed_mishnayot INT[] DEFAULT '{}',
+    completed_count INT NOT NULL DEFAULT 0,
+    is_completed BOOLEAN NOT NULL DEFAULT FALSE,
+    mishna_counts JSONB DEFAULT '{}'::jsonb,
+    mishna_last_read JSONB DEFAULT '{}'::jsonb,
+    years_history JSONB DEFAULT '{}'::jsonb,
+    cycle INT DEFAULT 1,
+    last_read_at TIMESTAMPTZ DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+    PRIMARY KEY (user_id, chapter_number)
+);
+
+CREATE INDEX IF NOT EXISTS idx_pirkei_avot_progress_user ON public.pirkei_avot_progress(user_id);
+
+ALTER TABLE public.pirkei_avot_progress ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can CRUD their own pirkei avot progress"
+    ON public.pirkei_avot_progress FOR ALL
+    USING (auth.uid() = user_id)
+    WITH CHECK (auth.uid() = user_id);
+
+CREATE TABLE IF NOT EXISTS public.pirkei_avot_bookmarks (
+    user_id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    chapter SMALLINT NOT NULL DEFAULT 1 CHECK (chapter BETWEEN 1 AND 6),
+    mishna SMALLINT NOT NULL DEFAULT 1,
+    completed BOOLEAN NOT NULL DEFAULT FALSE,
+    updated_at TIMESTAMPTZ DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+);
+
+ALTER TABLE public.pirkei_avot_bookmarks ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can CRUD their own pirkei avot bookmarks"
+    ON public.pirkei_avot_bookmarks FOR ALL
     USING (auth.uid() = user_id)
     WITH CHECK (auth.uid() = user_id);
 

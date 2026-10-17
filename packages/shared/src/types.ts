@@ -259,6 +259,10 @@ export interface PirkeiAvotProgress {
   completed_count: number;
   is_completed: boolean;
   last_read_at?: string;
+  mishna_counts?: Record<number, number>; // mishna_number -> veces leída (1, 2, 3...)
+  mishna_last_read?: Record<number, string>; // mishna_number -> timestamp ISO de última lectura
+  years_history?: Record<string, number[]>; // año (ej. "2025", "2026") -> mishnayot leídas ese año
+  cycle?: number; // Vuelta en curso al tratado
 }
 
 // ============================================================================
@@ -309,7 +313,11 @@ export interface ParashaProgress {
   parasha_id: string;
   completed_aliyot: number[];
   full_parasha_completed: boolean;
+  completed_count: number; // Veces que se ha completado la parashá completa
   last_read_at?: string;
+  aliyot_counts?: Record<number, number>; // aliyahNumber (1-7) -> veces leída
+  aliyot_last_read?: Record<number, string>; // aliyahNumber (1-7) -> última fecha de lectura ISO
+  years_history?: Record<string, number[]>; // Año (ej. "2025", "2026") -> aliyot leídas en ese año
 }
 
 

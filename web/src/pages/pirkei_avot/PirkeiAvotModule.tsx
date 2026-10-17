@@ -7,6 +7,7 @@ import {
   savePirkeiAvotBookmark,
   getStoredPirkeiAvotProgress,
   savePirkeiAvotProgress,
+  getMishnaStats,
 } from '../../lib/pirkeiAvot';
 import { ThemeMode, getStoredTheme, applyTheme } from '../../lib/theme';
 import {
@@ -25,6 +26,7 @@ import {
   Check,
   Award,
   Compass,
+  History,
 } from 'lucide-react';
 
 interface PirkeiAvotModuleProps {
@@ -108,6 +110,10 @@ export const PirkeiAvotModule: React.FC<PirkeiAvotModuleProps> = ({
                 completed_count: item.completed_count || 0,
                 is_completed: item.is_completed || false,
                 last_read_at: item.last_read_at,
+                mishna_counts: item.mishna_counts || {},
+                mishna_last_read: item.mishna_last_read || {},
+                years_history: item.years_history || {},
+                cycle: item.cycle || 1,
               };
             });
             setProgressMap(map);
@@ -162,6 +168,7 @@ export const PirkeiAvotModule: React.FC<PirkeiAvotModuleProps> = ({
     let totalCompletedChapters = 0;
     let totalCompletedMishnayot = 0;
     let totalMishnayotInBook = 0;
+    let totalReadingsCount = 0;
 
     PIRKEI_AVOT_DATA.forEach((chap) => {
       totalMishnayotInBook += chap.mishnayot.length;
@@ -169,6 +176,9 @@ export const PirkeiAvotModule: React.FC<PirkeiAvotModuleProps> = ({
       if (p) {
         if (p.is_completed) totalCompletedChapters++;
         totalCompletedMishnayot += p.completed_mishnayot.length;
+        const mCounts = Object.values(p.mishna_counts || {});
+        const sum = mCounts.reduce((acc, c) => acc + (c || 0), 0);
+        totalReadingsCount += sum > 0 ? sum : p.completed_mishnayot.length;
       }
     });
 
@@ -178,6 +188,7 @@ export const PirkeiAvotModule: React.FC<PirkeiAvotModuleProps> = ({
       totalCompletedChapters,
       totalCompletedMishnayot,
       totalMishnayotInBook,
+      totalReadingsCount,
       overallPct,
     };
   }, [progressMap]);
@@ -194,19 +205,19 @@ export const PirkeiAvotModule: React.FC<PirkeiAvotModuleProps> = ({
     await savePirkeiAvotBookmark(newBm, user?.id);
   };
 
-  // Alternar completado de una mishná individual
+  // Marcar lectura de una mishná individual (+1)
   const handleToggleMishnaCompleted = async (mishnaNum: number) => {
     if (!currentChapter) return;
     const currentCompleted = currentChapterProgress?.completed_mishnayot || [];
     let updatedList: number[];
 
-    if (currentCompleted.includes(mishnaNum)) {
-      updatedList = currentCompleted.filter((m) => m !== mishnaNum);
-    } else {
+    if (!currentCompleted.includes(mishnaNum)) {
       updatedList = [...currentCompleted, mishnaNum];
+    } else {
+      updatedList = currentCompleted;
     }
 
-    const newMap = await savePirkeiAvotProgress(currentChapter.chapter, updatedList, user?.id);
+    const newMap = await savePirkeiAvotProgress(currentChapter.chapter, updatedList, user?.id, mishnaNum);
     setProgressMap(newMap);
 
     // Actualizar también el marcador como última mishná leída
@@ -456,53 +467,81 @@ export const PirkeiAvotModule: React.FC<PirkeiAvotModuleProps> = ({
                       : 'border-slate-200 dark:border-slate-800 shadow-xs hover:border-amber-300 dark:hover:border-amber-800'
                   }`}
                 >
-                  {/* Encabezado de la Mishná */}
-                  <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100 dark:border-slate-800/80">
-                    <div className="flex items-center gap-2">
-                      <span className="w-7 h-7 rounded-full bg-amber-100 dark:bg-amber-950/70 text-amber-800 dark:text-amber-200 font-bold text-xs flex items-center justify-center">
-                        {m.mishna}
-                      </span>
-                      {m.sage && (
-                        <span className="text-xs font-semibold text-amber-700 dark:text-amber-400">
-                          {m.sage}
-                        </span>
-                      )}
-                      {isCurrentBookmark && (
-                        <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-500 text-white flex items-center gap-1 shadow-xs">
-                          <Bookmark className="w-3 h-3 fill-white" /> Tu punto de lectura
-                        </span>
-                      )}
-                    </div>
+                  {(() => {
+                    const mStats = getMishnaStats(currentChapterProgress, m.mishna);
 
-                    {/* Botones de acción: Fijar marcador y Marcar como leída */}
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => handleSetBookmark(currentChapter.chapter, m.mishna)}
-                        className={`p-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-1 ${
-                          isCurrentBookmark
-                            ? 'bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200'
-                            : 'text-slate-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-slate-800'
-                        }`}
-                        title="Marcar aquí como mi última lectura para el mediodía/tarde"
-                      >
-                        <Bookmark className={`w-4 h-4 ${isCurrentBookmark ? 'fill-amber-600' : ''}`} />
-                        <span className="hidden sm:inline">Guardar punto</span>
-                      </button>
+                    return (
+                      <>
+                        {/* Encabezado de la Mishná */}
+                        <div className="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-slate-100 dark:border-slate-800/80">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="w-7 h-7 rounded-full bg-amber-100 dark:bg-amber-950/70 text-amber-800 dark:text-amber-200 font-bold text-xs flex items-center justify-center">
+                              {m.mishna}
+                            </span>
+                            {m.sage && (
+                              <span className="text-xs font-semibold text-amber-700 dark:text-amber-400">
+                                {m.sage}
+                              </span>
+                            )}
+                            {isCurrentBookmark && (
+                              <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-500 text-white flex items-center gap-1 shadow-xs">
+                                <Bookmark className="w-3 h-3 fill-white" /> Tu punto de lectura
+                              </span>
+                            )}
 
-                      <button
-                        onClick={() => handleToggleMishnaCompleted(m.mishna)}
-                        className={`p-1.5 px-2.5 rounded-xl text-xs font-semibold transition flex items-center gap-1 ${
-                          isCompleted
-                            ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300'
-                            : 'bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-emerald-600'
-                        }`}
-                        title={isCompleted ? 'Desmarcar' : 'Marcar como leída'}
-                      >
-                        <Check className="w-3.5 h-3.5 stroke-[2.5]" />
-                        <span>{isCompleted ? 'Leída' : 'Marcar'}</span>
-                      </button>
-                    </div>
-                  </div>
+                            {/* Badge: Veces leída */}
+                            {mStats.count > 0 ? (
+                              <span className="text-[11px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/50 px-2 py-0.5 rounded-lg flex items-center gap-1">
+                                <CheckCircle className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+                                <span>Leída {mStats.count} {mStats.count === 1 ? 'vez' : 'veces'}</span>
+                              </span>
+                            ) : (
+                              <span className="text-[11px] font-medium text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/50 px-2 py-0.5 rounded-lg flex items-center gap-1">
+                                <Clock className="w-3 h-3 text-amber-600 dark:text-amber-400" />
+                                <span>Pendiente</span>
+                              </span>
+                            )}
+
+                            {/* Badge: Leída el año pasado */}
+                            {mStats.wasReadLastYear && (
+                              <span className="text-[11px] font-bold text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800/50 px-2 py-0.5 rounded-lg flex items-center gap-1">
+                                <span>📅 Leída en {new Date().getFullYear() - 1}</span>
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Botones de acción: Fijar marcador y Marcar como leída (+1) */}
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => handleSetBookmark(currentChapter.chapter, m.mishna)}
+                              className={`p-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-1 ${
+                                isCurrentBookmark
+                                  ? 'bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200'
+                                  : 'text-slate-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-slate-800'
+                              }`}
+                              title="Marcar aquí como mi última lectura para el mediodía/tarde"
+                            >
+                              <Bookmark className={`w-4 h-4 ${isCurrentBookmark ? 'fill-amber-600' : ''}`} />
+                              <span className="hidden sm:inline">Guardar punto</span>
+                            </button>
+
+                            <button
+                              onClick={() => handleToggleMishnaCompleted(m.mishna)}
+                              className={`p-1.5 px-2.5 rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer ${
+                                mStats.count > 0
+                                  ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 hover:bg-emerald-200'
+                                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 hover:text-emerald-600'
+                              }`}
+                              title="Marcar lectura (+1)"
+                            >
+                              <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+                              <span>{mStats.count > 0 ? `Leída (+1) • Total: ${mStats.count}` : 'Marcar como leída (+1)'}</span>
+                            </button>
+                          </div>
+                        </div>
+                      </>
+                    );
+                  })()}
 
                   {/* Resumen o enseñanza clave */}
                   {m.keyTeaching && (
@@ -619,7 +658,7 @@ export const PirkeiAvotModule: React.FC<PirkeiAvotModuleProps> = ({
           </div>
 
           {/* Tarjeta de métricas globales */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
             <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs">
               <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 block mb-0.5">
                 Mishnayot Leídas
@@ -640,6 +679,17 @@ export const PirkeiAvotModule: React.FC<PirkeiAvotModuleProps> = ({
 
             <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs">
               <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 block mb-0.5">
+                Lecturas Acumuladas
+              </span>
+              <div className="text-xl font-black text-blue-600 dark:text-blue-400 flex items-center gap-1.5">
+                <History className="w-4 h-4 text-blue-500" />
+                <span>{stats.totalReadingsCount}</span>
+                <span className="text-xs font-normal text-slate-400">totales</span>
+              </div>
+            </div>
+
+            <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs">
+              <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 block mb-0.5">
                 Progreso General
               </span>
               <div className="text-xl font-black text-emerald-600 dark:text-emerald-400">
@@ -647,12 +697,12 @@ export const PirkeiAvotModule: React.FC<PirkeiAvotModuleProps> = ({
               </div>
             </div>
 
-            <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs">
+            <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs col-span-2 sm:col-span-1">
               <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 block mb-0.5">
                 Punto de Lectura
               </span>
-              <div className="text-sm font-bold text-amber-700 dark:text-amber-300 mt-1 flex items-center gap-1">
-                <Compass className="w-4 h-4" /> Cap. {bookmark.chapter}:{bookmark.mishna}
+              <div className="text-sm font-bold text-amber-700 dark:text-amber-300 mt-1 flex items-center gap-1 truncate">
+                <Compass className="w-4 h-4 shrink-0" /> Cap. {bookmark.chapter}:{bookmark.mishna}
               </div>
             </div>
           </div>
@@ -665,6 +715,8 @@ export const PirkeiAvotModule: React.FC<PirkeiAvotModuleProps> = ({
               const isCompleted = p?.is_completed || false;
               const isBookmarkHere = bookmark.chapter === chap.chapter;
               const pct = Math.round((completedCount / chap.mishnayot.length) * 100);
+              const mCounts = Object.values(p?.mishna_counts || {});
+              const chapterTotalReadings = mCounts.reduce((acc, c) => acc + (c || 0), 0);
 
               return (
                 <div
@@ -690,6 +742,11 @@ export const PirkeiAvotModule: React.FC<PirkeiAvotModuleProps> = ({
                       <span className="font-hebrew text-sm font-bold text-slate-500 dark:text-slate-400">
                         {chap.titleHebrew}
                       </span>
+                      {chapterTotalReadings > 0 && (
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800/40 ml-auto">
+                          {chapterTotalReadings} {chapterTotalReadings === 1 ? 'lectura' : 'lecturas'}
+                        </span>
+                      )}
                     </div>
 
                     <h3 className="text-base font-bold text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition mb-1">
