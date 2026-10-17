@@ -222,11 +222,11 @@ export const SAMPLE_RECEIPTS: Array<{ label: string; data: ExtractedReceiptData 
 // ============================================================================
 // 2. PARSER OCR DE FACTURAS CON GEMINI VISION (MODELOS GRATUITOS FLASH-LITE)
 // ============================================================================
-// Modelos gratuitos de Google con menor consumo de tokens y mayor cuota gratuita
+// Modelos de Google Gemini optimizados para visión y OCR
 export const FREE_TIER_MODELS = [
-  'gemini-flash-lite-latest', // Modelo oficial gratuito de menor consumo y mayor velocidad
-  'gemini-3.5-flash-lite',    // Respaldo gratuito ultrarrápido
-  'gemini-3.1-flash-lite',    // Respaldo secundario de cuota ligera
+  'gemini-2.0-flash',       // Modelo estándar de alta velocidad y visión multimodal
+  'gemini-1.5-flash',       // Respaldo de alta cuota y estabilidad
+  'gemini-2.0-flash-lite',  // Respaldo ultraligero
 ];
 
 export async function parseReceiptWithGemini(

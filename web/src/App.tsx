@@ -2,14 +2,21 @@ import React, { useEffect, useState, useCallback, Suspense } from 'react';
 import { supabase, signOut, saveSessionBackup, tryRestoreSessionBackup } from './lib/supabase';
 import { LoginPage } from './pages/LoginPage';
 import { ToolHub } from './components/ToolHub';
-import { MoodCheckModal } from './components/MoodCheckModal';
 import { shouldPromptMoodCheck } from './lib/emotions';
-import { PirkeiAvotPromptModal } from './components/pirkei_avot/PirkeiAvotPromptModal';
 import { shouldPromptPirkeiAvot, getStoredPirkeiAvotBookmark } from './lib/pirkeiAvot';
 import { PirkeiAvotBookmark } from '../../packages/shared/src/types';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { MODULE_REGISTRY, findModuleByHash, getModuleById, ModuleManifest } from './modules/moduleRegistry';
 import { recordModuleUsage } from './modules/moduleUsage';
+import { ToastContainer } from './components/ToastContainer';
+
+// Modales globales cargados bajo demanda para mantener el Launcher ultra liviano
+const MoodCheckModal = React.lazy(() =>
+  import('./components/MoodCheckModal').then((m) => ({ default: m.MoodCheckModal }))
+);
+const PirkeiAvotPromptModal = React.lazy(() =>
+  import('./components/pirkei_avot/PirkeiAvotPromptModal').then((m) => ({ default: m.PirkeiAvotPromptModal }))
+);
 
 function ModuleLoadingFallback({ moduleName }: { moduleName?: string }) {
   return (
@@ -229,31 +236,42 @@ export default function App() {
         />
       )}
 
-      {/* Ventana flotante de chequeo de emoción */}
-      <MoodCheckModal
-        userId={session.user.id}
-        userName={session.user.user_metadata?.full_name}
-        isOpen={showMoodPrompt}
-        onClose={() => setShowMoodPrompt(false)}
-      />
+      {/* Ventana flotante de chequeo de emoción (Cargada bajo demanda) */}
+      {showMoodPrompt && (
+        <Suspense fallback={null}>
+          <MoodCheckModal
+            userId={session.user.id}
+            userName={session.user.user_metadata?.full_name}
+            isOpen={showMoodPrompt}
+            onClose={() => setShowMoodPrompt(false)}
+          />
+        </Suspense>
+      )}
 
-      {/* Ventana flotante de sugerencia de Pirkei Avot al mediodía o en la tarde */}
-      <PirkeiAvotPromptModal
-        isOpen={showAvotPrompt}
-        bookmark={avotBookmark}
-        greeting={avotGreeting}
-        onClose={() => setShowAvotPrompt(false)}
-        onReadNow={(chapter, mishna) => {
-          setShowAvotPrompt(false);
-          setAvotTarget({ chapter, mishna });
-          changeView('pirkei_avot');
-        }}
-        onViewAllChapters={() => {
-          setShowAvotPrompt(false);
-          setAvotTarget(null);
-          changeView('pirkei_avot');
-        }}
-      />
+      {/* Ventana flotante de sugerencia de Pirkei Avot al mediodía o en la tarde (Cargada bajo demanda) */}
+      {showAvotPrompt && (
+        <Suspense fallback={null}>
+          <PirkeiAvotPromptModal
+            isOpen={showAvotPrompt}
+            bookmark={avotBookmark}
+            greeting={avotGreeting}
+            onClose={() => setShowAvotPrompt(false)}
+            onReadNow={(chapter, mishna) => {
+              setShowAvotPrompt(false);
+              setAvotTarget({ chapter, mishna });
+              changeView('pirkei_avot');
+            }}
+            onViewAllChapters={() => {
+              setShowAvotPrompt(false);
+              setAvotTarget(null);
+              changeView('pirkei_avot');
+            }}
+          />
+        </Suspense>
+      )}
+
+      {/* Notificaciones globales tipo Toast (modernas y no invasivas) */}
+      <ToastContainer />
     </ErrorBoundary>
   );
 }

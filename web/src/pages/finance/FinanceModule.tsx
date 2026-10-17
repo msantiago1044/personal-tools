@@ -5,6 +5,7 @@ import { TransactionModal } from '../../components/finance/TransactionModal';
 import { BudgetGaugeCard } from '../../components/finance/BudgetGaugeCard';
 import { ExportTransactionsModal } from '../../components/finance/ExportTransactionsModal';
 import { ThemeMode, getStoredTheme, applyTheme } from '../../lib/theme';
+import { toast } from '../../lib/toast';
 import {
   Wallet,
   ArrowDownLeft,
@@ -730,7 +731,7 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
       await loadAllData();
     } catch (err) {
       console.error('Error al eliminar cuenta:', err);
-      alert('No se pudo eliminar la cuenta. Verifica tus permisos.');
+      toast.error('No se pudo eliminar la cuenta. Verifica tus permisos.');
     } finally {
       setDeleteAccountLoading(false);
     }
@@ -751,7 +752,7 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
       await loadAllData();
     } catch (err) {
       console.error('Error al eliminar transacción:', err);
-      alert('No se pudo eliminar el movimiento.');
+      toast.error('No se pudo eliminar el movimiento.');
     } finally {
       setDeleteTxLoading(false);
     }
@@ -772,7 +773,7 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
       await loadAllData();
     } catch (err) {
       console.error('Error al eliminar categoría:', err);
-      alert('No se pudo eliminar la categoría.');
+      toast.error('No se pudo eliminar la categoría.');
     } finally {
       setDeleteCatLoading(false);
     }
@@ -816,15 +817,16 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
       }));
 
     if (toInsert.length === 0) {
-      alert('Ya tienes todas las categorías sugeridas en tu cuenta.');
+      toast.info('Ya tienes todas las categorías sugeridas en tu cuenta.');
       return;
     }
 
     const { error } = await supabase.from('categories').insert(toInsert);
     if (error) {
       console.error('Error insertando categorías:', error);
-      alert('Error al agregar categorías sugeridas.');
+      toast.error('Error al agregar categorías sugeridas.');
     } else {
+      toast.success('Categorías sugeridas agregadas con éxito.');
       await loadAllData();
     }
   };
@@ -1198,32 +1200,51 @@ export const FinanceModule: React.FC<FinanceModuleProps> = ({ onBackToHub, user 
 
       {/* Contenido Principal */}
       <main className="flex-1 p-4 md:p-8 overflow-y-auto">
-        {/* Top Header con controles rápidos */}
+        {/* Top Header con controles rápidos y botón de regreso estilo Pirkei Avot */}
         <div className="max-w-6xl mx-auto flex items-center justify-between pb-6 mb-6 border-b border-slate-200 dark:border-slate-800">
           <div className="flex items-center gap-3">
             <button
+              onClick={onBackToHub}
+              className="p-2 rounded-xl text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+              title="Volver al Hub"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <button
               onClick={() => setMobileMenuOpen(true)}
               className="md:hidden p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200"
+              title="Abrir menú"
             >
               ☰
             </button>
-            <h1 className="text-lg font-bold text-slate-900 dark:text-white capitalize">
-              {activeTab === 'home'
-                ? 'Inicio'
-                : activeTab === 'transactions'
-                ? 'Movimientos'
-                : activeTab === 'accounts'
-                ? 'Cuentas'
-                : activeTab === 'categories'
-                ? 'Categorías'
-                : activeTab === 'budgets'
-                ? 'Presupuestos'
-                : activeTab === 'reports_date'
-                ? 'Por Fechas'
-                : activeTab === 'reports_category'
-                ? 'Por Categorías'
-                : 'Ajustes'}
-            </h1>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xl">📊</span>
+                <h1 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  Finanzas
+                  <span className="text-xs font-normal text-emerald-600 dark:text-emerald-400 capitalize">
+                    · {activeTab === 'home'
+                      ? 'Inicio'
+                      : activeTab === 'transactions'
+                      ? 'Movimientos'
+                      : activeTab === 'accounts'
+                      ? 'Cuentas'
+                      : activeTab === 'categories'
+                      ? 'Categorías'
+                      : activeTab === 'budgets'
+                      ? 'Presupuestos'
+                      : activeTab === 'reports_date'
+                      ? 'Por Fechas'
+                      : activeTab === 'reports_category'
+                      ? 'Por Categorías'
+                      : 'Ajustes'}
+                  </span>
+                </h1>
+              </div>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Flujo de caja y balances · {currencyCode} ({currencySymbol})
+              </p>
+            </div>
           </div>
 
           <div className="flex items-center gap-2">

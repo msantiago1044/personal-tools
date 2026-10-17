@@ -9,6 +9,7 @@ export interface ModuleManifest {
   id: string;
   name: string;
   description: string;
+  emoji: string;
   icon: string;
   route: string;
   hashAliases: string[];
@@ -75,6 +76,7 @@ export const MODULE_REGISTRY: ModuleManifest[] = [
     id: 'parasha',
     name: 'Parashá Semanal',
     description: 'Lectura diaria de la Torá (Diáspora) aliyá por aliyá.',
+    emoji: '📜',
     icon: 'book-open',
     route: '/parasha',
     hashAliases: ['parasha', 'tora', 'shavua'],
@@ -86,6 +88,7 @@ export const MODULE_REGISTRY: ModuleManifest[] = [
     id: 'finance',
     name: 'Finanzas',
     description: 'Flujo de caja, cuentas y presupuestos.',
+    emoji: '📊',
     icon: 'wallet',
     route: '/finance/home',
     hashAliases: ['finance'],
@@ -97,6 +100,7 @@ export const MODULE_REGISTRY: ModuleManifest[] = [
     id: 'pantry',
     name: 'Despensa & Mercado',
     description: 'Inventario, escaneo de facturas y nutrición.',
+    emoji: '🛒',
     icon: 'shopping-bag',
     route: '/pantry',
     hashAliases: ['pantry', 'mercado'],
@@ -108,6 +112,7 @@ export const MODULE_REGISTRY: ModuleManifest[] = [
     id: 'tehilim',
     name: 'Tehilim',
     description: '150 salmos con hebreo, fonética y traducción.',
+    emoji: '🕊️',
     icon: 'book-open',
     route: '/tehilim',
     hashAliases: ['tehilim'],
@@ -118,6 +123,7 @@ export const MODULE_REGISTRY: ModuleManifest[] = [
     id: 'pirkei_avot',
     name: 'Pirkei Avot',
     description: 'Ética de los Padres con hebreo, fonética y traducción.',
+    emoji: '🏛️',
     icon: 'book-open',
     route: '/pirkei-avot',
     hashAliases: ['pirkei-avot', 'avot', 'padres'],
@@ -129,6 +135,7 @@ export const MODULE_REGISTRY: ModuleManifest[] = [
     id: 'dwg_viewer',
     name: 'Planos CAD',
     description: 'Visor de archivos DWG y DXF con capas y regla.',
+    emoji: '📐',
     icon: 'layers',
     route: '/cad-viewer',
     hashAliases: ['cad', 'dwg'],
@@ -139,6 +146,7 @@ export const MODULE_REGISTRY: ModuleManifest[] = [
     id: 'emotions',
     name: 'Emociones',
     description: 'Registro de estado de ánimo, bienestar y balance diario.',
+    emoji: '✨',
     icon: 'smile',
     route: '/emotions',
     hashAliases: ['emocion', 'emotion', 'emotions'],
@@ -150,6 +158,7 @@ export const MODULE_REGISTRY: ModuleManifest[] = [
     id: 'notes',
     name: 'Notas & Keep',
     description: 'Notas rápidas, listas de tareas, colores y etiquetas.',
+    emoji: '📝',
     icon: 'sticky-note',
     route: '/notes',
     hashAliases: ['notes', 'notas', 'keep'],
@@ -161,6 +170,7 @@ export const MODULE_REGISTRY: ModuleManifest[] = [
     id: 'pgn',
     name: 'Concurso PGN 3PU-15',
     description: 'Preparación intensiva al mérito: 40 clases, microlearning y simulacros.',
+    emoji: '⚖️',
     icon: 'scale',
     route: '/pgn',
     hashAliases: ['pgn', 'concurso', '3pu15', 'merito'],
@@ -172,6 +182,7 @@ export const MODULE_REGISTRY: ModuleManifest[] = [
     id: 'hebrew_srs',
     name: 'Hebreo Bíblico SRS',
     description: 'Decodificación de Niqqud, evaluación psicométrica y repetición espaciada.',
+    emoji: '📖',
     icon: 'book-open',
     route: '/hebrew-srs',
     hashAliases: ['hebrew', 'hebreo', 'srs', 'niqqud'],
@@ -183,6 +194,7 @@ export const MODULE_REGISTRY: ModuleManifest[] = [
     id: 'sleep',
     name: 'Sueño & Descanso',
     description: 'Registro de horarios de sueño, duración, calidad (1 al 5) y correlación anímica.',
+    emoji: '🌙',
     icon: 'moon',
     route: '/sleep',
     hashAliases: ['sleep', 'sueno', 'descanso', 'dormir'],

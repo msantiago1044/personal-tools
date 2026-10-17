@@ -270,35 +270,13 @@ export const ToolHub: React.FC<ToolHubProps> = ({
                 <div>
                   <div className="flex justify-between items-center mb-3">
                     <div
-                      className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg ${
+                      className={`w-11 h-11 rounded-2xl flex items-center justify-center text-xl shadow-xs transition-transform duration-200 group-hover:scale-105 ${
                         isActive
-                          ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20'
-                          : 'bg-slate-200 dark:bg-slate-800 text-slate-500'
+                          ? 'bg-slate-100 dark:bg-slate-800/90 border border-slate-200/90 dark:border-slate-700/70'
+                          : 'bg-slate-200/50 dark:bg-slate-800/50 text-slate-400 border border-slate-200/40 dark:border-slate-800/40'
                       }`}
                     >
-                      {tool.id === 'parasha'
-                        ? '📜'
-                        : tool.id === 'finance'
-                        ? '📊'
-                        : tool.id === 'tehilim'
-                        ? '🕊️'
-                        : tool.id === 'pirkei_avot'
-                        ? '🏛️'
-                        : tool.id === 'dwg_viewer'
-                        ? '📐'
-                        : tool.id === 'pantry'
-                        ? '🛒'
-                        : tool.id === 'emotions'
-                        ? '✨'
-                        : tool.id === 'notes'
-                        ? '📝'
-                        : tool.id === 'pgn'
-                        ? '⚖️'
-                        : tool.id === 'hebrew_srs'
-                        ? '📖'
-                        : tool.id === 'sleep'
-                        ? '🌙'
-                        : '💎'}
+                      <span className="select-none leading-none">{tool.emoji}</span>
                     </div>
 
                     <div className="flex items-center gap-1.5">

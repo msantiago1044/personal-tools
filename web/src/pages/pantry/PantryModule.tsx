@@ -1210,11 +1210,10 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
           <div className="flex items-center gap-3">
             <button
               onClick={onBackToHub}
-              className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition flex items-center gap-1.5 text-xs font-semibold"
-              title="Volver al Hub"
+              className="p-2 rounded-xl text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+              title="Volver al inicio"
             >
-              <ArrowLeft className="w-4 h-4" />
-              <span className="hidden sm:inline">Hub</span>
+              <ArrowLeft className="w-5 h-5" />
             </button>
 
             <div className="flex items-center gap-2.5">

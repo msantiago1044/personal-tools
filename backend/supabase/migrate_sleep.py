@@ -1,10 +1,15 @@
+import os
 import pg8000.native
 
 def main():
     print("Connecting to Supabase...")
+    db_password = os.environ.get('SUPABASE_DB_PASSWORD')
+    if not db_password:
+        raise ValueError("SUPABASE_DB_PASSWORD environment variable is not set. Please export SUPABASE_DB_PASSWORD before running this script.")
+
     conn = pg8000.native.Connection(
         user='postgres.phczdxbtquxwfqnrakcz',
-        password='Mabs1044@10',
+        password=db_password,
         host='aws-0-us-west-2.pooler.supabase.com',
         port=6543,
         database='postgres',

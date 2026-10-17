@@ -3,6 +3,7 @@ import { supabase } from '../../lib/supabase';
 import { TEHILIM_PSALMS } from '../../../../packages/shared/src/data/tehilimData';
 import { Psalm, TehilimProgress } from '../../../../packages/shared/src/types';
 import { ThemeMode, getStoredTheme, applyTheme } from '../../lib/theme';
+import { toast } from '../../lib/toast';
 import {
   BookOpen,
   CheckCircle,
@@ -153,7 +154,7 @@ export const TehilimModule: React.FC<TehilimModuleProps> = ({ user, onBackToHub 
         setSelectedPsalmNumber(psalmNum + 1);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
-        alert('🎉 ¡Felicitaciones! Has completado el Salmo 150 y finalizado una vuelta completa a todo el libro de Tehilim.');
+        toast.success('¡Felicitaciones! Has completado el Salmo 150 y finalizado una vuelta completa a todo el libro de Tehilim.', '🎉 Tehilim Completado', 6000);
       }
     }, 700);
   };
