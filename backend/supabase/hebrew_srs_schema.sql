@@ -120,8 +120,11 @@ CREATE POLICY "Logs de revisión por usuario"
 -- ==============================================================================
 INSERT INTO public.hebrew_study_blocks (id, slug, name, vowel_focus, description, order_index)
 VALUES 
-    ('11111111-1111-1111-1111-111111111111', 'block-a-kamatz', 'Bloque A: Consonantes con Qamats', 'Qamats (ָ)', 'Estudio de la vocal abierta/larga Qamats (sonido /a/ o /o/ en sílaba cerrada inacentuada). Aislado para comparar metodologías de decodificación.', 1),
-    ('22222222-2222-2222-2222-222222222222', 'block-b-patach', 'Bloque B: Consonantes con Pataj', 'Pataj (ַ)', 'Estudio de la vocal corta Pataj (sonido /a/ breve). Incluye consonantes con y sin Daguesh para evaluación controlada.', 2)
+    ('11111111-1111-1111-1111-111111111111', 'fase-1-vocales-a', 'Fase 1: Vocales A (Qamats y Pataj)', 'Qamats (ָ) & Pataj (ַ)', 'Consonantes fundamentales con vocales abiertas y regla del Daguesh lene.', 1),
+    ('22222222-2222-2222-2222-222222222222', 'fase-2-vocales-e', 'Fase 2: Vocales E y Sheva', 'Tsere (ֵ), Segol (ֶ) & Sheva (ְ)', 'Vocales medias y articulación del Sheva silábico en textos litúrgicos.', 2),
+    ('33333333-3333-3333-3333-333333333333', 'fase-3-vocales-i-o', 'Fase 3: Vocales I y O', 'Hireq (ִ) & Holem (ֹ / וֹ)', 'Puntos altos y bajos, distinguiendo Holem del punto de Shin/Sin.', 3),
+    ('44444444-4444-4444-4444-444444444444', 'fase-4-vocales-u-sofit', 'Fase 4: Vocales U y Letras Finales', 'Qibbuts (ֻ), Shuruq (וּ) & Sofit', 'Vocal U y reconocimiento automático de terminaciones de palabras hebreas.', 4),
+    ('55555555-5555-5555-5555-555555555555', 'fase-5-siddur-jumash', 'Fase 5: Oraciones y Torá', 'Versículos y Plegarias Completas', 'Lectura continua con Niqqudot de textos del Siddur y Jumash.', 5)
 ON CONFLICT (slug) DO NOTHING;
 
 -- Tarjetas Bloque A: Consonantes con Qamats (ָ)

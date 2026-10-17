@@ -4,18 +4,25 @@ import {
   HebrewCard,
   UserCardProgress,
   ReviewLog,
-  LearningMethod,
   RatingScore,
   SRSLevel,
   DailyReviewStats,
   MethodComparisonMetrics,
+  StreakData,
+  DynamicSessionExercise,
+  DailySessionSummary,
+  CurriculumPhaseNumber,
 } from '../types/hebrewSrs.types';
 import { HebrewSrsService } from '../services/hebrewSrsService';
 import {
-  isCardDue,
+  generateDailySession,
+  generateFreePracticeSession,
+  updateStreakOnSessionComplete,
+  calculateDailySessionSummary,
+  calculateMethodMetrics,
   getTodayISODate,
-  calculateMethodComparison,
 } from '../services/srsAlgorithm';
+import { HebrewSrsTab } from '../components/HebrewSrsHeader';
 
 export function useHebrewSrsData(userId: string) {
   const [loading, setLoading] = useState(true);
@@ -23,33 +30,53 @@ export function useHebrewSrsData(userId: string) {
   const [cards, setCards] = useState<HebrewCard[]>([]);
   const [progress, setProgress] = useState<UserCardProgress[]>([]);
   const [logs, setLogs] = useState<ReviewLog[]>([]);
-  const [blockSettings, setBlockSettings] = useState<Record<string, LearningMethod>>({});
+  const [streak, setStreak] = useState<StreakData>({
+    current_streak: 1,
+    best_streak: 1,
+    last_active_date: getTodayISODate(),
+    completed_today: false,
+  });
+  const [activePhase, setActivePhaseState] = useState<CurriculumPhaseNumber>(1);
 
-  // Filtro de bloque actual ('all' o un blockId específico)
-  const [selectedBlockId, setSelectedBlockId] = useState<string>('all');
-  const [activeTab, setActiveTab] = useState<'study' | 'dashboard' | 'metrics' | 'blocks'>('dashboard');
+  // Navegación principal
+  const [activeTab, setActiveTab] = useState<HebrewSrsTab>('dashboard');
 
-  // Índice de la tarjeta activa en la sesión de estudio actual
-  const [studyCardIndex, setStudyCardIndex] = useState(0);
+  // Sesión Activa
+  const [activeSessionQueue, setActiveSessionQueue] = useState<DynamicSessionExercise[]>([]);
+  const [sessionTitle, setSessionTitle] = useState('Sesión Diaria');
+  const [isFreePracticeSession, setIsFreePracticeSession] = useState(false);
+  const [sessionCompletedLogs, setSessionCompletedLogs] = useState<ReviewLog[]>([]);
+
+  // Modal de resumen diario
+  const [showCompletionModal, setShowCompletionModal] = useState(false);
+  const [dailySummary, setDailySummary] = useState<DailySessionSummary | null>(null);
 
   // Carga inicial de datos
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
-      const [fetchedBlocks, fetchedCards, fetchedProgress, fetchedLogs, fetchedSettings] =
-        await Promise.all([
-          HebrewSrsService.getStudyBlocks(),
-          HebrewSrsService.getCards(),
-          HebrewSrsService.getUserProgress(userId),
-          HebrewSrsService.getReviewLogs(userId),
-          HebrewSrsService.getBlockSettings(userId),
-        ]);
+      const [
+        fetchedBlocks,
+        fetchedCards,
+        fetchedProgress,
+        fetchedLogs,
+        fetchedStreak,
+        fetchedPhase,
+      ] = await Promise.all([
+        HebrewSrsService.getStudyBlocks(),
+        HebrewSrsService.getCards(),
+        HebrewSrsService.getUserProgress(userId),
+        HebrewSrsService.getReviewLogs(userId),
+        HebrewSrsService.getStreak(userId),
+        HebrewSrsService.getActivePhase(userId),
+      ]);
 
       setBlocks(fetchedBlocks);
       setCards(fetchedCards);
       setProgress(fetchedProgress);
       setLogs(fetchedLogs);
-      setBlockSettings(fetchedSettings);
+      setStreak(fetchedStreak);
+      setActivePhaseState(fetchedPhase);
     } catch (err) {
       console.error('[useHebrewSrsData] Error cargando datos:', err);
     } finally {
@@ -61,120 +88,165 @@ export function useHebrewSrsData(userId: string) {
     loadData();
   }, [loadData]);
 
-  // Mapa rápido de progreso por card_id
-  const progressMap = useMemo(() => {
-    const map = new Map<string, UserCardProgress>();
-    progress.forEach((p) => map.set(p.card_id, p));
-    return map;
-  }, [progress]);
+  // Cambiar fase activa
+  const handleSetActivePhase = useCallback(
+    async (phase: CurriculumPhaseNumber) => {
+      setActivePhaseState(phase);
+      await HebrewSrsService.saveActivePhase(userId, phase);
+    },
+    [userId]
+  );
 
-  // Tarjetas filtradas por bloque seleccionado
-  const filteredCards = useMemo(() => {
-    if (selectedBlockId === 'all') return cards;
-    return cards.filter((c) => c.block_id === selectedBlockId);
-  }, [cards, selectedBlockId]);
+  // Iniciar Sesión Diaria (Botón 1)
+  const handleStartDailySession = useCallback(() => {
+    const queue = generateDailySession(cards, progress, activePhase);
+    setActiveSessionQueue(queue);
+    setSessionTitle('Mi Sesión Diaria');
+    setIsFreePracticeSession(false);
+    setSessionCompletedLogs([]);
+    setActiveTab('session');
+  }, [cards, progress, activePhase]);
 
-  // Tarjetas pendientes de revisión hoy (o nuevas aún sin repasar)
-  const dueCards = useMemo(() => {
+  // Iniciar Práctica Libre (Botón 2)
+  const handleStartFreePractice = useCallback(
+    (mode: 'all' | 'syllables' | 'pairs' | 'phrases' | 'match') => {
+      const queue = generateFreePracticeSession(mode, cards);
+      setActiveSessionQueue(queue);
+      const titleMap = {
+        all: 'Práctica Libre • Entrenamiento Mixto',
+        syllables: 'Práctica Libre • Sílabas del Siddur',
+        pairs: 'Práctica Libre • Pares Mínimos',
+        phrases: 'Práctica Libre • Lectura de Oraciones',
+        match: 'Práctica Libre • Emparejamiento Rápido',
+      };
+      setSessionTitle(titleMap[mode]);
+      setIsFreePracticeSession(true);
+      setSessionCompletedLogs([]);
+      setActiveTab('session');
+    },
+    [cards]
+  );
+
+  // Registro de un paso completado en la sesión
+  const handleStepComplete = useCallback(
+    async (
+      exercise: DynamicSessionExercise,
+      rating: RatingScore,
+      reactionTimeMs: number,
+      isCorrect?: boolean
+    ) => {
+      let createdLog: ReviewLog;
+
+      if (exercise.cardId && !isFreePracticeSession) {
+        // Tarjeta vinculada al motor SRS
+        const result = await HebrewSrsService.recordReview(
+          userId,
+          exercise.cardId,
+          exercise.method,
+          reactionTimeMs,
+          rating,
+          progress,
+          { isCorrect }
+        );
+        createdLog = result.log;
+
+        // Actualizar progreso en memoria
+        setProgress((prev) => {
+          const filtered = prev.filter((p) => p.card_id !== exercise.cardId);
+          return [...filtered, result.updatedProgress];
+        });
+      } else {
+        // Ejercicio sin tarjeta fija o de práctica libre
+        createdLog = {
+          id: `log_free_${Date.now()}`,
+          user_id: userId,
+          card_id: exercise.cardId || 'generic',
+          method_used: exercise.method,
+          reaction_time_ms: reactionTimeMs,
+          rating_score: rating,
+          previous_level: 1,
+          new_level: 1,
+          is_correct: isCorrect,
+          created_at: new Date().toISOString(),
+        };
+      }
+
+      setLogs((prev) => [createdLog, ...prev]);
+      setSessionCompletedLogs((prev) => [createdLog, ...prev]);
+    },
+    [userId, progress, isFreePracticeSession]
+  );
+
+  // Fin de sesión (Completó los 10 pasos)
+  const handleSessionFinished = useCallback(async () => {
+    if (!isFreePracticeSession) {
+      // 1. Actualizar Racha
+      const updatedStreak = updateStreakOnSessionComplete(streak);
+      setStreak(updatedStreak);
+      await HebrewSrsService.saveStreak(userId, updatedStreak);
+
+      // 2. Calcular diagnóstico del día
+      const summary = calculateDailySessionSummary(
+        sessionCompletedLogs,
+        updatedStreak,
+        activeSessionQueue.length
+      );
+      setDailySummary(summary);
+      setShowCompletionModal(true);
+    } else {
+      // Práctica libre finalizada -> vuelve al dashboard
+      setActiveTab('dashboard');
+    }
+  }, [isFreePracticeSession, streak, sessionCompletedLogs, activeSessionQueue.length, userId]);
+
+  // Cerrar modal de resumen
+  const handleCloseCompletionModal = useCallback(
+    (goToFreePractice = false) => {
+      setShowCompletionModal(false);
+      setDailySummary(null);
+      if (goToFreePractice) {
+        handleStartFreePractice('all');
+      } else {
+        setActiveTab('dashboard');
+      }
+    },
+    [handleStartFreePractice]
+  );
+
+  // Estadísticas del día
+  const dailyStats: DailyReviewStats = useMemo(() => {
     const today = getTodayISODate();
-    return filteredCards.filter((card) => {
-      const p = progressMap.get(card.id);
-      if (!p) return true; // Tarjeta nueva sin revisar: pendiente hoy
-      return isCardDue(p.next_review_date, today);
-    });
-  }, [filteredCards, progressMap]);
+    const progressMap = new Map(progress.map((p) => [p.card_id, p]));
 
-  // Tarjeta actual para la vista de estudio
-  const currentStudyCard = useMemo(() => {
-    if (dueCards.length === 0) return null;
-    const safeIndex = Math.min(studyCardIndex, dueCards.length - 1);
-    return dueCards[safeIndex] || null;
-  }, [dueCards, studyCardIndex]);
-
-  // Método activo para la tarjeta actual según la configuración de su bloque
-  const currentCardMethod = useMemo<LearningMethod>(() => {
-    if (!currentStudyCard) return 'srs_puro';
-    return blockSettings[currentStudyCard.block_id] || 'srs_puro';
-  }, [currentStudyCard, blockSettings]);
-
-  // Estadísticas diarias consolidadas
-  const dailyStats = useMemo<DailyReviewStats>(() => {
-    const today = getTodayISODate();
-    const levelDistribution: Record<SRSLevel, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    let pendingCount = 0;
     let masteredCount = 0;
+    const levelDistribution: Record<SRSLevel, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
 
-    cards.forEach((c) => {
-      const p = progressMap.get(c.id);
-      const level: SRSLevel = p ? p.srs_level : 1;
-      levelDistribution[level]++;
-      if (level === 5) masteredCount++;
-    });
-
-    // Cuántas se repasaron hoy
-    const completedToday = logs.filter((log) => {
-      return log.created_at.startsWith(today);
-    }).length;
-
-    const totalPendingToday = dueCards.length;
+    for (const card of cards) {
+      const prog = progressMap.get(card.id);
+      if (!prog || prog.next_review_date <= today) {
+        pendingCount++;
+      }
+      const lvl = prog ? prog.srs_level : 1;
+      levelDistribution[lvl]++;
+      if (lvl === 5) masteredCount++;
+    }
 
     return {
-      totalPendingToday,
-      completedToday,
+      totalPendingToday: pendingCount,
+      completedToday: streak.completed_today ? 10 : 0,
       masteredCount,
       totalCards: cards.length,
       levelDistribution,
+      streak,
+      activePhase,
     };
-  }, [cards, progressMap, logs, dueCards]);
+  }, [cards, progress, streak, activePhase]);
 
-  // Métricas comparativas entre los 4 métodos
-  const methodMetrics = useMemo<MethodComparisonMetrics[]>(() => {
-    return calculateMethodComparison(logs, progress, cards);
+  // Métricas agregadas por método
+  const methodMetrics: MethodComparisonMetrics[] = useMemo(() => {
+    return calculateMethodMetrics(logs, progress, cards);
   }, [logs, progress, cards]);
-
-  // Acción: Calificar y registrar revisión de tarjeta
-  const handleReviewCard = async (
-    rating: RatingScore,
-    reactionTimeMs: number,
-    tactileVerified?: boolean
-  ) => {
-    if (!currentStudyCard) return;
-
-    const method = currentCardMethod;
-
-    try {
-      const { updatedProgress, log } = await HebrewSrsService.recordReview(
-        userId,
-        currentStudyCard.id,
-        method,
-        reactionTimeMs,
-        rating,
-        progress,
-        tactileVerified
-      );
-
-      // Actualizar estado local reactivo
-      setProgress((prev) => {
-        const filtered = prev.filter((p) => p.card_id !== currentStudyCard.id);
-        return [...filtered, updatedProgress];
-      });
-
-      setLogs((prev) => [log, ...prev]);
-
-      // Si aún quedan tarjetas, no es necesario cambiar el índice si la lista disminuye
-      // pero si el índice excede el nuevo tamaño, ajustamos
-      if (studyCardIndex >= dueCards.length - 1) {
-        setStudyCardIndex(0);
-      }
-    } catch (err) {
-      console.error('[useHebrewSrsData] Error al registrar revisión:', err);
-    }
-  };
-
-  // Acción: Asignar método experimental a un bloque
-  const handleUpdateBlockMethod = async (blockId: string, method: LearningMethod) => {
-    setBlockSettings((prev) => ({ ...prev, [blockId]: method }));
-    await HebrewSrsService.saveBlockSetting(userId, blockId, method);
-  };
 
   return {
     loading,
@@ -182,20 +254,21 @@ export function useHebrewSrsData(userId: string) {
     cards,
     progress,
     logs,
-    blockSettings,
-    selectedBlockId,
-    setSelectedBlockId,
+    streak,
+    activePhase,
+    setActivePhase: handleSetActivePhase,
     activeTab,
     setActiveTab,
-    dueCards,
-    currentStudyCard,
-    currentCardMethod,
-    studyCardIndex,
-    setStudyCardIndex,
+    activeSessionQueue,
+    sessionTitle,
     dailyStats,
     methodMetrics,
-    handleReviewCard,
-    handleUpdateBlockMethod,
-    reload: loadData,
+    showCompletionModal,
+    dailySummary,
+    handleStartDailySession,
+    handleStartFreePractice,
+    handleStepComplete,
+    handleSessionFinished,
+    handleCloseCompletionModal,
   };
 }

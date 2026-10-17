@@ -7,12 +7,13 @@ import { supabase } from '../../../lib/supabase';
 import {
   StudyBlock,
   HebrewCard,
-  UserBlockSetting,
   UserCardProgress,
   ReviewLog,
   LearningMethod,
   RatingScore,
   SRSLevel,
+  StreakData,
+  CurriculumPhaseNumber,
 } from '../types/hebrewSrs.types';
 import { SEED_STUDY_BLOCKS, SEED_HEBREW_CARDS } from './seedData';
 import { calculateNextReview, getTodayISODate } from './srsAlgorithm';
@@ -21,6 +22,8 @@ const STORAGE_KEYS = {
   BLOCK_SETTINGS: 'hebrew_srs_block_settings',
   CARD_PROGRESS: 'hebrew_srs_card_progress',
   REVIEW_LOGS: 'hebrew_srs_review_logs',
+  STREAK: 'hebrew_srs_streak',
+  ACTIVE_PHASE: 'hebrew_srs_active_phase',
 };
 
 export class HebrewSrsService {
@@ -44,12 +47,12 @@ export class HebrewSrsService {
   }
 
   /**
-   * Obtiene las tarjetas de estudio (filtrables por bloque)
+   * Obtiene las tarjetas de estudio (filtrables por bloque o fase)
    */
   public static async getCards(blockId?: string): Promise<HebrewCard[]> {
     try {
       let query = supabase.from('hebrew_cards').select('*');
-      if (blockId) {
+      if (blockId && blockId !== 'all') {
         query = query.eq('block_id', blockId);
       }
       const { data, error } = await query;
@@ -59,70 +62,65 @@ export class HebrewSrsService {
     } catch (e) {
       // Usar fallback local
     }
-    return blockId ? SEED_HEBREW_CARDS.filter((c) => c.block_id === blockId) : SEED_HEBREW_CARDS;
+    return blockId && blockId !== 'all'
+      ? SEED_HEBREW_CARDS.filter((c) => c.block_id === blockId)
+      : SEED_HEBREW_CARDS;
   }
 
   /**
-   * Obtiene la configuración del método asignado a cada bloque
+   * Obtiene la Racha Diaria del Usuario (Streak)
    */
-  public static async getBlockSettings(userId: string): Promise<Record<string, LearningMethod>> {
-    const defaultSettings: Record<string, LearningMethod> = {
-      'block-a-kamatz': 'srs_puro',
-      'block-b-patach': 'kinetic',
+  public static async getStreak(userId: string): Promise<StreakData> {
+    const defaultStreak: StreakData = {
+      current_streak: 1,
+      best_streak: 1,
+      last_active_date: getTodayISODate(),
+      completed_today: false,
     };
 
     try {
-      const { data, error } = await supabase
-        .from('user_hebrew_block_settings')
-        .select('*')
-        .eq('user_id', userId);
-
-      if (!error && data && data.length > 0) {
-        const result: Record<string, LearningMethod> = {};
-        data.forEach((item) => {
-          result[item.block_id] = item.method_used as LearningMethod;
-        });
-        return result;
+      const raw = localStorage.getItem(`${STORAGE_KEYS.STREAK}_${userId}`);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        const today = getTodayISODate();
+        // Verificar si la fecha de completado es de hoy
+        parsed.completed_today = parsed.last_active_date === today && parsed.completed_today;
+        return parsed;
       }
-    } catch (e) {
-      // Fallback
-    }
-
-    try {
-      const raw = localStorage.getItem(`${STORAGE_KEYS.BLOCK_SETTINGS}_${userId}`);
-      if (raw) return JSON.parse(raw);
     } catch (e) {}
 
-    return defaultSettings;
+    return defaultStreak;
   }
 
   /**
-   * Guarda o actualiza el método asignado a un bloque
+   * Guarda la Racha Diaria
    */
-  public static async saveBlockSetting(
+  public static async saveStreak(userId: string, streak: StreakData): Promise<void> {
+    try {
+      localStorage.setItem(`${STORAGE_KEYS.STREAK}_${userId}`, JSON.stringify(streak));
+    } catch (e) {}
+  }
+
+  /**
+   * Obtiene la fase activa del currículo (1 a 5)
+   */
+  public static async getActivePhase(userId: string): Promise<CurriculumPhaseNumber> {
+    try {
+      const raw = localStorage.getItem(`${STORAGE_KEYS.ACTIVE_PHASE}_${userId}`);
+      if (raw) return parseInt(raw, 10) as CurriculumPhaseNumber;
+    } catch (e) {}
+    return 1;
+  }
+
+  /**
+   * Guarda la fase activa del currículo
+   */
+  public static async saveActivePhase(
     userId: string,
-    blockId: string,
-    method: LearningMethod
+    phase: CurriculumPhaseNumber
   ): Promise<void> {
     try {
-      await supabase.from('user_hebrew_block_settings').upsert(
-        {
-          user_id: userId,
-          block_id: blockId,
-          method_used: method,
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: 'user_id,block_id' }
-      );
-    } catch (e) {
-      // ignore
-    }
-
-    // Persistir también en LocalStorage
-    try {
-      const current = await this.getBlockSettings(userId);
-      current[blockId] = method;
-      localStorage.setItem(`${STORAGE_KEYS.BLOCK_SETTINGS}_${userId}`, JSON.stringify(current));
+      localStorage.setItem(`${STORAGE_KEYS.ACTIVE_PHASE}_${userId}`, phase.toString());
     } catch (e) {}
   }
 
@@ -174,7 +172,7 @@ export class HebrewSrsService {
   }
 
   /**
-   * Registra una revisión completada, actualizando la caja SRS y registrando la métrica
+   * Registra una revisión completada en el motor SRS y guarda log psicométrico
    */
   public static async recordReview(
     userId: string,
@@ -183,7 +181,11 @@ export class HebrewSrsService {
     reactionTimeMs: number,
     ratingScore: RatingScore,
     currentProgressList: UserCardProgress[],
-    tactileVerified?: boolean
+    options?: {
+      isCorrect?: boolean;
+      voiceVerified?: boolean;
+      tactileVerified?: boolean;
+    }
   ): Promise<{ updatedProgress: UserCardProgress; log: ReviewLog }> {
     const existing = currentProgressList.find((p) => p.card_id === cardId);
     const previousLevel: SRSLevel = existing ? existing.srs_level : 1;
@@ -214,7 +216,12 @@ export class HebrewSrsService {
       rating_score: ratingScore,
       previous_level: previousLevel,
       new_level: srsResult.newLevel,
-      tactile_verified: tactileVerified || false,
+      is_correct:
+        options?.isCorrect !== undefined
+          ? options.isCorrect
+          : ratingScore === 'good' || ratingScore === 'easy',
+      tactile_verified: options?.tactileVerified || false,
+      voice_verified: options?.voiceVerified || false,
       created_at: nowISO,
     };
 
@@ -243,7 +250,8 @@ export class HebrewSrsService {
         rating_score: ratingScore,
         previous_level: previousLevel,
         new_level: srsResult.newLevel,
-        tactile_verified: tactileVerified || false,
+        is_correct: log.is_correct,
+        tactile_verified: log.tactile_verified,
         created_at: nowISO,
       });
     } catch (e) {

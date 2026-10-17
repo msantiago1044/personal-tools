@@ -22,7 +22,7 @@ export const BlockSettingsView: React.FC<BlockSettingsViewProps> = ({
   blockSettings,
   onUpdateMethod,
 }) => {
-  const methodDescriptions: Record<LearningMethod, { desc: string; icon: React.ReactNode }> = {
+  const methodDescriptions: Record<string, { desc: string; icon: React.ReactNode }> = {
     srs_puro: {
       desc: 'Tarjeta tradicional de volteo rápido sin pistas. Control base del experimento.',
       icon: <Sparkles className="w-4 h-4 text-indigo-500" />,

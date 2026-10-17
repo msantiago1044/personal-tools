@@ -1,276 +1,255 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
-  StudyBlock,
   DailyReviewStats,
-  LearningMethod,
-  SRSLevel,
+  CurriculumPhaseNumber,
+  StudyBlock,
 } from '../types/hebrewSrs.types';
-import { METHOD_LABELS, LEITNER_INTERVALS_DAYS } from '../services/srsAlgorithm';
+import { CURRICULUM_PHASES } from '../services/seedData';
 import {
-  Clock,
+  Flame,
   Sparkles,
-  Trophy,
-  CheckCircle2,
-  Layers,
-  ArrowRight,
+  RotateCcw,
   BookOpen,
+  ArrowRight,
+  Layers,
+  Zap,
+  CheckCircle2,
+  Calendar,
 } from 'lucide-react';
 
 interface DailyReviewDashboardProps {
-  blocks: StudyBlock[];
   stats: DailyReviewStats;
-  blockSettings: Record<string, LearningMethod>;
-  selectedBlockId: string;
-  onSelectBlock: (blockId: string) => void;
-  onStartStudy: (blockId?: string) => void;
-  onOpenSettings: () => void;
+  blocks: StudyBlock[];
+  onStartDailySession: () => void;
+  onStartFreePractice: (mode: 'all' | 'syllables' | 'pairs' | 'phrases' | 'match') => void;
+  onOpenRoadmap: () => void;
 }
 
 export const DailyReviewDashboard: React.FC<DailyReviewDashboardProps> = ({
-  blocks,
   stats,
-  blockSettings,
-  selectedBlockId,
-  onSelectBlock,
-  onStartStudy,
-  onOpenSettings,
+  blocks,
+  onStartDailySession,
+  onStartFreePractice,
+  onOpenRoadmap,
 }) => {
-  // Cálculo de meta diaria
-  const totalTargetToday = stats.completedToday + stats.totalPendingToday;
-  const progressPercent =
-    totalTargetToday > 0 ? Math.round((stats.completedToday / totalTargetToday) * 100) : 100;
+  const [showFreePracticeModal, setShowFreePracticeModal] = useState(false);
+
+  const activePhaseInfo =
+    CURRICULUM_PHASES.find((p) => p.number === stats.activePhase) || CURRICULUM_PHASES[0];
 
   return (
-    <div className="w-full max-w-5xl mx-auto space-y-6">
-      {/* TARJETA HERO: ESTADO DIARIO Y LLAMADA A LA ACCIÓN */}
-      <div className="rounded-3xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-amber-600 p-6 sm:p-8 text-white shadow-xl shadow-indigo-600/20 relative overflow-hidden">
-        <div className="absolute right-0 bottom-0 opacity-10 pointer-events-none transform translate-x-8 translate-y-8">
+    <div className="w-full max-w-4xl mx-auto space-y-6">
+      {/* TARJETA HERO PRINCIPAL: LOS 2 BOTONES DE ACCIÓN */}
+      <div className="rounded-3xl bg-gradient-to-br from-indigo-700 via-indigo-800 to-amber-700 p-6 sm:p-9 text-white shadow-2xl shadow-indigo-600/25 relative overflow-hidden">
+        {/* Letra hebrea decorativa de fondo */}
+        <div className="absolute right-0 bottom-0 opacity-10 pointer-events-none transform translate-x-6 translate-y-6">
           <span
-            className="text-[180px] font-serif select-none"
+            className="text-[200px] font-serif select-none"
             style={{ fontFamily: '"SBL Hebrew", serif' }}
           >
-            אָ
+            בָּ
           </span>
         </div>
 
-        <div className="relative z-10 max-w-2xl">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 backdrop-blur-sm text-xs font-semibold uppercase tracking-wider mb-3">
-            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-            <span>Sesión Diaria de Decodificación</span>
-          </div>
-
-          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-            {stats.totalPendingToday > 0
-              ? `Tienes ${stats.totalPendingToday} tarjetas pendientes para hoy`
-              : '¡Todo al día! Has completado tus repasos de hoy'}
-          </h2>
-          <p className="mt-2 text-sm sm:text-base text-indigo-100 max-w-xl">
-            La repetición espaciada refuerza la memoria de trabajo y afianza la decodificación
-            automática de las vocales Tiberianas (Niqqud).
-          </p>
-
-          {/* Barra de progreso diario */}
-          <div className="mt-5 space-y-2 max-w-md">
-            <div className="flex justify-between text-xs font-medium text-indigo-200">
-              <span>Progreso de hoy: {stats.completedToday} repasadas</span>
-              <span>{progressPercent}% completado</span>
+        <div className="relative z-10 max-w-2xl space-y-4">
+          {/* Insignia de Racha y Fase */}
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400 text-amber-950 font-extrabold text-xs shadow-md">
+              <Flame className="w-4 h-4 fill-current text-amber-700" />
+              <span>{stats.streak.current_streak} {stats.streak.current_streak === 1 ? 'DÍA' : 'DÍAS'} DE RACHA</span>
             </div>
-            <div className="w-full h-3 bg-black/20 rounded-full overflow-hidden backdrop-blur-sm p-0.5">
-              <div
-                className="h-full bg-gradient-to-r from-amber-400 to-emerald-400 rounded-full transition-all duration-500"
-                style={{ width: `${progressPercent}%` }}
-              />
+
+            <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/15 backdrop-blur-sm text-xs font-semibold text-indigo-100">
+              <BookOpen className="w-3.5 h-3.5 text-amber-300" />
+              <span>{activePhaseInfo.title}</span>
             </div>
           </div>
 
-          <div className="mt-6 flex flex-wrap items-center gap-3">
-            <button
-              onClick={() => onStartStudy(selectedBlockId === 'all' ? undefined : selectedBlockId)}
-              disabled={stats.totalPendingToday === 0}
-              className="px-6 py-3 rounded-xl bg-white text-indigo-700 font-bold text-sm shadow-md hover:bg-indigo-50 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-all"
-            >
-              <Sparkles className="w-4 h-4 text-indigo-600" />
-              <span>
-                {stats.totalPendingToday > 0
-                  ? `Comenzar Repaso (${stats.totalPendingToday})`
-                  : 'Sin pendientes'}
-              </span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-
-            <button
-              onClick={onOpenSettings}
-              className="px-4 py-3 rounded-xl bg-white/15 hover:bg-white/20 backdrop-blur-sm text-white font-medium text-sm transition-colors"
-            >
-              Asignar Métodos a Bloques
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* MÉTRICAS RÁPIDAS DE CABECERA */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-        <div className="p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="text-xs font-medium uppercase">Pendientes</span>
-            <Clock className="w-4 h-4 text-indigo-500" />
-          </div>
-          <p className="mt-2 text-2xl font-bold text-slate-900 dark:text-white">
-            {stats.totalPendingToday}
-          </p>
-          <span className="text-[11px] text-slate-500">Listas para repasar</span>
-        </div>
-
-        <div className="p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="text-xs font-medium uppercase">Repasadas Hoy</span>
-            <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-          </div>
-          <p className="mt-2 text-2xl font-bold text-slate-900 dark:text-white">
-            {stats.completedToday}
-          </p>
-          <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">
-            Tarjetas evaluadas
-          </span>
-        </div>
-
-        <div className="p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="text-xs font-medium uppercase">Dominadas (N5)</span>
-            <Trophy className="w-4 h-4 text-amber-500" />
-          </div>
-          <p className="mt-2 text-2xl font-bold text-slate-900 dark:text-white">
-            {stats.masteredCount}
-          </p>
-          <span className="text-[11px] text-amber-600 dark:text-amber-400 font-medium">
-            Intervalo de 30 días
-          </span>
-        </div>
-
-        <div className="p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="text-xs font-medium uppercase">Total Mazo</span>
-            <Layers className="w-4 h-4 text-slate-500" />
-          </div>
-          <p className="mt-2 text-2xl font-bold text-slate-900 dark:text-white">
-            {stats.totalCards}
-          </p>
-          <span className="text-[11px] text-slate-500">Letras y combinaciones</span>
-        </div>
-      </div>
-
-      {/* PIRÁMIDE / DISTRIBUCIÓN DE LAS 5 CAJAS LEITNER */}
-      <div className="p-6 rounded-3xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
-        <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <Layers className="w-4 h-4 text-indigo-500" />
-              <span>Distribución en las 5 Cajas Leitner (SRS)</span>
-            </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              Cada acierto asciende la tarjeta a intervalos mayores de reposo
+            <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight leading-tight">
+              {stats.streak.completed_today
+                ? '¡Meta de Hoy Cumplida! Descanso Activo'
+                : '¿Listo para tu sesión de lectura de hoy?'}
+            </h1>
+            <p className="mt-2 text-sm sm:text-base text-indigo-100 max-w-xl">
+              {stats.streak.completed_today
+                ? 'Completaste tu sesión diaria. Tu cerebro está fijando las conexiones sinápticas. Puedes descansar o hacer práctica libre.'
+                : '10 ejercicios automáticos (Pares mínimos, Ensamblador de palabras del Siddur y Mnemotecnia). Cero configuración.'}
             </p>
           </div>
+
+          {/* LOS 2 BOTONES PRINCIPALES */}
+          <div className="pt-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            {/* BOTÓN 1: MI SESIÓN DE HOY */}
+            <button
+              onClick={onStartDailySession}
+              className="py-4 px-7 rounded-2xl bg-white text-indigo-900 font-extrabold text-base shadow-xl hover:bg-indigo-50 active:scale-98 flex items-center justify-center gap-3 transition-all hover:scale-[1.02]"
+            >
+              <Sparkles className="w-5 h-5 text-indigo-600" />
+              <span>
+                {stats.streak.completed_today
+                  ? 'Repetir Sesión del Día'
+                  : '▶ Iniciar Mi Sesión de Hoy (10 Ejercicios)'}
+              </span>
+              <ArrowRight className="w-4 h-4 ml-1" />
+            </button>
+
+            {/* BOTÓN 2: PRÁCTICA LIBRE */}
+            <button
+              onClick={() => setShowFreePracticeModal(true)}
+              className="py-4 px-6 rounded-2xl bg-white/15 hover:bg-white/25 backdrop-blur-md border border-white/20 text-white font-bold text-sm flex items-center justify-center gap-2 transition-all active:scale-98"
+            >
+              <RotateCcw className="w-4 h-4" />
+              <span>Práctica Libre (Sin límites)</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* ESTADO DE LAS 5 CAJAS LEITNER (Memoria a Largo Plazo) */}
+      <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+          <div className="flex items-center gap-2">
+            <Layers className="w-5 h-5 text-indigo-600" />
+            <h3 className="text-base font-bold text-slate-900 dark:text-white">
+              Cajas Leitner (Distribución de tu Memoria)
+            </h3>
+          </div>
+          <button
+            onClick={onOpenRoadmap}
+            className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
+          >
+            <span>Ver Ruta Completa</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 pt-2">
-          {([1, 2, 3, 4, 5] as SRSLevel[]).map((level) => {
-            const count = stats.levelDistribution[level];
-            const days = LEITNER_INTERVALS_DAYS[level];
-            const isMastered = level === 5;
+        <div className="grid grid-cols-5 gap-2 sm:gap-3 text-center">
+          {[1, 2, 3, 4, 5].map((lvl) => {
+            const count = stats.levelDistribution[lvl as 1 | 2 | 3 | 4 | 5] || 0;
+            const isMastered = lvl === 5;
 
             return (
               <div
-                key={level}
-                className={`p-4 rounded-2xl border flex flex-col justify-between transition-all ${
+                key={`lvl_${lvl}`}
+                className={`p-3 sm:p-4 rounded-2xl border transition-all ${
                   isMastered
-                    ? 'bg-amber-500/10 border-amber-500/30 text-amber-900 dark:text-amber-200'
-                    : 'bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700/80 text-slate-800 dark:text-slate-200'
+                    ? 'bg-amber-50/60 dark:bg-amber-950/20 border-amber-300 dark:border-amber-800'
+                    : 'bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700'
                 }`}
               >
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider">Caja {level}</span>
-                  {isMastered && <Trophy className="w-3.5 h-3.5 text-amber-500" />}
-                </div>
-                <div className="my-3">
-                  <span className="text-3xl font-extrabold">{count}</span>
-                  <span className="text-xs text-slate-500 dark:text-slate-400 ml-1">tarjetas</span>
-                </div>
-                <div className="text-[11px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-200/60 dark:border-slate-700/60 flex items-center gap-1">
-                  <Clock className="w-3 h-3" />
-                  <span>Reposo: {days} {days === 1 ? 'día' : 'días'}</span>
-                </div>
+                <span className="text-[10px] sm:text-xs font-bold text-slate-400 block uppercase">
+                  Caja {lvl}
+                </span>
+                <span
+                  className={`text-xl sm:text-2xl font-extrabold my-1 block ${
+                    isMastered ? 'text-amber-600 dark:text-amber-400' : 'text-slate-800 dark:text-white'
+                  }`}
+                >
+                  {count}
+                </span>
+                <span className="text-[10px] text-slate-500 font-medium hidden sm:block">
+                  {lvl === 1 && '1 día'}
+                  {lvl === 2 && '3 días'}
+                  {lvl === 3 && '7 días'}
+                  {lvl === 4 && '14 días'}
+                  {lvl === 5 && 'Dominadas ⭐'}
+                </span>
               </div>
             );
           })}
         </div>
       </div>
 
-      {/* SELECTOR DE BLOQUES DE ESTUDIO (AISLAMIENTO EXPERIMENTAL) */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <BookOpen className="w-4 h-4 text-indigo-500" />
-            <span>Bloques de Estudio Aislados (Anti-Sesgo)</span>
-          </h3>
-          <span className="text-xs text-slate-500">
-            Control de variables de arrastre fonético
-          </span>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {blocks.map((block) => {
-            const assignedMethod = blockSettings[block.id] || 'srs_puro';
-            const isSelected = selectedBlockId === block.id;
-
-            return (
-              <div
-                key={block.id}
-                onClick={() => onSelectBlock(isSelected ? 'all' : block.id)}
-                className={`p-5 rounded-2xl border cursor-pointer transition-all ${
-                  isSelected
-                    ? 'border-indigo-500 ring-2 ring-indigo-500/20 bg-indigo-50/30 dark:bg-indigo-950/20'
-                    : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600'
-                }`}
+      {/* MODAL DE PRÁCTICA LIBRE */}
+      {showFreePracticeModal && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+          <div className="w-full max-w-md bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <RotateCcw className="w-5 h-5 text-indigo-600" />
+                <span>¿Qué deseas practicar libremente?</span>
+              </h3>
+              <button
+                onClick={() => setShowFreePracticeModal(false)}
+                className="text-slate-400 hover:text-slate-600 text-sm font-bold"
               >
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
-                      Vocal: {block.vowel_focus}
-                    </span>
-                    <h4 className="mt-2 text-base font-bold text-slate-900 dark:text-white">
-                      {block.name}
-                    </h4>
-                  </div>
-                  <span className="text-xs px-2.5 py-1 rounded-full bg-amber-100 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300 font-semibold border border-amber-300/40">
-                    {METHOD_LABELS[assignedMethod]}
-                  </span>
-                </div>
+                ✕
+              </button>
+            </div>
 
-                <p className="mt-2 text-xs text-slate-500 dark:text-slate-400 line-clamp-2">
-                  {block.description}
-                </p>
+            <p className="text-xs text-slate-500">
+              La práctica libre no altera los intervalos de tus Cajas Leitner ni tu calendario SRS.
+            </p>
 
-                <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between text-xs">
-                  <span className="text-indigo-600 dark:text-indigo-400 font-medium">
-                    {isSelected ? '✓ Bloque Seleccionado' : 'Clic para filtrar este bloque'}
-                  </span>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onStartStudy(block.id);
-                    }}
-                    className="flex items-center gap-1 font-semibold text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400"
-                  >
-                    <span>Repasar</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
+            <div className="space-y-2.5">
+              <button
+                onClick={() => {
+                  setShowFreePracticeModal(false);
+                  onStartFreePractice('all');
+                }}
+                className="w-full p-3.5 rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-200 dark:border-indigo-800 text-left hover:border-indigo-500 flex items-center justify-between transition-colors"
+              >
+                <div>
+                  <h4 className="text-sm font-bold text-indigo-950 dark:text-indigo-200">
+                    🎲 Entrenamiento Mixto Completo
+                  </h4>
+                  <p className="text-xs text-slate-500">Mezcla todas las mecánicas</p>
                 </div>
-              </div>
-            );
-          })}
+                <ArrowRight className="w-4 h-4 text-indigo-500" />
+              </button>
+
+              <button
+                onClick={() => {
+                  setShowFreePracticeModal(false);
+                  onStartFreePractice('syllables');
+                }}
+                className="w-full p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-left hover:border-indigo-500 flex items-center justify-between transition-colors"
+              >
+                <div>
+                  <h4 className="text-sm font-bold text-slate-900 dark:text-white">
+                    🧩 Ensamblador de Sílabas del Siddur
+                  </h4>
+                  <p className="text-xs text-slate-500">Arma palabras bíblicas con fichas</p>
+                </div>
+                <ArrowRight className="w-4 h-4 text-slate-400" />
+              </button>
+
+              <button
+                onClick={() => {
+                  setShowFreePracticeModal(false);
+                  onStartFreePractice('pairs');
+                }}
+                className="w-full p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-left hover:border-indigo-500 flex items-center justify-between transition-colors"
+              >
+                <div>
+                  <h4 className="text-sm font-bold text-slate-900 dark:text-white">
+                    ⚡ Discriminación de Pares Mínimos
+                  </h4>
+                  <p className="text-xs text-slate-500">Agudeza visual entre signos parecidos</p>
+                </div>
+                <ArrowRight className="w-4 h-4 text-slate-400" />
+              </button>
+
+              <button
+                onClick={() => {
+                  setShowFreePracticeModal(false);
+                  onStartFreePractice('phrases');
+                }}
+                className="w-full p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-left hover:border-indigo-500 flex items-center justify-between transition-colors"
+              >
+                <div>
+                  <h4 className="text-sm font-bold text-slate-900 dark:text-white">
+                    📖 Lectura de Frases (Shema & Berajot)
+                  </h4>
+                  <p className="text-xs text-slate-500">Práctica de oraciones completas con audio</p>
+                </div>
+                <ArrowRight className="w-4 h-4 text-slate-400" />
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
