@@ -1,4 +1,5 @@
 import { ModuleManifest } from './moduleRegistry';
+import { supabase } from '../lib/supabase';
 
 export type ModuleSortMode = 'most_used' | 'recent' | 'default';
 
@@ -6,6 +7,7 @@ export interface ModuleUsageStats {
   count: number;
   lastOpened: number; // Unix timestamp en ms
   pinned?: boolean;
+  pinnedUpdatedAt?: number;
 }
 
 export type ModuleUsageMap = Record<string, ModuleUsageStats>;
@@ -13,13 +15,36 @@ export type ModuleUsageMap = Record<string, ModuleUsageStats>;
 const STORAGE_PREFIX = 'pt_module_usage_';
 const SORT_PREF_KEY = 'pt_module_sort_preference';
 
+let syncDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+let lastRecordedTime = 0;
+let lastRecordedModule = '';
+
+function resolveUserKey(userKey?: string): string {
+  if (userKey && userKey.trim() !== '') return userKey;
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('sb-') && key.endsWith('-auth-token')) {
+        const item = localStorage.getItem(key);
+        if (item) {
+          const parsed = JSON.parse(item);
+          const email = parsed?.user?.email || parsed?.user?.id;
+          if (email) return email;
+        }
+      }
+    }
+  } catch {}
+  return 'default';
+}
+
 function getStorageKey(userKey?: string): string {
-  const normalized = (userKey || 'default').trim().toLowerCase().replace(/[^a-z0-9_.-]/g, '_');
+  const resolved = resolveUserKey(userKey);
+  const normalized = resolved.trim().toLowerCase().replace(/[^a-z0-9_.-]/g, '_');
   return `${STORAGE_PREFIX}${normalized}`;
 }
 
 /**
- * Obtiene el mapa completo de estadísticas de uso para el usuario actual
+ * Obtiene el mapa completo de estadísticas de uso para el usuario actual (Lectura síncrona de caché)
  */
 export function getModuleUsageStats(userKey?: string): ModuleUsageMap {
   try {
@@ -34,7 +59,7 @@ export function getModuleUsageStats(userKey?: string): ModuleUsageMap {
 }
 
 /**
- * Guarda las estadísticas de uso para el usuario actual
+ * Guarda las estadísticas de uso en caché local
  */
 function saveModuleUsageStats(stats: ModuleUsageMap, userKey?: string): void {
   try {
@@ -45,37 +70,49 @@ function saveModuleUsageStats(stats: ModuleUsageMap, userKey?: string): void {
 }
 
 /**
- * Registra una apertura de un módulo (incrementa contador y actualiza fecha)
+ * Registra una apertura de un módulo (incrementa contador, actualiza fecha y programa sincronización cloud)
  */
 export function recordModuleUsage(moduleId: string, userKey?: string): void {
   if (!moduleId || moduleId === 'hub') return;
+  const now = Date.now();
+  // Evitar doble conteo si ToolHub y App disparan en milisegundos de diferencia
+  if (moduleId === lastRecordedModule && now - lastRecordedTime < 600) {
+    return;
+  }
+  lastRecordedTime = now;
+  lastRecordedModule = moduleId;
+
   const stats = getModuleUsageStats(userKey);
   const current = stats[moduleId] || { count: 0, lastOpened: 0, pinned: false };
 
   stats[moduleId] = {
     ...current,
     count: (current.count || 0) + 1,
-    lastOpened: Date.now(),
+    lastOpened: now,
   };
 
   saveModuleUsageStats(stats, userKey);
+  scheduleCloudSync(userKey);
 }
 
 /**
- * Fija o desfija un módulo en la parte superior (Pin/Favorito)
+ * Fija o desfija un módulo en la parte superior (Pin/Favorito) y sincroniza
  */
 export function togglePinModule(moduleId: string, userKey?: string): boolean {
   if (!moduleId) return false;
   const stats = getModuleUsageStats(userKey);
   const current = stats[moduleId] || { count: 0, lastOpened: 0, pinned: false };
   const newPinned = !current.pinned;
+  const now = Date.now();
 
   stats[moduleId] = {
     ...current,
     pinned: newPinned,
+    pinnedUpdatedAt: now,
   };
 
   saveModuleUsageStats(stats, userKey);
+  scheduleCloudSync(userKey);
   return newPinned;
 }
 
@@ -97,12 +134,125 @@ export function getStoredSortPreference(): ModuleSortMode {
 /**
  * Guarda la preferencia de ordenación del usuario
  */
-export function setStoredSortPreference(mode: ModuleSortMode): void {
+export function setStoredSortPreference(mode: ModuleSortMode, userKey?: string): void {
   try {
     localStorage.setItem(SORT_PREF_KEY, mode);
+    scheduleCloudSync(userKey);
   } catch (e) {
     console.warn('Error guardando preferencia de orden de módulos:', e);
   }
+}
+
+/**
+ * Sincroniza las estadísticas locales con la nube en Supabase Auth (user_metadata).
+ * Realiza una unión inteligente por deltas para sumar los usos realizados en móvil y en web
+ * sin sobrescribir ni perder el historial de ningún dispositivo.
+ */
+export async function syncModuleUsageWithCloud(userKey?: string): Promise<ModuleUsageMap> {
+  const resolvedKey = resolveUserKey(userKey);
+  const storageKey = getStorageKey(resolvedKey);
+  const baselineKey = `pt_module_usage_synced_${storageKey}`;
+
+  const localStats = getModuleUsageStats(resolvedKey);
+
+  let baselineStats: ModuleUsageMap = {};
+  try {
+    const rawBase = localStorage.getItem(baselineKey);
+    if (rawBase) baselineStats = JSON.parse(rawBase);
+  } catch {}
+
+  try {
+    const { data: { user }, error: authErr } = await supabase.auth.getUser();
+    if (authErr || !user) {
+      return localStats;
+    }
+
+    const remoteStats: ModuleUsageMap = (user.user_metadata?.module_usage_stats as ModuleUsageMap) || {};
+    const remoteSortPref = user.user_metadata?.module_sort_preference as ModuleSortMode | undefined;
+
+    if (remoteSortPref && ['most_used', 'recent', 'default'].includes(remoteSortPref)) {
+      localStorage.setItem(SORT_PREF_KEY, remoteSortPref);
+    }
+
+    const merged: ModuleUsageMap = { ...remoteStats };
+    let hasRemoteDifference = false;
+
+    // 1. Integrar deltas locales de este dispositivo
+    for (const [modId, localItem] of Object.entries(localStats)) {
+      const baseItem = baselineStats[modId] || { count: 0, lastOpened: 0 };
+      const deltaCount = Math.max(0, (localItem.count || 0) - (baseItem.count || 0));
+
+      const remoteItem = merged[modId] || { count: 0, lastOpened: 0, pinned: false };
+      const newCount = (remoteItem.count || 0) + deltaCount;
+      const newLastOpened = Math.max(remoteItem.lastOpened || 0, localItem.lastOpened || 0);
+
+      let newPinned = !!remoteItem.pinned;
+      if (localItem.pinnedUpdatedAt && remoteItem.pinnedUpdatedAt) {
+        newPinned = localItem.pinnedUpdatedAt >= remoteItem.pinnedUpdatedAt ? !!localItem.pinned : !!remoteItem.pinned;
+      } else if (localItem.pinned !== undefined) {
+        newPinned = !!localItem.pinned || !!remoteItem.pinned;
+      }
+
+      const newPinnedUpdatedAt = Math.max(localItem.pinnedUpdatedAt || 0, remoteItem.pinnedUpdatedAt || 0);
+
+      if (
+        newCount !== remoteItem.count ||
+        newLastOpened !== remoteItem.lastOpened ||
+        newPinned !== remoteItem.pinned
+      ) {
+        hasRemoteDifference = true;
+      }
+
+      merged[modId] = {
+        count: newCount,
+        lastOpened: newLastOpened,
+        pinned: newPinned,
+        ...(newPinnedUpdatedAt > 0 ? { pinnedUpdatedAt: newPinnedUpdatedAt } : {}),
+      };
+    }
+
+    // 2. Módulos que existen en la nube pero aún no en local
+    for (const [modId, remoteItem] of Object.entries(remoteStats)) {
+      if (!merged[modId]) {
+        merged[modId] = { ...remoteItem };
+        hasRemoteDifference = true;
+      }
+    }
+
+    // 3. Guardar en local y registrar nueva línea base de sincronización
+    saveModuleUsageStats(merged, resolvedKey);
+    try {
+      localStorage.setItem(baselineKey, JSON.stringify(merged));
+    } catch {}
+
+    // 4. Si hay usos locales nuevos o la nube estaba vacía, persistir en Supabase
+    if (hasRemoteDifference || !user.user_metadata?.module_usage_stats) {
+      await supabase.auth.updateUser({
+        data: {
+          module_usage_stats: merged,
+          module_sort_preference: getStoredSortPreference(),
+        },
+      });
+    }
+
+    return merged;
+  } catch (err) {
+    console.warn('[moduleUsage] Error al sincronizar estadísticas en la nube:', err);
+    return localStats;
+  }
+}
+
+/**
+ * Programa una sincronización con la nube con debounce para no saturar peticiones
+ */
+export function scheduleCloudSync(userKey?: string, delayMs = 1200): void {
+  if (typeof window === 'undefined') return;
+  if (syncDebounceTimer) {
+    clearTimeout(syncDebounceTimer);
+  }
+  syncDebounceTimer = setTimeout(() => {
+    syncModuleUsageWithCloud(userKey).catch(() => {});
+  }, delayMs);
 }
 
 /**
@@ -114,7 +264,6 @@ export function sortModules(
   sortMode: ModuleSortMode,
   stats: ModuleUsageMap
 ): ModuleManifest[] {
-  // Mapa de índices originales para desempate estable
   const originalIndices = new Map<string, number>();
   modules.forEach((mod, idx) => originalIndices.set(mod.id, idx));
 
@@ -133,7 +282,6 @@ export function sortModules(
       const diffCount = (statsB.count || 0) - (statsA.count || 0);
       if (diffCount !== 0) return diffCount;
 
-      // Desempate por última apertura
       const diffOpened = (statsB.lastOpened || 0) - (statsA.lastOpened || 0);
       if (diffOpened !== 0) return diffOpened;
     } else if (sortMode === 'recent') {

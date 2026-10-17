@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ThemeMode, getStoredTheme, applyTheme } from '../lib/theme';
-import { Sun, Moon, Laptop, Flame, Clock, SlidersHorizontal, Pin, Download } from 'lucide-react';
+import { Sun, Moon, Laptop, Flame, Clock, SlidersHorizontal, Pin, Download, Cloud } from 'lucide-react';
 import { MODULE_REGISTRY, ModuleManifest } from '../modules/moduleRegistry';
 import { isStandaloneMode } from '../lib/pwa';
 import { InstallPwaModal } from './InstallPwaModal';
@@ -13,6 +13,7 @@ import {
   setStoredSortPreference,
   sortModules,
   formatRelativeTime,
+  syncModuleUsageWithCloud,
 } from '../modules/moduleUsage';
 
 interface ToolHubProps {
@@ -37,6 +38,32 @@ export const ToolHub: React.FC<ToolHubProps> = ({
   const [sortMode, setSortMode] = useState<ModuleSortMode>(getStoredSortPreference());
   const [usageStats, setUsageStats] = useState(() => getModuleUsageStats(userKey));
 
+  // Sincronizar estadísticas unificadas en la nube (Móvil + Web)
+  useEffect(() => {
+    let isCancelled = false;
+
+    const runSync = async () => {
+      const merged = await syncModuleUsageWithCloud(userKey);
+      if (!isCancelled && merged) {
+        setUsageStats(merged);
+        setSortMode(getStoredSortPreference());
+      }
+    };
+
+    runSync();
+
+    // Re-sincronizar cuando el usuario regrese a la pestaña (por si abrió algo en el celular)
+    const handleFocus = () => {
+      runSync();
+    };
+
+    window.addEventListener('focus', handleFocus);
+    return () => {
+      isCancelled = true;
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, [userKey]);
+
   const handleThemeChange = (newTheme: ThemeMode) => {
     setTheme(newTheme);
     applyTheme(newTheme);
@@ -44,7 +71,7 @@ export const ToolHub: React.FC<ToolHubProps> = ({
 
   const handleSortChange = (newMode: ModuleSortMode) => {
     setSortMode(newMode);
-    setStoredSortPreference(newMode);
+    setStoredSortPreference(newMode, userKey);
   };
 
   const handleTogglePin = (e: React.MouseEvent, moduleId: string) => {
@@ -157,8 +184,12 @@ export const ToolHub: React.FC<ToolHubProps> = ({
               Módulos ({MODULE_REGISTRY.length})
             </span>
             {sortMode === 'most_used' && (
-              <span className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-md border border-emerald-200/60 dark:border-emerald-800/40">
-                Orden dinámico por más usados
+              <span className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-md border border-emerald-200/60 dark:border-emerald-800/40 flex items-center gap-1.5">
+                <span>Orden dinámico por más usados</span>
+                <span className="inline-flex items-center gap-1 text-[10px] text-emerald-600/80 dark:text-emerald-400/80 font-normal border-l border-emerald-200 dark:border-emerald-800/60 pl-1.5">
+                  <Cloud className="w-3 h-3 text-emerald-500" />
+                  Móvil + Web
+                </span>
               </span>
             )}
             {sortMode === 'recent' && (
