@@ -124,8 +124,12 @@ VALUES
     ('22222222-2222-2222-2222-222222222222', 'fase-2-vocales-e', 'Fase 2: Vocales E y Sheva', 'Tsere (ֵ), Segol (ֶ) & Sheva (ְ)', 'Vocales medias y articulación del Sheva silábico en textos litúrgicos.', 2),
     ('33333333-3333-3333-3333-333333333333', 'fase-3-vocales-i-o', 'Fase 3: Vocales I y O', 'Hireq (ִ) & Holem (ֹ / וֹ)', 'Puntos altos y bajos, distinguiendo Holem del punto de Shin/Sin.', 3),
     ('44444444-4444-4444-4444-444444444444', 'fase-4-vocales-u-sofit', 'Fase 4: Vocales U y Letras Finales', 'Qibbuts (ֻ), Shuruq (וּ) & Sofit', 'Vocal U y reconocimiento automático de terminaciones de palabras hebreas.', 4),
-    ('55555555-5555-5555-5555-555555555555', 'fase-5-siddur-jumash', 'Fase 5: Oraciones y Torá', 'Versículos y Plegarias Completas', 'Lectura continua con Niqqudot de textos del Siddur y Jumash.', 5)
-ON CONFLICT (slug) DO NOTHING;
+ON CONFLICT (id) DO UPDATE SET
+    slug = EXCLUDED.slug,
+    name = EXCLUDED.name,
+    vowel_focus = EXCLUDED.vowel_focus,
+    description = EXCLUDED.description,
+    order_index = EXCLUDED.order_index;
 
 -- Tarjetas Bloque A: Consonantes con Qamats (ָ)
 INSERT INTO public.hebrew_cards (block_id, consonant, niqqud, combined_symbol, letter_name, transliteration, phonetic_rule, audio_hint)
