@@ -7,6 +7,7 @@ import {
   ParashaProgress,
 } from '../../../packages/shared/src/types';
 import { PARASHAT_NOACH_DATA } from '../../../packages/shared/src/data/parashatNoachData';
+import { PARASHAT_LECH_LECHA_DATA } from '../../../packages/shared/src/data/parashatLechLechaData';
 
 // Claves de almacenamiento local
 const PARASHA_CACHE_PREFIX = 'parasha_data_cache_';
@@ -51,9 +52,9 @@ export function cleanSacredNames(rawText: string): string {
   text = text.replace(/\bdel\s+Señor\b/g, 'de HaShem');
   text = text.replace(/\bal\s+Señor\b/g, 'a HaShem');
   text = text.replace(/\bSeñor\b/g, 'HaShem');
-  text = text.replace(/\bJehov[aá]\b/gi, 'YHVH');
-  text = text.replace(/\bYahv[eé]\b/gi, 'YHVH');
-  text = text.replace(/\bYahw[eé]h?\b/gi, 'YHVH');
+  text = text.replace(/Jehov[aá]/gi, 'YHVH');
+  text = text.replace(/Yahv[eé]/gi, 'YHVH');
+  text = text.replace(/Yahw[eé]h?/gi, 'YHVH');
 
   // 3. Nombres Divinos y términos sagrados
   // Reemplazar Dios cuando refiere al Creador por Elohim si está junto a HaShem/YHVH
@@ -272,15 +273,21 @@ export function hebrewToPhoneticSpanish(hebrew: string): string {
 /**
  * Calcula el horario y la Aliyá que corresponde leer hoy en la Diáspora.
  *
- * Reglas de lectura semanal de la Diáspora:
- * - Sábado en la Mañana (hasta las 13:30): Parashá completa de esa semana (Aliyot 1 a 7 + Maftir).
- * - Sábado en la Tarde (desde Minjá ~13:30): Comienza la nueva parashá con la 1ª Aliyá (Rishón).
- * - Domingo: 2ª Aliyá (Shení).
- * - Lunes: 3ª Aliyá (Shlishí).
- * - Martes: 4ª Aliyá (Revií).
- * - Miércoles: 5ª Aliyá (Jamishí).
- * - Jueves: 6ª Aliyá (Shishí).
- * - Viernes: 7ª Aliyá (Shevií / Maftir).
+ * Reglas de lectura semanal de la Diáspora con cambio en Minjá y caída del sol:
+ * - Sábado desde Minjá (~13:30) hasta Domingo en la caída del sol (~18:00):
+ *   Entra la nueva parashá con la 1ª Aliyá (Rishón).
+ * - Domingo en la caída del sol (~18:00) hasta Lunes en la caída del sol (~18:00):
+ *   2ª Aliyá (Shení).
+ * - Lunes en la caída del sol hasta Martes en la caída del sol:
+ *   3ª Aliyá (Shlishí).
+ * - Martes en la caída del sol hasta Miércoles en la caída del sol:
+ *   4ª Aliyá (Revií).
+ * - Miércoles en la caída del sol hasta Jueves en la caída del sol:
+ *   5ª Aliyá (Jamishí).
+ * - Jueves en la caída del sol hasta Viernes en la caída del sol:
+ *   6ª Aliyá (Shishí).
+ * - Viernes en la caída del sol (entra Shabat) hasta Sábado en Minjá (~13:30):
+ *   7ª Aliyá (Shevií / Maftir) y lectura completa de Shabat.
  */
 export function getDiasporaDailySchedule(now = new Date()): ParashaDailySchedule {
   const dayOfWeek = now.getDay(); // 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
@@ -288,66 +295,121 @@ export function getDiasporaDailySchedule(now = new Date()): ParashaDailySchedule
   const minute = now.getMinutes();
   const timeDecimal = hour + minute / 60;
 
-  const dateKey = now.toISOString().split('T')[0];
+  const SUNSET_HOUR = 18.0; // 18:00 (caída del sol / Shkiá aproximada)
+  const MINCHA_HOUR = 13.5; // 13:30 (Minjá de Shabat)
 
   let targetAliyahNumber = 1;
   let targetAliyahName = '1ª Aliyá (Rishón)';
   let isShabbatMorning = false;
   let isShabbatAfternoon = false;
   let dayName = 'Hoy';
+  let daysUntilTargetShabbat = 0;
 
   switch (dayOfWeek) {
     case 6: // Sábado (Shabat)
-      dayName = 'Shabat';
-      if (timeDecimal < 13.5) {
-        // Mañana de Shabat: lectura completa de la semana
+      if (timeDecimal < MINCHA_HOUR) {
+        // Mañana de Shabat (hasta las 13:30): Culmina la parashá de la semana que cierra
         isShabbatMorning = true;
-        targetAliyahNumber = 0; // 0 representa lectura completa
-        targetAliyahName = 'Parashá Completa';
+        dayName = 'Shabat (Shajarit)';
+        targetAliyahNumber = 7; // 7ª Aliyá / Completa
+        targetAliyahName = '7ª Aliyá (Shevií)';
+        daysUntilTargetShabbat = 0; // Sábado de hoy
       } else {
-        // Tarde de Shabat (Minjá): inicia el ciclo con la 1ª Aliyá de la semana entrante
+        // Tarde de Shabat (desde Minjá ~13:30): Inicia la nueva parashá con la 1ª Aliyá
         isShabbatAfternoon = true;
+        dayName = 'Shabat (Minjá)';
         targetAliyahNumber = 1;
         targetAliyahName = '1ª Aliyá (Rishón)';
+        daysUntilTargetShabbat = 7; // Próximo sábado
       }
       break;
 
     case 0: // Domingo
-      dayName = 'Domingo';
-      targetAliyahNumber = 2;
-      targetAliyahName = '2ª Aliyá (Shení)';
+      if (timeDecimal < SUNSET_HOUR) {
+        dayName = 'Domingo';
+        targetAliyahNumber = 1;
+        targetAliyahName = '1ª Aliyá (Rishón)';
+      } else {
+        dayName = 'Domingo (noche) / Lunes';
+        targetAliyahNumber = 2;
+        targetAliyahName = '2ª Aliyá (Shení)';
+      }
+      daysUntilTargetShabbat = 6;
       break;
 
     case 1: // Lunes
-      dayName = 'Lunes';
-      targetAliyahNumber = 3;
-      targetAliyahName = '3ª Aliyá (Shlishí)';
+      if (timeDecimal < SUNSET_HOUR) {
+        dayName = 'Lunes';
+        targetAliyahNumber = 2;
+        targetAliyahName = '2ª Aliyá (Shení)';
+      } else {
+        dayName = 'Lunes (noche) / Martes';
+        targetAliyahNumber = 3;
+        targetAliyahName = '3ª Aliyá (Shlishí)';
+      }
+      daysUntilTargetShabbat = 5;
       break;
 
     case 2: // Martes
-      dayName = 'Martes';
-      targetAliyahNumber = 4;
-      targetAliyahName = '4ª Aliyá (Revií)';
+      if (timeDecimal < SUNSET_HOUR) {
+        dayName = 'Martes';
+        targetAliyahNumber = 3;
+        targetAliyahName = '3ª Aliyá (Shlishí)';
+      } else {
+        dayName = 'Martes (noche) / Miércoles';
+        targetAliyahNumber = 4;
+        targetAliyahName = '4ª Aliyá (Revií)';
+      }
+      daysUntilTargetShabbat = 4;
       break;
 
     case 3: // Miércoles
-      dayName = 'Miércoles';
-      targetAliyahNumber = 5;
-      targetAliyahName = '5ª Aliyá (Jamishí)';
+      if (timeDecimal < SUNSET_HOUR) {
+        dayName = 'Miércoles';
+        targetAliyahNumber = 4;
+        targetAliyahName = '4ª Aliyá (Revií)';
+      } else {
+        dayName = 'Miércoles (noche) / Jueves';
+        targetAliyahNumber = 5;
+        targetAliyahName = '5ª Aliyá (Jamishí)';
+      }
+      daysUntilTargetShabbat = 3;
       break;
 
     case 4: // Jueves
-      dayName = 'Jueves';
-      targetAliyahNumber = 6;
-      targetAliyahName = '6ª Aliyá (Shishí)';
+      if (timeDecimal < SUNSET_HOUR) {
+        dayName = 'Jueves';
+        targetAliyahNumber = 5;
+        targetAliyahName = '5ª Aliyá (Jamishí)';
+      } else {
+        dayName = 'Jueves (noche) / Viernes';
+        targetAliyahNumber = 6;
+        targetAliyahName = '6ª Aliyá (Shishí)';
+      }
+      daysUntilTargetShabbat = 2;
       break;
 
     case 5: // Viernes
-      dayName = 'Viernes';
-      targetAliyahNumber = 7;
-      targetAliyahName = '7ª Aliyá (Shevií)';
+      if (timeDecimal < SUNSET_HOUR) {
+        dayName = 'Viernes';
+        targetAliyahNumber = 6;
+        targetAliyahName = '6ª Aliyá (Shishí)';
+      } else {
+        dayName = 'Viernes (noche / Shabat)';
+        targetAliyahNumber = 7;
+        targetAliyahName = '7ª Aliyá (Shevií)';
+      }
+      daysUntilTargetShabbat = 1;
       break;
   }
+
+  const targetDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + daysUntilTargetShabbat);
+  const dateKey = now.toISOString().split('T')[0];
+
+  // Determinar la parashá activa según la fecha de culminación
+  // Shabat 24 Oct 2026 -> Lej-Lejá; Shabat 17 Oct 2026 (y antes de Minjá) -> Noaj
+  const targetTime = targetDate.getTime();
+  const isLechLechaTarget = targetTime >= new Date(2026, 9, 18).getTime();
 
   return {
     dayOfWeek,
@@ -356,9 +418,9 @@ export function getDiasporaDailySchedule(now = new Date()): ParashaDailySchedule
     targetAliyahName,
     isShabbatMorning,
     isShabbatAfternoon,
-    parashaName: 'Noaj',
-    parashaHebrew: 'נֹחַ',
-    parashaRef: 'Genesis 6:9-11:32',
+    parashaName: isLechLechaTarget ? 'Lej-Lejá' : 'Noaj',
+    parashaHebrew: isLechLechaTarget ? 'לֶךְ־לְךָ' : 'נֹחַ',
+    parashaRef: isLechLechaTarget ? 'Génesis 12:1–17:27' : 'Génesis 6:9–11:32',
     dateKey,
   };
 }
@@ -375,8 +437,21 @@ function isEnglishText(text: string): boolean {
  * Obtiene la Parashá activa de la Diáspora y sus Aliyot.
  * Garantiza 100% texto en Español con Niqqud en hebreo y fonética, nunca en inglés.
  */
-export async function getWeeklyParasha(): Promise<WeeklyParasha> {
-  const cacheKey = `${PARASHA_CACHE_PREFIX}current`;
+export async function getWeeklyParasha(targetDate?: Date): Promise<WeeklyParasha> {
+  const schedule = getDiasporaDailySchedule(targetDate || new Date());
+  const now = targetDate || new Date();
+  const dayOfWeek = now.getDay();
+  const timeDecimal = now.getHours() + now.getMinutes() / 60;
+  
+  let daysUntilTargetShabbat = 0;
+  if (dayOfWeek === 6) {
+    daysUntilTargetShabbat = timeDecimal < 13.5 ? 0 : 7;
+  } else {
+    daysUntilTargetShabbat = 6 - dayOfWeek;
+  }
+  const targetShabbat = new Date(now.getFullYear(), now.getMonth(), now.getDate() + daysUntilTargetShabbat);
+  const targetDateKey = `${targetShabbat.getFullYear()}-${String(targetShabbat.getMonth() + 1).padStart(2, '0')}-${String(targetShabbat.getDate()).padStart(2, '0')}`;
+  const cacheKey = `${PARASHA_CACHE_PREFIX}${targetDateKey}`;
 
   // 1. Revisar caché local en localStorage
   if (typeof window !== 'undefined') {
@@ -397,9 +472,25 @@ export async function getWeeklyParasha(): Promise<WeeklyParasha> {
     }
   }
 
-  // 2. Intentar consultar calendario de Sefaria (Diáspora)
+  // 2. Comprobar datasets de alta fidelidad precompilados en Español y Hebreo con Niqqud
+  if (schedule.parashaName === 'Lej-Lejá' || targetDateKey === '2026-10-24') {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(cacheKey, JSON.stringify({ ...PARASHAT_LECH_LECHA_DATA, _cachedAt: Date.now() }));
+    }
+    return PARASHAT_LECH_LECHA_DATA;
+  }
+
+  if (schedule.parashaName === 'Noaj' || targetDateKey === '2026-10-17') {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(cacheKey, JSON.stringify({ ...PARASHAT_NOACH_DATA, _cachedAt: Date.now() }));
+    }
+    return PARASHAT_NOACH_DATA;
+  }
+
+  // 3. Intentar consultar calendario de Sefaria con la fecha objetivo de Shabat (Diáspora)
   try {
-    const calRes = await fetch('https://www.sefaria.org/api/calendars?diaspora=1');
+    const sefariaUrl = `https://www.sefaria.org/api/calendars?diaspora=1&year=${targetShabbat.getFullYear()}&month=${targetShabbat.getMonth() + 1}&day=${targetShabbat.getDate()}`;
+    const calRes = await fetch(sefariaUrl);
     if (calRes.ok) {
       const calData = await calRes.json();
       const pItem = calData.calendar_items?.find(
@@ -407,11 +498,18 @@ export async function getWeeklyParasha(): Promise<WeeklyParasha> {
       );
 
       if (pItem) {
-        const nameEn = pItem.displayValue?.en || 'Noach';
-        const nameHe = pItem.displayValue?.he || 'נח';
-        const fullRef = pItem.ref || 'Genesis 6:9-11:32';
+        const nameEn = pItem.displayValue?.en || '';
+        const nameHe = pItem.displayValue?.he || '';
+        const fullRef = pItem.ref || '';
 
-        // Si la parashá actual es Noaj, usar de inmediato nuestro dataset completo de alta fidelidad
+        // Si la parashá devuelta es Lej-Lejá o Noaj, usar nuestros datasets
+        if (nameEn.toLowerCase().includes('lech') || nameEn.toLowerCase().includes('lej') || fullRef.toLowerCase().includes('genesis 12:1')) {
+          if (typeof window !== 'undefined') {
+            localStorage.setItem(cacheKey, JSON.stringify({ ...PARASHAT_LECH_LECHA_DATA, _cachedAt: Date.now() }));
+          }
+          return PARASHAT_LECH_LECHA_DATA;
+        }
+
         if (nameEn.toLowerCase().includes('noa') || fullRef.toLowerCase().includes('genesis 6:9')) {
           if (typeof window !== 'undefined') {
             localStorage.setItem(cacheKey, JSON.stringify({ ...PARASHAT_NOACH_DATA, _cachedAt: Date.now() }));
@@ -430,12 +528,22 @@ export async function getWeeklyParasha(): Promise<WeeklyParasha> {
             const textRes = await fetch(`https://www.sefaria.org/api/texts/${encodeURIComponent(aliyahRef)}?lang=es&context=0`);
             if (textRes.ok) {
               const textData = await textRes.json();
-              const hebrewVerses: string[] = Array.isArray(textData.he) ? textData.he : [textData.he || ''];
-              const englishSpanishVerses: string[] = Array.isArray(textData.text) ? textData.text : [textData.text || ''];
+              let hebrewVerses: string[] = [];
+              if (Array.isArray(textData.he)) {
+                hebrewVerses = Array.isArray(textData.he[0]) ? textData.he.flat(Infinity) : textData.he;
+              } else {
+                hebrewVerses = [textData.he || ''];
+              }
+
+              let englishSpanishVerses: string[] = [];
+              if (Array.isArray(textData.text)) {
+                englishSpanishVerses = Array.isArray(textData.text[0]) ? textData.text.flat(Infinity) : textData.text;
+              } else {
+                englishSpanishVerses = [textData.text || ''];
+              }
 
               const verses: ParashaVerse[] = hebrewVerses.map((heb, vIdx) => {
                 const rawSp = englishSpanishVerses[vIdx] || '';
-                // Si Sefaria devolvió inglés, limpiar nombres sagrados
                 const sanitized = cleanSacredNames(rawSp);
                 return {
                   verseNumber: vIdx + 1,
@@ -483,11 +591,12 @@ export async function getWeeklyParasha(): Promise<WeeklyParasha> {
     console.warn('Error conectando a Sefaria para Parashá:', err);
   }
 
-  // 3. Respaldo garantizado 100% en Español con Nombres Sagrados (Parashat Noaj)
+  // 4. Respaldo garantizado según la fecha objetivo
+  const fallbackData = schedule.parashaName === 'Lej-Lejá' ? PARASHAT_LECH_LECHA_DATA : PARASHAT_NOACH_DATA;
   if (typeof window !== 'undefined') {
-    localStorage.setItem(cacheKey, JSON.stringify({ ...PARASHAT_NOACH_DATA, _cachedAt: Date.now() }));
+    localStorage.setItem(cacheKey, JSON.stringify({ ...fallbackData, _cachedAt: Date.now() }));
   }
-  return PARASHAT_NOACH_DATA;
+  return fallbackData;
 }
 
 /**
