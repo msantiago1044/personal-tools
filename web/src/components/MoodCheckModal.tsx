@@ -38,7 +38,7 @@ export const MoodCheckModal: React.FC<MoodCheckModalProps> = ({
   // Estados para el registro de sueño en la primera entrada del día
   const [needsSleepPrompt, setNeedsSleepPrompt] = useState(false);
   const [checkingSleepStatus, setCheckingSleepStatus] = useState(true);
-  const [skipSleepRecord, setSkipSleepRecord] = useState(false);
+  const [wantsSleepRecord, setWantsSleepRecord] = useState(true);
   const [bedTime, setBedTime] = useState('23:00');
   const [wakeTime, setWakeTime] = useState(() => {
     const now = new Date();
@@ -59,9 +59,13 @@ export const MoodCheckModal: React.FC<MoodCheckModalProps> = ({
         const hasSleep = await hasSleepRecordedForDate(userId, getLocalDateString());
         if (isMounted) {
           setNeedsSleepPrompt(!hasSleep);
+          setWantsSleepRecord(!hasSleep);
         }
       } catch (e) {
-        if (isMounted) setNeedsSleepPrompt(false);
+        if (isMounted) {
+          setNeedsSleepPrompt(false);
+          setWantsSleepRecord(false);
+        }
       } finally {
         if (isMounted) setCheckingSleepStatus(false);
       }
@@ -92,14 +96,16 @@ export const MoodCheckModal: React.FC<MoodCheckModalProps> = ({
 
   if (!isOpen) return null;
 
-  const performSave = async (emotionKey: EmotionKey, customNote?: string) => {
+  const isSleepPromptActive = needsSleepPrompt && wantsSleepRecord;
+
+  const performSave = async (emotionKey: EmotionKey, customNote?: string, saveSleep: boolean = false) => {
     setSaving(true);
     try {
-      // 1. Guardar emoción
+      // 1. Guardar emoción siempre
       await saveEmotionRecord(userId, emotionKey, customNote);
 
-      // 2. Si corresponde a la primera entrada y el usuario no omitió el sueño, guardar registro de sueño
-      if (needsSleepPrompt && !skipSleepRecord && durationMinutes > 0) {
+      // 2. Si corresponde al sueño y el usuario decidió guardarlo
+      if (needsSleepPrompt && saveSleep && durationMinutes > 0) {
         const now = new Date();
         const [bH, bM] = bedTime.split(':').map(Number);
         const [wH, wM] = wakeTime.split(':').map(Number);
@@ -129,7 +135,7 @@ export const MoodCheckModal: React.FC<MoodCheckModalProps> = ({
         setSelectedEmotion(null);
         setNote('');
         setShowNoteInput(false);
-        setSkipSleepRecord(false);
+        setWantsSleepRecord(true);
         onSaved?.();
         onClose();
       }, 750);
@@ -143,15 +149,15 @@ export const MoodCheckModal: React.FC<MoodCheckModalProps> = ({
   const handleSelectEmotion = async (emotionKey: EmotionKey) => {
     setSelectedEmotion(emotionKey);
 
-    // Si no tiene desplegado el input de notas, guardamos directamente
-    if (!showNoteInput) {
-      await performSave(emotionKey);
+    // Si NO estamos en modo de registrar sueño y no hay nota abierta, guardado rápido de 1-clic
+    if (!isSleepPromptActive && !showNoteInput) {
+      await performSave(emotionKey, undefined, false);
     }
   };
 
-  const handleConfirmWithNote = async () => {
+  const handleConfirmFullSave = async () => {
     if (!selectedEmotion) return;
-    await performSave(selectedEmotion, note);
+    await performSave(selectedEmotion, note, isSleepPromptActive);
   };
 
   const handleDismiss = () => {
@@ -160,11 +166,10 @@ export const MoodCheckModal: React.FC<MoodCheckModalProps> = ({
   };
 
   const firstName = userName ? userName.split(' ')[0] : null;
-  const isFirstDailyCheckin = needsSleepPrompt && !skipSleepRecord;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 dark:bg-black/75 backdrop-blur-xs p-4 animate-in fade-in duration-200">
-      <div className={`w-full ${isFirstDailyCheckin ? 'max-w-md' : 'max-w-sm'} bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-2xl text-slate-900 dark:text-slate-100 transition-all duration-200 relative overflow-hidden max-h-[90vh] overflow-y-auto`}>
+      <div className={`w-full ${isSleepPromptActive ? 'max-w-md' : 'max-w-sm'} bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-2xl text-slate-900 dark:text-slate-100 transition-all duration-200 relative overflow-hidden max-h-[90vh] overflow-y-auto`}>
         {/* Glow decorativo sutil */}
         <div className="absolute -top-12 -right-12 w-32 h-32 bg-emerald-500/10 dark:bg-emerald-400/10 rounded-full blur-xl pointer-events-none" />
 
@@ -173,15 +178,15 @@ export const MoodCheckModal: React.FC<MoodCheckModalProps> = ({
           <div>
             <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>{isFirstDailyCheckin ? '🌅 Primera entrada del día' : 'Chequeo de bienestar'}</span>
+              <span>{isSleepPromptActive ? '🌅 Primera entrada del día' : 'Chequeo de bienestar'}</span>
             </div>
             <h3 className="text-base font-bold text-slate-900 dark:text-white mt-0.5">
               {firstName ? `¿Cómo te sientes, ${firstName}?` : '¿Cómo te sientes en este momento?'}
             </h3>
             <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
-              {isFirstDailyCheckin
+              {isSleepPromptActive
                 ? 'Registra tu descanso de anoche y tu estado de ánimo'
-                : 'Toca un icono para registrar tu ánimo actual'}
+                : 'Selecciona una emoción para registrar tu ánimo actual'}
             </p>
           </div>
           <button
@@ -200,106 +205,126 @@ export const MoodCheckModal: React.FC<MoodCheckModalProps> = ({
               <Check className="w-7 h-7 stroke-[3]" />
             </div>
             <h4 className="text-sm font-bold text-slate-900 dark:text-white">
-              {isFirstDailyCheckin ? '¡Sueño y Ánimo Registrados!' : '¡Emoción registrada!'}
+              {isSleepPromptActive ? '¡Sueño y Ánimo Registrados!' : '¡Emoción registrada!'}
             </h4>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-              Guardado en tu historial de bienestar y descanso
+              {isSleepPromptActive
+                ? 'Descanso y emoción guardados. ¡No volveremos a preguntarte por tu sueño hoy!'
+                : needsSleepPrompt && !wantsSleepRecord
+                ? 'Emoción guardada. Te preguntaremos por tu descanso en tu próximo chequeo.'
+                : 'Guardado en tu historial de bienestar'}
             </p>
           </div>
         ) : (
           <>
-            {/* Sección de Sueño para la Primera Entrada del Día */}
-            {isFirstDailyCheckin && !checkingSleepStatus && (
-              <div className="my-3 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1.5 text-xs font-semibold text-indigo-600 dark:text-indigo-400">
-                    <Moon className="w-3.5 h-3.5" />
-                    <span>Descanso de anoche</span>
-                  </div>
-                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300">
-                    {formatSleepDuration(durationMinutes)}
-                  </span>
-                </div>
-
-                {/* Horas de inicio y fin */}
-                <div className="grid grid-cols-2 gap-2.5">
-                  <div>
-                    <label className="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-1 flex items-center gap-1">
-                      <Clock className="w-3 h-3 text-slate-400" />
-                      Hora de dormir
-                    </label>
-                    <input
-                      type="time"
-                      value={bedTime}
-                      onChange={(e) => setBedTime(e.target.value)}
-                      className="w-full text-xs font-semibold px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-1 flex items-center gap-1">
-                      <Sun className="w-3 h-3 text-amber-500" />
-                      Hora despertar
-                    </label>
-                    <input
-                      type="time"
-                      value={wakeTime}
-                      onChange={(e) => setWakeTime(e.target.value)}
-                      className="w-full text-xs font-semibold px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                    />
-                  </div>
-                </div>
-
-                {/* Calidad de sueño del 1 al 5 */}
-                <div>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400">
-                      ¿Cómo dormiste? (1 al 5)
-                    </span>
-                    <span className="text-[11px] font-semibold text-slate-700 dark:text-slate-300">
-                      {SLEEP_QUALITY_CONFIG[sleepQuality]?.emoji} {SLEEP_QUALITY_CONFIG[sleepQuality]?.label}
+            {/* Sección de Sueño para la Entrada del Día sin registrar */}
+            {needsSleepPrompt && !checkingSleepStatus && (
+              wantsSleepRecord ? (
+                <div className="my-3 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5 text-xs font-semibold text-indigo-600 dark:text-indigo-400">
+                      <Moon className="w-3.5 h-3.5" />
+                      <span>Descanso de anoche</span>
+                    </div>
+                    <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300">
+                      {formatSleepDuration(durationMinutes)}
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-5 gap-1.5">
-                    {[1, 2, 3, 4, 5].map((score) => {
-                      const item = SLEEP_QUALITY_CONFIG[score];
-                      const isSelected = sleepQuality === score;
-                      return (
-                        <button
-                          key={score}
-                          type="button"
-                          onClick={() => setSleepQuality(score)}
-                          className={`flex flex-col items-center justify-center py-2 px-1 rounded-xl border transition-all duration-150 ${
-                            isSelected
-                              ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/60 ring-2 ring-indigo-500/20 text-indigo-700 dark:text-indigo-300 shadow-xs'
-                              : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300'
-                          }`}
-                        >
-                          <span className="text-base leading-none mb-1">{item.emoji}</span>
-                          <span className="text-[10px] font-bold">{score}</span>
-                        </button>
-                      );
-                    })}
+                  {/* Horas de inicio y fin */}
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <div>
+                      <label className="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-1 flex items-center gap-1">
+                        <Clock className="w-3 h-3 text-slate-400" />
+                        Hora de dormir
+                      </label>
+                      <input
+                        type="time"
+                        value={bedTime}
+                        onChange={(e) => setBedTime(e.target.value)}
+                        className="w-full text-xs font-semibold px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-1 flex items-center gap-1">
+                        <Sun className="w-3 h-3 text-amber-500" />
+                        Hora despertar
+                      </label>
+                      <input
+                        type="time"
+                        value={wakeTime}
+                        onChange={(e) => setWakeTime(e.target.value)}
+                        className="w-full text-xs font-semibold px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Calidad de sueño del 1 al 5 */}
+                  <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400">
+                        ¿Cómo dormiste? (1 al 5)
+                      </span>
+                      <span className="text-[11px] font-semibold text-slate-700 dark:text-slate-300">
+                        {SLEEP_QUALITY_CONFIG[sleepQuality]?.emoji} {SLEEP_QUALITY_CONFIG[sleepQuality]?.label}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-5 gap-1.5">
+                      {[1, 2, 3, 4, 5].map((score) => {
+                        const item = SLEEP_QUALITY_CONFIG[score];
+                        const isSelected = sleepQuality === score;
+                        return (
+                          <button
+                            key={score}
+                            type="button"
+                            onClick={() => setSleepQuality(score)}
+                            className={`flex flex-col items-center justify-center py-2 px-1 rounded-xl border transition-all duration-150 ${
+                              isSelected
+                                ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/60 ring-2 ring-indigo-500/20 text-indigo-700 dark:text-indigo-300 shadow-xs'
+                                : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300'
+                            }`}
+                          >
+                            <span className="text-base leading-none mb-1">{item.emoji}</span>
+                            <span className="text-[10px] font-bold">{score}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Opción para omitir registro de sueño si tiene prisa */}
+                  <div className="flex justify-between items-center pt-1 border-t border-slate-200/60 dark:border-slate-700/60">
+                    <span className="text-[10px] text-slate-400">¿No quieres llenar el sueño ahora?</span>
+                    <button
+                      type="button"
+                      onClick={() => setWantsSleepRecord(false)}
+                      className="text-[10px] font-medium text-indigo-600 dark:text-indigo-400 hover:underline"
+                    >
+                      Omitir por ahora (preguntar luego)
+                    </button>
                   </div>
                 </div>
-
-                {/* Opción para omitir registro de sueño si tiene prisa */}
-                <div className="flex justify-end pt-1">
+              ) : (
+                <div className="my-2.5 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
+                  <span>💤 Sueño omitido (se te preguntará en tu próximo chequeo).</span>
                   <button
                     type="button"
-                    onClick={() => setSkipSleepRecord(true)}
-                    className="text-[10px] text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 underline"
+                    onClick={() => setWantsSleepRecord(true)}
+                    className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline ml-2"
                   >
-                    Omitir registro de sueño hoy
+                    Reactivar
                   </button>
                 </div>
-              </div>
+              )
             )}
 
             {/* Grid de iconografía con las 6 emociones */}
             <div className="mb-2">
               <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 block mb-2">
-                {isFirstDailyCheckin ? 'Selecciona tu ánimo al comenzar el día:' : 'Selecciona tu emoción:'}
+                {isSleepPromptActive
+                  ? 'Selecciona tu ánimo al comenzar el día (requerido):'
+                  : 'Selecciona tu emoción:'}
               </span>
 
               <div className="grid grid-cols-3 gap-2.5">
@@ -329,17 +354,44 @@ export const MoodCheckModal: React.FC<MoodCheckModalProps> = ({
               </div>
             </div>
 
-            {/* Opción desplegable para nota corta */}
-            {!showNoteInput ? (
-              <div className="flex justify-between items-center pt-2.5 border-t border-slate-100 dark:border-slate-800/80">
-                <button
-                  type="button"
-                  onClick={() => setShowNoteInput(true)}
-                  className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition"
-                >
-                  <MessageSquare className="w-3.5 h-3.5" />
-                  <span>+ Añadir nota corta</span>
-                </button>
+            {/* Opción para nota corta */}
+            {showNoteInput && (
+              <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800/80 animate-in fade-in duration-150">
+                <input
+                  type="text"
+                  placeholder="Ej. Desperté con buena energía, listo para la jornada..."
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  maxLength={120}
+                  className="w-full text-xs px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                />
+              </div>
+            )}
+
+            {/* Botones de acción inferiores */}
+            <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800/80 flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                {!showNoteInput ? (
+                  <button
+                    type="button"
+                    onClick={() => setShowNoteInput(true)}
+                    className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition"
+                  >
+                    <MessageSquare className="w-3.5 h-3.5" />
+                    <span>+ Añadir nota</span>
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowNoteInput(false);
+                      setNote('');
+                    }}
+                    className="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+                  >
+                    Quitar nota
+                  </button>
+                )}
 
                 <button
                   type="button"
@@ -349,35 +401,33 @@ export const MoodCheckModal: React.FC<MoodCheckModalProps> = ({
                   Ahora no
                 </button>
               </div>
-            ) : (
-              <div className="space-y-2.5 pt-2.5 border-t border-slate-100 dark:border-slate-800/80 animate-in fade-in duration-150">
-                <input
-                  type="text"
-                  placeholder="Ej. Desperté con buena energía, listo para la jornada..."
-                  value={note}
-                  onChange={(e) => setNote(e.target.value)}
-                  maxLength={120}
-                  className="w-full text-xs px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                />
-                <div className="flex items-center justify-end gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowNoteInput(false)}
-                    className="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 px-2 py-1"
-                  >
-                    Cancelar nota
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleConfirmWithNote}
-                    disabled={!selectedEmotion || saving}
-                    className="text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 text-white px-3.5 py-1.5 rounded-xl shadow-xs transition"
-                  >
-                    {saving ? 'Guardando...' : 'Guardar todo'}
-                  </button>
-                </div>
-              </div>
-            )}
+
+              {/* Botón explícito de confirmación cuando el formulario de sueño o nota están presentes */}
+              {(isSleepPromptActive || showNoteInput || (needsSleepPrompt && !wantsSleepRecord)) && (
+                <button
+                  type="button"
+                  onClick={handleConfirmFullSave}
+                  disabled={!selectedEmotion || saving}
+                  className="w-full py-2.5 px-4 text-xs font-bold rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-white shadow-sm transition flex items-center justify-center gap-2"
+                >
+                  {saving ? (
+                    'Guardando...'
+                  ) : !selectedEmotion ? (
+                    'Selecciona una emoción arriba para guardar'
+                  ) : isSleepPromptActive ? (
+                    <>
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>Guardar descanso y emoción</span>
+                    </>
+                  ) : (
+                    <>
+                      <Check className="w-3.5 h-3.5" />
+                      <span>Guardar emoción</span>
+                    </>
+                  )}
+                </button>
+              )}
+            </div>
           </>
         )}
       </div>

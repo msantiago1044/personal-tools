@@ -4,6 +4,9 @@ import { LoginPage } from './pages/LoginPage';
 import { ToolHub } from './components/ToolHub';
 import { MoodCheckModal } from './components/MoodCheckModal';
 import { shouldPromptMoodCheck } from './lib/emotions';
+import { PirkeiAvotPromptModal } from './components/pirkei_avot/PirkeiAvotPromptModal';
+import { shouldPromptPirkeiAvot, getStoredPirkeiAvotBookmark } from './lib/pirkeiAvot';
+import { PirkeiAvotBookmark } from '../../packages/shared/src/types';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { MODULE_REGISTRY, findModuleByHash, getModuleById, ModuleManifest } from './modules/moduleRegistry';
 import { recordModuleUsage } from './modules/moduleUsage';
@@ -26,6 +29,10 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [currentView, setCurrentView] = useState<string>('hub');
   const [showMoodPrompt, setShowMoodPrompt] = useState(false);
+  const [showAvotPrompt, setShowAvotPrompt] = useState(false);
+  const [avotBookmark, setAvotBookmark] = useState<PirkeiAvotBookmark>(() => getStoredPirkeiAvotBookmark());
+  const [avotGreeting, setAvotGreeting] = useState<string>('Pausa de Mediodía');
+  const [avotTarget, setAvotTarget] = useState<{ chapter: number; mishna: number } | null>(null);
 
   // Inicializar vista basada en hash existente si el usuario ingresó por enlace directo
   useEffect(() => {
@@ -126,17 +133,51 @@ export default function App() {
     };
   }, []);
 
-  // Chequeo de estado de ánimo
+  // Chequeo de estado de ánimo (evalúa reglas de tiempo y reentradas durante el día)
   useEffect(() => {
-    if (session?.user) {
+    if (!session?.user) return;
+
+    const checkPrompt = () => {
       if (shouldPromptMoodCheck()) {
-        const timer = setTimeout(() => {
-          setShowMoodPrompt(true);
-        }, 500);
-        return () => clearTimeout(timer);
+        setShowMoodPrompt(true);
       }
-    }
+    };
+
+    const timer = setTimeout(checkPrompt, 500);
+
+    // Al volver a la pestaña/app durante el día, comprobar si corresponde preguntar
+    window.addEventListener('focus', checkPrompt);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('focus', checkPrompt);
+    };
   }, [session]);
+
+  // Sugerencia de lectura de Pirkei Avot a mediodía o en la tarde (12:00 a 19:30)
+  useEffect(() => {
+    if (!session?.user) return;
+
+    const checkAvotPrompt = () => {
+      // Si el usuario ya está en Pirkei Avot o el modal de ánimo está abierto, no interrumpir
+      if (currentView === 'pirkei_avot' || showMoodPrompt) return;
+
+      const { shouldPrompt, bookmark, greeting } = shouldPromptPirkeiAvot(session.user.id);
+      if (shouldPrompt) {
+        setAvotBookmark(bookmark);
+        setAvotGreeting(greeting);
+        setShowAvotPrompt(true);
+      }
+    };
+
+    const timer = setTimeout(checkAvotPrompt, 1200);
+    window.addEventListener('focus', checkAvotPrompt);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('focus', checkAvotPrompt);
+    };
+  }, [session, currentView, showMoodPrompt]);
 
   if (loading) {
     return (
@@ -163,6 +204,8 @@ export default function App() {
             <activeModule.component
               user={session.user}
               onBackToHub={() => changeView('hub')}
+              initialChapter={currentView === 'pirkei_avot' ? avotTarget?.chapter : undefined}
+              initialMishna={currentView === 'pirkei_avot' ? avotTarget?.mishna : undefined}
             />
           </Suspense>
         </ErrorBoundary>
@@ -193,6 +236,25 @@ export default function App() {
         isOpen={showMoodPrompt}
         onClose={() => setShowMoodPrompt(false)}
       />
+
+      {/* Ventana flotante de sugerencia de Pirkei Avot al mediodía o en la tarde */}
+      <PirkeiAvotPromptModal
+        isOpen={showAvotPrompt}
+        bookmark={avotBookmark}
+        greeting={avotGreeting}
+        onClose={() => setShowAvotPrompt(false)}
+        onReadNow={(chapter, mishna) => {
+          setShowAvotPrompt(false);
+          setAvotTarget({ chapter, mishna });
+          changeView('pirkei_avot');
+        }}
+        onViewAllChapters={() => {
+          setShowAvotPrompt(false);
+          setAvotTarget(null);
+          changeView('pirkei_avot');
+        }}
+      />
     </ErrorBoundary>
   );
 }
+

@@ -242,6 +242,8 @@ export const ToolHub: React.FC<ToolHubProps> = ({
                         ? '📊'
                         : tool.id === 'tehilim'
                         ? '📜'
+                        : tool.id === 'pirkei_avot'
+                        ? '🏛️'
                         : tool.id === 'dwg_viewer'
                         ? '📐'
                         : tool.id === 'pantry'

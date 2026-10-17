@@ -225,4 +225,41 @@ export interface PantryEntropyMetrics {
   recommendations: string[];
 }
 
+// ============================================================================
+// MÓDULO: PIRKEI AVOT (ÉTICA DE LOS PADRES)
+// ============================================================================
+export interface AvotMishna {
+  mishna: number;
+  hebrew: string;
+  transliteration: string;
+  spanish: string;
+  sage?: string;
+  keyTeaching?: string;
+}
+
+export interface AvotChapter {
+  chapter: number;
+  titleHebrew: string;
+  titleTransliteration: string;
+  titleSpanish: string;
+  description: string;
+  mishnayot: AvotMishna[];
+}
+
+export interface PirkeiAvotBookmark {
+  chapter: number;
+  mishna: number;
+  updated_at: string;
+  completed?: boolean;
+}
+
+export interface PirkeiAvotProgress {
+  chapter_number: number;
+  completed_mishnayot: number[];
+  completed_count: number;
+  is_completed: boolean;
+  last_read_at?: string;
+}
+
+
 

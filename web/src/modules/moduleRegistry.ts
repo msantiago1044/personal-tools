@@ -57,6 +57,11 @@ const SleepModule = React.lazy(() =>
   import('../pages/sleep/SleepModule').then((m) => ({ default: m.SleepModule }))
 );
 
+const PirkeiAvotModule = React.lazy(() =>
+  import('../pages/pirkei_avot/PirkeiAvotModule').then((m) => ({ default: m.PirkeiAvotModule }))
+);
+
+
 /**
  * Registro Central Desacoplado de Módulos (Architecture RFC - OCP)
  * Para añadir un nuevo módulo, solo regístralo en esta lista.
@@ -93,6 +98,17 @@ export const MODULE_REGISTRY: ModuleManifest[] = [
     hashAliases: ['tehilim'],
     status: 'active',
     component: TehilimModule,
+  },
+  {
+    id: 'pirkei_avot',
+    name: 'Pirkei Avot',
+    description: 'Ética de los Padres con hebreo, fonética y traducción.',
+    icon: 'book-open',
+    route: '/pirkei-avot',
+    hashAliases: ['pirkei-avot', 'avot', 'padres'],
+    status: 'active',
+    badge: 'Mishná',
+    component: PirkeiAvotModule,
   },
   {
     id: 'dwg_viewer',
