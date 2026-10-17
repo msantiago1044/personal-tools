@@ -61,12 +61,27 @@ const PirkeiAvotModule = React.lazy(() =>
   import('../pages/pirkei_avot/PirkeiAvotModule').then((m) => ({ default: m.PirkeiAvotModule }))
 );
 
+const ParashaModule = React.lazy(() =>
+  import('../pages/parasha/ParashaModule').then((m) => ({ default: m.ParashaModule }))
+);
+
 
 /**
  * Registro Central Desacoplado de Módulos (Architecture RFC - OCP)
  * Para añadir un nuevo módulo, solo regístralo en esta lista.
  */
 export const MODULE_REGISTRY: ModuleManifest[] = [
+  {
+    id: 'parasha',
+    name: 'Parashá Semanal',
+    description: 'Lectura diaria de la Torá (Diáspora) aliyá por aliyá.',
+    icon: 'book-open',
+    route: '/parasha',
+    hashAliases: ['parasha', 'tora', 'shavua'],
+    status: 'active',
+    badge: 'Diáspora',
+    component: ParashaModule,
+  },
   {
     id: 'finance',
     name: 'Finanzas',

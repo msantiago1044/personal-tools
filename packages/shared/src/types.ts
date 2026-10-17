@@ -261,5 +261,57 @@ export interface PirkeiAvotProgress {
   last_read_at?: string;
 }
 
+// ============================================================================
+// MÓDULO: PARASHÁ DE LA SEMANA (DIÁSPORA)
+// ============================================================================
+export interface ParashaVerse {
+  verseNumber: number;
+  verseKey: string;
+  hebrew: string;
+  transliteration: string;
+  spanish: string;
+}
+
+export interface ParashaAliyah {
+  aliyahNumber: number;
+  nameHebrew: string;
+  nameSpanish: string;
+  refRange: string;
+  verses: ParashaVerse[];
+}
+
+export interface WeeklyParasha {
+  id: string;
+  nameHebrew: string;
+  nameSpanish: string;
+  book: 'Genesis' | 'Exodus' | 'Leviticus' | 'Numbers' | 'Deuteronomy';
+  bookSpanish: string;
+  ref: string;
+  aliyot: ParashaAliyah[];
+  summary?: string;
+}
+
+export interface ParashaDailySchedule {
+  dayOfWeek: number;
+  dayName: string;
+  targetAliyahNumber: number;
+  targetAliyahName: string;
+  isShabbatMorning: boolean;
+  isShabbatAfternoon: boolean;
+  parashaName: string;
+  parashaHebrew: string;
+  parashaRef: string;
+  aliyahRef?: string;
+  dateKey: string;
+}
+
+export interface ParashaProgress {
+  parasha_id: string;
+  completed_aliyot: number[];
+  full_parasha_completed: boolean;
+  last_read_at?: string;
+}
+
+
 
 

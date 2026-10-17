@@ -4,6 +4,7 @@ import { Sun, Moon, Laptop, Flame, Clock, SlidersHorizontal, Pin, Download, Clou
 import { MODULE_REGISTRY, ModuleManifest } from '../modules/moduleRegistry';
 import { isStandaloneMode } from '../lib/pwa';
 import { InstallPwaModal } from './InstallPwaModal';
+import { ParashaDailyCard } from './ParashaDailyCard';
 import {
   ModuleSortMode,
   getModuleUsageStats,
@@ -177,6 +178,12 @@ export const ToolHub: React.FC<ToolHubProps> = ({
 
       {/* Grid de Herramientas Minimalista */}
       <main className="max-w-5xl mx-auto mt-6 sm:mt-8">
+        {/* Widget diario de Parashá de la semana (se oculta automáticamente si ya fue leída hoy) */}
+        <ParashaDailyCard
+          userId={userKey}
+          onOpenParasha={(aliyahNumber) => onSelectTool('/parasha')}
+        />
+
         {/* Barra superior de ordenación y preferencias */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5">
           <div className="flex items-center gap-2">
@@ -269,10 +276,12 @@ export const ToolHub: React.FC<ToolHubProps> = ({
                           : 'bg-slate-200 dark:bg-slate-800 text-slate-500'
                       }`}
                     >
-                      {tool.id === 'finance'
+                      {tool.id === 'parasha'
+                        ? '📜'
+                        : tool.id === 'finance'
                         ? '📊'
                         : tool.id === 'tehilim'
-                        ? '📜'
+                        ? '🕊️'
                         : tool.id === 'pirkei_avot'
                         ? '🏛️'
                         : tool.id === 'dwg_viewer'
