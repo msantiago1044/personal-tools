@@ -330,4 +330,28 @@ CREATE POLICY "Users can CRUD their own pantry consumptions"
     USING (auth.uid() = user_id)
     WITH CHECK (auth.uid() = user_id);
 
+-- ==============================================================================
+-- 13. MÓDULO: PARASHÁ DE LA SEMANA (DIÁSPORA) - SEGUIMIENTO DE ALIYOT
+-- ==============================================================================
+CREATE TABLE IF NOT EXISTS public.parasha_progress (
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    parasha_id VARCHAR(50) NOT NULL,
+    completed_aliyot INT[] DEFAULT '{}',
+    is_completed BOOLEAN NOT NULL DEFAULT FALSE,
+    date_key VARCHAR(20),
+    last_read_at TIMESTAMPTZ DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+    PRIMARY KEY (user_id, parasha_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_parasha_progress_user ON public.parasha_progress(user_id);
+
+ALTER TABLE public.parasha_progress ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can CRUD their own parasha progress"
+    ON public.parasha_progress FOR ALL
+    USING (auth.uid() = user_id)
+    WITH CHECK (auth.uid() = user_id);
+
+
 
