@@ -42,6 +42,31 @@ export function resolvePirkeiAvotUserId(userId?: string): string {
 }
 
 /**
+ * Valida si un string cumple el formato UUID estándar de Supabase/PostgreSQL.
+ */
+export function isUuid(str?: string): boolean {
+  return (
+    !!str &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(str.trim())
+  );
+}
+
+/**
+ * Obtiene el UUID canónico del usuario autenticado en Supabase.
+ * Previene errores de tipo UUID en PostgreSQL (ej. si se pasa un correo electrónico en lugar del UUID).
+ */
+export async function getCanonicalAuthUserId(userId?: string): Promise<string | undefined> {
+  if (userId && isUuid(userId)) return userId.trim();
+  try {
+    const { data } = await supabase.auth.getUser();
+    if (data?.user?.id && isUuid(data.user.id)) {
+      return data.user.id;
+    }
+  } catch {}
+  return undefined;
+}
+
+/**
  * Obtiene el marcador actual de lectura (dónde quedó el usuario).
  * Si no existe marcador previo, retorna por defecto Capítulo 1, Mishná 1.
  * Soporta migración transparente desde claves previas (correo o invitado).
@@ -50,39 +75,55 @@ export function getStoredPirkeiAvotBookmark(userId?: string): PirkeiAvotBookmark
   const defaultBookmark: PirkeiAvotBookmark = {
     chapter: 1,
     mishna: 1,
-    updated_at: new Date().toISOString(),
+    updated_at: new Date(0).toISOString(),
     completed: false,
   };
 
   if (typeof window === 'undefined') return defaultBookmark;
 
   const resolved = resolvePirkeiAvotUserId(userId);
-  const primaryKey = `${BOOKMARK_KEY_PREFIX}${resolved}`;
-  let stored = localStorage.getItem(primaryKey);
+  let bestBookmark = defaultBookmark;
 
-  // Fallback / Migración si se guardó con correo o con 'guest'
-  if (!stored && userId && userId !== resolved) {
-    stored = localStorage.getItem(`${BOOKMARK_KEY_PREFIX}${userId}`);
-    if (stored) {
-      localStorage.setItem(primaryKey, stored);
-    }
-  }
-  if (!stored && resolved !== 'guest') {
-    stored = localStorage.getItem(`${BOOKMARK_KEY_PREFIX}guest`);
-  }
-
-  if (!stored) return defaultBookmark;
+  const candidateKeys = new Set<string>();
+  if (resolved) candidateKeys.add(`${BOOKMARK_KEY_PREFIX}${resolved}`);
+  if (userId) candidateKeys.add(`${BOOKMARK_KEY_PREFIX}${userId}`);
+  candidateKeys.add(`${BOOKMARK_KEY_PREFIX}guest`);
+  candidateKeys.add(`${BOOKMARK_KEY_PREFIX}default`);
 
   try {
-    const parsed = JSON.parse(stored) as PirkeiAvotBookmark;
-    if (parsed.chapter && parsed.mishna) {
-      return parsed;
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith(BOOKMARK_KEY_PREFIX)) {
+        candidateKeys.add(k);
+      }
     }
-  } catch (e) {
-    console.warn('Error leyendo marcador de Pirkei Avot:', e);
-  }
+  } catch {}
 
-  return defaultBookmark;
+  candidateKeys.forEach((k) => {
+    try {
+      const raw = localStorage.getItem(k);
+      if (raw) {
+        const parsed = JSON.parse(raw) as PirkeiAvotBookmark;
+        if (parsed && parsed.chapter && parsed.mishna) {
+          const parsedTime = new Date(parsed.updated_at || 0).getTime();
+          const bestTime = new Date(bestBookmark.updated_at || 0).getTime();
+          const isAdvanced =
+            parsed.chapter > bestBookmark.chapter ||
+            (parsed.chapter === bestBookmark.chapter && parsed.mishna > bestBookmark.mishna);
+
+          if (
+            parsedTime > bestTime ||
+            isAdvanced ||
+            (bestBookmark.chapter === 1 && bestBookmark.mishna === 1 && !bestBookmark.completed)
+          ) {
+            bestBookmark = parsed;
+          }
+        }
+      }
+    } catch {}
+  });
+
+  return bestBookmark;
 }
 
 /**
@@ -167,8 +208,8 @@ export async function savePirkeiAvotBookmark(
   const dateKey = getLocalDateKey();
   localStorage.setItem(`${DAILY_READ_KEY_PREFIX}${dateKey}_${resolved}`, 'true');
 
-  const cloudUid = resolved !== 'guest' ? resolved : userId;
-  if (cloudUid && cloudUid !== 'guest') {
+  const cloudUid = await getCanonicalAuthUserId(userId || (resolved !== 'guest' ? resolved : undefined));
+  if (cloudUid) {
     try {
       const { error } = await supabase.from('pirkei_avot_bookmarks').upsert(
         {
@@ -204,25 +245,37 @@ export async function savePirkeiAvotBookmark(
 export function getStoredPirkeiAvotProgress(userId?: string): Record<number, PirkeiAvotProgress> {
   if (typeof window === 'undefined') return {};
   const resolved = resolvePirkeiAvotUserId(userId);
-  const primaryKey = `${PROGRESS_KEY_PREFIX}${resolved}`;
-  let stored = localStorage.getItem(primaryKey);
+  let combined: Record<number, PirkeiAvotProgress> = {};
 
-  if (!stored && userId && userId !== resolved) {
-    stored = localStorage.getItem(`${PROGRESS_KEY_PREFIX}${userId}`);
-    if (stored) {
-      localStorage.setItem(primaryKey, stored);
-    }
-  }
-  if (!stored && resolved !== 'guest') {
-    stored = localStorage.getItem(`${PROGRESS_KEY_PREFIX}guest`);
-  }
+  const candidateKeys = new Set<string>();
+  if (resolved) candidateKeys.add(`${PROGRESS_KEY_PREFIX}${resolved}`);
+  if (userId) candidateKeys.add(`${PROGRESS_KEY_PREFIX}${userId}`);
+  candidateKeys.add(`${PROGRESS_KEY_PREFIX}guest`);
+  candidateKeys.add(`${PROGRESS_KEY_PREFIX}default`);
 
-  if (!stored) return {};
   try {
-    return JSON.parse(stored);
-  } catch {
-    return {};
-  }
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith(PROGRESS_KEY_PREFIX)) {
+        candidateKeys.add(k);
+      }
+    }
+  } catch {}
+
+  candidateKeys.forEach((k) => {
+    try {
+      const raw = localStorage.getItem(k);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === 'object') {
+          const { merged } = mergePirkeiAvotProgressMaps(combined, parsed);
+          combined = merged;
+        }
+      }
+    } catch {}
+  });
+
+  return combined;
 }
 
 /**
@@ -355,8 +408,8 @@ export async function savePirkeiAvotProgress(
     localStorage.setItem(`${DAILY_READ_KEY_PREFIX}${dateKey}_${resolved}`, 'true');
   }
 
-  const cloudUid = resolved !== 'guest' ? resolved : userId;
-  if (cloudUid && cloudUid !== 'guest') {
+  const cloudUid = await getCanonicalAuthUserId(userId || (resolved !== 'guest' ? resolved : undefined));
+  if (cloudUid) {
     try {
       const { error } = await supabase.from('pirkei_avot_progress').upsert(
         {
@@ -529,9 +582,7 @@ export async function syncPirkeiAvotWithCloud(userId?: string): Promise<{
   const localBm = getStoredPirkeiAvotBookmark(resolved);
   const localProg = getStoredPirkeiAvotProgress(resolved);
 
-  const cloudUid = resolved !== 'guest' ? resolved : (userId && userId !== 'guest' ? userId : undefined);
-
-  if (!cloudUid || typeof window === 'undefined') {
+  if (typeof window === 'undefined') {
     return {
       bookmark: localBm,
       progressMap: localProg,
@@ -545,6 +596,19 @@ export async function syncPirkeiAvotWithCloud(userId?: string): Promise<{
   try {
     // 0. Consultar sesión actual y user_metadata en auth (fuente compartida directa en Supabase)
     const { data: authData } = await supabase.auth.getUser();
+    const cloudUid =
+      authData?.user?.id ||
+      (userId && isUuid(userId) ? userId : undefined) ||
+      (isUuid(resolved) ? resolved : undefined);
+
+    if (!cloudUid) {
+      return {
+        bookmark: localBm,
+        progressMap: localProg,
+        hasReadToday: hasReadPirkeiAvotToday(resolved),
+      };
+    }
+
     const metaBookmark = authData?.user?.user_metadata?.pirkei_avot_bookmark as PirkeiAvotBookmark | undefined;
     const metaProgress = authData?.user?.user_metadata?.pirkei_avot_progress as Record<number, PirkeiAvotProgress> | undefined;
 
@@ -592,6 +656,9 @@ export async function syncPirkeiAvotWithCloud(userId?: string): Promise<{
           updated_at: effectiveRemoteBm.updated_at,
         };
         localStorage.setItem(`${BOOKMARK_KEY_PREFIX}${resolved}`, JSON.stringify(finalBm));
+        if (cloudUid && cloudUid !== resolved) {
+          localStorage.setItem(`${BOOKMARK_KEY_PREFIX}${cloudUid}`, JSON.stringify(finalBm));
+        }
       } else if (localTime > remoteTime && !isLocalDefault) {
         // El local es más reciente / avanzado, subir a la nube
         await supabase.from('pirkei_avot_bookmarks').upsert(
@@ -656,6 +723,9 @@ export async function syncPirkeiAvotWithCloud(userId?: string): Promise<{
 
     // Guardar progreso combinado localmente
     localStorage.setItem(`${PROGRESS_KEY_PREFIX}${resolved}`, JSON.stringify(finalProg));
+    if (cloudUid && cloudUid !== resolved) {
+      localStorage.setItem(`${PROGRESS_KEY_PREFIX}${cloudUid}`, JSON.stringify(finalProg));
+    }
 
     // Subir a Supabase los capítulos con novedades combinadas (usando SOLO columnas válidas de la BD)
     if (chaptersToUpload.length > 0) {

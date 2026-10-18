@@ -19,17 +19,28 @@ window.addEventListener('vite:preloadError', (event) => {
 // Inicializar listeners de instalación PWA
 initPwaListeners();
 
-// Registro de Service Worker para capacidades offline y PWA
+// Registro de Service Worker para capacidades offline y PWA con actualización activa
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker
       .register('/sw.js')
       .then((registration) => {
         console.log('[PWA] Service Worker registrado con éxito:', registration.scope);
+        // Forzar comprobación inmediata de nueva versión en cada carga
+        registration.update().catch(() => {});
       })
       .catch((error) => {
         console.warn('[PWA] No se pudo registrar el Service Worker:', error);
       });
+  });
+
+  // Si un nuevo Service Worker toma el control (nueva versión desplegada), refrescar suavemente
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!refreshing) {
+      refreshing = true;
+      window.location.reload();
+    }
   });
 }
 

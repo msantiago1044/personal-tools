@@ -1,4 +1,4 @@
-const CACHE_NAME = 'personal-tools-pwa-v3';
+const CACHE_NAME = 'personal-tools-pwa-v5';
 const PRECACHE_ASSETS = [
   '/',
   '/manifest.webmanifest',
@@ -26,13 +26,14 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// Activación: Limpieza de caches antiguos
+// Activación: Limpieza exhaustiva de caches antiguos
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
         keys.map((key) => {
           if (key !== CACHE_NAME) {
+            console.log('[PWA SW] Purgando cache obsoleto:', key);
             return caches.delete(key);
           }
         })
@@ -79,7 +80,27 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Recursos estáticos (imágenes, fuentes, css, js, icons): Stale-While-Revalidate
+  // Código y estilos (scripts .js, hojas .css, assets de Vite): Network First con fallback a Cache
+  if (
+    url.pathname.endsWith('.js') ||
+    url.pathname.endsWith('.css') ||
+    url.pathname.includes('/assets/')
+  ) {
+    event.respondWith(
+      fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const clone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          }
+          return networkResponse;
+        })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  // Recursos estáticos secundarios (imágenes, fuentes, iconos): Stale-While-Revalidate
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       const fetchPromise = fetch(event.request)
