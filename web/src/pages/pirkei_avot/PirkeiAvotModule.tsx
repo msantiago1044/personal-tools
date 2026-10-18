@@ -201,45 +201,7 @@ export const PirkeiAvotModule: React.FC<PirkeiAvotModuleProps> = ({
     [user?.id]
   );
 
-  // Auto-guardado de marcador al leer y desplazarse por el capítulo
-  useEffect(() => {
-    if (selectedChapterNumber === null || typeof window === 'undefined') return;
-
-    let debounceTimer: any = null;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries.find((e) => e.isIntersecting);
-        if (visible) {
-          const mNum = parseInt(visible.target.getAttribute('data-mishna') || '1', 10);
-          if (mNum && (bookmark.chapter !== selectedChapterNumber || bookmark.mishna !== mNum)) {
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => {
-              handleSetBookmark(selectedChapterNumber, mNum);
-            }, 800);
-          }
-        }
-      },
-      {
-        rootMargin: '-10% 0px -65% 0px',
-        threshold: 0.1,
-      }
-    );
-
-    Object.entries(mishnaRefs.current).forEach(([num, el]) => {
-      if (el) {
-        el.setAttribute('data-mishna', num);
-        observer.observe(el);
-      }
-    });
-
-    return () => {
-      clearTimeout(debounceTimer);
-      observer.disconnect();
-    };
-  }, [selectedChapterNumber, bookmark.chapter, bookmark.mishna, handleSetBookmark]);
-
-  // Marcar lectura de una mishná individual (+1)
+  // Marcar lectura de una mishná individual (+1) y avanzar el punto de lectura al siguiente texto
   const handleToggleMishnaCompleted = async (mishnaNum: number) => {
     if (!currentChapter) return;
     const currentCompleted = currentChapterProgress?.completed_mishnayot || [];
@@ -255,8 +217,29 @@ export const PirkeiAvotModule: React.FC<PirkeiAvotModuleProps> = ({
     setProgressMap(newMap);
     setHasReadToday(true);
 
-    // Actualizar también el marcador como última mishná leída
-    handleSetBookmark(currentChapter.chapter, mishnaNum);
+    // Avanzar el punto de lectura guardado a la siguiente mishná a leer
+    let nextChapter = currentChapter.chapter;
+    let nextMishna = mishnaNum + 1;
+    let isBookCompleted = false;
+
+    if (mishnaNum >= currentChapter.mishnayot.length) {
+      if (currentChapter.chapter < 6) {
+        nextChapter = currentChapter.chapter + 1;
+        nextMishna = 1;
+      } else {
+        isBookCompleted = true;
+      }
+    }
+
+    const nextBookmark: PirkeiAvotBookmark = {
+      chapter: nextChapter,
+      mishna: nextMishna,
+      updated_at: new Date().toISOString(),
+      completed: isBookCompleted,
+    };
+
+    setBookmark(nextBookmark);
+    await savePirkeiAvotBookmark(nextBookmark, user?.id);
 
     // Celebración si completó todas las mishnayot del capítulo
     if (updatedList.length === currentChapter.mishnayot.length) {
@@ -278,20 +261,21 @@ export const PirkeiAvotModule: React.FC<PirkeiAvotModuleProps> = ({
 
     // Avanzar al siguiente capítulo si existe
     if (currentChapter.chapter < 6) {
+      const nextChap = currentChapter.chapter + 1;
+      await handleSetBookmark(nextChap, 1);
       setTimeout(() => {
-        const nextChap = currentChapter.chapter + 1;
         setSelectedChapterNumber(nextChap);
         setTargetMishnaNumber(1);
-        handleSetBookmark(nextChap, 1);
       }, 900);
+    } else {
+      await handleSetBookmark(6, currentChapter.mishnayot.length);
     }
   };
 
-  // Abrir capítulo desde el catálogo
-  const handleOpenChapter = (chapNum: number, mishnaNum: number = 1) => {
+  // Abrir capítulo desde el catálogo (solo para lectura, no sobreescribe el marcador)
+  const handleOpenChapter = (chapNum: number, mishnaNum?: number) => {
     setSelectedChapterNumber(chapNum);
-    setTargetMishnaNumber(mishnaNum);
-    handleSetBookmark(chapNum, mishnaNum);
+    setTargetMishnaNumber(mishnaNum || null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
