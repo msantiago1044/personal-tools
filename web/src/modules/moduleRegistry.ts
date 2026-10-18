@@ -8,6 +8,7 @@ export interface ModuleProps {
 export interface ModuleManifest {
   id: string;
   name: string;
+  shortName?: string;
   description: string;
   emoji: string;
   icon: string;
@@ -75,6 +76,7 @@ export const MODULE_REGISTRY: ModuleManifest[] = [
   {
     id: 'parasha',
     name: 'Parashá Semanal',
+    shortName: 'Parashá',
     description: 'Lectura diaria de la Torá (Diáspora) aliyá por aliyá.',
     emoji: '📜',
     icon: 'book-open',
@@ -87,6 +89,7 @@ export const MODULE_REGISTRY: ModuleManifest[] = [
   {
     id: 'finance',
     name: 'Finanzas',
+    shortName: 'Finanzas',
     description: 'Flujo de caja, cuentas y presupuestos.',
     emoji: '📊',
     icon: 'wallet',
@@ -99,6 +102,7 @@ export const MODULE_REGISTRY: ModuleManifest[] = [
   {
     id: 'pantry',
     name: 'Despensa & Mercado',
+    shortName: 'Despensa',
     description: 'Inventario, escaneo de facturas y nutrición.',
     emoji: '🛒',
     icon: 'shopping-bag',
@@ -111,6 +115,7 @@ export const MODULE_REGISTRY: ModuleManifest[] = [
   {
     id: 'tehilim',
     name: 'Tehilim',
+    shortName: 'Tehilim',
     description: '150 salmos con hebreo, fonética y traducción.',
     emoji: '🕊️',
     icon: 'book-open',
@@ -122,6 +127,7 @@ export const MODULE_REGISTRY: ModuleManifest[] = [
   {
     id: 'pirkei_avot',
     name: 'Pirkei Avot',
+    shortName: 'Pirkei Avot',
     description: 'Ética de los Padres con hebreo, fonética y traducción.',
     emoji: '🏛️',
     icon: 'book-open',
@@ -134,6 +140,7 @@ export const MODULE_REGISTRY: ModuleManifest[] = [
   {
     id: 'dwg_viewer',
     name: 'Planos CAD',
+    shortName: 'Planos CAD',
     description: 'Visor de archivos DWG y DXF con capas y regla.',
     emoji: '📐',
     icon: 'layers',
@@ -145,6 +152,7 @@ export const MODULE_REGISTRY: ModuleManifest[] = [
   {
     id: 'emotions',
     name: 'Emociones',
+    shortName: 'Emociones',
     description: 'Registro de estado de ánimo, bienestar y balance diario.',
     emoji: '✨',
     icon: 'smile',
@@ -157,6 +165,7 @@ export const MODULE_REGISTRY: ModuleManifest[] = [
   {
     id: 'notes',
     name: 'Notas & Keep',
+    shortName: 'Notas',
     description: 'Notas rápidas, listas de tareas, colores y etiquetas.',
     emoji: '📝',
     icon: 'sticky-note',
@@ -169,6 +178,7 @@ export const MODULE_REGISTRY: ModuleManifest[] = [
   {
     id: 'pgn',
     name: 'Concurso PGN 3PU-15',
+    shortName: 'PGN 3PU-15',
     description: 'Preparación intensiva al mérito: 40 clases, microlearning y simulacros.',
     emoji: '⚖️',
     icon: 'scale',
@@ -181,6 +191,7 @@ export const MODULE_REGISTRY: ModuleManifest[] = [
   {
     id: 'hebrew_srs',
     name: 'Hebreo Bíblico SRS',
+    shortName: 'Hebreo SRS',
     description: 'Decodificación de Niqqud, evaluación psicométrica y repetición espaciada.',
     emoji: '📖',
     icon: 'book-open',
@@ -193,6 +204,7 @@ export const MODULE_REGISTRY: ModuleManifest[] = [
   {
     id: 'sleep',
     name: 'Sueño & Descanso',
+    shortName: 'Sueño',
     description: 'Registro de horarios de sueño, duración, calidad (1 al 5) y correlación anímica.',
     emoji: '🌙',
     icon: 'moon',

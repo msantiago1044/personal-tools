@@ -3,7 +3,7 @@ import { supabase, signOut, saveSessionBackup, tryRestoreSessionBackup } from '.
 import { LoginPage } from './pages/LoginPage';
 import { ToolHub } from './components/ToolHub';
 import { shouldPromptMoodCheck } from './lib/emotions';
-import { shouldPromptPirkeiAvot, getStoredPirkeiAvotBookmark } from './lib/pirkeiAvot';
+import { shouldPromptPirkeiAvotAsync, getStoredPirkeiAvotBookmark, syncPirkeiAvotWithCloud } from './lib/pirkeiAvot';
 import { PirkeiAvotBookmark } from '../../packages/shared/src/types';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { MODULE_REGISTRY, findModuleByHash, getModuleById, ModuleManifest } from './modules/moduleRegistry';
@@ -162,25 +162,32 @@ export default function App() {
   }, [session]);
 
   // Sugerencia de lectura de Pirkei Avot a mediodía o en la tarde (12:00 a 19:30)
+  // Sincroniza previamente con la nube para que reconozca lecturas hechas en laptop u otro dispositivo
   useEffect(() => {
     if (!session?.user) return;
 
-    const checkAvotPrompt = () => {
+    let isMounted = true;
+
+    const checkAvotPrompt = async () => {
       // Si el usuario ya está en Pirkei Avot o el modal de ánimo está abierto, no interrumpir
       if (currentView === 'pirkei_avot' || showMoodPrompt) return;
 
-      const { shouldPrompt, bookmark, greeting } = shouldPromptPirkeiAvot(session.user.id);
-      if (shouldPrompt) {
+      const { shouldPrompt, bookmark, greeting } = await shouldPromptPirkeiAvotAsync(session.user.id);
+      if (isMounted && shouldPrompt) {
         setAvotBookmark(bookmark);
         setAvotGreeting(greeting);
         setShowAvotPrompt(true);
       }
     };
 
+    // Sincronizar en segundo plano inmediatamente
+    syncPirkeiAvotWithCloud(session.user.id);
+
     const timer = setTimeout(checkAvotPrompt, 1200);
     window.addEventListener('focus', checkAvotPrompt);
 
     return () => {
+      isMounted = false;
       clearTimeout(timer);
       window.removeEventListener('focus', checkAvotPrompt);
     };
@@ -218,6 +225,7 @@ export default function App() {
         </ErrorBoundary>
       ) : (
         <ToolHub
+          userId={session.user.id}
           userEmail={session.user.email}
           userName={session.user.user_metadata?.full_name}
           avatarUrl={session.user.user_metadata?.avatar_url}

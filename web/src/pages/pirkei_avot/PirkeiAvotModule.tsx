@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { PIRKEI_AVOT_DATA } from '../../../../packages/shared/src/data/pirkeiAvotData';
 import { AvotChapter, AvotMishna, PirkeiAvotBookmark, PirkeiAvotProgress } from '../../../../packages/shared/src/types';
@@ -8,6 +8,8 @@ import {
   getStoredPirkeiAvotProgress,
   savePirkeiAvotProgress,
   getMishnaStats,
+  hasReadPirkeiAvotToday,
+  syncPirkeiAvotWithCloud,
 } from '../../lib/pirkeiAvot';
 import { ThemeMode, getStoredTheme, applyTheme } from '../../lib/theme';
 import {
@@ -55,6 +57,9 @@ export const PirkeiAvotModule: React.FC<PirkeiAvotModuleProps> = ({
     getStoredPirkeiAvotBookmark(user?.id)
   );
 
+  // Estado si ya leyó hoy
+  const [hasReadToday, setHasReadToday] = useState(() => hasReadPirkeiAvotToday(user?.id));
+
   // Capítulo actualmente abierto en el lector (null = vista general del catálogo)
   const [selectedChapterNumber, setSelectedChapterNumber] = useState<number | null>(() => {
     if (initialChapter && initialChapter >= 1 && initialChapter <= 6) return initialChapter;
@@ -93,49 +98,36 @@ export const PirkeiAvotModule: React.FC<PirkeiAvotModuleProps> = ({
     applyTheme(newTheme);
   };
 
-  // Cargar progreso desde Supabase
+  // Sincronización transparente con la nube (Supabase + localStorage)
   useEffect(() => {
-    if (user?.id) {
-      supabase
-        .from('pirkei_avot_progress')
-        .select('*')
-        .eq('user_id', user.id)
-        .then(({ data, error }) => {
-          if (!error && data && data.length > 0) {
-            const map: Record<number, PirkeiAvotProgress> = { ...progressMap };
-            data.forEach((item: any) => {
-              map[item.chapter_number] = {
-                chapter_number: item.chapter_number,
-                completed_mishnayot: item.completed_mishnayot || [],
-                completed_count: item.completed_count || 0,
-                is_completed: item.is_completed || false,
-                last_read_at: item.last_read_at,
-                mishna_counts: item.mishna_counts || {},
-                mishna_last_read: item.mishna_last_read || {},
-                years_history: item.years_history || {},
-                cycle: item.cycle || 1,
-              };
-            });
-            setProgressMap(map);
-          }
-        });
+    let isMounted = true;
 
-      supabase
-        .from('pirkei_avot_bookmarks')
-        .select('*')
-        .eq('user_id', user.id)
-        .single()
-        .then(({ data, error }) => {
-          if (!error && data) {
-            setBookmark({
-              chapter: data.chapter,
-              mishna: data.mishna,
-              updated_at: data.updated_at,
-              completed: data.completed,
-            });
-          }
-        });
-    }
+    const runSync = async () => {
+      const res = await syncPirkeiAvotWithCloud(user?.id);
+      if (isMounted && res) {
+        setBookmark(res.bookmark);
+        setProgressMap(res.progressMap);
+        setHasReadToday(res.hasReadToday);
+      }
+    };
+
+    runSync();
+
+    const handleCloudUpdate = (e: any) => {
+      if (!isMounted) return;
+      if (e.detail?.bookmark) setBookmark(e.detail.bookmark);
+      if (e.detail?.progress) setProgressMap(e.detail.progress);
+      setHasReadToday(hasReadPirkeiAvotToday(user?.id));
+    };
+
+    window.addEventListener('pirkei_avot_updated', handleCloudUpdate);
+    window.addEventListener('focus', runSync);
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener('pirkei_avot_updated', handleCloudUpdate);
+      window.removeEventListener('focus', runSync);
+    };
   }, [user?.id]);
 
   // Desplazamiento suave a la mishná objetivo cuando se abre un capítulo
@@ -194,16 +186,58 @@ export const PirkeiAvotModule: React.FC<PirkeiAvotModuleProps> = ({
   }, [progressMap]);
 
   // Actualizar el marcador de lectura
-  const handleSetBookmark = async (chapter: number, mishna: number) => {
-    const newBm: PirkeiAvotBookmark = {
-      chapter,
-      mishna,
-      updated_at: new Date().toISOString(),
-      completed: false,
+  const handleSetBookmark = useCallback(
+    async (chapter: number, mishna: number) => {
+      const newBm: PirkeiAvotBookmark = {
+        chapter,
+        mishna,
+        updated_at: new Date().toISOString(),
+        completed: false,
+      };
+      setBookmark(newBm);
+      setHasReadToday(true);
+      await savePirkeiAvotBookmark(newBm, user?.id);
+    },
+    [user?.id]
+  );
+
+  // Auto-guardado de marcador al leer y desplazarse por el capítulo
+  useEffect(() => {
+    if (selectedChapterNumber === null || typeof window === 'undefined') return;
+
+    let debounceTimer: any = null;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.find((e) => e.isIntersecting);
+        if (visible) {
+          const mNum = parseInt(visible.target.getAttribute('data-mishna') || '1', 10);
+          if (mNum && (bookmark.chapter !== selectedChapterNumber || bookmark.mishna !== mNum)) {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+              handleSetBookmark(selectedChapterNumber, mNum);
+            }, 800);
+          }
+        }
+      },
+      {
+        rootMargin: '-10% 0px -65% 0px',
+        threshold: 0.1,
+      }
+    );
+
+    Object.entries(mishnaRefs.current).forEach(([num, el]) => {
+      if (el) {
+        el.setAttribute('data-mishna', num);
+        observer.observe(el);
+      }
+    });
+
+    return () => {
+      clearTimeout(debounceTimer);
+      observer.disconnect();
     };
-    setBookmark(newBm);
-    await savePirkeiAvotBookmark(newBm, user?.id);
-  };
+  }, [selectedChapterNumber, bookmark.chapter, bookmark.mishna, handleSetBookmark]);
 
   // Marcar lectura de una mishná individual (+1)
   const handleToggleMishnaCompleted = async (mishnaNum: number) => {
@@ -219,6 +253,7 @@ export const PirkeiAvotModule: React.FC<PirkeiAvotModuleProps> = ({
 
     const newMap = await savePirkeiAvotProgress(currentChapter.chapter, updatedList, user?.id, mishnaNum);
     setProgressMap(newMap);
+    setHasReadToday(true);
 
     // Actualizar también el marcador como última mishná leída
     handleSetBookmark(currentChapter.chapter, mishnaNum);
@@ -236,6 +271,7 @@ export const PirkeiAvotModule: React.FC<PirkeiAvotModuleProps> = ({
     const allNums = currentChapter.mishnayot.map((m) => m.mishna);
     const newMap = await savePirkeiAvotProgress(currentChapter.chapter, allNums, user?.id);
     setProgressMap(newMap);
+    setHasReadToday(true);
 
     setAnimatingCelebration(true);
     setTimeout(() => setAnimatingCelebration(false), 3000);
@@ -624,6 +660,37 @@ export const PirkeiAvotModule: React.FC<PirkeiAvotModuleProps> = ({
             VISTA 2: ÍNDICE GENERAL / CATÁLOGO DE LOS 6 CAPÍTULOS
            ========================================================================= */
         <main className="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 pb-28">
+          {/* Notificación de lectura completada hoy */}
+          {hasReadToday && (
+            <div className="mb-6 p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-emerald-500/15 via-teal-500/10 to-transparent border border-emerald-500/30 dark:border-emerald-700/40 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-in fade-in duration-200">
+              <div className="flex items-center gap-3.5">
+                <div className="w-11 h-11 rounded-2xl bg-emerald-100 dark:bg-emerald-950/70 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-xl shrink-0 shadow-xs border border-emerald-200 dark:border-emerald-800">
+                  <CheckCircle2 className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 bg-emerald-100/80 dark:bg-emerald-950/60 px-2 py-0.5 rounded-md">
+                      Lectura de hoy registrada
+                    </span>
+                  </div>
+                  <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white mt-0.5">
+                    ¡Ya leíste Pirkei Avot hoy!
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    Tu punto actual de lectura sincronizado es Capítulo {bookmark.chapter}, Mishná {bookmark.mishna}.
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => handleOpenChapter(bookmark.chapter, bookmark.mishna)}
+                className="w-full sm:w-auto px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-xs"
+              >
+                <span>Repasar lectura</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
+
           {/* Banner Hero de Pirkei Avot */}
           <div className="relative rounded-3xl p-6 sm:p-8 mb-6 overflow-hidden bg-gradient-to-br from-amber-500 via-amber-600 to-amber-700 text-white shadow-xl">
             <div className="relative z-10 max-w-xl">
