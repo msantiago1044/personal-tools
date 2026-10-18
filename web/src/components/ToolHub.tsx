@@ -218,103 +218,6 @@ export const ToolHub: React.FC<ToolHubProps> = ({
           onOpenParasha={(aliyahNumber) => onSelectTool('/parasha')}
         />
 
-        {/* Barra superior de ordenación y preferencias */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-              Módulos ({MODULE_REGISTRY.length})
-            </span>
-            {sortMode === 'most_used' && (
-              <span className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-md border border-emerald-200/60 dark:border-emerald-800/40 flex items-center gap-1.5">
-                <span>Orden dinámico por más usados</span>
-                <span className="inline-flex items-center gap-1 text-[10px] text-emerald-600/80 dark:text-emerald-400/80 font-normal border-l border-emerald-200 dark:border-emerald-800/60 pl-1.5">
-                  <Cloud className="w-3 h-3 text-emerald-500" />
-                  Móvil + Web
-                </span>
-              </span>
-            )}
-            {sortMode === 'recent' && (
-              <span className="text-[11px] font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 px-2 py-0.5 rounded-md border border-blue-200/60 dark:border-blue-800/40">
-                Orden por última apertura
-              </span>
-            )}
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-            {/* Selector de Vista: Cuadrícula Rápida de Iconos vs Tarjetas */}
-            <div className="flex items-center bg-white dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs text-xs">
-              <button
-                onClick={() => handleLayoutChange('grid')}
-                title="Vista compacta de cuadrícula con iconos y nombres cortos"
-                aria-label="Vista de cuadrícula con iconos"
-                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg transition font-medium ${
-                  layoutMode === 'grid'
-                    ? 'bg-emerald-500 text-white shadow-xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                <LayoutGrid className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Iconos</span>
-              </button>
-              <button
-                onClick={() => handleLayoutChange('cards')}
-                title="Vista de tarjetas detalladas con descripciones"
-                aria-label="Vista de tarjetas detalladas"
-                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg transition font-medium ${
-                  layoutMode === 'cards'
-                    ? 'bg-emerald-500 text-white shadow-xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                <LayoutList className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Tarjetas</span>
-              </button>
-            </div>
-
-            {/* Selector de Orden */}
-            <div className="flex items-center bg-white dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs text-xs">
-              <button
-                onClick={() => handleSortChange('most_used')}
-                title="Colocar primero los que más usas"
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition font-medium ${
-                  sortMode === 'most_used'
-                    ? 'bg-emerald-500 text-white shadow-xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                <Flame className="w-3.5 h-3.5" />
-                <span>Más usados</span>
-              </button>
-
-              <button
-                onClick={() => handleSortChange('recent')}
-                title="Colocar primero los usados recientemente"
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition font-medium ${
-                  sortMode === 'recent'
-                    ? 'bg-emerald-500 text-white shadow-xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                <Clock className="w-3.5 h-3.5" />
-                <span>Recientes</span>
-              </button>
-
-              <button
-                onClick={() => handleSortChange('default')}
-                title="Ver en el orden original"
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition font-medium ${
-                  sortMode === 'default'
-                    ? 'bg-emerald-500 text-white shadow-xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                <SlidersHorizontal className="w-3.5 h-3.5" />
-                <span>Predeterminado</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
         {/* Módulos según modo de visualización */}
         {layoutMode === 'grid' ? (
           /* =========================================================================
@@ -513,6 +416,103 @@ export const ToolHub: React.FC<ToolHubProps> = ({
             })}
           </div>
         )}
+
+        {/* Barra de ordenación y preferencias (ubicada debajo de los iconos para priorizar la grilla) */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mt-6 sm:mt-8 pb-8 pt-4 border-t border-slate-200/50 dark:border-slate-800/50">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+              Módulos ({MODULE_REGISTRY.length})
+            </span>
+            {sortMode === 'most_used' && (
+              <span className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-md border border-emerald-200/60 dark:border-emerald-800/40 flex items-center gap-1.5">
+                <span>Orden dinámico por más usados</span>
+                <span className="inline-flex items-center gap-1 text-[10px] text-emerald-600/80 dark:text-emerald-400/80 font-normal border-l border-emerald-200 dark:border-emerald-800/60 pl-1.5">
+                  <Cloud className="w-3 h-3 text-emerald-500" />
+                  Móvil + Web
+                </span>
+              </span>
+            )}
+            {sortMode === 'recent' && (
+              <span className="text-[11px] font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 px-2 py-0.5 rounded-md border border-blue-200/60 dark:border-blue-800/40">
+                Orden por última apertura
+              </span>
+            )}
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Selector de Vista: Cuadrícula Rápida de Iconos vs Tarjetas */}
+            <div className="flex items-center bg-white dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs text-xs">
+              <button
+                onClick={() => handleLayoutChange('grid')}
+                title="Vista compacta de cuadrícula con iconos y nombres cortos"
+                aria-label="Vista de cuadrícula con iconos"
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg transition font-medium ${
+                  layoutMode === 'grid'
+                    ? 'bg-emerald-500 text-white shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                <LayoutGrid className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Iconos</span>
+              </button>
+              <button
+                onClick={() => handleLayoutChange('cards')}
+                title="Vista de tarjetas detalladas con descripciones"
+                aria-label="Vista de tarjetas detalladas"
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg transition font-medium ${
+                  layoutMode === 'cards'
+                    ? 'bg-emerald-500 text-white shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                <LayoutList className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Tarjetas</span>
+              </button>
+            </div>
+
+            {/* Selector de Orden */}
+            <div className="flex items-center bg-white dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs text-xs">
+              <button
+                onClick={() => handleSortChange('most_used')}
+                title="Colocar primero los que más usas"
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition font-medium ${
+                  sortMode === 'most_used'
+                    ? 'bg-emerald-500 text-white shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                <Flame className="w-3.5 h-3.5" />
+                <span>Más usados</span>
+              </button>
+
+              <button
+                onClick={() => handleSortChange('recent')}
+                title="Colocar primero los usados recientemente"
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition font-medium ${
+                  sortMode === 'recent'
+                    ? 'bg-emerald-500 text-white shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                <Clock className="w-3.5 h-3.5" />
+                <span>Recientes</span>
+              </button>
+
+              <button
+                onClick={() => handleSortChange('default')}
+                title="Ver en el orden original"
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition font-medium ${
+                  sortMode === 'default'
+                    ? 'bg-emerald-500 text-white shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                <SlidersHorizontal className="w-3.5 h-3.5" />
+                <span>Predeterminado</span>
+              </button>
+            </div>
+          </div>
+        </div>
       </main>
 
       {/* Modal de Instrucciones de Instalación PWA (iOS / Android / Desktop) */}
