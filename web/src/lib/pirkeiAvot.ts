@@ -170,16 +170,24 @@ export async function savePirkeiAvotBookmark(
   const cloudUid = resolved !== 'guest' ? resolved : userId;
   if (cloudUid && cloudUid !== 'guest') {
     try {
-      const { error } = await supabase.from('pirkei_avot_bookmarks').upsert({
-        user_id: cloudUid,
-        chapter: bookmark.chapter,
-        mishna: bookmark.mishna,
-        completed: bookmark.completed || false,
-        updated_at: bookmark.updated_at || new Date().toISOString(),
-      });
+      const { error } = await supabase.from('pirkei_avot_bookmarks').upsert(
+        {
+          user_id: cloudUid,
+          chapter: bookmark.chapter,
+          mishna: bookmark.mishna,
+          completed: bookmark.completed || false,
+          updated_at: bookmark.updated_at || new Date().toISOString(),
+        },
+        { onConflict: 'user_id' }
+      );
       if (error) {
         console.warn('Nota: bookmark guardado localmente (Supabase:', error.message, ')');
       }
+
+      // Respaldo en user_metadata para disponibilidad inmediata en todos los dispositivos
+      supabase.auth.updateUser({
+        data: { pirkei_avot_bookmark: bookmark },
+      }).catch(() => {});
     } catch (err) {
       console.warn('Nota: bookmark guardado localmente (Supabase:', err, ')');
     }
@@ -350,21 +358,25 @@ export async function savePirkeiAvotProgress(
   const cloudUid = resolved !== 'guest' ? resolved : userId;
   if (cloudUid && cloudUid !== 'guest') {
     try {
-      const { error } = await supabase.from('pirkei_avot_progress').upsert({
-        user_id: cloudUid,
-        chapter_number: chapterNum,
-        completed_mishnayot: updated.completed_mishnayot,
-        completed_count: updated.completed_count,
-        is_completed: updated.is_completed,
-        mishna_counts: updated.mishna_counts,
-        mishna_last_read: updated.mishna_last_read,
-        years_history: updated.years_history,
-        cycle: updated.cycle,
-        last_read_at: nowISO,
-      });
+      const { error } = await supabase.from('pirkei_avot_progress').upsert(
+        {
+          user_id: cloudUid,
+          chapter_number: chapterNum,
+          completed_mishnayot: updated.completed_mishnayot,
+          completed_count: updated.completed_count,
+          is_completed: updated.is_completed,
+          last_read_at: nowISO,
+        },
+        { onConflict: 'user_id,chapter_number' }
+      );
       if (error) {
         console.warn('Nota: progreso guardado localmente (Supabase:', error.message, ')');
       }
+
+      // Respaldar mapa completo en user_metadata (incluyendo counts y fechas detalladas)
+      supabase.auth.updateUser({
+        data: { pirkei_avot_progress: newMap },
+      }).catch(() => {});
     } catch (e) {
       console.warn('Nota: Progreso de Pirkei Avot guardado localmente');
     }
@@ -531,6 +543,11 @@ export async function syncPirkeiAvotWithCloud(userId?: string): Promise<{
   let finalProg = { ...localProg };
 
   try {
+    // 0. Consultar sesión actual y user_metadata en auth (fuente compartida directa en Supabase)
+    const { data: authData } = await supabase.auth.getUser();
+    const metaBookmark = authData?.user?.user_metadata?.pirkei_avot_bookmark as PirkeiAvotBookmark | undefined;
+    const metaProgress = authData?.user?.user_metadata?.pirkei_avot_progress as Record<number, PirkeiAvotProgress> | undefined;
+
     // 1. Sincronizar y unificar marcador (bookmark)
     const { data: remoteBookmark } = await supabase
       .from('pirkei_avot_bookmarks')
@@ -538,42 +555,70 @@ export async function syncPirkeiAvotWithCloud(userId?: string): Promise<{
       .eq('user_id', cloudUid)
       .maybeSingle();
 
-    if (remoteBookmark) {
-      const remoteTime = new Date(remoteBookmark.updated_at || 0).getTime();
+    // Evaluar el mejor marcador remoto entre la tabla de BD y user_metadata
+    let effectiveRemoteBm: PirkeiAvotBookmark | null = remoteBookmark ? {
+      chapter: remoteBookmark.chapter,
+      mishna: remoteBookmark.mishna,
+      completed: remoteBookmark.completed || false,
+      updated_at: remoteBookmark.updated_at,
+    } : null;
+
+    if (metaBookmark) {
+      if (!effectiveRemoteBm) {
+        effectiveRemoteBm = metaBookmark;
+      } else {
+        const metaTime = new Date(metaBookmark.updated_at || 0).getTime();
+        const tableTime = new Date(effectiveRemoteBm.updated_at || 0).getTime();
+        if (metaTime > tableTime) {
+          effectiveRemoteBm = metaBookmark;
+        }
+      }
+    }
+
+    if (effectiveRemoteBm) {
+      const remoteTime = new Date(effectiveRemoteBm.updated_at || 0).getTime();
       const localTime = new Date(localBm.updated_at || 0).getTime();
       const isLocalDefault = localBm.chapter === 1 && localBm.mishna === 1 && !localBm.completed;
 
       const remoteIsMoreAdvanced =
-        remoteBookmark.chapter > localBm.chapter ||
-        (remoteBookmark.chapter === localBm.chapter && remoteBookmark.mishna > localBm.mishna);
+        effectiveRemoteBm.chapter > localBm.chapter ||
+        (effectiveRemoteBm.chapter === localBm.chapter && effectiveRemoteBm.mishna > localBm.mishna);
 
       if (remoteTime >= localTime || isLocalDefault || remoteIsMoreAdvanced) {
         finalBm = {
-          chapter: remoteBookmark.chapter,
-          mishna: remoteBookmark.mishna,
-          completed: remoteBookmark.completed || false,
-          updated_at: remoteBookmark.updated_at,
+          chapter: effectiveRemoteBm.chapter,
+          mishna: effectiveRemoteBm.mishna,
+          completed: effectiveRemoteBm.completed || false,
+          updated_at: effectiveRemoteBm.updated_at,
         };
         localStorage.setItem(`${BOOKMARK_KEY_PREFIX}${resolved}`, JSON.stringify(finalBm));
       } else if (localTime > remoteTime && !isLocalDefault) {
         // El local es más reciente / avanzado, subir a la nube
-        await supabase.from('pirkei_avot_bookmarks').upsert({
+        await supabase.from('pirkei_avot_bookmarks').upsert(
+          {
+            user_id: cloudUid,
+            chapter: localBm.chapter,
+            mishna: localBm.mishna,
+            completed: localBm.completed || false,
+            updated_at: localBm.updated_at,
+          },
+          { onConflict: 'user_id' }
+        );
+        supabase.auth.updateUser({ data: { pirkei_avot_bookmark: localBm } }).catch(() => {});
+      }
+    } else if (localBm.chapter > 1 || localBm.mishna > 1 || localBm.completed) {
+      // No existe en la nube aún, subir local
+      await supabase.from('pirkei_avot_bookmarks').upsert(
+        {
           user_id: cloudUid,
           chapter: localBm.chapter,
           mishna: localBm.mishna,
           completed: localBm.completed || false,
           updated_at: localBm.updated_at,
-        });
-      }
-    } else if (localBm.chapter > 1 || localBm.mishna > 1 || localBm.completed) {
-      // No existe en la nube aún, subir local
-      await supabase.from('pirkei_avot_bookmarks').upsert({
-        user_id: cloudUid,
-        chapter: localBm.chapter,
-        mishna: localBm.mishna,
-        completed: localBm.completed || false,
-        updated_at: localBm.updated_at,
-      });
+        },
+        { onConflict: 'user_id' }
+      );
+      supabase.auth.updateUser({ data: { pirkei_avot_bookmark: localBm } }).catch(() => {});
     }
 
     // 2. Sincronizar y MEZCLAR progreso de capítulos
@@ -582,7 +627,7 @@ export async function syncPirkeiAvotWithCloud(userId?: string): Promise<{
       .select('*')
       .eq('user_id', cloudUid);
 
-    const remoteMap: Record<number, PirkeiAvotProgress> = {};
+    let remoteMap: Record<number, PirkeiAvotProgress> = {};
     if (remoteProgress && remoteProgress.length > 0) {
       remoteProgress.forEach((item: any) => {
         remoteMap[item.chapter_number] = {
@@ -591,12 +636,18 @@ export async function syncPirkeiAvotWithCloud(userId?: string): Promise<{
           completed_count: item.completed_count || 0,
           is_completed: item.is_completed || false,
           last_read_at: item.last_read_at,
-          mishna_counts: item.mishna_counts || {},
-          mishna_last_read: item.mishna_last_read || {},
-          years_history: item.years_history || {},
-          cycle: item.cycle || 1,
+          mishna_counts: {},
+          mishna_last_read: {},
+          years_history: {},
+          cycle: 1,
         };
       });
+    }
+
+    // Integrar también lo que haya en user_metadata si existe
+    if (metaProgress) {
+      const { merged: mergedFromMeta } = mergePirkeiAvotProgressMaps(remoteMap, metaProgress);
+      remoteMap = mergedFromMeta;
     }
 
     // Fusión bidireccional (merge de leídos en laptop y celular)
@@ -606,27 +657,34 @@ export async function syncPirkeiAvotWithCloud(userId?: string): Promise<{
     // Guardar progreso combinado localmente
     localStorage.setItem(`${PROGRESS_KEY_PREFIX}${resolved}`, JSON.stringify(finalProg));
 
-    // Subir a Supabase los capítulos con novedades combinadas
+    // Subir a Supabase los capítulos con novedades combinadas (usando SOLO columnas válidas de la BD)
     if (chaptersToUpload.length > 0) {
       for (const chap of chaptersToUpload) {
         try {
-          await supabase.from('pirkei_avot_progress').upsert({
-            user_id: cloudUid,
-            chapter_number: chap.chapter_number,
-            completed_mishnayot: chap.completed_mishnayot,
-            completed_count: chap.completed_count,
-            is_completed: chap.is_completed,
-            mishna_counts: chap.mishna_counts,
-            mishna_last_read: chap.mishna_last_read,
-            years_history: chap.years_history,
-            cycle: chap.cycle,
-            last_read_at: chap.last_read_at,
-          });
+          await supabase.from('pirkei_avot_progress').upsert(
+            {
+              user_id: cloudUid,
+              chapter_number: chap.chapter_number,
+              completed_mishnayot: chap.completed_mishnayot,
+              completed_count: chap.completed_count,
+              is_completed: chap.is_completed,
+              last_read_at: chap.last_read_at,
+            },
+            { onConflict: 'user_id,chapter_number' }
+          );
         } catch (err) {
           console.warn('[PirkeiAvot] Error subiendo capítulo combinado a Supabase:', err);
         }
       }
     }
+
+    // Guardar el mapa unificado completo en user_metadata
+    supabase.auth.updateUser({
+      data: {
+        pirkei_avot_progress: finalProg,
+        pirkei_avot_bookmark: finalBm,
+      },
+    }).catch(() => {});
 
     // 3. Registrar bandera de hoy si cualquier dispositivo leyó hoy
     const dateKey = getLocalDateKey();
