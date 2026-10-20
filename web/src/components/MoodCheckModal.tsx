@@ -161,7 +161,7 @@ export const MoodCheckModal: React.FC<MoodCheckModalProps> = ({
   };
 
   const handleDismiss = () => {
-    markMoodPromptDismissed();
+    markMoodPromptDismissed(userId);
     onClose();
   };
 

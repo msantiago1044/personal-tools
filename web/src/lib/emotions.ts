@@ -91,8 +91,8 @@ const LAST_PROMPT_KEY = 'last_mood_prompt_time';
 const ONE_HOUR_MS = 60 * 60 * 1000;
 
 /**
- * Comprueba si debe mostrar la ventana flotante de chequeo de emoción:
- * Solo si nunca se ha preguntado o si han pasado más de 60 minutos desde la última vez.
+ * Comprueba si debe mostrar la ventana flotante de chequeo de emoción (versión síncrona local):
+ * Solo si nunca se ha preguntado o si han pasado más de 60 minutos desde la última vez en este navegador.
  */
 export function shouldPromptMoodCheck(): boolean {
   if (typeof window === 'undefined') return false;
@@ -107,11 +107,92 @@ export function shouldPromptMoodCheck(): boolean {
 }
 
 /**
- * Marca el timestamp del último chequeo para no volver a preguntar antes de 1 hora
+ * Evalúa asincrónicamente con previa sincronización en la nube si se debe preguntar la emoción.
+ * Garantiza que si el usuario respondió o descartó en su móvil, el computador (web/PC)
+ * reconozca inmediatamente el tiempo transcurrido y no vuelva a preguntar antes de 1 hora.
  */
-export function markMoodPromptDismissed(): void {
+export async function shouldPromptMoodCheckAsync(userId?: string): Promise<boolean> {
+  if (typeof window === 'undefined') return false;
+
+  // 1. Verificación local rápida en este dispositivo
+  const localPrompt = localStorage.getItem(LAST_PROMPT_KEY);
+  if (localPrompt) {
+    const localTime = parseInt(localPrompt, 10);
+    if (!isNaN(localTime) && Date.now() - localTime < ONE_HOUR_MS) {
+      return false;
+    }
+  }
+
+  if (!userId) {
+    return shouldPromptMoodCheck();
+  }
+
+  // 2. Sincronizar con la nube (última emoción registrada en user_emotions y/o último descarte en user_metadata)
+  try {
+    let latestCloudTimestamp = 0;
+
+    // A. Consultar la última emoción registrada por el usuario en cualquier dispositivo
+    const { data: latestEmotion } = await supabase
+      .from('user_emotions')
+      .select('created_at')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (latestEmotion?.created_at) {
+      const emotionTime = new Date(latestEmotion.created_at).getTime();
+      if (!isNaN(emotionTime) && emotionTime > latestCloudTimestamp) {
+        latestCloudTimestamp = emotionTime;
+      }
+    }
+
+    // B. Consultar el timestamp de último descarte/prompt guardado en user_metadata
+    try {
+      const { data: authData } = await supabase.auth.getUser();
+      const metaTime = authData?.user?.user_metadata?.last_mood_prompt_time;
+      if (metaTime) {
+        const parsedMeta = typeof metaTime === 'number' ? metaTime : parseInt(metaTime, 10);
+        if (!isNaN(parsedMeta) && parsedMeta > latestCloudTimestamp) {
+          latestCloudTimestamp = parsedMeta;
+        }
+      }
+    } catch {}
+
+    // Si hubo alguna interacción en la nube hace menos de 1 hora
+    if (latestCloudTimestamp > 0) {
+      const diff = Date.now() - latestCloudTimestamp;
+      if (diff < ONE_HOUR_MS) {
+        // Actualizar la caché local de este navegador para no tener que consultar continuamente
+        localStorage.setItem(LAST_PROMPT_KEY, latestCloudTimestamp.toString());
+        return false;
+      }
+    }
+  } catch (err) {
+    console.warn('[Emociones] Error consultando sincronización de ánimo en la nube:', err);
+    return shouldPromptMoodCheck();
+  }
+
+  return true;
+}
+
+/**
+ * Marca el timestamp del último chequeo para no volver a preguntar antes de 1 hora
+ * y lo propaga a user_metadata en Supabase para sincronizar con otros dispositivos.
+ */
+export function markMoodPromptDismissed(userId?: string): void {
   if (typeof window === 'undefined') return;
-  localStorage.setItem(LAST_PROMPT_KEY, Date.now().toString());
+  const now = Date.now();
+  localStorage.setItem(LAST_PROMPT_KEY, now.toString());
+
+  // Propagación silenciosa a Supabase user_metadata para mobile y PC
+  try {
+    supabase.auth.updateUser({
+      data: {
+        last_mood_prompt_time: now,
+      },
+    }).catch(() => {});
+  } catch {}
 }
 
 /**
@@ -143,8 +224,8 @@ export async function saveEmotionRecord(
     console.warn('[Emociones] Error guardando en local storage:', err);
   }
 
-  // 2. Marcar timestamp para que no vuelva a preguntar antes de 1 hora
-  markMoodPromptDismissed();
+  // 2. Marcar timestamp en local y nube para que ningún dispositivo vuelva a preguntar antes de 1 hora
+  markMoodPromptDismissed(userId);
 
   // 3. Sincronizar con Supabase
   try {
@@ -188,6 +269,13 @@ export async function fetchEmotionRecords(userId: string): Promise<EmotionRecord
     if (!error && data && data.length > 0) {
       // Sincronizar caché local
       localStorage.setItem(LOCAL_STORAGE_EMOTIONS_KEY, JSON.stringify(data));
+      const latestTime = new Date(data[0].created_at).getTime();
+      if (!isNaN(latestTime)) {
+        const currentLocal = parseInt(localStorage.getItem(LAST_PROMPT_KEY) || '0', 10);
+        if (latestTime > currentLocal) {
+          localStorage.setItem(LAST_PROMPT_KEY, latestTime.toString());
+        }
+      }
       return data as EmotionRecord[];
     }
   } catch (err) {

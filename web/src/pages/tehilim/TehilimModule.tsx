@@ -653,40 +653,66 @@ export const TehilimModule: React.FC<TehilimModuleProps> = ({ user, onBackToHub 
           </div>
 
           {/* Sub-filtros por Libro */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-2.5 mb-6 no-scrollbar">
+          <div className="flex items-center gap-2 overflow-x-auto pb-2.5 mb-6 no-scrollbar">
             <button
               onClick={() => setBookFilter('all')}
-              className={`px-2.5 py-1 rounded-xl text-xs font-medium whitespace-nowrap transition ${
+              className={`flex flex-col items-center justify-center px-3 py-1.5 rounded-xl whitespace-nowrap transition ${
                 bookFilter === 'all'
-                  ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-semibold'
-                  : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800'
+                  ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-semibold shadow-xs'
+                  : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-800'
               }`}
             >
-              Todos
+              <span className="text-xs font-semibold leading-tight">Todos</span>
+              <span className={`text-[10px] leading-tight mt-0.5 ${
+                bookFilter === 'all' ? 'text-slate-300 dark:text-slate-600' : 'text-slate-400 dark:text-slate-500'
+              }`}>
+                1 al 150
+              </span>
             </button>
-            {[1, 2, 3, 4, 5].map((b) => (
-              <button
-                key={b}
-                onClick={() => setBookFilter(b as any)}
-                className={`px-2.5 py-1 rounded-xl text-xs font-medium whitespace-nowrap transition ${
-                  bookFilter === b
-                    ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-semibold'
-                    : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800'
-                }`}
-              >
-                Libro {b}
-              </button>
-            ))}
+            {[
+              { id: 1, name: 'Libro 1', range: '1 al 41' },
+              { id: 2, name: 'Libro 2', range: '42 al 72' },
+              { id: 3, name: 'Libro 3', range: '73 al 89' },
+              { id: 4, name: 'Libro 4', range: '90 al 106' },
+              { id: 5, name: 'Libro 5', range: '107 al 150' },
+            ].map((b) => {
+              const isSelected = bookFilter === b.id;
+              return (
+                <button
+                  key={b.id}
+                  onClick={() => setBookFilter(b.id as any)}
+                  className={`flex flex-col items-center justify-center px-3 py-1.5 rounded-xl whitespace-nowrap transition ${
+                    isSelected
+                      ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-semibold shadow-xs'
+                      : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-800'
+                  }`}
+                >
+                  <span className="text-xs font-semibold leading-tight">{b.name}</span>
+                  <span className={`text-[10px] leading-tight mt-0.5 ${
+                    isSelected ? 'text-slate-300 dark:text-slate-600' : 'text-slate-400 dark:text-slate-500'
+                  }`}>
+                    {b.range}
+                  </span>
+                </button>
+              );
+            })}
             <button
               onClick={() => setBookFilter('tikkun')}
-              className={`flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-medium whitespace-nowrap transition ${
+              className={`flex flex-col items-center justify-center px-3 py-1.5 rounded-xl whitespace-nowrap transition ${
                 bookFilter === 'tikkun'
-                  ? 'bg-purple-600 text-white font-semibold'
+                  ? 'bg-purple-600 text-white font-semibold shadow-xs'
                   : 'bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800'
               }`}
             >
-              <Sparkles className="w-3 h-3" />
-              <span>Tikún Haklalí</span>
+              <div className="flex items-center gap-1">
+                <Sparkles className="w-3 h-3" />
+                <span className="text-xs font-semibold leading-tight">Tikún Haklalí</span>
+              </div>
+              <span className={`text-[10px] leading-tight mt-0.5 ${
+                bookFilter === 'tikkun' ? 'text-purple-200' : 'text-purple-500/80 dark:text-purple-400/80'
+              }`}>
+                10 Salmos
+              </span>
             </button>
           </div>
 

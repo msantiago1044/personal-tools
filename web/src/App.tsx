@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback, Suspense } from 'react';
 import { supabase, signOut, saveSessionBackup, tryRestoreSessionBackup } from './lib/supabase';
 import { LoginPage } from './pages/LoginPage';
 import { ToolHub } from './components/ToolHub';
-import { shouldPromptMoodCheck } from './lib/emotions';
+import { shouldPromptMoodCheck, shouldPromptMoodCheckAsync } from './lib/emotions';
 import { shouldPromptPirkeiAvotAsync, getStoredPirkeiAvotBookmark, syncPirkeiAvotWithCloud } from './lib/pirkeiAvot';
 import { PirkeiAvotBookmark } from '../../packages/shared/src/types';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -140,26 +140,43 @@ export default function App() {
     };
   }, []);
 
-  // Chequeo de estado de ánimo (evalúa reglas de tiempo y reentradas durante el día)
+  // Chequeo de estado de ánimo (evalúa reglas de tiempo y sincronización entre mobile y web/PC)
   useEffect(() => {
-    if (!session?.user) return;
+    if (!session?.user?.id) return;
 
-    const checkPrompt = () => {
-      if (shouldPromptMoodCheck()) {
-        setShowMoodPrompt(true);
+    let isMounted = true;
+    let isChecking = false;
+
+    const checkPrompt = async () => {
+      if (isChecking || showMoodPrompt) return;
+
+      // Verificación rápida local: si ya se preguntó o registró hace menos de 1 hora en este navegador, salir
+      if (!shouldPromptMoodCheck()) return;
+
+      isChecking = true;
+      try {
+        const should = await shouldPromptMoodCheckAsync(session.user.id);
+        if (isMounted && should) {
+          setShowMoodPrompt(true);
+        }
+      } catch (err) {
+        console.warn('Error verificando estado de ánimo en la nube:', err);
+      } finally {
+        isChecking = false;
       }
     };
 
-    const timer = setTimeout(checkPrompt, 500);
+    const timer = setTimeout(checkPrompt, 600);
 
     // Al volver a la pestaña/app durante el día, comprobar si corresponde preguntar
     window.addEventListener('focus', checkPrompt);
 
     return () => {
+      isMounted = false;
       clearTimeout(timer);
       window.removeEventListener('focus', checkPrompt);
     };
-  }, [session]);
+  }, [session, showMoodPrompt]);
 
   // Sugerencia de lectura de Pirkei Avot a mediodía o en la tarde (12:00 a 19:30)
   // Sincroniza previamente con la nube para que reconozca lecturas hechas en laptop u otro dispositivo
