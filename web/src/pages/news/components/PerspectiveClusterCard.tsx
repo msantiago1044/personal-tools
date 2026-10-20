@@ -153,7 +153,7 @@ export const PerspectiveClusterCard: React.FC<PerspectiveClusterCardProps> = ({ 
               <a
                 href={selectedArticle.url}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
               >
                 <span>Leer original</span>

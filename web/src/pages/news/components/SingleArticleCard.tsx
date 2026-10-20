@@ -20,7 +20,7 @@ export const SingleArticleCard: React.FC<SingleArticleCardProps> = ({ article })
         </div>
 
         <h3 className="text-base font-bold text-slate-900 dark:text-white leading-snug hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-          <a href={article.url} target="_blank" rel="noreferrer">
+          <a href={article.url} target="_blank" rel="noopener noreferrer">
             {article.title}
           </a>
         </h3>
@@ -45,7 +45,7 @@ export const SingleArticleCard: React.FC<SingleArticleCardProps> = ({ article })
         <a
           href={article.url}
           target="_blank"
-          rel="noreferrer"
+          rel="noopener noreferrer"
           className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
         >
           <span>Abrir</span>

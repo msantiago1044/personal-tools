@@ -80,27 +80,36 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Código y estilos (scripts .js, hojas .css, assets de Vite): Network First con fallback a Cache
+  // Assets estáticos con hash inmutable de Vite (scripts .js, hojas .css, /assets/): Cache First con fallback
   if (
     url.pathname.endsWith('.js') ||
     url.pathname.endsWith('.css') ||
     url.pathname.includes('/assets/')
   ) {
     event.respondWith(
-      fetch(event.request)
-        .then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            const clone = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-          }
-          return networkResponse;
-        })
-        .catch(() => caches.match(event.request))
+      caches.match(event.request).then((cachedResponse) => {
+        if (cachedResponse) return cachedResponse;
+        return fetch(event.request)
+          .then((networkResponse) => {
+            if (networkResponse && networkResponse.status === 200) {
+              const clone = networkResponse.clone();
+              caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+            }
+            return networkResponse;
+          })
+          .catch(() => {
+            return new Response('/* Recurso no disponible offline */', {
+              status: 503,
+              statusText: 'Service Unavailable',
+              headers: { 'Content-Type': 'application/javascript' },
+            });
+          });
+      })
     );
     return;
   }
 
-  // Recursos estáticos secundarios (imágenes, fuentes, iconos): Stale-While-Revalidate
+  // Recursos estáticos secundarios (imágenes, fuentes, iconos): Stale-While-Revalidate con fallback seguro
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       const fetchPromise = fetch(event.request)
@@ -113,7 +122,11 @@ self.addEventListener('fetch', (event) => {
         })
         .catch(() => cachedResponse);
 
-      return cachedResponse || fetchPromise;
+      return (
+        cachedResponse ||
+        fetchPromise ||
+        new Response('', { status: 404, statusText: 'Not Found' })
+      );
     })
   );
 });

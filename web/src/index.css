@@ -19,11 +19,25 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   letter-spacing: -0.01em;
+  /* Soporte de Safe Areas para PWA en iOS / Notch y Home Indicator */
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
 }
 
 html.dark body {
   background-color: #030712;
   color: #f8fafc;
+}
+
+/* Clases utilitarias de Safe Area para barras de navegación fijas y modales */
+.safe-bottom {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom, 1rem));
+}
+
+.safe-top {
+  padding-top: max(1rem, env(safe-area-inset-top, 1rem));
 }
 
 /* Custom scrollbars - Minimalistas */
@@ -55,4 +69,16 @@ html.dark ::-webkit-scrollbar-thumb {
 
 html.dark ::-webkit-scrollbar-thumb:hover {
   background: #334155;
+}
+
+/* Accesibilidad (WCAG 2.2 AA): Respeta la preferencia del usuario de reducción de movimiento */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

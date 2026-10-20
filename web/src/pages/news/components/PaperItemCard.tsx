@@ -36,7 +36,7 @@ export const PaperItemCard: React.FC<PaperItemCardProps> = ({ article }) => {
 
         {/* Título */}
         <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-snug hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-          <a href={article.url} target="_blank" rel="noreferrer">
+          <a href={article.url} target="_blank" rel="noopener noreferrer">
             {article.title}
           </a>
         </h3>
@@ -82,7 +82,7 @@ export const PaperItemCard: React.FC<PaperItemCardProps> = ({ article }) => {
             <a
               href={meta.pdfUrl}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               className="px-2.5 py-1 text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 rounded-lg flex items-center gap-1 transition-all"
             >
               <Download className="w-3.5 h-3.5" />
@@ -92,7 +92,7 @@ export const PaperItemCard: React.FC<PaperItemCardProps> = ({ article }) => {
           <a
             href={article.url}
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             className="px-2.5 py-1 text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg flex items-center gap-1 transition-all shadow-sm"
           >
             <span>Ver fuente</span>

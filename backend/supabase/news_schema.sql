@@ -63,11 +63,11 @@ CREATE POLICY "Allow read news_sources" ON public.news_sources FOR SELECT TO aut
 CREATE POLICY "Allow read news_clusters" ON public.news_clusters FOR SELECT TO authenticated, anon USING (true);
 CREATE POLICY "Allow read news_articles" ON public.news_articles FOR SELECT TO authenticated, anon USING (true);
 
-CREATE POLICY "Allow insert news_articles" ON public.news_articles FOR INSERT TO authenticated, anon WITH CHECK (true);
-CREATE POLICY "Allow update news_articles" ON public.news_articles FOR UPDATE TO authenticated, anon USING (true) WITH CHECK (true);
+CREATE POLICY "Allow insert news_articles" ON public.news_articles FOR INSERT TO service_role WITH CHECK (true);
+CREATE POLICY "Allow update news_articles" ON public.news_articles FOR UPDATE TO service_role USING (true) WITH CHECK (true);
 
-CREATE POLICY "Allow insert news_clusters" ON public.news_clusters FOR INSERT TO authenticated, anon WITH CHECK (true);
-CREATE POLICY "Allow update news_clusters" ON public.news_clusters FOR UPDATE TO authenticated, anon USING (true) WITH CHECK (true);
+CREATE POLICY "Allow insert news_clusters" ON public.news_clusters FOR INSERT TO service_role WITH CHECK (true);
+CREATE POLICY "Allow update news_clusters" ON public.news_clusters FOR UPDATE TO service_role USING (true) WITH CHECK (true);
 
 -- Habilitar replicación en Tiempo Real para Supabase Realtime
 DO $$

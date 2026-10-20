@@ -238,9 +238,18 @@ export const ToolHub: React.FC<ToolHubProps> = ({
               return (
                 <div
                   key={tool.id}
+                  role="button"
+                  tabIndex={isActive ? 0 : -1}
                   onClick={() => isActive && handleOpenTool(tool)}
+                  onKeyDown={(e) => {
+                    if (isActive && (e.key === 'Enter' || e.key === ' ')) {
+                      e.preventDefault();
+                      handleOpenTool(tool);
+                    }
+                  }}
                   title={`${tool.name}: ${tool.description}`}
-                  className={`group relative flex flex-col items-center justify-between text-center p-3 sm:p-4 rounded-3xl transition-all duration-200 select-none ${
+                  aria-label={`Abrir módulo ${tool.name}`}
+                  className={`group relative flex flex-col items-center justify-between text-center p-3 sm:p-4 rounded-3xl transition-all duration-200 select-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none ${
                     isActive
                       ? 'bg-white/90 dark:bg-slate-900/90 backdrop-blur-xs border border-slate-200/90 dark:border-slate-800/80 hover:border-emerald-500/50 hover:shadow-lg hover:-translate-y-1 cursor-pointer active:scale-95 shadow-xs'
                       : 'bg-slate-100/40 dark:bg-slate-900/30 border border-slate-200/40 dark:border-slate-800/40 opacity-45 cursor-not-allowed'
@@ -321,8 +330,17 @@ export const ToolHub: React.FC<ToolHubProps> = ({
               return (
                 <div
                   key={tool.id}
+                  role="button"
+                  tabIndex={isActive ? 0 : -1}
                   onClick={() => isActive && handleOpenTool(tool)}
-                  className={`relative rounded-2xl p-5 transition-all duration-150 flex flex-col justify-between ${
+                  onKeyDown={(e) => {
+                    if (isActive && (e.key === 'Enter' || e.key === ' ')) {
+                      e.preventDefault();
+                      handleOpenTool(tool);
+                    }
+                  }}
+                  aria-label={`Abrir módulo ${tool.name}: ${tool.description}`}
+                  className={`relative rounded-2xl p-5 transition-all duration-150 flex flex-col justify-between focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none ${
                     isActive
                       ? 'bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800/80 hover:border-emerald-500/40 hover:shadow-md cursor-pointer group shadow-xs'
                       : 'bg-slate-100/50 dark:bg-slate-900/40 border border-slate-200/50 dark:border-slate-800/40 opacity-50 cursor-not-allowed'

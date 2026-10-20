@@ -340,10 +340,13 @@ Debes responder ÚNICAMENTE con un JSON válido sin texto previo o markdown fuer
   // Cascada de modelos gratuitos para garantizar disponibilidad continua
   for (const model of FREE_TIER_MODELS) {
     try {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
       const response = await fetch(url, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-goog-api-key': key,
+        },
         body: JSON.stringify(requestBody),
       });
 
