@@ -58,10 +58,16 @@ ALTER TABLE public.news_sources ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.news_clusters ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.news_articles ENABLE ROW LEVEL SECURITY;
 
--- Políticas de Lectura (Cualquier usuario autenticado o de la suite puede leer el feed)
+-- Políticas de Acceso (Lectura e Inserción para la suite y workers de ingesta)
 CREATE POLICY "Allow read news_sources" ON public.news_sources FOR SELECT TO authenticated, anon USING (true);
 CREATE POLICY "Allow read news_clusters" ON public.news_clusters FOR SELECT TO authenticated, anon USING (true);
 CREATE POLICY "Allow read news_articles" ON public.news_articles FOR SELECT TO authenticated, anon USING (true);
+
+CREATE POLICY "Allow insert news_articles" ON public.news_articles FOR INSERT TO authenticated, anon WITH CHECK (true);
+CREATE POLICY "Allow update news_articles" ON public.news_articles FOR UPDATE TO authenticated, anon USING (true) WITH CHECK (true);
+
+CREATE POLICY "Allow insert news_clusters" ON public.news_clusters FOR INSERT TO authenticated, anon WITH CHECK (true);
+CREATE POLICY "Allow update news_clusters" ON public.news_clusters FOR UPDATE TO authenticated, anon USING (true) WITH CHECK (true);
 
 -- Habilitar replicación en Tiempo Real para Supabase Realtime
 DO $$

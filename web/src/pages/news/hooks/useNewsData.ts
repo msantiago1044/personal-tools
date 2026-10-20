@@ -1,6 +1,11 @@
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { NewsCategory, PoliticalBias, NewsCluster, NewsArticle } from '../types/news.types';
-import { INITIAL_CLUSTERS, INITIAL_PAPERS_AND_TECH, KNOWN_SOURCES } from '../services/newsService';
+import {
+  INITIAL_CLUSTERS,
+  INITIAL_PAPERS_AND_TECH,
+  fetchNewsDataFromSupabase,
+  subscribeToRealtimeNews,
+} from '../services/newsService';
 
 export function useNewsData() {
   const [clusters, setClusters] = useState<NewsCluster[]>(INITIAL_CLUSTERS);
@@ -11,36 +16,54 @@ export function useNewsData() {
   const [isLiveActive, setIsLiveActive] = useState(true);
   const [incomingCount, setIncomingCount] = useState(0);
   const [lastRefreshedAt, setLastRefreshedAt] = useState<Date>(new Date());
+  const pendingArticlesRef = useRef<NewsArticle[]>([]);
 
-  // Simulación de "Tiempo Real" cada 45 segundos o mediante botón de refresco
+  // 1. Carga inicial desde Supabase
+  const loadData = useCallback(async () => {
+    try {
+      const { clusters: dbClusters, articles: dbArticles } = await fetchNewsDataFromSupabase();
+      if (dbClusters && dbClusters.length > 0) setClusters(dbClusters);
+      if (dbArticles && dbArticles.length > 0) setStandaloneArticles(dbArticles);
+      setLastRefreshedAt(new Date());
+    } catch (e) {
+      console.warn('[useNewsData] Usando datos fallback:', e);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  // 2. Suscripción en Tiempo Real vía Supabase WebSockets
   useEffect(() => {
     if (!isLiveActive) return;
 
-    const interval = setInterval(() => {
-      setIncomingCount((prev) => prev + 1);
-    }, 45000);
+    const unsubscribe = subscribeToRealtimeNews(
+      (newArticle) => {
+        pendingArticlesRef.current.unshift(newArticle);
+        setIncomingCount((prev) => prev + 1);
+      },
+      () => {
+        // Notificación de actualización de cluster
+        loadData();
+      }
+    );
 
-    return () => clearInterval(interval);
-  }, [isLiveActive]);
+    return () => {
+      unsubscribe();
+    };
+  }, [isLiveActive, loadData]);
 
   const handleApplyIncomingUpdates = useCallback(() => {
-    // Agrega una nueva noticia simulada de última hora
-    const mockBreakingArticle: NewsArticle = {
-      id: `live-${Date.now()}`,
-      title: 'Banco de la República ajusta tasa de interés interbancaria en su junta extraordinaria',
-      summary: 'El emisor toma decisiones de política monetaria con base en el comportamiento de la inflación mensual y el crecimiento proyectado.',
-      source: KNOWN_SOURCES.portafolio || KNOWN_SOURCES.eltiempo,
-      url: 'https://portafolio.co',
-      publishedAt: new Date().toISOString(),
-      category: 'colombia',
-      tags: ['Economía', 'Tasas', 'BanRep', 'Urgente'],
-      bias: 'center',
-    };
-
-    setStandaloneArticles((prev) => [mockBreakingArticle, ...prev]);
+    if (pendingArticlesRef.current.length > 0) {
+      setStandaloneArticles((prev) => [...pendingArticlesRef.current, ...prev]);
+      pendingArticlesRef.current = [];
+    } else {
+      loadData();
+    }
     setIncomingCount(0);
     setLastRefreshedAt(new Date());
-  }, []);
+  }, [loadData]);
 
   // Filtrado de clusters (agrupaciones comparativas de noticias)
   const filteredClusters = useMemo(() => {

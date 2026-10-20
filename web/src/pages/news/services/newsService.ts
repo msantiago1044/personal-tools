@@ -222,3 +222,164 @@ export const INITIAL_PAPERS_AND_TECH: NewsArticle[] = [
     bias: 'neutral',
   },
 ];
+
+/**
+ * Consulta noticias y clusters desde Supabase con fallback automático
+ */
+export async function fetchNewsDataFromSupabase(): Promise<{
+  clusters: NewsCluster[];
+  articles: NewsArticle[];
+}> {
+  try {
+    const { supabase } = await import('../../../lib/supabase');
+
+    // 1. Obtener clusters activos
+    const { data: dbClusters, error: clusterErr } = await supabase
+      .from('news_clusters')
+      .select('*')
+      .order('last_updated', { ascending: false })
+      .limit(20);
+
+    // 2. Obtener artículos
+    const { data: dbArticles, error: articleErr } = await supabase
+      .from('news_articles')
+      .select('*, news_sources(*)')
+      .order('published_at', { ascending: false })
+      .limit(60);
+
+    if (clusterErr || articleErr || !dbArticles || dbArticles.length === 0) {
+      return { clusters: INITIAL_CLUSTERS, articles: INITIAL_PAPERS_AND_TECH };
+    }
+
+    // Mapear artículos de BD a la interfaz de la app
+    const mappedArticles: NewsArticle[] = dbArticles.map((item: any) => {
+      const sourceObj: NewsSource = item.news_sources
+        ? {
+            id: item.news_sources.id,
+            name: item.news_sources.name,
+            bias: item.news_sources.bias,
+            country: item.news_sources.country,
+            reliabilityScore: item.news_sources.reliability_score,
+          }
+        : KNOWN_SOURCES[item.source_id] || {
+            id: item.source_id,
+            name: item.source_id,
+            bias: item.bias || 'neutral',
+            country: 'CO',
+          };
+
+      return {
+        id: item.id,
+        clusterId: item.cluster_id,
+        title: item.title,
+        summary: item.summary,
+        source: sourceObj,
+        url: item.url,
+        imageUrl: item.image_url,
+        publishedAt: item.published_at,
+        category: item.category,
+        tags: item.tags || [],
+        bias: item.bias,
+        paperMetadata: item.paper_metadata || undefined,
+      };
+    });
+
+    // Artículos que no pertenecen a clusters (papers, tech standalone)
+    const standalone = mappedArticles.filter((a) => !a.clusterId);
+
+    // Mapear clusters conectando sus artículos
+    let clusters: NewsCluster[] = [];
+    if (dbClusters && dbClusters.length > 0) {
+      clusters = dbClusters.map((c: any) => {
+        const clusterArticles = mappedArticles.filter((a) => a.clusterId === c.id);
+        return {
+          id: c.id,
+          headline: c.headline,
+          topic: c.topic,
+          category: c.category,
+          lastUpdated: c.last_updated,
+          coverage: {
+            leftPercent: c.left_percent ?? 33,
+            centerPercent: c.center_percent ?? 34,
+            rightPercent: c.right_percent ?? 33,
+            totalArticles: clusterArticles.length || c.total_articles || 1,
+          },
+          blindspot: c.blindspot,
+          articles: clusterArticles.length > 0 ? clusterArticles : [],
+        };
+      });
+    }
+
+    // Si no hay clusters en la base de datos pero sí en los iniciales, combinar
+    const finalClusters = clusters.length > 0 ? clusters : INITIAL_CLUSTERS;
+    const finalArticles = standalone.length > 0 ? standalone : INITIAL_PAPERS_AND_TECH;
+
+    return { clusters: finalClusters, articles: finalArticles };
+  } catch (err) {
+    console.warn('[NewsService] Error al conectar con Supabase, usando datos en caché:', err);
+    return { clusters: INITIAL_CLUSTERS, articles: INITIAL_PAPERS_AND_TECH };
+  }
+}
+
+/**
+ * Suscripción en Tiempo Real mediante Supabase WebSockets (supabase_realtime)
+ */
+export function subscribeToRealtimeNews(
+  onNewArticle: (article: NewsArticle) => void,
+  onClusterUpdate: () => void
+): () => void {
+  let channel: any = null;
+
+  import('../../../lib/supabase').then(({ supabase }) => {
+    channel = supabase
+      .channel('public:realtime_news')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'news_articles' },
+        (payload: any) => {
+          const item = payload.new;
+          if (!item) return;
+
+          const sourceObj: NewsSource = KNOWN_SOURCES[item.source_id] || {
+            id: item.source_id,
+            name: item.source_id,
+            bias: item.bias || 'neutral',
+            country: 'CO',
+          };
+
+          const newArticle: NewsArticle = {
+            id: item.id,
+            clusterId: item.cluster_id,
+            title: item.title,
+            summary: item.summary,
+            source: sourceObj,
+            url: item.url,
+            imageUrl: item.image_url,
+            publishedAt: item.published_at || new Date().toISOString(),
+            category: item.category,
+            tags: item.tags || [],
+            bias: item.bias,
+            paperMetadata: item.paper_metadata,
+          };
+
+          onNewArticle(newArticle);
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'news_clusters' },
+        () => {
+          onClusterUpdate();
+        }
+      )
+      .subscribe();
+  });
+
+  return () => {
+    if (channel) {
+      import('../../../lib/supabase').then(({ supabase }) => {
+        supabase.removeChannel(channel);
+      });
+    }
+  };
+}
