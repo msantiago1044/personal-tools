@@ -71,6 +71,10 @@ const AssetsModule = React.lazy(() =>
   import('../pages/assets/AssetsModule').then((m) => ({ default: m.AssetsModule }))
 );
 
+const NewsModule = React.lazy(() =>
+  import('../pages/news/NewsModule').then((m) => ({ default: m.NewsModule }))
+);
+
 
 /**
  * Registro Central Desacoplado de Módulos (Architecture RFC - OCP)
@@ -230,6 +234,19 @@ export const MODULE_REGISTRY: ModuleManifest[] = [
     status: 'active',
     badge: 'Bienestar',
     component: SleepModule,
+  },
+  {
+    id: 'news',
+    name: 'Noticias & Papers',
+    shortName: 'Noticias',
+    description: 'Actualidad nacional e internacional por sesgo político (Izq/Der/Neutro) y avances científicos.',
+    emoji: '📰',
+    icon: 'newspaper',
+    route: '/news',
+    hashAliases: ['news', 'noticias', 'actualidad', 'papers'],
+    status: 'active',
+    badge: 'En Vivo',
+    component: NewsModule,
   },
 ];
 
