@@ -422,6 +422,7 @@ export function getDiasporaDailySchedule(now = new Date()): ParashaDailySchedule
     parashaHebrew: isLechLechaTarget ? 'לֶךְ־לְךָ' : 'נֹחַ',
     parashaRef: isLechLechaTarget ? 'Génesis 12:1–17:27' : 'Génesis 6:9–11:32',
     dateKey,
+    parashaId: isLechLechaTarget ? 'lechlecha' : 'noach',
   };
 }
 
@@ -677,37 +678,252 @@ export function getAliyahStats(progress: ParashaProgress | undefined, aliyahNumb
 }
 
 /**
+ * Normaliza y obtiene el identificador canónico de la Parashá (ej: 'lechlecha', 'noach')
+ * para garantizar 100% consistencia entre la base de datos, el celular y la web.
+ */
+export function getCanonicalParashaId(input?: string): string {
+  if (!input) return 'lechlecha';
+  const clean = input.toLowerCase().replace(/[^a-z0-9]/g, '');
+  if (clean.includes('lech') || clean.includes('leja') || clean.includes('lej')) return 'lechlecha';
+  if (clean.includes('noa')) return 'noach';
+  return input;
+}
+
+function isUuid(str?: string): boolean {
+  if (!str) return false;
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(str);
+}
+
+async function getCanonicalAuthUserId(userId?: string): Promise<string | undefined> {
+  if (userId && isUuid(userId)) {
+    return userId;
+  }
+  try {
+    const { data } = await supabase.auth.getUser();
+    if (data?.user?.id && isUuid(data.user.id)) {
+      return data.user.id;
+    }
+  } catch {}
+  return undefined;
+}
+
+/**
  * Verifica si la lectura correspondiente a HOY ya ha sido completada
  * por el usuario. Si ya está leída hoy, el widget en ToolHub se oculta.
+ * Comprueba tanto la clave diaria local como el progreso acumulado de aliyot.
  */
 export function isDailyAliyahReadToday(userId?: string): boolean {
   if (typeof window === 'undefined') return false;
 
   const schedule = getDiasporaDailySchedule();
-  const storageKey = `${DAILY_READ_KEY}_${userId || 'guest'}`;
-  const stored = localStorage.getItem(storageKey);
+  const canonicalId = schedule.parashaId || getCanonicalParashaId(schedule.parashaName);
+  const targetNum = schedule.targetAliyahNumber;
 
-  if (!stored) return false;
+  // 1. Comprobar registros de lectura diaria guardados en localStorage
+  const candidateKeys = new Set<string>();
+  if (userId) candidateKeys.add(`${DAILY_READ_KEY}_${userId}`);
+  candidateKeys.add(`${DAILY_READ_KEY}_guest`);
+  candidateKeys.add(`${DAILY_READ_KEY}_default`);
 
   try {
-    const record = JSON.parse(stored);
-    if (record.dateKey === schedule.dateKey) {
-      if (schedule.targetAliyahNumber === 0) {
-        return record.completedFull === true || record.completedAliyah === 0;
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith(DAILY_READ_KEY)) {
+        candidateKeys.add(k);
       }
-      return record.completedAliyah === schedule.targetAliyahNumber || record.completedFull === true;
     }
-  } catch (e) {
-    console.warn('Error leyendo registro diario de lectura:', e);
+  } catch {}
+
+  for (const key of candidateKeys) {
+    try {
+      const stored = localStorage.getItem(key);
+      if (stored) {
+        const record = JSON.parse(stored);
+        if (record && record.dateKey === schedule.dateKey) {
+          if (targetNum === 0) {
+            if (record.completedFull === true || record.completedAliyah === 0) return true;
+          } else {
+            if (record.completedAliyah === targetNum || record.completedFull === true) return true;
+          }
+        }
+      }
+    } catch {}
+  }
+
+  // 2. Comprobar si en el progreso guardado de la parashá actual ya figura leída hoy
+  const parashaIdsToCheck = [canonicalId, 'lechlecha', 'lej-lejá', schedule.parashaName.toLowerCase()];
+  for (const pId of parashaIdsToCheck) {
+    const prog = getParashaProgress(pId, userId);
+    if (prog) {
+      if (prog.full_parasha_completed) {
+        if (prog.last_read_at) {
+          try {
+            const readDateKey = new Date(prog.last_read_at).toISOString().split('T')[0];
+            if (readDateKey === schedule.dateKey) return true;
+          } catch {}
+        }
+      }
+      if (targetNum > 0 && prog.completed_aliyot?.includes(targetNum)) {
+        const aliyahLastRead = prog.aliyot_last_read?.[targetNum] || prog.last_read_at;
+        if (aliyahLastRead) {
+          try {
+            const readDateKey = new Date(aliyahLastRead).toISOString().split('T')[0];
+            if (readDateKey === schedule.dateKey) return true;
+          } catch {}
+        }
+      }
+    }
   }
 
   return false;
 }
 
 /**
+ * Sincroniza bidireccionalmente el progreso y lectura de Parashá con Supabase.
+ * Actualiza y fusiona (merge) inmediatamente para que celular y web (PC/Laptop)
+ * compartan exactamente la misma información en tiempo real sin discrepancias.
+ */
+export async function syncParashaWithCloud(userId?: string): Promise<{
+  isReadToday: boolean;
+  progress: ParashaProgress | null;
+}> {
+  const schedule = getDiasporaDailySchedule();
+  const canonicalId = schedule.parashaId || getCanonicalParashaId(schedule.parashaName);
+  const defaultRes = {
+    isReadToday: isDailyAliyahReadToday(userId),
+    progress: getParashaProgress(canonicalId, userId),
+  };
+
+  if (typeof window === 'undefined') return defaultRes;
+
+  try {
+    const cloudUid = await getCanonicalAuthUserId(userId);
+    const { data: authData } = await supabase.auth.getUser();
+
+    // 1. Respaldo rápido en user_metadata (sincronización instantánea entre pestañas/dispositivos)
+    const metaDailyRead = authData?.user?.user_metadata?.parasha_daily_read;
+    if (metaDailyRead && metaDailyRead.dateKey === schedule.dateKey) {
+      if (
+        metaDailyRead.completedFull ||
+        metaDailyRead.completedAliyah === schedule.targetAliyahNumber ||
+        schedule.targetAliyahNumber === 0
+      ) {
+        const storageKey = `${DAILY_READ_KEY}_${userId || 'guest'}`;
+        localStorage.setItem(storageKey, JSON.stringify(metaDailyRead));
+        if (cloudUid && cloudUid !== userId) {
+          localStorage.setItem(`${DAILY_READ_KEY}_${cloudUid}`, JSON.stringify(metaDailyRead));
+        }
+        window.dispatchEvent(new CustomEvent('parasha_progress_updated'));
+      }
+    }
+
+    if (!cloudUid) return defaultRes;
+
+    // 2. Consultar tabla parasha_progress en Supabase
+    const { data: remoteRows, error } = await supabase
+      .from('parasha_progress')
+      .select('*')
+      .eq('user_id', cloudUid);
+
+    if (!error && remoteRows && remoteRows.length > 0) {
+      // Buscar la fila correspondiente a la parashá actual (manejando aliases)
+      const matchingRow =
+        remoteRows.find((r: any) => getCanonicalParashaId(r.parasha_id) === canonicalId) ||
+        remoteRows[0];
+
+      if (matchingRow) {
+        const localProg = getParashaProgress(canonicalId, userId);
+        const combinedAliyot = Array.from(
+          new Set([...(localProg.completed_aliyot || []), ...(matchingRow.completed_aliyot || [])])
+        ).sort((a, b) => a - b);
+
+        const mergedProg: ParashaProgress = {
+          parasha_id: canonicalId,
+          completed_aliyot: combinedAliyot,
+          full_parasha_completed: matchingRow.is_completed || localProg.full_parasha_completed,
+          completed_count: Math.max(matchingRow.completed_count || 0, localProg.completed_count || 0),
+          last_read_at: matchingRow.last_read_at || localProg.last_read_at,
+          aliyot_counts: { ...(localProg.aliyot_counts || {}), ...(matchingRow.aliyot_counts || {}) },
+          aliyot_last_read: { ...(localProg.aliyot_last_read || {}), ...(matchingRow.aliyot_last_read || {}) },
+          years_history: { ...(localProg.years_history || {}), ...(matchingRow.years_history || {}) },
+        };
+
+        // Guardar progreso combinado localmente
+        const progressKey = `${PARASHA_PROGRESS_PREFIX}${canonicalId}_${userId || 'guest'}`;
+        localStorage.setItem(progressKey, JSON.stringify(mergedProg));
+        if (cloudUid && cloudUid !== userId) {
+          localStorage.setItem(`${PARASHA_PROGRESS_PREFIX}${canonicalId}_${cloudUid}`, JSON.stringify(mergedProg));
+        }
+
+        // Evaluar si la aliyá de hoy fue leída hoy en el celular u otro dispositivo
+        let readToday = false;
+        if (matchingRow.date_key === schedule.dateKey) {
+          if (schedule.targetAliyahNumber === 0) {
+            readToday = mergedProg.full_parasha_completed;
+          } else {
+            readToday =
+              mergedProg.completed_aliyot.includes(schedule.targetAliyahNumber) ||
+              mergedProg.full_parasha_completed;
+          }
+        }
+
+        if (!readToday && schedule.targetAliyahNumber > 0) {
+          const aliyahTime = mergedProg.aliyot_last_read?.[schedule.targetAliyahNumber];
+          if (aliyahTime) {
+            try {
+              if (new Date(aliyahTime).toISOString().split('T')[0] === schedule.dateKey) {
+                readToday = true;
+              }
+            } catch {}
+          }
+        }
+
+        if (!readToday && mergedProg.last_read_at && mergedProg.completed_aliyot.includes(schedule.targetAliyahNumber)) {
+          try {
+            if (new Date(mergedProg.last_read_at).toISOString().split('T')[0] === schedule.dateKey) {
+              readToday = true;
+            }
+          } catch {}
+        }
+
+        if (readToday) {
+          const record = {
+            dateKey: schedule.dateKey,
+            parashaId: canonicalId,
+            completedAliyah: schedule.targetAliyahNumber,
+            completedFull: mergedProg.full_parasha_completed,
+            timestamp: Date.now(),
+          };
+          const storageKey = `${DAILY_READ_KEY}_${userId || 'guest'}`;
+          localStorage.setItem(storageKey, JSON.stringify(record));
+          if (cloudUid && cloudUid !== userId) {
+            localStorage.setItem(`${DAILY_READ_KEY}_${cloudUid}`, JSON.stringify(record));
+          }
+        }
+
+        window.dispatchEvent(new CustomEvent('parasha_progress_updated'));
+
+        return {
+          isReadToday: readToday || isDailyAliyahReadToday(userId),
+          progress: mergedProg,
+        };
+      }
+    }
+  } catch (err) {
+    console.warn('[Parashá] Error sincronizando con la nube:', err);
+  }
+
+  return {
+    isReadToday: isDailyAliyahReadToday(userId),
+    progress: getParashaProgress(canonicalId, userId),
+  };
+}
+
+/**
  * Marca la Aliyá de hoy (o una aliyá seleccionada) como leída.
  * Incrementa el contador acumulativo, registra el timestamp y el año,
- * y oculta el widget de inicio.
+ * guarda tanto en local como en la nube de Supabase y user_metadata,
+ * y oculta el widget de inicio en todos los dispositivos conectados.
  */
 export async function markDailyAliyahCompletedToday(
   aliyahNumber: number,
@@ -715,6 +931,7 @@ export async function markDailyAliyahCompletedToday(
   userId?: string
 ): Promise<ParashaProgress> {
   const schedule = getDiasporaDailySchedule();
+  const canonicalId = getCanonicalParashaId(parashaId || schedule.parashaId);
   const now = new Date();
   const nowISO = now.toISOString();
   const currentYearStr = String(now.getFullYear());
@@ -723,19 +940,21 @@ export async function markDailyAliyahCompletedToday(
   // 1. Guardar récord diario para ocultar el widget en ToolHub
   const record = {
     dateKey: schedule.dateKey,
-    parashaId,
+    parashaId: canonicalId,
     completedAliyah: aliyahNumber,
     completedFull: aliyahNumber === 0,
     timestamp: Date.now(),
   };
+
   if (typeof window !== 'undefined') {
     localStorage.setItem(storageKey, JSON.stringify(record));
+    localStorage.setItem(`${DAILY_READ_KEY}_guest`, JSON.stringify(record));
   }
 
   // 2. Actualizar el mapa general de progreso de la Parashá con conteo multi-año
-  const progressKey = `${PARASHA_PROGRESS_PREFIX}${parashaId}_${userId || 'guest'}`;
+  const progressKey = `${PARASHA_PROGRESS_PREFIX}${canonicalId}_${userId || 'guest'}`;
   let progress: ParashaProgress = {
-    parasha_id: parashaId,
+    parasha_id: canonicalId,
     completed_aliyot: [],
     full_parasha_completed: false,
     completed_count: 0,
@@ -795,21 +1014,37 @@ export async function markDailyAliyahCompletedToday(
     localStorage.setItem(progressKey, JSON.stringify(progress));
   }
 
-  // 3. Sincronizar en Supabase si hay usuario activo
-  if (userId) {
+  // 3. Sincronizar en Supabase (Base de datos y metadata de Auth para disponibilidad inmediata)
+  const cloudUid = await getCanonicalAuthUserId(userId);
+  if (cloudUid) {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(`${DAILY_READ_KEY}_${cloudUid}`, JSON.stringify(record));
+      localStorage.setItem(`${PARASHA_PROGRESS_PREFIX}${canonicalId}_${cloudUid}`, JSON.stringify(progress));
+    }
+
     try {
-      await supabase.from('parasha_progress').upsert({
-        user_id: userId,
-        parasha_id: parashaId,
-        completed_aliyot: progress.completed_aliyot,
-        is_completed: progress.full_parasha_completed,
-        completed_count: progress.completed_count,
-        aliyot_counts: progress.aliyot_counts,
-        aliyot_last_read: progress.aliyot_last_read,
-        years_history: progress.years_history,
-        last_read_at: progress.last_read_at,
-        date_key: schedule.dateKey,
-      });
+      await supabase.from('parasha_progress').upsert(
+        {
+          user_id: cloudUid,
+          parasha_id: canonicalId,
+          completed_aliyot: progress.completed_aliyot,
+          is_completed: progress.full_parasha_completed,
+          completed_count: progress.completed_count,
+          aliyot_counts: progress.aliyot_counts,
+          aliyot_last_read: progress.aliyot_last_read,
+          years_history: progress.years_history,
+          last_read_at: progress.last_read_at,
+          date_key: schedule.dateKey,
+        },
+        { onConflict: 'user_id,parasha_id' }
+      );
+
+      // Respaldo inmediato en user_metadata para replicación en caliente a todos los clientes
+      supabase.auth.updateUser({
+        data: {
+          parasha_daily_read: record,
+        },
+      }).catch(() => {});
     } catch (err) {
       console.warn('Nota: Progreso de Parashá guardado localmente (Supabase:', err, ')');
     }
@@ -827,8 +1062,9 @@ export async function markDailyAliyahCompletedToday(
  * Obtiene el progreso general de la parashá actual
  */
 export function getParashaProgress(parashaId: string, userId?: string): ParashaProgress {
+  const canonicalId = getCanonicalParashaId(parashaId);
   const defaultProg: ParashaProgress = {
-    parasha_id: parashaId,
+    parasha_id: canonicalId,
     completed_aliyot: [],
     full_parasha_completed: false,
     completed_count: 0,
@@ -838,16 +1074,22 @@ export function getParashaProgress(parashaId: string, userId?: string): ParashaP
   };
 
   if (typeof window !== 'undefined') {
-    const progressKey = `${PARASHA_PROGRESS_PREFIX}${parashaId}_${userId || 'guest'}`;
-    const stored = localStorage.getItem(progressKey);
-    if (stored) {
-      try {
-        return { ...defaultProg, ...JSON.parse(stored) };
-      } catch {
-        return defaultProg;
+    const candidateKeys = [
+      `${PARASHA_PROGRESS_PREFIX}${canonicalId}_${userId || 'guest'}`,
+      `${PARASHA_PROGRESS_PREFIX}${parashaId}_${userId || 'guest'}`,
+      `${PARASHA_PROGRESS_PREFIX}${canonicalId}_guest`,
+    ];
+
+    for (const key of candidateKeys) {
+      const stored = localStorage.getItem(key);
+      if (stored) {
+        try {
+          return { ...defaultProg, ...JSON.parse(stored) };
+        } catch {}
       }
     }
   }
 
   return defaultProg;
 }
+

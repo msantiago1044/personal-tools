@@ -307,6 +307,7 @@ export interface ParashaDailySchedule {
   parashaRef: string;
   aliyahRef?: string;
   dateKey: string;
+  parashaId?: string;
 }
 
 export interface ParashaProgress {

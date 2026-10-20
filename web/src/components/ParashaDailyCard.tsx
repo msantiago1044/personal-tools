@@ -3,6 +3,7 @@ import {
   getDiasporaDailySchedule,
   isDailyAliyahReadToday,
   markDailyAliyahCompletedToday,
+  syncParashaWithCloud,
 } from '../lib/parashaService';
 import { BookOpen, CheckCircle2, ChevronRight, Sparkles } from 'lucide-react';
 
@@ -20,15 +21,28 @@ export const ParashaDailyCard: React.FC<ParashaDailyCardProps> = ({
   const [isDismissing, setIsDismissing] = useState(false);
 
   useEffect(() => {
+    let isCancelled = false;
+
     const handleUpdate = () => {
       setSchedule(getDiasporaDailySchedule());
       setIsReadToday(isDailyAliyahReadToday(userId));
     };
 
+    // Sincronizar inmediatamente con la nube de Supabase para reflejar lecturas hechas en celular u otros dispositivos
+    syncParashaWithCloud(userId).then((res) => {
+      if (!isCancelled) {
+        setSchedule(getDiasporaDailySchedule());
+        if (res.isReadToday) {
+          setIsReadToday(true);
+        }
+      }
+    });
+
     window.addEventListener('parasha_progress_updated', handleUpdate);
     window.addEventListener('focus', handleUpdate);
 
     return () => {
+      isCancelled = true;
       window.removeEventListener('parasha_progress_updated', handleUpdate);
       window.removeEventListener('focus', handleUpdate);
     };
@@ -42,7 +56,11 @@ export const ParashaDailyCard: React.FC<ParashaDailyCardProps> = ({
   const handleQuickMarkRead = async (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsDismissing(true);
-    await markDailyAliyahCompletedToday(schedule.targetAliyahNumber, schedule.parashaName.toLowerCase(), userId);
+    await markDailyAliyahCompletedToday(
+      schedule.targetAliyahNumber,
+      schedule.parashaId || schedule.parashaName,
+      userId
+    );
     setTimeout(() => {
       setIsReadToday(true);
       setIsDismissing(false);

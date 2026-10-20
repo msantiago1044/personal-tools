@@ -5,6 +5,7 @@ import { MODULE_REGISTRY, ModuleManifest } from '../modules/moduleRegistry';
 import { isStandaloneMode } from '../lib/pwa';
 import { InstallPwaModal } from './InstallPwaModal';
 import { ParashaDailyCard } from './ParashaDailyCard';
+import { syncParashaWithCloud } from '../lib/parashaService';
 import { hasReadPirkeiAvotToday, getStoredPirkeiAvotBookmark, syncPirkeiAvotWithCloud } from '../lib/pirkeiAvot';
 import {
   ModuleSortMode,
@@ -76,6 +77,8 @@ export const ToolHub: React.FC<ToolHubProps> = ({
       if (!isCancelled) {
         setAvotVersion((v) => v + 1);
       }
+      // Sincronizar y mezclar lecturas de Parashá entre dispositivos (móvil y web)
+      await syncParashaWithCloud(userId || userKey);
     };
 
     runSync();

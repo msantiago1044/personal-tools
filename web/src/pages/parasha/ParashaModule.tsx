@@ -13,6 +13,7 @@ import {
   getParashaProgress,
   markDailyAliyahCompletedToday,
   getAliyahStats,
+  syncParashaWithCloud,
 } from '../../lib/parashaService';
 import { ThemeMode, getStoredTheme, applyTheme } from '../../lib/theme';
 import {
@@ -95,32 +96,28 @@ export const ParashaModule: React.FC<ParashaModuleProps> = ({
     };
   }, [user]);
 
-  // Sincronizar progreso remoto de Supabase
+  // Sincronizar progreso remoto de Supabase (móvil + web)
   useEffect(() => {
-    if (user?.id && parasha?.id) {
-      supabase
-        .from('parasha_progress')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('parasha_id', parasha.id)
-        .single()
-        .then(({ data, error }) => {
-          if (!error && data) {
-            const remoteProg: ParashaProgress = {
-              parasha_id: data.parasha_id,
-              completed_aliyot: data.completed_aliyot || [],
-              full_parasha_completed: data.is_completed || false,
-              completed_count: data.completed_count || 0,
-              last_read_at: data.last_read_at,
-              aliyot_counts: data.aliyot_counts || {},
-              aliyot_last_read: data.aliyot_last_read || {},
-              years_history: data.years_history || {},
-            };
-            setProgress(remoteProg);
-            localStorage.setItem(`parasha_progress_${parasha.id}_${user.id}`, JSON.stringify(remoteProg));
-          }
-        });
-    }
+    let isCancelled = false;
+    syncParashaWithCloud(user?.id).then((res) => {
+      if (!isCancelled && res.progress) {
+        setProgress(res.progress);
+      }
+    });
+
+    const handleUpdate = () => {
+      syncParashaWithCloud(user?.id).then((res) => {
+        if (!isCancelled && res.progress) {
+          setProgress(res.progress);
+        }
+      });
+    };
+
+    window.addEventListener('parasha_progress_updated', handleUpdate);
+    return () => {
+      isCancelled = true;
+      window.removeEventListener('parasha_progress_updated', handleUpdate);
+    };
   }, [user?.id, parasha?.id]);
 
   const handleThemeChange = (newTheme: ThemeMode) => {

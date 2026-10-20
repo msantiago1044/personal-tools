@@ -3,6 +3,7 @@ import { ModuleProps } from '../../modules/moduleRegistry';
 import { ThemeMode, getStoredTheme, applyTheme } from '../../lib/theme';
 import { PGN_MODULES, PGN_CLASSES } from './data/pgnCurriculumData';
 import { UserPgnProgress, AnswerKey } from './types/pgn.types';
+import { supabase } from '../../lib/supabase';
 import { ClassViewer } from './components/ClassViewer';
 import { ExamRunner } from './components/ExamRunner';
 import { SummaryDashboard } from './components/SummaryDashboard';
@@ -31,7 +32,7 @@ export const PgnPrepModule: React.FC<ModuleProps> = ({ user, onBackToHub }) => {
     applyTheme(newTheme);
   };
 
-  // Progreso persistente
+  // Progreso persistente (sincronizado entre móvil y web)
   const [progress, setProgress] = useState<UserPgnProgress>(() => {
     try {
       const saved = localStorage.getItem(storageKey);
@@ -46,9 +47,35 @@ export const PgnPrepModule: React.FC<ModuleProps> = ({ user, onBackToHub }) => {
     };
   });
 
+  // Sincronizar en la nube con Supabase (móvil y web)
+  useEffect(() => {
+    let isCancelled = false;
+    supabase.auth.getUser().then(({ data }) => {
+      const remoteProg = data?.user?.user_metadata?.pgn_prep_progress as UserPgnProgress | undefined;
+      if (!isCancelled && remoteProg) {
+        setProgress((prev) => {
+          const merged: UserPgnProgress = {
+            completedClasses: Array.from(new Set([...(prev.completedClasses || []), ...(remoteProg.completedClasses || [])])),
+            checkpointAnswers: { ...(remoteProg.checkpointAnswers || {}), ...(prev.checkpointAnswers || {}) },
+            examResults: { ...(remoteProg.examResults || {}), ...(prev.examResults || {}) },
+          };
+          localStorage.setItem(storageKey, JSON.stringify(merged));
+          return merged;
+        });
+      }
+    });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [storageKey]);
+
   useEffect(() => {
     try {
       localStorage.setItem(storageKey, JSON.stringify(progress));
+      supabase.auth.updateUser({
+        data: { pgn_prep_progress: progress },
+      }).catch(() => {});
     } catch (e) {
       console.warn('Error guardando progreso PGN:', e);
     }

@@ -4,6 +4,7 @@ import { LoginPage } from './pages/LoginPage';
 import { ToolHub } from './components/ToolHub';
 import { shouldPromptMoodCheck, shouldPromptMoodCheckAsync } from './lib/emotions';
 import { shouldPromptPirkeiAvotAsync, getStoredPirkeiAvotBookmark, syncPirkeiAvotWithCloud } from './lib/pirkeiAvot';
+import { syncParashaWithCloud } from './lib/parashaService';
 import { PirkeiAvotBookmark } from '../../packages/shared/src/types';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { MODULE_REGISTRY, findModuleByHash, getModuleById, ModuleManifest } from './modules/moduleRegistry';
@@ -199,6 +200,7 @@ export default function App() {
 
     // Sincronizar en segundo plano inmediatamente
     syncPirkeiAvotWithCloud(session.user.id);
+    syncParashaWithCloud(session.user.id);
 
     const timer = setTimeout(checkAvotPrompt, 1200);
     window.addEventListener('focus', checkAvotPrompt);

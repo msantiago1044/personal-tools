@@ -14,6 +14,15 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     detectSessionInUrl: true,
     storage: typeof window !== 'undefined' ? window.localStorage : undefined,
   },
+  realtime: {
+    // Evita excepciones en entornos Node/CI que carezcan de WebSocket nativo
+    transport:
+      typeof window !== 'undefined'
+        ? undefined
+        : typeof globalThis !== 'undefined' && (globalThis as any).WebSocket
+        ? undefined
+        : (class DummyWebSocket {} as any),
+  },
 });
 
 /**
