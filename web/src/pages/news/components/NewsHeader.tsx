@@ -37,19 +37,14 @@ export const NewsHeader: React.FC<NewsHeaderProps> = ({
 
           <div className="flex items-center gap-2">
             <span className="text-2xl" role="img" aria-label="periódico">📰</span>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight">
-                  Radar de Noticias & Papers
-                </h1>
-                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  {isLiveActive ? 'EN VIVO' : 'PAUSADO'}
-                </span>
-              </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400 hidden md:block">
-                Contraste de perspectivas políticas (Colombia & Mundo) y avances científicos
-              </p>
+            <div className="flex items-center gap-2">
+              <h1 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight">
+                Noticias & Papers
+              </h1>
+              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                {isLiveActive ? 'EN VIVO' : 'PAUSADO'}
+              </span>
             </div>
           </div>
         </div>

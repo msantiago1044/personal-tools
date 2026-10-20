@@ -18,13 +18,13 @@ export const PerspectiveClusterCard: React.FC<PerspectiveClusterCardProps> = ({ 
   const getBiasLabel = (bias: PoliticalBias) => {
     switch (bias) {
       case 'left':
-        return 'Izquierda / Progresista';
+        return 'Izquierda';
       case 'center':
-        return 'Centro / Institucional';
+        return 'Centro';
       case 'right':
-        return 'Derecha / Conservador';
+        return 'Derecha';
       case 'neutral':
-        return 'Neutro / Fact-check';
+        return 'Neutro';
     }
   };
 
@@ -42,83 +42,77 @@ export const PerspectiveClusterCard: React.FC<PerspectiveClusterCardProps> = ({ 
   };
 
   return (
-    <article className="bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200/90 dark:border-slate-700/80 p-5 shadow-sm hover:shadow-md transition-all flex flex-col gap-4">
+    <article className="bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200/90 dark:border-slate-700/80 p-4 sm:p-5 shadow-sm hover:shadow-md transition-all flex flex-col gap-3.5">
       {/* Encabezado del Cluster */}
       <div>
-        <div className="flex items-center justify-between gap-2 mb-2">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-semibold bg-slate-100 dark:bg-slate-700/70 text-slate-700 dark:text-slate-300">
-            <Layers className="w-3.5 h-3.5 text-blue-500" />
+        <div className="flex items-center justify-between gap-2 mb-1.5">
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-slate-100 dark:bg-slate-700/70 text-slate-700 dark:text-slate-300">
+            <Layers className="w-3 h-3 text-blue-500" />
             {cluster.topic}
           </span>
 
-          <span className="text-xs text-slate-400 dark:text-slate-500 flex items-center gap-1">
-            <Clock className="w-3.5 h-3.5" />
+          <span className="text-[11px] text-slate-400 dark:text-slate-500 flex items-center gap-1">
+            <Clock className="w-3 h-3" />
             {new Date(cluster.lastUpdated).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </span>
         </div>
 
-        <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white leading-snug">
+        <h3 className="text-base font-bold text-slate-900 dark:text-white leading-snug">
           {cluster.headline}
         </h3>
       </div>
 
-      {/* Barra de Distribución de Sesgo (Ground News Style) */}
-      <div className="bg-slate-50 dark:bg-slate-900/60 rounded-xl p-3 border border-slate-100 dark:border-slate-800">
-        <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-1.5 font-medium">
+      {/* Barra de Distribución de Cobertura */}
+      <div className="bg-slate-50 dark:bg-slate-900/60 rounded-xl p-2.5 border border-slate-100 dark:border-slate-800">
+        <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 mb-1.5 font-medium">
           <span className="flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full bg-rose-500" />
-            Izquierda: {cluster.coverage.leftPercent}%
+            <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+            Izq {cluster.coverage.leftPercent}%
           </span>
           <span className="flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full bg-amber-400" />
-            Centro: {cluster.coverage.centerPercent}%
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+            Centro {cluster.coverage.centerPercent}%
           </span>
           <span className="flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full bg-blue-500" />
-            Derecha: {cluster.coverage.rightPercent}%
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+            Der {cluster.coverage.rightPercent}%
           </span>
         </div>
 
         {/* Barra segmentada */}
-        <div className="w-full h-2 rounded-full overflow-hidden flex bg-slate-200 dark:bg-slate-700">
+        <div className="w-full h-1.5 rounded-full overflow-hidden flex bg-slate-200 dark:bg-slate-700">
           <div
             style={{ width: `${cluster.coverage.leftPercent}%` }}
             className="h-full bg-rose-500 transition-all duration-500"
-            title={`Izquierda: ${cluster.coverage.leftPercent}%`}
           />
           <div
             style={{ width: `${cluster.coverage.centerPercent}%` }}
             className="h-full bg-amber-400 transition-all duration-500"
-            title={`Centro: ${cluster.coverage.centerPercent}%`}
           />
           <div
             style={{ width: `${cluster.coverage.rightPercent}%` }}
             className="h-full bg-blue-500 transition-all duration-500"
-            title={`Derecha: ${cluster.coverage.rightPercent}%`}
           />
         </div>
       </div>
 
-      {/* Pestañas de Perspectivas para comparar cómo titula cada medio */}
+      {/* Selector de Perspectivas */}
       <div>
-        <span className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2 block">
-          Comparativa de Enfoque Editorial:
-        </span>
-        <div className="flex flex-wrap gap-1.5 mb-3">
+        <div className="flex flex-wrap gap-1.5 mb-2.5">
           {cluster.articles.map((art) => {
             const isTabActive = activeBiasTab === art.bias;
             return (
               <button
                 key={art.id}
                 onClick={() => setActiveBiasTab(art.bias)}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 border ${
+                className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-all flex items-center gap-1 border ${
                   isTabActive
-                    ? `${getBiasBadgeClass(art.bias)} shadow-sm ring-1 ring-black/5`
-                    : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50'
+                    ? `${getBiasBadgeClass(art.bias)} shadow-sm`
+                    : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:bg-slate-50'
                 }`}
               >
                 <span>{art.source.name}</span>
-                <span className="opacity-75">({getBiasLabel(art.bias).split(' ')[0]})</span>
+                <span className="opacity-70 text-[10px]">({getBiasLabel(art.bias)})</span>
               </button>
             );
           })}
@@ -126,13 +120,12 @@ export const PerspectiveClusterCard: React.FC<PerspectiveClusterCardProps> = ({ 
 
         {/* Noticia Seleccionada según el enfoque */}
         {selectedArticle && (
-          <div className="p-3.5 rounded-xl bg-slate-50/70 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800 flex flex-col gap-2">
+          <div className="p-3 rounded-xl bg-slate-50/70 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800 flex flex-col gap-1.5">
             <div className="flex items-center justify-between gap-2">
               <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                {selectedArticle.source.name}{' '}
-                <span className="font-normal text-slate-400">({selectedArticle.source.country === 'CO' ? 'Colombia' : 'Global'})</span>
+                {selectedArticle.source.name}
               </span>
-              <span className={`text-[11px] font-semibold px-2 py-0.5 rounded border ${getBiasBadgeClass(selectedArticle.bias)}`}>
+              <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded border ${getBiasBadgeClass(selectedArticle.bias)}`}>
                 {getBiasLabel(selectedArticle.bias)}
               </span>
             </div>
