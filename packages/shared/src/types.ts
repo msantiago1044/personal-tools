@@ -321,6 +321,69 @@ export interface ParashaProgress {
   years_history?: Record<string, number[]>; // Año (ej. "2025", "2026") -> aliyot leídas en ese año
 }
 
+// ============================================================================
+// MÓDULO: PATRIMONIO, ACTIVOS & AMORTIZACIÓN DE DEUDAS
+// ============================================================================
+export type AssetCategory = 'enseres' | 'tecnologia' | 'vehiculo' | 'inmueble' | 'inversion' | 'otro';
+export type DepreciationMethod = 'lineal' | 'anual_pct' | 'apreciacion' | 'ninguna';
 
+export interface Asset {
+  id: string;
+  user_id: string;
+  name: string;
+  category: AssetCategory;
+  location?: string;
+  purchase_date: string;
+  purchase_price: number;
+  currency: string;
+  depreciation_method: DepreciationMethod;
+  useful_life_months: number;
+  salvage_value: number;
+  annual_rate: number;
+  warranty_expiration?: string;
+  serial_number?: string;
+  image_url?: string;
+  notes?: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at?: string;
 
+  // Propiedades calculadas en cliente
+  current_value?: number;
+  depreciated_amount?: number;
+  age_months?: number;
+  remaining_life_months?: number;
+}
 
+export interface AssetValuation {
+  id: string;
+  asset_id: string;
+  user_id: string;
+  valuation_date: string;
+  market_value: number;
+  notes?: string;
+  created_at: string;
+}
+
+export interface DebtDetail {
+  id: string;
+  user_id: string;
+  account_id?: string | null;
+  name: string;
+  current_balance: number;
+  interest_rate_annual: number;
+  minimum_payment: number;
+  due_day?: number;
+  created_at: string;
+}
+
+export interface NetWorthSnapshot {
+  id: string;
+  user_id: string;
+  snapshot_date: string;
+  cash_balance: number;
+  assets_value: number;
+  liabilities_value: number;
+  net_worth: number;
+  created_at: string;
+}

@@ -67,6 +67,10 @@ const ParashaModule = React.lazy(() =>
   import('../pages/parasha/ParashaModule').then((m) => ({ default: m.ParashaModule }))
 );
 
+const AssetsModule = React.lazy(() =>
+  import('../pages/assets/AssetsModule').then((m) => ({ default: m.AssetsModule }))
+);
+
 
 /**
  * Registro Central Desacoplado de Módulos (Architecture RFC - OCP)
@@ -98,6 +102,19 @@ export const MODULE_REGISTRY: ModuleManifest[] = [
     status: 'active',
     badge: 'Principal',
     component: FinanceModule,
+  },
+  {
+    id: 'assets',
+    name: 'Patrimonio & Activos',
+    shortName: 'Patrimonio',
+    description: 'Inventario de bienes tangibles, depreciación, patrimonio neto y amortización de deudas.',
+    emoji: '🏛️',
+    icon: 'landmark',
+    route: '/assets',
+    hashAliases: ['assets', 'patrimonio', 'bienes', 'activos'],
+    status: 'active',
+    badge: 'Nuevo',
+    component: AssetsModule,
   },
   {
     id: 'pantry',
