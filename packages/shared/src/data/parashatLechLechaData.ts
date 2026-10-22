@@ -1,4 +1,5 @@
 import { WeeklyParasha } from '../types';
+import { WEEKDAY_READINGS_CATALOG } from './weekdayTorahReadings';
 
 export const PARASHAT_LECH_LECHA_DATA: WeeklyParasha = {
   id: 'lechlecha',
@@ -8,12 +9,14 @@ export const PARASHAT_LECH_LECHA_DATA: WeeklyParasha = {
   bookSpanish: 'Bereshit (Génesis)',
   ref: 'Génesis 12:1–17:27',
   summary: 'El llamado de Avram a dejar su tierra hacia Canaán, la hambruna y descenso a Egipto, la separación con Lot, la promesa de descendencia innumerable, el pacto entre las partes (Brit Bein HaBetarim), el nacimiento de Yishmael, y el precepto del Brit Milá (circuncisión).',
+  weekdayReading: WEEKDAY_READINGS_CATALOG.lechlecha,
   aliyot: [
   {
     "aliyahNumber": 1,
     "nameHebrew": "רִאשׁוֹן",
     "nameSpanish": "1ª Aliyá (Rishón)",
     "refRange": "Génesis 12:1–12:13",
+    "hasWeekdayReading": true,
     "verses": [
       {
         "verseNumber": 1,

@@ -268,12 +268,35 @@ export interface PirkeiAvotProgress {
 // ============================================================================
 // MÓDULO: PARASHÁ DE LA SEMANA (DIÁSPORA)
 // ============================================================================
+export type WeekdayAliyahType = 'cohen' | 'levi' | 'israel';
+
+export interface WeekdayReadingAliyah {
+  type: WeekdayAliyahType;
+  nameHebrew: string; // 'כֹּהֵן' | 'לֵוִי' | 'יִשְׂרָאֵל'
+  nameSpanish: string; // 'Cohén' | 'Leví' | 'Israel'
+  refRange: string;
+  aliyahNumber: number; // En qué aliyá de Shabat se encuentra (1 o 2)
+  startVerseNum: number;
+  endVerseNum: number;
+}
+
+export interface WeekdayReading {
+  ref: string;
+  spansAliyot: number[]; // [1] o [1, 2]
+  cohen: WeekdayReadingAliyah;
+  levi: WeekdayReadingAliyah;
+  israel: WeekdayReadingAliyah;
+}
+
 export interface ParashaVerse {
   verseNumber: number;
   verseKey: string;
   hebrew: string;
   transliteration: string;
   spanish: string;
+  weekdayAliyah?: WeekdayAliyahType;
+  isWeekdayStart?: WeekdayAliyahType;
+  isWeekdayEnd?: boolean;
 }
 
 export interface ParashaAliyah {
@@ -282,6 +305,7 @@ export interface ParashaAliyah {
   nameSpanish: string;
   refRange: string;
   verses: ParashaVerse[];
+  hasWeekdayReading?: boolean;
 }
 
 export interface WeeklyParasha {
@@ -293,6 +317,7 @@ export interface WeeklyParasha {
   ref: string;
   aliyot: ParashaAliyah[];
   summary?: string;
+  weekdayReading?: WeekdayReading;
 }
 
 export interface ParashaDailySchedule {

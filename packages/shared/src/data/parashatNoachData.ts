@@ -1,4 +1,5 @@
 import { WeeklyParasha } from '../types';
+import { WEEKDAY_READINGS_CATALOG } from './weekdayTorahReadings';
 
 export const PARASHAT_NOACH_DATA: WeeklyParasha = {
   id: 'noach',
@@ -8,12 +9,14 @@ export const PARASHAT_NOACH_DATA: WeeklyParasha = {
   bookSpanish: 'Bereshit (Génesis)',
   ref: 'Génesis 6:9–11:32',
   summary: 'La historia de Noaj, el diluvio universal, la construcción de la Tevá (Arca), el pacto del arcoíris, y la Torre de Babel.',
+  weekdayReading: WEEKDAY_READINGS_CATALOG.noach,
   aliyot: [
     {
       aliyahNumber: 1,
       nameHebrew: 'רִאשׁוֹן',
       nameSpanish: '1ª Aliyá (Rishón)',
       refRange: 'Génesis 6:9–6:22',
+      hasWeekdayReading: true,
       verses: [
         {
           verseNumber: 9,

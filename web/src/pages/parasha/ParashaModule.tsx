@@ -149,6 +149,20 @@ export const ParashaModule: React.FC<ParashaModuleProps> = ({
     return years;
   }, [progress.years_history]);
 
+  // Filtro de lectura de días de semana dentro de la porción activa
+  const [weekdayFilter, setWeekdayFilter] = useState<'all' | 'weekday_all' | 'cohen' | 'levi' | 'israel'>('all');
+
+  // Resetear el filtro de días de semana al cambiar de Aliyá
+  useEffect(() => {
+    setWeekdayFilter('all');
+  }, [selectedAliyah]);
+
+  const isWeekdayTorahDay = React.useMemo(() => {
+    // Lunes (1), Jueves (4), o Sábado (6) por la tarde (Minjá)
+    const day = schedule.dayOfWeek;
+    return day === 1 || day === 4 || schedule.isShabbatAfternoon;
+  }, [schedule]);
+
   // Versículos a mostrar según la pestaña activa
   const currentVerses: ParashaVerse[] = React.useMemo(() => {
     if (!parasha || !parasha.aliyot) return [];
@@ -159,6 +173,20 @@ export const ParashaModule: React.FC<ParashaModuleProps> = ({
     const target = parasha.aliyot.find((al) => al.aliyahNumber === selectedAliyah);
     return target ? target.verses : [];
   }, [parasha, selectedAliyah]);
+
+  const currentAliyahHasWeekday = React.useMemo(() => {
+    if (!parasha || !parasha.weekdayReading) return false;
+    if (selectedAliyah === 0) return true;
+    return parasha.weekdayReading.spansAliyot.includes(selectedAliyah);
+  }, [parasha, selectedAliyah]);
+
+  const displayVerses: ParashaVerse[] = React.useMemo(() => {
+    if (weekdayFilter === 'all') return currentVerses;
+    if (weekdayFilter === 'weekday_all') {
+      return currentVerses.filter((v) => !!v.weekdayAliyah);
+    }
+    return currentVerses.filter((v) => v.weekdayAliyah === weekdayFilter);
+  }, [currentVerses, weekdayFilter]);
 
   const currentAliyahInfo = React.useMemo(() => {
     if (!parasha) return null;
@@ -389,6 +417,7 @@ export const ParashaModule: React.FC<ParashaModuleProps> = ({
             const isSelected = selectedAliyah === al.aliyahNumber;
             const isToday = schedule.targetAliyahNumber === al.aliyahNumber;
             const alStats = getAliyahStats(progress, al.aliyahNumber);
+            const hasWeekday = parasha.weekdayReading?.spansAliyot.includes(al.aliyahNumber);
 
             return (
               <button
@@ -401,6 +430,18 @@ export const ParashaModule: React.FC<ParashaModuleProps> = ({
                 }`}
               >
                 <span>{al.aliyahNumber}ª Aliyá</span>
+                {hasWeekday && (
+                  <span
+                    className={`text-[9px] px-1.5 py-0.2 rounded font-bold ${
+                      isSelected
+                        ? 'bg-blue-300/30 text-white'
+                        : 'bg-blue-100 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300'
+                    }`}
+                    title="Contiene lectura de días de semana: Cohén, Leví e Israel"
+                  >
+                    Cohén • Leví • Israel
+                  </span>
+                )}
                 {alStats.count > 0 && (
                   <span
                     className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
@@ -538,64 +579,399 @@ export const ParashaModule: React.FC<ParashaModuleProps> = ({
           </button>
         </div>
 
-        {/* Lista de Versículos */}
-        <div className="space-y-4">
-          {currentVerses.map((verse) => (
-            <article
-              key={verse.verseKey}
-              className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/70 rounded-2xl p-4 sm:p-5 shadow-xs hover:border-slate-300 dark:hover:border-slate-700 transition"
-            >
-              {/* Encabezado con número de versículo */}
-              <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100 dark:border-slate-800/60">
-                <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500">
-                  {verse.verseKey}
-                </span>
-                <span className="text-[10px] text-emerald-600 dark:text-emerald-400/80 font-mono">
-                  Pasuk {verse.verseNumber}
-                </span>
+        {/* Banner interactivo de Lectura de Días de Semana (Lunes, Jueves y Shabat Minjá) */}
+        {currentAliyahHasWeekday && parasha.weekdayReading && (
+          <div className="bg-gradient-to-br from-blue-50/90 via-indigo-50/50 to-emerald-50/70 dark:from-blue-950/40 dark:via-indigo-950/30 dark:to-emerald-950/30 border border-blue-200/80 dark:border-blue-900/60 rounded-2xl p-4 sm:p-5 mb-5 shadow-xs">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-blue-200/60 dark:border-blue-900/40">
+              <div className="flex items-start sm:items-center gap-2.5">
+                <span className="text-xl">📜</span>
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-xs font-bold uppercase tracking-wider text-blue-700 dark:text-blue-400">
+                      Lectura de Días de Semana (Kriat HaTorá)
+                    </span>
+                    <span className="text-[10px] bg-blue-100 dark:bg-blue-900/60 text-blue-800 dark:text-blue-300 font-bold px-2 py-0.5 rounded-full border border-blue-200 dark:border-blue-800/60">
+                      Lunes, Jueves y Shabat Minjá
+                    </span>
+                    {parasha.weekdayReading.spansAliyot.length > 1 ? (
+                      <span className="text-[10px] bg-purple-100 dark:bg-purple-900/60 text-purple-800 dark:text-purple-300 font-bold px-2 py-0.5 rounded-full">
+                        Abarca 1ª y 2ª Aliyá
+                      </span>
+                    ) : (
+                      <span className="text-[10px] bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300 font-bold px-2 py-0.5 rounded-full">
+                        Dentro de la 1ª Aliyá
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 mt-1">
+                    En los servicios de los días de semana se leen públicamente 3 Aliyot de esta Parashá: <strong className="text-slate-800 dark:text-white">Cohén, Leví e Israel</strong>. Rango total: <span className="font-semibold text-slate-700 dark:text-slate-200">{parasha.weekdayReading.ref}</span>
+                  </p>
+                </div>
               </div>
 
-              {/* Capa 1: Hebreo vocalizado con Niqqud */}
-              {showHebrew && (
-                <p
-                  dir="rtl"
-                  className={`font-serif text-slate-900 dark:text-white leading-loose mb-3 tracking-wide ${
-                    fontSize === 'sm'
-                      ? 'text-lg'
-                      : fontSize === 'base'
-                      ? 'text-xl'
-                      : fontSize === 'lg'
-                      ? 'text-2xl'
-                      : 'text-3xl'
-                  }`}
-                >
-                  {verse.hebrew}
-                </p>
+              {isWeekdayTorahDay && (
+                <div className="shrink-0 bg-amber-500/15 border border-amber-500/40 px-2.5 py-1.5 rounded-xl text-[11px] font-bold text-amber-800 dark:text-amber-300 flex items-center gap-1.5 self-start sm:self-auto">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                  <span>Hoy se lee en la Sinagoga</span>
+                </div>
               )}
+            </div>
 
-              {/* Capa 2: Transliteración Fonética */}
-              {showTranslit && verse.transliteration && (
-                <p
-                  className={`text-slate-600 dark:text-slate-300 font-sans italic mb-2.5 leading-relaxed ${
-                    fontSize === 'sm' ? 'text-xs' : fontSize === 'base' ? 'text-sm' : fontSize === 'lg' ? 'text-base' : 'text-lg'
-                  }`}
-                >
-                  {verse.transliteration}
-                </p>
-              )}
+            {/* Los 3 Olim de Semana (Cohén, Leví, Israel) */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mt-3">
+              {/* Cohén */}
+              <div
+                onClick={() => setWeekdayFilter(weekdayFilter === 'cohen' ? 'all' : 'cohen')}
+                className={`p-3 rounded-xl border transition cursor-pointer flex flex-col justify-between ${
+                  weekdayFilter === 'cohen'
+                    ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
+                    : 'bg-white dark:bg-slate-900/90 border-blue-200/70 dark:border-blue-900/50 hover:border-blue-400'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className={`text-[11px] font-bold uppercase tracking-wider ${
+                    weekdayFilter === 'cohen' ? 'text-blue-100' : 'text-blue-600 dark:text-blue-400'
+                  }`}>
+                    1ª Aliyá • Cohén
+                  </span>
+                  <span className="font-serif text-base font-bold" dir="rtl">
+                    כֹּהֵן
+                  </span>
+                </div>
+                <div className="mt-1">
+                  <span className={`text-xs font-semibold ${weekdayFilter === 'cohen' ? 'text-white' : 'text-slate-800 dark:text-slate-200'}`}>
+                    {parasha.weekdayReading.cohen.refRange}
+                  </span>
+                  <span className={`block text-[10px] mt-0.5 ${weekdayFilter === 'cohen' ? 'text-blue-200' : 'text-slate-400'}`}>
+                    (1ª Aliyá de Shabat)
+                  </span>
+                </div>
+              </div>
 
-              {/* Capa 3: Traducción al Español (Nombres Sagrados preservados) */}
-              {showSpanish && verse.spanish && (
-                <p
-                  className={`text-slate-800 dark:text-slate-200 leading-relaxed font-normal ${
-                    fontSize === 'sm' ? 'text-xs' : fontSize === 'base' ? 'text-sm' : fontSize === 'lg' ? 'text-base' : 'text-lg'
-                  }`}
+              {/* Leví */}
+              <div
+                onClick={() => setWeekdayFilter(weekdayFilter === 'levi' ? 'all' : 'levi')}
+                className={`p-3 rounded-xl border transition cursor-pointer flex flex-col justify-between ${
+                  weekdayFilter === 'levi'
+                    ? 'bg-indigo-600 text-white border-indigo-600 shadow-xs'
+                    : 'bg-white dark:bg-slate-900/90 border-indigo-200/70 dark:border-indigo-900/50 hover:border-indigo-400'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className={`text-[11px] font-bold uppercase tracking-wider ${
+                    weekdayFilter === 'levi' ? 'text-indigo-100' : 'text-indigo-600 dark:text-indigo-400'
+                  }`}>
+                    2ª Aliyá • Leví
+                  </span>
+                  <span className="font-serif text-base font-bold" dir="rtl">
+                    לֵוִי
+                  </span>
+                </div>
+                <div className="mt-1">
+                  <span className={`text-xs font-semibold ${weekdayFilter === 'levi' ? 'text-white' : 'text-slate-800 dark:text-slate-200'}`}>
+                    {parasha.weekdayReading.levi.refRange}
+                  </span>
+                  <span className={`block text-[10px] mt-0.5 ${weekdayFilter === 'levi' ? 'text-indigo-200' : 'text-slate-400'}`}>
+                    {parasha.weekdayReading.levi.aliyahNumber === 1 ? '(1ª Aliyá de Shabat)' : '(2ª Aliyá de Shabat)'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Israel */}
+              <div
+                onClick={() => setWeekdayFilter(weekdayFilter === 'israel' ? 'all' : 'israel')}
+                className={`p-3 rounded-xl border transition cursor-pointer flex flex-col justify-between ${
+                  weekdayFilter === 'israel'
+                    ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
+                    : 'bg-white dark:bg-slate-900/90 border-emerald-200/70 dark:border-emerald-900/50 hover:border-emerald-400'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className={`text-[11px] font-bold uppercase tracking-wider ${
+                    weekdayFilter === 'israel' ? 'text-emerald-100' : 'text-emerald-600 dark:text-emerald-400'
+                  }`}>
+                    3ª Aliyá • Israel
+                  </span>
+                  <span className="font-serif text-base font-bold" dir="rtl">
+                    יִשְׂרָאֵל
+                  </span>
+                </div>
+                <div className="mt-1">
+                  <span className={`text-xs font-semibold ${weekdayFilter === 'israel' ? 'text-white' : 'text-slate-800 dark:text-slate-200'}`}>
+                    {parasha.weekdayReading.israel.refRange}
+                  </span>
+                  <span className={`block text-[10px] mt-0.5 ${weekdayFilter === 'israel' ? 'text-emerald-200' : 'text-slate-400'}`}>
+                    {parasha.weekdayReading.israel.aliyahNumber === 1 ? '(1ª Aliyá de Shabat)' : '(2ª Aliyá de Shabat)'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Barra de Filtros rápidos */}
+            <div className="flex flex-wrap items-center gap-1.5 mt-3 pt-3 border-t border-blue-200/50 dark:border-blue-900/40">
+              <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mr-1">
+                Filtrar lectura:
+              </span>
+              <button
+                onClick={() => setWeekdayFilter('all')}
+                className={`text-xs px-2.5 py-1 rounded-lg border font-medium transition cursor-pointer ${
+                  weekdayFilter === 'all'
+                    ? 'bg-slate-800 dark:bg-slate-100 text-white dark:text-slate-900 border-slate-800 dark:border-slate-100 shadow-xs'
+                    : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:border-slate-400'
+                }`}
+              >
+                Aliyá Completa
+              </button>
+              <button
+                onClick={() => setWeekdayFilter('weekday_all')}
+                className={`text-xs px-2.5 py-1 rounded-lg border font-semibold transition cursor-pointer flex items-center gap-1 ${
+                  weekdayFilter === 'weekday_all'
+                    ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
+                    : 'bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800 hover:border-blue-400'
+                }`}
+              >
+                <span>📜 Toda la Lectura de Semana</span>
+              </button>
+              <button
+                onClick={() => setWeekdayFilter('cohen')}
+                className={`text-xs px-2.5 py-1 rounded-lg border font-semibold transition cursor-pointer flex items-center gap-1 ${
+                  weekdayFilter === 'cohen'
+                    ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
+                    : 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800 hover:border-blue-400'
+                }`}
+              >
+                <span>כֹּהֵן Cohén</span>
+              </button>
+              <button
+                onClick={() => setWeekdayFilter('levi')}
+                className={`text-xs px-2.5 py-1 rounded-lg border font-semibold transition cursor-pointer flex items-center gap-1 ${
+                  weekdayFilter === 'levi'
+                    ? 'bg-indigo-600 text-white border-indigo-600 shadow-xs'
+                    : 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800 hover:border-indigo-400'
+                }`}
+              >
+                <span>לֵוִי Leví</span>
+              </button>
+              <button
+                onClick={() => setWeekdayFilter('israel')}
+                className={`text-xs px-2.5 py-1 rounded-lg border font-semibold transition cursor-pointer flex items-center gap-1 ${
+                  weekdayFilter === 'israel'
+                    ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
+                    : 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800 hover:border-emerald-400'
+                }`}
+              >
+                <span>יִשְׂרָאֵל Israel</span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Lista de Versículos */}
+        <div className="space-y-4">
+          {displayVerses.length === 0 ? (
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-8 text-center text-slate-500 dark:text-slate-400">
+              <p className="text-sm font-medium">No hay versículos para el filtro seleccionado.</p>
+              <button
+                onClick={() => setWeekdayFilter('all')}
+                className="mt-3 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold cursor-pointer transition"
+              >
+                Mostrar todos los versículos
+              </button>
+            </div>
+          ) : (
+            displayVerses.map((verse) => (
+              <React.Fragment key={verse.verseKey}>
+                {/* Indicador de inicio de Cohén */}
+                {verse.isWeekdayStart === 'cohen' && (weekdayFilter === 'all' || weekdayFilter === 'weekday_all' || weekdayFilter === 'cohen') && (
+                  <div className="rounded-2xl bg-gradient-to-r from-blue-500/10 via-cyan-500/10 to-transparent border-l-4 border-l-blue-600 border border-blue-200 dark:border-blue-900/60 p-3.5 sm:p-4 my-4 shadow-xs">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-xs">
+                          1ª
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
+                              Días de Semana • Lunes, Jueves y Shabat Minjá
+                            </span>
+                            <span className="text-[9px] bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-bold px-1.5 py-0.2 rounded-full">
+                              1ª Aliyá
+                            </span>
+                          </div>
+                          <h3 className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white flex items-center gap-2 mt-0.5">
+                            <span>Lectura del Cohén</span>
+                            <span className="font-serif text-lg text-blue-700 dark:text-blue-400" dir="rtl">
+                              כֹּהֵן
+                            </span>
+                          </h3>
+                        </div>
+                      </div>
+                      {parasha.weekdayReading?.cohen && (
+                        <span className="text-xs font-bold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700">
+                          {parasha.weekdayReading.cohen.refRange}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Indicador de inicio de Leví */}
+                {verse.isWeekdayStart === 'levi' && (weekdayFilter === 'all' || weekdayFilter === 'weekday_all' || weekdayFilter === 'levi') && (
+                  <div className="rounded-2xl bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-transparent border-l-4 border-l-indigo-600 border border-indigo-200 dark:border-indigo-900/60 p-3.5 sm:p-4 my-4 shadow-xs">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-sm shadow-xs">
+                          2ª
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
+                              Días de Semana • Lunes, Jueves y Shabat Minjá
+                            </span>
+                            <span className="text-[9px] bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-bold px-1.5 py-0.2 rounded-full">
+                              2ª Aliyá
+                            </span>
+                          </div>
+                          <h3 className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white flex items-center gap-2 mt-0.5">
+                            <span>Lectura del Leví</span>
+                            <span className="font-serif text-lg text-indigo-700 dark:text-indigo-400" dir="rtl">
+                              לֵוִי
+                            </span>
+                          </h3>
+                        </div>
+                      </div>
+                      {parasha.weekdayReading?.levi && (
+                        <span className="text-xs font-bold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700">
+                          {parasha.weekdayReading.levi.refRange}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Indicador de inicio de Israel */}
+                {verse.isWeekdayStart === 'israel' && (weekdayFilter === 'all' || weekdayFilter === 'weekday_all' || weekdayFilter === 'israel') && (
+                  <div className="rounded-2xl bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-transparent border-l-4 border-l-emerald-600 border border-emerald-200 dark:border-emerald-900/60 p-3.5 sm:p-4 my-4 shadow-xs">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-sm shadow-xs">
+                          3ª
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                              Días de Semana • Lunes, Jueves y Shabat Minjá
+                            </span>
+                            <span className="text-[9px] bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-bold px-1.5 py-0.2 rounded-full">
+                              3ª Aliyá
+                            </span>
+                          </div>
+                          <h3 className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white flex items-center gap-2 mt-0.5">
+                            <span>Lectura de Israel</span>
+                            <span className="font-serif text-lg text-emerald-700 dark:text-emerald-400" dir="rtl">
+                              יִשְׂרָאֵל
+                            </span>
+                          </h3>
+                        </div>
+                      </div>
+                      {parasha.weekdayReading?.israel && (
+                        <span className="text-xs font-bold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700">
+                          {parasha.weekdayReading.israel.refRange}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                <article
+                  className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/70 rounded-2xl p-4 sm:p-5 shadow-xs hover:border-slate-300 dark:hover:border-slate-700 transition"
                 >
-                  {verse.spanish}
-                </p>
-              )}
-            </article>
-          ))}
+                  {/* Encabezado con número de versículo y Distintivo de Días de Semana */}
+                  <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100 dark:border-slate-800/60 flex-wrap gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500">
+                        {verse.verseKey}
+                      </span>
+                      {verse.weekdayAliyah === 'cohen' && (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60">
+                          <span className="font-serif">כֹּהֵן</span>
+                          <span>• Cohén (Semana)</span>
+                        </span>
+                      )}
+                      {verse.weekdayAliyah === 'levi' && (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60">
+                          <span className="font-serif">לֵוִי</span>
+                          <span>• Leví (Semana)</span>
+                        </span>
+                      )}
+                      {verse.weekdayAliyah === 'israel' && (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60">
+                          <span className="font-serif">יִשְׂרָאֵל</span>
+                          <span>• Israel (Semana)</span>
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-[10px] text-emerald-600 dark:text-emerald-400/80 font-mono">
+                      Pasuk {verse.verseNumber}
+                    </span>
+                  </div>
+
+                  {/* Capa 1: Hebreo vocalizado con Niqqud */}
+                  {showHebrew && (
+                    <p
+                      dir="rtl"
+                      className={`font-serif text-slate-900 dark:text-white leading-loose mb-3 tracking-wide ${
+                        fontSize === 'sm'
+                          ? 'text-lg'
+                          : fontSize === 'base'
+                          ? 'text-xl'
+                          : fontSize === 'lg'
+                          ? 'text-2xl'
+                          : 'text-3xl'
+                      }`}
+                    >
+                      {verse.hebrew}
+                    </p>
+                  )}
+
+                  {/* Capa 2: Transliteración Fonética */}
+                  {showTranslit && verse.transliteration && (
+                    <p
+                      className={`text-slate-600 dark:text-slate-300 font-sans italic mb-2.5 leading-relaxed ${
+                        fontSize === 'sm' ? 'text-xs' : fontSize === 'base' ? 'text-sm' : fontSize === 'lg' ? 'text-base' : 'text-lg'
+                      }`}
+                    >
+                      {verse.transliteration}
+                    </p>
+                  )}
+
+                  {/* Capa 3: Traducción al Español (Nombres Sagrados preservados) */}
+                  {showSpanish && verse.spanish && (
+                    <p
+                      className={`text-slate-800 dark:text-slate-200 leading-relaxed font-normal ${
+                        fontSize === 'sm' ? 'text-xs' : fontSize === 'base' ? 'text-sm' : fontSize === 'lg' ? 'text-base' : 'text-lg'
+                      }`}
+                    >
+                      {verse.spanish}
+                    </p>
+                  )}
+                </article>
+
+                {/* Marcador de Fin de Lectura de Días de Semana */}
+                {verse.isWeekdayEnd && (weekdayFilter === 'all' || weekdayFilter === 'weekday_all' || weekdayFilter === 'israel') && (
+                  <div className="my-5 p-3.5 rounded-2xl bg-slate-100/90 dark:bg-slate-800/80 border border-slate-300/80 dark:border-slate-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs shadow-xs">
+                    <div className="flex items-center gap-2 text-slate-700 dark:text-slate-200 font-semibold">
+                      <span className="text-base">🏁</span>
+                      <span>Fin de la lectura de días de semana (Lunes, Jueves y Shabat Minjá)</span>
+                    </div>
+                    <span className="font-serif text-sm font-bold text-slate-600 dark:text-slate-400" dir="rtl">
+                      סוֹף קְרִיאַת שֵׁנִי וַחֲמִישִׁי
+                    </span>
+                  </div>
+                )}
+              </React.Fragment>
+            ))
+          )}
         </div>
 
         {/* Botón final para marcar como leída y avanzar */}

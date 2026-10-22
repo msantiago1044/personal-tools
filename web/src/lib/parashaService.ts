@@ -5,9 +5,18 @@ import {
   ParashaAliyah,
   ParashaVerse,
   ParashaProgress,
+  WeekdayReading,
+  WeekdayAliyahType,
 } from '../../../packages/shared/src/types';
 import { PARASHAT_NOACH_DATA } from '../../../packages/shared/src/data/parashatNoachData';
 import { PARASHAT_LECH_LECHA_DATA } from '../../../packages/shared/src/data/parashatLechLechaData';
+import {
+  getWeekdayReadingForParasha,
+  annotateParashaWithWeekdayReading,
+} from '../../../packages/shared/src/data/weekdayTorahReadings';
+
+export { getWeekdayReadingForParasha, annotateParashaWithWeekdayReading };
+export type { WeekdayReading, WeekdayAliyahType };
 
 // Claves de almacenamiento local
 const PARASHA_CACHE_PREFIX = 'parasha_data_cache_';
@@ -465,7 +474,7 @@ export async function getWeeklyParasha(targetDate?: Date): Promise<WeeklyParasha
         if (isEnglishText(firstVerseSpanish) || !parsed.aliyot || parsed.aliyot.length < 7) {
           localStorage.removeItem(cacheKey);
         } else if (parsed._cachedAt && Date.now() - parsed._cachedAt < 2 * 24 * 3600 * 1000) {
-          return parsed;
+          return annotateParashaWithWeekdayReading(parsed);
         }
       } catch (e) {
         localStorage.removeItem(cacheKey);
@@ -475,17 +484,19 @@ export async function getWeeklyParasha(targetDate?: Date): Promise<WeeklyParasha
 
   // 2. Comprobar datasets de alta fidelidad precompilados en Español y Hebreo con Niqqud
   if (schedule.parashaName === 'Lej-Lejá' || targetDateKey === '2026-10-24') {
+    const data = annotateParashaWithWeekdayReading(PARASHAT_LECH_LECHA_DATA);
     if (typeof window !== 'undefined') {
-      localStorage.setItem(cacheKey, JSON.stringify({ ...PARASHAT_LECH_LECHA_DATA, _cachedAt: Date.now() }));
+      localStorage.setItem(cacheKey, JSON.stringify({ ...data, _cachedAt: Date.now() }));
     }
-    return PARASHAT_LECH_LECHA_DATA;
+    return data;
   }
 
   if (schedule.parashaName === 'Noaj' || targetDateKey === '2026-10-17') {
+    const data = annotateParashaWithWeekdayReading(PARASHAT_NOACH_DATA);
     if (typeof window !== 'undefined') {
-      localStorage.setItem(cacheKey, JSON.stringify({ ...PARASHAT_NOACH_DATA, _cachedAt: Date.now() }));
+      localStorage.setItem(cacheKey, JSON.stringify({ ...data, _cachedAt: Date.now() }));
     }
-    return PARASHAT_NOACH_DATA;
+    return data;
   }
 
   // 3. Intentar consultar calendario de Sefaria con la fecha objetivo de Shabat (Diáspora)
@@ -505,17 +516,19 @@ export async function getWeeklyParasha(targetDate?: Date): Promise<WeeklyParasha
 
         // Si la parashá devuelta es Lej-Lejá o Noaj, usar nuestros datasets
         if (nameEn.toLowerCase().includes('lech') || nameEn.toLowerCase().includes('lej') || fullRef.toLowerCase().includes('genesis 12:1')) {
+          const data = annotateParashaWithWeekdayReading(PARASHAT_LECH_LECHA_DATA);
           if (typeof window !== 'undefined') {
-            localStorage.setItem(cacheKey, JSON.stringify({ ...PARASHAT_LECH_LECHA_DATA, _cachedAt: Date.now() }));
+            localStorage.setItem(cacheKey, JSON.stringify({ ...data, _cachedAt: Date.now() }));
           }
-          return PARASHAT_LECH_LECHA_DATA;
+          return data;
         }
 
         if (nameEn.toLowerCase().includes('noa') || fullRef.toLowerCase().includes('genesis 6:9')) {
+          const data = annotateParashaWithWeekdayReading(PARASHAT_NOACH_DATA);
           if (typeof window !== 'undefined') {
-            localStorage.setItem(cacheKey, JSON.stringify({ ...PARASHAT_NOACH_DATA, _cachedAt: Date.now() }));
+            localStorage.setItem(cacheKey, JSON.stringify({ ...data, _cachedAt: Date.now() }));
           }
-          return PARASHAT_NOACH_DATA;
+          return data;
         }
 
         const rawAliyotRefs: string[] = pItem.extraDetails?.aliyot || [];
@@ -570,7 +583,7 @@ export async function getWeeklyParasha(targetDate?: Date): Promise<WeeklyParasha
 
         // Si todas las aliyot se descargaron y la primera no está en inglés
         if (aliyot.length >= 7 && !isEnglishText(aliyot[0]?.verses?.[0]?.spanish || '')) {
-          const result: WeeklyParasha = {
+          const rawResult: WeeklyParasha = {
             id: nameEn.toLowerCase().replace(/[^a-z0-9]/g, ''),
             nameHebrew: nameHe,
             nameSpanish: nameEn,
@@ -580,6 +593,7 @@ export async function getWeeklyParasha(targetDate?: Date): Promise<WeeklyParasha
             aliyot,
             summary: pItem.description?.en ? cleanSacredNames(pItem.description.en) : undefined,
           };
+          const result = annotateParashaWithWeekdayReading(rawResult);
 
           if (typeof window !== 'undefined') {
             localStorage.setItem(cacheKey, JSON.stringify({ ...result, _cachedAt: Date.now() }));
@@ -593,7 +607,8 @@ export async function getWeeklyParasha(targetDate?: Date): Promise<WeeklyParasha
   }
 
   // 4. Respaldo garantizado según la fecha objetivo
-  const fallbackData = schedule.parashaName === 'Lej-Lejá' ? PARASHAT_LECH_LECHA_DATA : PARASHAT_NOACH_DATA;
+  const fallbackRaw = schedule.parashaName === 'Lej-Lejá' ? PARASHAT_LECH_LECHA_DATA : PARASHAT_NOACH_DATA;
+  const fallbackData = annotateParashaWithWeekdayReading(fallbackRaw);
   if (typeof window !== 'undefined') {
     localStorage.setItem(cacheKey, JSON.stringify({ ...fallbackData, _cachedAt: Date.now() }));
   }
