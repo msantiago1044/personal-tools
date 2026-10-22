@@ -202,13 +202,27 @@ export default function App() {
     syncPirkeiAvotWithCloud(session.user.id);
     syncParashaWithCloud(session.user.id);
 
+    const handleSyncAndPrompt = () => {
+      checkAvotPrompt();
+      syncPirkeiAvotWithCloud(session.user.id);
+      syncParashaWithCloud(session.user.id);
+    };
+
     const timer = setTimeout(checkAvotPrompt, 1200);
-    window.addEventListener('focus', checkAvotPrompt);
+    window.addEventListener('focus', handleSyncAndPrompt);
+
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        handleSyncAndPrompt();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
 
     return () => {
       isMounted = false;
       clearTimeout(timer);
-      window.removeEventListener('focus', checkAvotPrompt);
+      window.removeEventListener('focus', handleSyncAndPrompt);
+      document.removeEventListener('visibilitychange', handleVisibility);
     };
   }, [session, currentView, showMoodPrompt]);
 

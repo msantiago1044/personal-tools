@@ -77,8 +77,8 @@ export const PARASHAT_LECH_LECHA_DATA: WeeklyParasha = {
       {
         "verseNumber": 9,
         "verseKey": "Génesis 12:9",
-        "hebrew": "וַיִּסַּ֣ע אַבְרָ֔ם הָל֥וֹךְ וְנָס֖וֹעַ הַנֶּֽגְבָּה׃&nbsp;<span class=\"mam-spi-pe\">{פ}</span><br>",
-        "transliteration": "vayisa averam halvoje venasvoa hanegebah&nbsp;<span class=\"mam-spi-pe\">{f}</span><br>",
+        "hebrew": "וַיִּסַּ֣ע אַבְרָ֔ם הָל֥וֹךְ וְנָס֖וֹעַ הַנֶּֽגְבָּה׃",
+        "transliteration": "vayisa averam halvoje venasvoa hanegebah",
         "spanish": "Y Abram partió de allí, caminando y yendo hacia el Neguev."
       },
       {
@@ -141,8 +141,8 @@ export const PARASHAT_LECH_LECHA_DATA: WeeklyParasha = {
       {
         "verseNumber": 17,
         "verseKey": "Génesis 12:17",
-        "hebrew": "וַיְנַגַּ֨ע יְהֹוָ֧ה&thinsp;<small>׀</small>&thinsp;אֶת־פַּרְעֹ֛ה נְגָעִ֥ים גְּדֹלִ֖ים וְאֶת־בֵּית֑וֹ עַל־דְּבַ֥ר שָׂרַ֖י אֵ֥שֶׁת אַבְרָֽם׃",
-        "transliteration": "vayenaga yehovah&thinsp;<small></small>&thinsp;etpareoh negaiym gedoliym veetbeytvo aldevar saray eshet averam",
+        "hebrew": "וַיְנַגַּ֨ע יְהֹוָ֧ה ׀ אֶת־פַּרְעֹ֛ה נְגָעִ֥ים גְּדֹלִ֖ים וְאֶת־בֵּית֑וֹ עַל־דְּבַ֥ר שָׂרַ֖י אֵ֥שֶׁת אַבְרָֽם׃",
+        "transliteration": "vayenaga yehovah etpareoh negaiym gedoliym veetbeytvo aldevar saray eshet averam",
         "spanish": "Mas YHVH hirió a Faraón y a su casa con grandes plagas, por causa de Sarai mujer de Abram."
       },
       {
@@ -240,8 +240,8 @@ export const PARASHAT_LECH_LECHA_DATA: WeeklyParasha = {
       {
         "verseNumber": 10,
         "verseKey": "Génesis 13:10",
-        "hebrew": "וַיִּשָּׂא־ל֣וֹט אֶת־עֵינָ֗יו וַיַּרְא֙ אֶת־כׇּל־כִּכַּ֣ר הַיַּרְדֵּ֔ן כִּ֥י כֻלָּ֖הּ מַשְׁקֶ֑ה לִפְנֵ֣י&thinsp;<b>׀</b> שַׁחֵ֣ת יְהֹוָ֗ה אֶת־סְדֹם֙ וְאֶת־עֲמֹרָ֔ה כְּגַן־יְהֹוָה֙ כְּאֶ֣רֶץ מִצְרַ֔יִם בֹּאֲכָ֖ה צֹֽעַר׃",
-        "transliteration": "vayisalvot eteynayv vayare etklkikar hayareden kiy julah mashekeh lifeney&thinsp;<b></b> shajet yehovah etsedom veetamorah keganyehovah keeretz mitzerayim boajah tzoar",
+        "hebrew": "וַיִּשָּׂא־ל֣וֹט אֶת־עֵינָ֗יו וַיַּרְא֙ אֶת־כׇּל־כִּכַּ֣ר הַיַּרְדֵּ֔ן כִּ֥י כֻלָּ֖הּ מַשְׁקֶ֑ה לִפְנֵ֣י ׀ שַׁחֵ֣ת יְהֹוָ֗ה אֶת־סְדֹם֙ וְאֶת־עֲמֹרָ֔ה כְּגַן־יְהֹוָה֙ כְּאֶ֣רֶץ מִצְרַ֔יִם בֹּאֲכָ֖ה צֹֽעַר׃",
+        "transliteration": "vayisalvot eteynayv vayare etklkikar hayareden kiy julah mashekeh lifeney shajet yehovah etsedom veetamorah keganyehovah keeretz mitzerayim boajah tzoar",
         "spanish": "Y alzó Lot sus ojos, y vio toda la llanura del Jordán, que toda ella era de riego, como el huerto de YHVH, como la tierra de Egipto en la dirección de Zoar, antes que destruyese YHVH a Sodoma y a Gomorra."
       },
       {
@@ -282,8 +282,8 @@ export const PARASHAT_LECH_LECHA_DATA: WeeklyParasha = {
       {
         "verseNumber": 16,
         "verseKey": "Génesis 13:16",
-        "hebrew": "וְשַׂמְתִּ֥י אֶֽת־זַרְעֲךָ֖ כַּעֲפַ֣ר הָאָ֑רֶץ אֲשֶׁ֣ר&thinsp;<b>׀</b> אִם־יוּכַ֣ל אִ֗ישׁ לִמְנוֹת֙ אֶת־עֲפַ֣ר הָאָ֔רֶץ גַּֽם־זַרְעֲךָ֖ יִמָּנֶֽה׃",
-        "transliteration": "vesametiy etzareaja kaafar haaretz asher&thinsp;<b></b> imybjal iysh limenvot etafar haaretz gamzareaja yimaneh",
+        "hebrew": "וְשַׂמְתִּ֥י אֶֽת־זַרְעֲךָ֖ כַּעֲפַ֣ר הָאָ֑רֶץ אֲשֶׁ֣ר ׀ אִם־יוּכַ֣ל אִ֗ישׁ לִמְנוֹת֙ אֶת־עֲפַ֣ר הָאָ֔רֶץ גַּֽם־זַרְעֲךָ֖ יִמָּנֶֽה׃",
+        "transliteration": "vesametiy etzareaja kaafar haaretz asher imybjal iysh limenvot etafar haaretz gamzareaja yimaneh",
         "spanish": "Y haré tu descendencia como el polvo de la tierra; que si alguno puede contar el polvo de la tierra, también tu descendencia será contada."
       },
       {
@@ -296,8 +296,8 @@ export const PARASHAT_LECH_LECHA_DATA: WeeklyParasha = {
       {
         "verseNumber": 18,
         "verseKey": "Génesis 13:18",
-        "hebrew": "וַיֶּאֱהַ֣ל אַבְרָ֗ם וַיָּבֹ֛א וַיֵּ֛שֶׁב בְּאֵלֹנֵ֥י מַמְרֵ֖א אֲשֶׁ֣ר בְּחֶבְר֑וֹן וַיִּֽבֶן־שָׁ֥ם מִזְבֵּ֖חַ לַֽיהֹוָֽה׃&nbsp;<span class=\"mam-spi-pe\">{פ}</span><br>",
-        "transliteration": "vayeehal averam vayavo vayeshev beeloney mamere asher bejevervon vayivensham mizebeja layhovah&nbsp;<span class=\"mam-spi-pe\">{f}</span><br>",
+        "hebrew": "וַיֶּאֱהַ֣ל אַבְרָ֗ם וַיָּבֹ֛א וַיֵּ֛שֶׁב בְּאֵלֹנֵ֥י מַמְרֵ֖א אֲשֶׁ֣ר בְּחֶבְר֑וֹן וַיִּֽבֶן־שָׁ֥ם מִזְבֵּ֖חַ לַֽיהֹוָֽה׃",
+        "transliteration": "vayeehal averam vayavo vayeshev beeloney mamere asher bejevervon vayivensham mizebeja layhovah",
         "spanish": "Abram, pues, removiendo su tienda, vino y moró en el encinar de Mamre, que está en Hebrón, y edificó allí altar a YHVH."
       }
     ]
@@ -318,8 +318,8 @@ export const PARASHAT_LECH_LECHA_DATA: WeeklyParasha = {
       {
         "verseNumber": 2,
         "verseKey": "Génesis 14:2",
-        "hebrew": "עָשׂ֣וּ מִלְחָמָ֗ה אֶת־בֶּ֙רַע֙ מֶ֣לֶךְ סְדֹ֔ם וְאֶת־בִּרְשַׁ֖ע מֶ֣לֶךְ עֲמֹרָ֑ה שִׁנְאָ֣ב&thinsp;<b>׀</b> מֶ֣לֶךְ אַדְמָ֗ה וְשֶׁמְאֵ֙בֶר֙ מֶ֣לֶךְ <span class=\"mam-kq\"><span class=\"mam-kq-k\">(צביים)</span> <span class=\"mam-kq-q\">[צְבוֹיִ֔ם]</span></span> וּמֶ֥לֶךְ בֶּ֖לַע הִיא־צֹֽעַר׃",
-        "transliteration": "asb milejamah etbera meleje sedom veetbiresha meleje amorah shineav&thinsp;<b></b> meleje ademah veshemeever meleje <span class=\"mam-kq\"><span class=\"mam-kq-k\">(tzvyym)</span> <span class=\"mam-kq-q\">[tzevvoyim]</span></span> bmeleje bela hiytzoar",
+        "hebrew": "עָשׂ֣וּ מִלְחָמָ֗ה אֶת־בֶּ֙רַע֙ מֶ֣לֶךְ סְדֹ֔ם וְאֶת־בִּרְשַׁ֖ע מֶ֣לֶךְ עֲמֹרָ֑ה שִׁנְאָ֣ב ׀ מֶ֣לֶךְ אַדְמָ֗ה וְשֶׁמְאֵ֙בֶר֙ מֶ֣לֶךְ <span class=\"mam-kq\"><span class=\"mam-kq-k\">(צביים)</span> <span class=\"mam-kq-q\">[צְבוֹיִ֔ם]</span></span> וּמֶ֥לֶךְ בֶּ֖לַע הִיא־צֹֽעַר׃",
+        "transliteration": "asb milejamah etbera meleje sedom veetbiresha meleje amorah shineav meleje ademah veshemeever meleje <span class=\"mam-kq\"><span class=\"mam-kq-k\">(tzvyym)</span> <span class=\"mam-kq-q\">[tzevvoyim]</span></span> bmeleje bela hiytzoar",
         "spanish": "que éstos hicieron guerra contra Bera rey de Sodoma, contra Birsa rey de Gomorra, contra Sinab rey de Adma, contra Semeber rey de Zeboim, y contra el rey de Bela, la cual es Zoar."
       },
       {
@@ -409,8 +409,8 @@ export const PARASHAT_LECH_LECHA_DATA: WeeklyParasha = {
       {
         "verseNumber": 15,
         "verseKey": "Génesis 14:15",
-        "hebrew": "וַיֵּחָלֵ֨ק עֲלֵיהֶ֧ם&thinsp;<small>׀</small>&thinsp;לַ֛יְלָה ה֥וּא וַעֲבָדָ֖יו וַיַּכֵּ֑ם וַֽיִּרְדְּפֵם֙ עַד־חוֹבָ֔ה אֲשֶׁ֥ר מִשְּׂמֹ֖אל לְדַמָּֽשֶׂק׃",
-        "transliteration": "vayejalek aleyhem&thinsp;<small></small>&thinsp;layelah hb vaavadayv vayakem vayiredefem adjvovah asher misemol ledamasek",
+        "hebrew": "וַיֵּחָלֵ֨ק עֲלֵיהֶ֧ם ׀ לַ֛יְלָה ה֥וּא וַעֲבָדָ֖יו וַיַּכֵּ֑ם וַֽיִּרְדְּפֵם֙ עַד־חוֹבָ֔ה אֲשֶׁ֥ר מִשְּׂמֹ֖אל לְדַמָּֽשֶׂק׃",
+        "transliteration": "vayejalek aleyhem layelah hb vaavadayv vayakem vayiredefem adjvovah asher misemol ledamasek",
         "spanish": "Y cayó sobre ellos de noche, él y sus siervos, y les atacó, y les fue siguiendo hasta Hoba al norte de Damasco."
       },
       {
@@ -480,15 +480,15 @@ export const PARASHAT_LECH_LECHA_DATA: WeeklyParasha = {
       {
         "verseNumber": 24,
         "verseKey": "Génesis 14:24",
-        "hebrew": "בִּלְעָדַ֗י רַ֚ק אֲשֶׁ֣ר אָֽכְל֣וּ הַנְּעָרִ֔ים וְחֵ֙לֶק֙ הָֽאֲנָשִׁ֔ים אֲשֶׁ֥ר הָלְכ֖וּ אִתִּ֑י עָנֵר֙ אֶשְׁכֹּ֣ל וּמַמְרֵ֔א הֵ֖ם יִקְח֥וּ חֶלְקָֽם׃&nbsp;<span class=\"mam-spi-samekh\">{ס}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",
-        "transliteration": "bileaday rak asher ajelb haneariym vejelek haanashiym asher halejb itiy aner eshekol bmamere hem yikejb jelekam&nbsp;<span class=\"mam-spi-samekh\">{s}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",
+        "hebrew": "בִּלְעָדַ֗י רַ֚ק אֲשֶׁ֣ר אָֽכְל֣וּ הַנְּעָרִ֔ים וְחֵ֙לֶק֙ הָֽאֲנָשִׁ֔ים אֲשֶׁ֥ר הָלְכ֖וּ אִתִּ֑י עָנֵר֙ אֶשְׁכֹּ֣ל וּמַמְרֵ֔א הֵ֖ם יִקְח֥וּ חֶלְקָֽם׃",
+        "transliteration": "bileaday rak asher ajelb haneariym vejelek haanashiym asher halejb itiy aner eshekol bmamere hem yikejb jelekam",
         "spanish": "excepto solamente lo que comieron los jóvenes, y la parte de los varones que fueron conmigo, Aner, Escol y Mamre, los cuales tomarán su parte."
       },
       {
         "verseNumber": 1,
         "verseKey": "Génesis 15:1",
-        "hebrew": "אַחַ֣ר&thinsp;<b>׀</b> הַדְּבָרִ֣ים הָאֵ֗לֶּה הָיָ֤ה דְבַר־יְהֹוָה֙ אֶל־אַבְרָ֔ם בַּֽמַּחֲזֶ֖ה לֵאמֹ֑ר אַל־תִּירָ֣א אַבְרָ֗ם אָנֹכִי֙ מָגֵ֣ן לָ֔ךְ שְׂכָרְךָ֖ הַרְבֵּ֥ה מְאֹֽד׃",
-        "transliteration": "ajar&thinsp;<b></b> hadevariym haeleh hayah devaryehovah elaveram bamajazeh lemor altiyra averam anojiy magen laje sejareja harebeh meod",
+        "hebrew": "אַחַ֣ר ׀ הַדְּבָרִ֣ים הָאֵ֗לֶּה הָיָ֤ה דְבַר־יְהֹוָה֙ אֶל־אַבְרָ֔ם בַּֽמַּחֲזֶ֖ה לֵאמֹ֑ר אַל־תִּירָ֣א אַבְרָ֗ם אָנֹכִי֙ מָגֵ֣ן לָ֔ךְ שְׂכָרְךָ֖ הַרְבֵּ֥ה מְאֹֽד׃",
+        "transliteration": "ajar hadevariym haeleh hayah devaryehovah elaveram bamajazeh lemor altiyra averam anojiy magen laje sejareja harebeh meod",
         "spanish": "Después de estas cosas vino la palabra de YHVH a Abram en visión, diciendo: No temas, Abram; yo soy tu escudo, y tu galardón será sobremanera grande."
       },
       {
@@ -579,8 +579,8 @@ export const PARASHAT_LECH_LECHA_DATA: WeeklyParasha = {
       {
         "verseNumber": 13,
         "verseKey": "Génesis 15:13",
-        "hebrew": "וַיֹּ֣אמֶר לְאַבְרָ֗ם יָדֹ֨עַ תֵּדַ֜ע כִּי־גֵ֣ר&thinsp;<b>׀</b> יִהְיֶ֣ה זַרְעֲךָ֗ בְּאֶ֙רֶץ֙ לֹ֣א לָהֶ֔ם וַעֲבָד֖וּם וְעִנּ֣וּ אֹתָ֑ם אַרְבַּ֥ע מֵא֖וֹת שָׁנָֽה׃",
-        "transliteration": "vayomer leaveram yadoa teda kiyger&thinsp;<b></b> yiheyeh zareaja beeretz lo lahem vaavadbm veinb otam areba mevot shanah",
+        "hebrew": "וַיֹּ֣אמֶר לְאַבְרָ֗ם יָדֹ֨עַ תֵּדַ֜ע כִּי־גֵ֣ר ׀ יִהְיֶ֣ה זַרְעֲךָ֗ בְּאֶ֙רֶץ֙ לֹ֣א לָהֶ֔ם וַעֲבָד֖וּם וְעִנּ֣וּ אֹתָ֑ם אַרְבַּ֥ע מֵא֖וֹת שָׁנָֽה׃",
+        "transliteration": "vayomer leaveram yadoa teda kiyger yiheyeh zareaja beeretz lo lahem vaavadbm veinb otam areba mevot shanah",
         "spanish": "Entonces YHVH dijo a Abram: Ten por cierto que tu descendencia morará en tierra ajena, y será esclava allí, y será oprimida cuatrocientos años."
       },
       {
@@ -635,8 +635,8 @@ export const PARASHAT_LECH_LECHA_DATA: WeeklyParasha = {
       {
         "verseNumber": 21,
         "verseKey": "Génesis 15:21",
-        "hebrew": "וְאֶת־הָֽאֱמֹרִי֙ וְאֶת־הַֽכְּנַעֲנִ֔י וְאֶת־הַגִּרְגָּשִׁ֖י וְאֶת־הַיְבוּסִֽי׃&nbsp;<span class=\"mam-spi-samekh\">{ס}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",
-        "transliteration": "veethaemoriy veethakenaaniy veethagiregashiy veethayevbsiy&nbsp;<span class=\"mam-spi-samekh\">{s}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",
+        "hebrew": "וְאֶת־הָֽאֱמֹרִי֙ וְאֶת־הַֽכְּנַעֲנִ֔י וְאֶת־הַגִּרְגָּשִׁ֖י וְאֶת־הַיְבוּסִֽי׃",
+        "transliteration": "veethaemoriy veethakenaaniy veethagiregashiy veethayevbsiy",
         "spanish": "los amorreos, los cananeos, los gergeseos y los jebuseos."
       },
       {
@@ -747,8 +747,8 @@ export const PARASHAT_LECH_LECHA_DATA: WeeklyParasha = {
       {
         "verseNumber": 16,
         "verseKey": "Génesis 16:16",
-        "hebrew": "וְאַבְרָ֕ם בֶּן־שְׁמֹנִ֥ים שָׁנָ֖ה וְשֵׁ֣שׁ שָׁנִ֑ים בְּלֶֽדֶת־הָגָ֥ר אֶת־יִשְׁמָעֵ֖אל לְאַבְרָֽם׃&nbsp;<span class=\"mam-spi-samekh\">{ס}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",
-        "transliteration": "veaveram benshemoniym shanah veshesh shaniym beledethagar etyishemael leaveram&nbsp;<span class=\"mam-spi-samekh\">{s}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",
+        "hebrew": "וְאַבְרָ֕ם בֶּן־שְׁמֹנִ֥ים שָׁנָ֖ה וְשֵׁ֣שׁ שָׁנִ֑ים בְּלֶֽדֶת־הָגָ֥ר אֶת־יִשְׁמָעֵ֖אל לְאַבְרָֽם׃",
+        "transliteration": "veaveram benshemoniym shanah veshesh shaniym beledethagar etyishemael leaveram",
         "spanish": "Era Abram de edad de ochenta y seis años, cuando Agar dio a luz a Ismael."
       },
       {
@@ -811,8 +811,8 @@ export const PARASHAT_LECH_LECHA_DATA: WeeklyParasha = {
       {
         "verseNumber": 8,
         "verseKey": "Génesis 17:8",
-        "hebrew": "וְנָתַתִּ֣י לְ֠ךָ֠ וּלְזַרְעֲךָ֨ אַחֲרֶ֜יךָ אֵ֣ת&thinsp;<b>׀</b> אֶ֣רֶץ מְגֻרֶ֗יךָ אֵ֚ת כׇּל־אֶ֣רֶץ כְּנַ֔עַן לַאֲחֻזַּ֖ת עוֹלָ֑ם וְהָיִ֥יתִי לָהֶ֖ם לֵאלֹהִֽים׃",
-        "transliteration": "venatatiy leja blezareaja ajareyja et&thinsp;<b></b> eretz megureyja et kleretz kenaan laajuzat volam vehayiytiy lahem lelohiym",
+        "hebrew": "וְנָתַתִּ֣י לְ֠ךָ֠ וּלְזַרְעֲךָ֨ אַחֲרֶ֜יךָ אֵ֣ת ׀ אֶ֣רֶץ מְגֻרֶ֗יךָ אֵ֚ת כׇּל־אֶ֣רֶץ כְּנַ֔עַן לַאֲחֻזַּ֖ת עוֹלָ֑ם וְהָיִ֥יתִי לָהֶ֖ם לֵאלֹהִֽים׃",
+        "transliteration": "venatatiy leja blezareaja ajareyja et eretz megureyja et kleretz kenaan laajuzat volam vehayiytiy lahem lelohiym",
         "spanish": "Y te daré a ti, y a tu descendencia después de ti, la tierra en que moras, toda la tierra de Canaán en heredad perpetua; y seré el Elohim de ellos."
       },
       {
@@ -846,15 +846,15 @@ export const PARASHAT_LECH_LECHA_DATA: WeeklyParasha = {
       {
         "verseNumber": 13,
         "verseKey": "Génesis 17:13",
-        "hebrew": "הִמּ֧וֹל&thinsp;<small>׀</small>&thinsp;יִמּ֛וֹל יְלִ֥יד בֵּֽיתְךָ֖ וּמִקְנַ֣ת כַּסְפֶּ֑ךָ וְהָיְתָ֧ה בְרִיתִ֛י בִּבְשַׂרְכֶ֖ם לִבְרִ֥ית עוֹלָֽם׃",
-        "transliteration": "himvol&thinsp;<small></small>&thinsp;yimvol yeliyd beyteja bmikenat kasepeja vehayetah veriytiy bivesarejem liveriyt volam",
+        "hebrew": "הִמּ֧וֹל ׀ יִמּ֛וֹל יְלִ֥יד בֵּֽיתְךָ֖ וּמִקְנַ֣ת כַּסְפֶּ֑ךָ וְהָיְתָ֧ה בְרִיתִ֛י בִּבְשַׂרְכֶ֖ם לִבְרִ֥ית עוֹלָֽם׃",
+        "transliteration": "himvol yimvol yeliyd beyteja bmikenat kasepeja vehayetah veriytiy bivesarejem liveriyt volam",
         "spanish": "Debe ser circuncidado el nacido en tu casa, y el comprado por tu dinero; y estará mi pacto en vuestra carne por pacto perpetuo."
       },
       {
         "verseNumber": 14,
         "verseKey": "Génesis 17:14",
-        "hebrew": "וְעָרֵ֣ל&thinsp;<b>׀</b> זָכָ֗ר אֲשֶׁ֤ר לֹֽא־יִמּוֹל֙ אֶת־בְּשַׂ֣ר עׇרְלָת֔וֹ וְנִכְרְתָ֛ה הַנֶּ֥פֶשׁ הַהִ֖וא מֵעַמֶּ֑יהָ אֶת־בְּרִיתִ֖י הֵפַֽר׃&nbsp;<span class=\"mam-spi-samekh\">{ס}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",
-        "transliteration": "vearel&thinsp;<b></b> zajar asher loyimvol etbesar relatvo venijeretah hanefesh hahiv meameyha etberiytiy hefar&nbsp;<span class=\"mam-spi-samekh\">{s}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",
+        "hebrew": "וְעָרֵ֣ל ׀ זָכָ֗ר אֲשֶׁ֤ר לֹֽא־יִמּוֹל֙ אֶת־בְּשַׂ֣ר עׇרְלָת֔וֹ וְנִכְרְתָ֛ה הַנֶּ֥פֶשׁ הַהִ֖וא מֵעַמֶּ֑יהָ אֶת־בְּרִיתִ֖י הֵפַֽר׃",
+        "transliteration": "vearel zajar asher loyimvol etbesar relatvo venijeretah hanefesh hahiv meameyha etberiytiy hefar",
         "spanish": "Y el varón incircunciso, el que no hubiere circuncidado la carne de su prepucio, aquella persona será cortada de su pueblo; ha violado mi pacto."
       },
       {
@@ -895,8 +895,8 @@ export const PARASHAT_LECH_LECHA_DATA: WeeklyParasha = {
       {
         "verseNumber": 20,
         "verseKey": "Génesis 17:20",
-        "hebrew": "וּֽלְיִשְׁמָעֵאל֮ שְׁמַעְתִּ֒יךָ֒ הִנֵּ֣ה&thinsp;<b>׀</b> בֵּרַ֣כְתִּי אֹת֗וֹ וְהִפְרֵיתִ֥י אֹת֛וֹ וְהִרְבֵּיתִ֥י אֹת֖וֹ בִּמְאֹ֣ד מְאֹ֑ד שְׁנֵים־עָשָׂ֤ר נְשִׂיאִם֙ יוֹלִ֔יד וּנְתַתִּ֖יו לְג֥וֹי גָּדֽוֹל׃",
-        "transliteration": "bleyishemael shemaetiyja hineh&thinsp;<b></b> berajetiy otvo vehifereytiy otvo vehirebeytiy otvo bimeod meod sheneymasar nesiyim yvoliyd bnetatiyv legvoy gadvol",
+        "hebrew": "וּֽלְיִשְׁמָעֵאל֮ שְׁמַעְתִּ֒יךָ֒ הִנֵּ֣ה ׀ בֵּרַ֣כְתִּי אֹת֗וֹ וְהִפְרֵיתִ֥י אֹת֛וֹ וְהִרְבֵּיתִ֥י אֹת֖וֹ בִּמְאֹ֣ד מְאֹ֑ד שְׁנֵים־עָשָׂ֤ר נְשִׂיאִם֙ יוֹלִ֔יד וּנְתַתִּ֖יו לְג֥וֹי גָּדֽוֹל׃",
+        "transliteration": "bleyishemael shemaetiyja hineh berajetiy otvo vehifereytiy otvo vehirebeytiy otvo bimeod meod sheneymasar nesiyim yvoliyd bnetatiyv legvoy gadvol",
         "spanish": "Y en cuanto a Ismael, también te he oído; he aquí que le bendeciré, y le haré fructificar y multiplicar mucho en gran manera; doce príncipes engendrará, y haré de él una gran nación."
       },
       {
@@ -944,8 +944,8 @@ export const PARASHAT_LECH_LECHA_DATA: WeeklyParasha = {
       {
         "verseNumber": 27,
         "verseKey": "Génesis 17:27",
-        "hebrew": "וְכׇל־אַנְשֵׁ֤י בֵיתוֹ֙ יְלִ֣יד בָּ֔יִת וּמִקְנַת־כֶּ֖סֶף מֵאֵ֣ת בֶּן־נֵכָ֑ר נִמֹּ֖לוּ אִתּֽוֹ׃&nbsp;<span class=\"mam-spi-pe\">{פ}</span><br>",
-        "transliteration": "vejlaneshey veytvo yeliyd bayit bmikenatkesef meet bennejar nimolb itvo&nbsp;<span class=\"mam-spi-pe\">{f}</span><br>",
+        "hebrew": "וְכׇל־אַנְשֵׁ֤י בֵיתוֹ֙ יְלִ֣יד בָּ֔יִת וּמִקְנַת־כֶּ֖סֶף מֵאֵ֣ת בֶּן־נֵכָ֑ר נִמֹּ֖לוּ אִתּֽוֹ׃",
+        "transliteration": "vejlaneshey veytvo yeliyd bayit bmikenatkesef meet bennejar nimolb itvo",
         "spanish": "Y todos los varones de su casa, el siervo nacido en casa, y el comprado del extranjero por dinero, fueron circuncidados con él."
       }
     ]

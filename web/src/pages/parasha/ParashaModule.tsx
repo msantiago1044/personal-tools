@@ -96,16 +96,11 @@ export const ParashaModule: React.FC<ParashaModuleProps> = ({
     };
   }, [user]);
 
-  // Sincronizar progreso remoto de Supabase (móvil + web)
+  // Sincronizar progreso remoto de Supabase (móvil + web) bidireccionalmente
   useEffect(() => {
     let isCancelled = false;
-    syncParashaWithCloud(user?.id).then((res) => {
-      if (!isCancelled && res.progress) {
-        setProgress(res.progress);
-      }
-    });
 
-    const handleUpdate = () => {
+    const runSync = () => {
       syncParashaWithCloud(user?.id).then((res) => {
         if (!isCancelled && res.progress) {
           setProgress(res.progress);
@@ -113,10 +108,46 @@ export const ParashaModule: React.FC<ParashaModuleProps> = ({
       });
     };
 
+    runSync();
+
+    const handleUpdate = () => runSync();
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        runSync();
+      }
+    };
+
     window.addEventListener('parasha_progress_updated', handleUpdate);
+    window.addEventListener('focus', handleUpdate);
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    let channel: any = null;
+    if (user?.id) {
+      channel = supabase
+        .channel(`parasha_realtime_${user.id}`)
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'parasha_progress',
+            filter: `user_id=eq.${user.id}`,
+          },
+          () => {
+            runSync();
+          }
+        )
+        .subscribe();
+    }
+
     return () => {
       isCancelled = true;
       window.removeEventListener('parasha_progress_updated', handleUpdate);
+      window.removeEventListener('focus', handleUpdate);
+      document.removeEventListener('visibilitychange', handleVisibility);
+      if (channel) {
+        supabase.removeChannel(channel);
+      }
     };
   }, [user?.id, parasha?.id]);
 
@@ -578,193 +609,6 @@ export const ParashaModule: React.FC<ParashaModuleProps> = ({
             </span>
           </button>
         </div>
-
-        {/* Banner interactivo de Lectura de Días de Semana (Lunes, Jueves y Shabat Minjá) */}
-        {currentAliyahHasWeekday && parasha.weekdayReading && (
-          <div className="bg-gradient-to-br from-blue-50/90 via-indigo-50/50 to-emerald-50/70 dark:from-blue-950/40 dark:via-indigo-950/30 dark:to-emerald-950/30 border border-blue-200/80 dark:border-blue-900/60 rounded-2xl p-4 sm:p-5 mb-5 shadow-xs">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-blue-200/60 dark:border-blue-900/40">
-              <div className="flex items-start sm:items-center gap-2.5">
-                <span className="text-xl">📜</span>
-                <div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-xs font-bold uppercase tracking-wider text-blue-700 dark:text-blue-400">
-                      Lectura de Días de Semana (Kriat HaTorá)
-                    </span>
-                    <span className="text-[10px] bg-blue-100 dark:bg-blue-900/60 text-blue-800 dark:text-blue-300 font-bold px-2 py-0.5 rounded-full border border-blue-200 dark:border-blue-800/60">
-                      Lunes, Jueves y Shabat Minjá
-                    </span>
-                    {parasha.weekdayReading.spansAliyot.length > 1 ? (
-                      <span className="text-[10px] bg-purple-100 dark:bg-purple-900/60 text-purple-800 dark:text-purple-300 font-bold px-2 py-0.5 rounded-full">
-                        Abarca 1ª y 2ª Aliyá
-                      </span>
-                    ) : (
-                      <span className="text-[10px] bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300 font-bold px-2 py-0.5 rounded-full">
-                        Dentro de la 1ª Aliyá
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-xs text-slate-600 dark:text-slate-300 mt-1">
-                    En los servicios de los días de semana se leen públicamente 3 Aliyot de esta Parashá: <strong className="text-slate-800 dark:text-white">Cohén, Leví e Israel</strong>. Rango total: <span className="font-semibold text-slate-700 dark:text-slate-200">{parasha.weekdayReading.ref}</span>
-                  </p>
-                </div>
-              </div>
-
-              {isWeekdayTorahDay && (
-                <div className="shrink-0 bg-amber-500/15 border border-amber-500/40 px-2.5 py-1.5 rounded-xl text-[11px] font-bold text-amber-800 dark:text-amber-300 flex items-center gap-1.5 self-start sm:self-auto">
-                  <Sparkles className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-                  <span>Hoy se lee en la Sinagoga</span>
-                </div>
-              )}
-            </div>
-
-            {/* Los 3 Olim de Semana (Cohén, Leví, Israel) */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mt-3">
-              {/* Cohén */}
-              <div
-                onClick={() => setWeekdayFilter(weekdayFilter === 'cohen' ? 'all' : 'cohen')}
-                className={`p-3 rounded-xl border transition cursor-pointer flex flex-col justify-between ${
-                  weekdayFilter === 'cohen'
-                    ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
-                    : 'bg-white dark:bg-slate-900/90 border-blue-200/70 dark:border-blue-900/50 hover:border-blue-400'
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className={`text-[11px] font-bold uppercase tracking-wider ${
-                    weekdayFilter === 'cohen' ? 'text-blue-100' : 'text-blue-600 dark:text-blue-400'
-                  }`}>
-                    1ª Aliyá • Cohén
-                  </span>
-                  <span className="font-serif text-base font-bold" dir="rtl">
-                    כֹּהֵן
-                  </span>
-                </div>
-                <div className="mt-1">
-                  <span className={`text-xs font-semibold ${weekdayFilter === 'cohen' ? 'text-white' : 'text-slate-800 dark:text-slate-200'}`}>
-                    {parasha.weekdayReading.cohen.refRange}
-                  </span>
-                  <span className={`block text-[10px] mt-0.5 ${weekdayFilter === 'cohen' ? 'text-blue-200' : 'text-slate-400'}`}>
-                    (1ª Aliyá de Shabat)
-                  </span>
-                </div>
-              </div>
-
-              {/* Leví */}
-              <div
-                onClick={() => setWeekdayFilter(weekdayFilter === 'levi' ? 'all' : 'levi')}
-                className={`p-3 rounded-xl border transition cursor-pointer flex flex-col justify-between ${
-                  weekdayFilter === 'levi'
-                    ? 'bg-indigo-600 text-white border-indigo-600 shadow-xs'
-                    : 'bg-white dark:bg-slate-900/90 border-indigo-200/70 dark:border-indigo-900/50 hover:border-indigo-400'
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className={`text-[11px] font-bold uppercase tracking-wider ${
-                    weekdayFilter === 'levi' ? 'text-indigo-100' : 'text-indigo-600 dark:text-indigo-400'
-                  }`}>
-                    2ª Aliyá • Leví
-                  </span>
-                  <span className="font-serif text-base font-bold" dir="rtl">
-                    לֵוִי
-                  </span>
-                </div>
-                <div className="mt-1">
-                  <span className={`text-xs font-semibold ${weekdayFilter === 'levi' ? 'text-white' : 'text-slate-800 dark:text-slate-200'}`}>
-                    {parasha.weekdayReading.levi.refRange}
-                  </span>
-                  <span className={`block text-[10px] mt-0.5 ${weekdayFilter === 'levi' ? 'text-indigo-200' : 'text-slate-400'}`}>
-                    {parasha.weekdayReading.levi.aliyahNumber === 1 ? '(1ª Aliyá de Shabat)' : '(2ª Aliyá de Shabat)'}
-                  </span>
-                </div>
-              </div>
-
-              {/* Israel */}
-              <div
-                onClick={() => setWeekdayFilter(weekdayFilter === 'israel' ? 'all' : 'israel')}
-                className={`p-3 rounded-xl border transition cursor-pointer flex flex-col justify-between ${
-                  weekdayFilter === 'israel'
-                    ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
-                    : 'bg-white dark:bg-slate-900/90 border-emerald-200/70 dark:border-emerald-900/50 hover:border-emerald-400'
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className={`text-[11px] font-bold uppercase tracking-wider ${
-                    weekdayFilter === 'israel' ? 'text-emerald-100' : 'text-emerald-600 dark:text-emerald-400'
-                  }`}>
-                    3ª Aliyá • Israel
-                  </span>
-                  <span className="font-serif text-base font-bold" dir="rtl">
-                    יִשְׂרָאֵל
-                  </span>
-                </div>
-                <div className="mt-1">
-                  <span className={`text-xs font-semibold ${weekdayFilter === 'israel' ? 'text-white' : 'text-slate-800 dark:text-slate-200'}`}>
-                    {parasha.weekdayReading.israel.refRange}
-                  </span>
-                  <span className={`block text-[10px] mt-0.5 ${weekdayFilter === 'israel' ? 'text-emerald-200' : 'text-slate-400'}`}>
-                    {parasha.weekdayReading.israel.aliyahNumber === 1 ? '(1ª Aliyá de Shabat)' : '(2ª Aliyá de Shabat)'}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Barra de Filtros rápidos */}
-            <div className="flex flex-wrap items-center gap-1.5 mt-3 pt-3 border-t border-blue-200/50 dark:border-blue-900/40">
-              <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mr-1">
-                Filtrar lectura:
-              </span>
-              <button
-                onClick={() => setWeekdayFilter('all')}
-                className={`text-xs px-2.5 py-1 rounded-lg border font-medium transition cursor-pointer ${
-                  weekdayFilter === 'all'
-                    ? 'bg-slate-800 dark:bg-slate-100 text-white dark:text-slate-900 border-slate-800 dark:border-slate-100 shadow-xs'
-                    : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:border-slate-400'
-                }`}
-              >
-                Aliyá Completa
-              </button>
-              <button
-                onClick={() => setWeekdayFilter('weekday_all')}
-                className={`text-xs px-2.5 py-1 rounded-lg border font-semibold transition cursor-pointer flex items-center gap-1 ${
-                  weekdayFilter === 'weekday_all'
-                    ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
-                    : 'bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800 hover:border-blue-400'
-                }`}
-              >
-                <span>📜 Toda la Lectura de Semana</span>
-              </button>
-              <button
-                onClick={() => setWeekdayFilter('cohen')}
-                className={`text-xs px-2.5 py-1 rounded-lg border font-semibold transition cursor-pointer flex items-center gap-1 ${
-                  weekdayFilter === 'cohen'
-                    ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
-                    : 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800 hover:border-blue-400'
-                }`}
-              >
-                <span>כֹּהֵן Cohén</span>
-              </button>
-              <button
-                onClick={() => setWeekdayFilter('levi')}
-                className={`text-xs px-2.5 py-1 rounded-lg border font-semibold transition cursor-pointer flex items-center gap-1 ${
-                  weekdayFilter === 'levi'
-                    ? 'bg-indigo-600 text-white border-indigo-600 shadow-xs'
-                    : 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800 hover:border-indigo-400'
-                }`}
-              >
-                <span>לֵוִי Leví</span>
-              </button>
-              <button
-                onClick={() => setWeekdayFilter('israel')}
-                className={`text-xs px-2.5 py-1 rounded-lg border font-semibold transition cursor-pointer flex items-center gap-1 ${
-                  weekdayFilter === 'israel'
-                    ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
-                    : 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800 hover:border-emerald-400'
-                }`}
-              >
-                <span>יִשְׂרָאֵל Israel</span>
-              </button>
-            </div>
-          </div>
-        )}
 
         {/* Lista de Versículos */}
         <div className="space-y-4">

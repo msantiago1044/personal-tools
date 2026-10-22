@@ -12,10 +12,10 @@ import { PARASHAT_NOACH_DATA } from '../../../packages/shared/src/data/parashatN
 import { PARASHAT_LECH_LECHA_DATA } from '../../../packages/shared/src/data/parashatLechLechaData';
 import {
   getWeekdayReadingForParasha,
-  annotateParashaWithWeekdayReading,
+  annotateParashaWithWeekdayReading as baseAnnotateParashaWithWeekdayReading,
 } from '../../../packages/shared/src/data/weekdayTorahReadings';
 
-export { getWeekdayReadingForParasha, annotateParashaWithWeekdayReading };
+export { getWeekdayReadingForParasha };
 export type { WeekdayReading, WeekdayAliyahType };
 
 // Claves de almacenamiento local
@@ -90,6 +90,84 @@ export function cleanSacredNames(rawText: string): string {
   text = text.replace(/\s{2,}/g, ' ').trim();
 
   return text;
+}
+
+/**
+ * Sanitiza y purifica el texto en hebreo eliminando entidades HTML, etiquetas Masoréticas y artefactos bidi.
+ */
+export function cleanHebrewText(rawText: string): string {
+  if (!rawText) return '';
+  let text = rawText;
+
+  // 1. Normalizar Paseq Masorético (׀)
+  text = text.replace(/&thinsp;<(?:b|small)>׀<\/(?:b|small)>&thinsp;/gi, ' ׀ ');
+  text = text.replace(/&thinsp;<(?:b|small)>׀<\/(?:b|small)>/gi, ' ׀ ');
+  text = text.replace(/<(?:b|small)>׀<\/(?:b|small)>/gi, ' ׀ ');
+  text = text.replace(/&thinsp;/gi, ' ');
+  text = text.replace(/&nbsp;/gi, ' ');
+
+  // 2. Qere / Ketiv: preservar la lectura vocalizada Qere
+  text = text.replace(/<span\s+class="mam-kq"[^>]*>.*?<span\s+class="mam-kq-q"[^>]*>(\[[^\]]+\])<\/span><\/span>/gi, '$1');
+  text = text.replace(/<span\s+class="mam-kq-trivial"[^>]*>(.*?)<\/span>/gi, '$1');
+
+  // 3. Eliminar marcas masoréticas de división {ס} {פ} y etiquetas mam-spi
+  text = text.replace(/<span\s+class="mam-spi-[^"]*"[^>]*>.*?<\/span>/gi, '');
+  text = text.replace(/<br\s*\/?>/gi, ' ');
+  text = text.replace(/\{[פס]\}/gi, '');
+
+  // 4. Eliminar cualquier otra etiqueta HTML residual
+  text = text.replace(/<[^>]+>/g, '');
+
+  // 5. Normalizar espacios
+  text = text.replace(/\s{2,}/g, ' ').trim();
+  return text;
+}
+
+/**
+ * Sanitiza y purifica el texto fonético transliterado eliminando entidades HTML y artefactos.
+ */
+export function cleanTransliterationText(rawText: string): string {
+  if (!rawText) return '';
+  let text = rawText;
+
+  text = text.replace(/&thinsp;<(?:b|small)><\/(?:b|small)>&thinsp;/gi, ' ');
+  text = text.replace(/&thinsp;/gi, ' ');
+  text = text.replace(/&nbsp;/gi, ' ');
+  text = text.replace(/<span\s+class="mam-kq"[^>]*>.*?<span\s+class="mam-kq-q"[^>]*>(\[[^\]]+\])<\/span><\/span>/gi, '$1');
+  text = text.replace(/<span\s+class="mam-kq-trivial"[^>]*>(.*?)<\/span>/gi, '$1');
+  text = text.replace(/<span\s+class="mam-spi-[^"]*"[^>]*>.*?<\/span>/gi, '');
+  text = text.replace(/<br\s*\/?>/gi, ' ');
+  text = text.replace(/\{[sfp]\}/gi, '');
+  text = text.replace(/<[^>]+>/g, '');
+  text = text.replace(/\s{2,}/g, ' ').trim();
+  return text;
+}
+
+/**
+ * Sanitiza todos los versículos de una Parashá garantizando hebreo, fonética y español limpios.
+ */
+export function sanitizeParashaVerses(parasha: WeeklyParasha): WeeklyParasha {
+  if (!parasha) return parasha;
+  return {
+    ...parasha,
+    aliyot: (parasha.aliyot || []).map((aliyah) => ({
+      ...aliyah,
+      verses: (aliyah.verses || []).map((v) => ({
+        ...v,
+        hebrew: cleanHebrewText(v.hebrew),
+        transliteration: cleanTransliterationText(v.transliteration),
+        spanish: cleanSacredNames(v.spanish),
+      })),
+    })),
+  };
+}
+
+/**
+ * Anota la Parashá con lecturas de días de semana y sanitiza todos sus versículos.
+ */
+export function annotateParashaWithWeekdayReading(parasha: WeeklyParasha): WeeklyParasha {
+  const annotated = baseAnnotateParashaWithWeekdayReading(parasha);
+  return sanitizeParashaVerses(annotated);
 }
 
 /**
@@ -470,8 +548,15 @@ export async function getWeeklyParasha(targetDate?: Date): Promise<WeeklyParasha
       try {
         const parsed = JSON.parse(cached);
         const firstVerseSpanish = parsed.aliyot?.[0]?.verses?.[0]?.spanish || '';
-        // Si el caché tiene texto en inglés o está incompleto, invalidar de inmediato
-        if (isEnglishText(firstVerseSpanish) || !parsed.aliyot || parsed.aliyot.length < 7) {
+        // Si el caché tiene texto en inglés, está incompleto o tiene marcas HTML sucias, invalidar de inmediato
+        if (
+          isEnglishText(firstVerseSpanish) ||
+          !parsed.aliyot ||
+          parsed.aliyot.length < 7 ||
+          cached.includes('mam-spi') ||
+          cached.includes('&thinsp;') ||
+          cached.includes('mam-kq')
+        ) {
           localStorage.removeItem(cacheKey);
         } else if (parsed._cachedAt && Date.now() - parsed._cachedAt < 2 * 24 * 3600 * 1000) {
           return annotateParashaWithWeekdayReading(parsed);
@@ -828,7 +913,35 @@ export async function syncParashaWithCloud(userId?: string): Promise<{
         if (cloudUid && cloudUid !== userId) {
           localStorage.setItem(`${DAILY_READ_KEY}_${cloudUid}`, JSON.stringify(metaDailyRead));
         }
-        window.dispatchEvent(new CustomEvent('parasha_progress_updated'));
+      }
+    }
+
+    // 1b. Progreso completo de Aliyot sincronizado a través de user_metadata
+    const metaProgress =
+      authData?.user?.user_metadata?.[`parasha_progress_${canonicalId}`] ||
+      authData?.user?.user_metadata?.parasha_progress;
+
+    if (metaProgress && typeof metaProgress === 'object' && Array.isArray(metaProgress.completed_aliyot)) {
+      const localProg = getParashaProgress(canonicalId, userId);
+      const combinedAliyot = Array.from(
+        new Set([...(localProg.completed_aliyot || []), ...(metaProgress.completed_aliyot || [])])
+      ).sort((a, b) => a - b);
+
+      const mergedMetaProg: ParashaProgress = {
+        parasha_id: canonicalId,
+        completed_aliyot: combinedAliyot,
+        full_parasha_completed: metaProgress.full_parasha_completed || localProg.full_parasha_completed,
+        completed_count: Math.max(metaProgress.completed_count || 0, localProg.completed_count || 0),
+        last_read_at: metaProgress.last_read_at || localProg.last_read_at,
+        aliyot_counts: { ...(localProg.aliyot_counts || {}), ...(metaProgress.aliyot_counts || {}) },
+        aliyot_last_read: { ...(localProg.aliyot_last_read || {}), ...(metaProgress.aliyot_last_read || {}) },
+        years_history: { ...(localProg.years_history || {}), ...(metaProgress.years_history || {}) },
+      };
+
+      const progressKey = `${PARASHA_PROGRESS_PREFIX}${canonicalId}_${userId || 'guest'}`;
+      localStorage.setItem(progressKey, JSON.stringify(mergedMetaProg));
+      if (cloudUid && cloudUid !== userId) {
+        localStorage.setItem(`${PARASHA_PROGRESS_PREFIX}${canonicalId}_${cloudUid}`, JSON.stringify(mergedMetaProg));
       }
     }
 
@@ -1054,10 +1167,12 @@ export async function markDailyAliyahCompletedToday(
         { onConflict: 'user_id,parasha_id' }
       );
 
-      // Respaldo inmediato en user_metadata para replicación en caliente a todos los clientes
+      // Respaldo inmediato en user_metadata para replicación en caliente a todos los clientes (móvil y web)
       supabase.auth.updateUser({
         data: {
           parasha_daily_read: record,
+          [`parasha_progress_${canonicalId}`]: progress,
+          parasha_progress: progress,
         },
       }).catch(() => {});
     } catch (err) {

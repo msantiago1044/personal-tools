@@ -23,28 +23,42 @@ export const ParashaDailyCard: React.FC<ParashaDailyCardProps> = ({
   useEffect(() => {
     let isCancelled = false;
 
+    const runSync = () => {
+      syncParashaWithCloud(userId).then((res) => {
+        if (!isCancelled) {
+          setSchedule(getDiasporaDailySchedule());
+          if (res.isReadToday) {
+            setIsReadToday(true);
+          } else {
+            setIsReadToday(isDailyAliyahReadToday(userId));
+          }
+        }
+      });
+    };
+
+    runSync();
+
     const handleUpdate = () => {
       setSchedule(getDiasporaDailySchedule());
       setIsReadToday(isDailyAliyahReadToday(userId));
+      runSync();
     };
 
-    // Sincronizar inmediatamente con la nube de Supabase para reflejar lecturas hechas en celular u otros dispositivos
-    syncParashaWithCloud(userId).then((res) => {
-      if (!isCancelled) {
-        setSchedule(getDiasporaDailySchedule());
-        if (res.isReadToday) {
-          setIsReadToday(true);
-        }
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        handleUpdate();
       }
-    });
+    };
 
     window.addEventListener('parasha_progress_updated', handleUpdate);
     window.addEventListener('focus', handleUpdate);
+    document.addEventListener('visibilitychange', handleVisibility);
 
     return () => {
       isCancelled = true;
       window.removeEventListener('parasha_progress_updated', handleUpdate);
       window.removeEventListener('focus', handleUpdate);
+      document.removeEventListener('visibilitychange', handleVisibility);
     };
   }, [userId]);
 
