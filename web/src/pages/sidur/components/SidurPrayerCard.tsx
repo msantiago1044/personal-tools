@@ -4,9 +4,10 @@ import { SidurDisplayPreferences } from '../types/sidur.types';
 import {
   getRenderedTransliteration,
   getRenderedSpanish,
+  isSegmentRequiringMinian,
 } from '../services/sidurService';
 import { PostureBadge } from './PostureBadge';
-import { Copy, Check, Info } from 'lucide-react';
+import { Copy, Check } from 'lucide-react';
 
 interface SidurPrayerCardProps {
   segment: SidurSegment;
@@ -21,11 +22,10 @@ export const SidurPrayerCard: React.FC<SidurPrayerCardProps> = ({
 }) => {
   const [copied, setCopied] = useState(false);
 
-  const translitText = getRenderedTransliteration(
-    segment,
-    preferences.sacredNameMode
-  );
-  const spanishText = getRenderedSpanish(segment, preferences.sacredNameMode);
+  // Nombres Sagrados fijados a YHVH
+  const translitText = getRenderedTransliteration(segment, 'YHVH');
+  const spanishText = getRenderedSpanish(segment, 'YHVH');
+  const requiresMinian = isSegmentRequiringMinian(segment);
 
   const handleCopy = () => {
     const full = `${segment.titleSpanish || ''}\n\n${segment.hebrew}\n\n${translitText}\n\n${spanishText}`;
@@ -77,6 +77,11 @@ export const SidurPrayerCard: React.FC<SidurPrayerCardProps> = ({
               {segment.titleHebrew && (
                 <span dir="rtl" className="text-xs font-serif text-amber-800 dark:text-amber-300 font-semibold">
                   {segment.titleHebrew}
+                </span>
+              )}
+              {requiresMinian && (
+                <span className="text-[10px] px-1.5 py-0.2 rounded-full font-bold bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-300 dark:border-amber-700/60">
+                  👥 Minián
                 </span>
               )}
             </div>

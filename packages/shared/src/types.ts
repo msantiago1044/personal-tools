@@ -433,6 +433,8 @@ export interface SidurPosture {
   instruction?: string;
 }
 
+export type SidurPrayerMode = 'minian' | 'sin_minian' | 'rapido' | 'completo';
+
 export interface SidurSegment {
   id: string;
   titleHebrew?: string;
@@ -445,6 +447,8 @@ export interface SidurSegment {
   moroccanNote?: string;
   isSilent?: boolean;
   isCommunityResponse?: boolean;
+  requiresMinian?: boolean; // Solo se recita con quórum de 10 varones (Minián)
+  isEssential?: boolean;    // Núcleo halájico esencial para el Modo Rápido
 }
 
 export interface SidurSection {
@@ -454,6 +458,8 @@ export interface SidurSection {
   titleSpanish: string;
   titleTranslit: string;
   description?: string;
+  isEssential?: boolean;
+  requiresMinian?: boolean;
   segments: SidurSegment[];
 }
 

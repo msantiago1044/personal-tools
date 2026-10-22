@@ -1,6 +1,7 @@
 import React from 'react';
 
 interface SidurBookPageProps {
+  id?: string;
   tefilaTitleHebrew: string;
   tefilaTitleSpanish: string;
   sectionTitleHebrew?: string;
@@ -39,6 +40,7 @@ function toHebrewNumeral(num: number): string {
 }
 
 export const SidurBookPage: React.FC<SidurBookPageProps> = ({
+  id,
   tefilaTitleHebrew,
   tefilaTitleSpanish,
   sectionTitleHebrew,
@@ -49,7 +51,7 @@ export const SidurBookPage: React.FC<SidurBookPageProps> = ({
   const hebrewFolio = toHebrewNumeral(folioNumber);
 
   return (
-    <div className="relative mx-auto max-w-4xl w-full my-6 transition-all duration-300">
+    <div id={id} className="relative mx-auto max-w-4xl w-full my-6 transition-all duration-300">
       {/* Cinta marcapáginas tradicional de seda que desciende desde el lomo */}
       <div className="absolute -top-3 right-12 z-20 w-7 h-16 pointer-events-none drop-shadow-md hidden sm:block">
         <div className="w-full h-full bg-gradient-to-b from-amber-600 via-amber-700 to-amber-800 rounded-b-xs shadow-inner flex items-end justify-center pb-1">

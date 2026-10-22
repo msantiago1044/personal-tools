@@ -1,26 +1,25 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { ModuleProps } from '../../modules/moduleRegistry';
 import { ErrorBoundary } from '../../components/ErrorBoundary';
-import { SidurTefilaId, SidurSegment } from '../../../../packages/shared/src/types';
+import { SidurTefilaId, SidurSegment, SidurPrayerMode } from '../../../../packages/shared/src/types';
 import { ThemeMode, getStoredTheme, applyTheme } from '../../lib/theme';
-import { SacredNameOption } from '../../lib/hebrewPhonetics';
 import { SidurDisplayPreferences } from './types/sidur.types';
 import {
   getSidurTefilot,
   getSidurTefila,
   getSuggestedTefilaId,
+  getFilteredSections,
 } from './services/sidurService';
-import { useSidurProgress } from './hooks/useSidurProgress';
 import { SidurHeader } from './components/SidurHeader';
 import { SidurTefilaSelector } from './components/SidurTefilaSelector';
+import { SidurProgressBar } from './components/SidurProgressBar';
 import { SidurSectionNav } from './components/SidurSectionNav';
 import { SidurPrayerCard } from './components/SidurPrayerCard';
 import { SidurKavanaMode } from './components/SidurKavanaMode';
-import { SidurChatModal } from './components/SidurChatModal';
 import { SidurBookPage } from './components/SidurBookPage';
-import { BookOpen, Sparkles } from 'lucide-react';
+import { BookOpen } from 'lucide-react';
 
-export const SidurModuleContent: React.FC<ModuleProps> = ({ user, onBackToHub }) => {
+export const SidurModuleContent: React.FC<ModuleProps> = ({ onBackToHub }) => {
   const [theme, setTheme] = useState<ThemeMode>(() => getStoredTheme());
   const tefilot = useMemo(() => getSidurTefilot(), []);
   const suggestedTefilaId = useMemo(() => getSuggestedTefilaId(), []);
@@ -40,13 +39,18 @@ export const SidurModuleContent: React.FC<ModuleProps> = ({ user, onBackToHub })
     setActiveSectionId('all');
   }, [selectedTefilaId]);
 
-  // Preferencias de lectura persistentes
+  // Preferencias de lectura persistentes (con los 4 modos y nombres divinos consagrados)
   const [preferences, setPreferences] = useState<SidurDisplayPreferences>(() => {
-    let sacredName: SacredNameOption = 'YHVH';
+    let prayerMode: SidurPrayerMode = 'completo';
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('sidur_sacred_name_mode') as SacredNameOption;
-      if (saved === 'Adonai' || saved === 'HaShem' || saved === 'YHVH') {
-        sacredName = saved;
+      const savedMode = localStorage.getItem('sidur_prayer_mode') as SidurPrayerMode;
+      if (
+        savedMode === 'minian' ||
+        savedMode === 'sin_minian' ||
+        savedMode === 'rapido' ||
+        savedMode === 'completo'
+      ) {
+        prayerMode = savedMode;
       }
     }
     return {
@@ -54,15 +58,15 @@ export const SidurModuleContent: React.FC<ModuleProps> = ({ user, onBackToHub })
       showTranslit: true,
       showSpanish: true,
       fontSize: 'base',
-      sacredNameMode: sacredName,
+      prayerMode,
     };
   });
 
   const updatePreferences = (updates: Partial<SidurDisplayPreferences>) => {
     setPreferences((prev) => {
       const next = { ...prev, ...updates };
-      if (updates.sacredNameMode && typeof window !== 'undefined') {
-        localStorage.setItem('sidur_sacred_name_mode', updates.sacredNameMode);
+      if (updates.prayerMode && typeof window !== 'undefined') {
+        localStorage.setItem('sidur_prayer_mode', updates.prayerMode);
       }
       return next;
     });
@@ -74,23 +78,25 @@ export const SidurModuleContent: React.FC<ModuleProps> = ({ user, onBackToHub })
     applyTheme(newTheme);
   };
 
-  // Progreso y racha
-  const { progress, toggleCompleted } = useSidurProgress(user?.id);
-
-  // Modales
+  // Modal Modo Kavaná
   const [kavanaOpen, setKavanaOpen] = useState(false);
-  const [chatOpen, setChatOpen] = useState(false);
 
-  // Segmentos a mostrar según sección seleccionada
+  // Secciones filtradas según el modo litúrgico (Con Minián / Sin Minián / Rápido / Completo)
+  const filteredSections = useMemo(
+    () => getFilteredSections(currentTefila.sections, preferences.prayerMode),
+    [currentTefila, preferences.prayerMode]
+  );
+
+  // Secciones a mostrar según filtro de sección seleccionada
   const displayedSections = useMemo(() => {
-    if (activeSectionId === 'all') return currentTefila.sections;
-    return currentTefila.sections.filter((s) => s.id === activeSectionId);
-  }, [currentTefila, activeSectionId]);
+    if (activeSectionId === 'all') return filteredSections;
+    return filteredSections.filter((s) => s.id === activeSectionId);
+  }, [filteredSections, activeSectionId]);
 
-  // Lista plana de todos los segmentos para el Modo Kavaná
+  // Lista plana de todos los segmentos para el Modo Kavaná (respetando los filtros activos)
   const allSegments = useMemo<SidurSegment[]>(() => {
-    return currentTefila.sections.flatMap((s) => s.segments);
-  }, [currentTefila]);
+    return filteredSections.flatMap((s) => s.segments);
+  }, [filteredSections]);
 
   return (
     <div className="min-h-screen bg-slate-100/70 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors flex flex-col">
@@ -99,7 +105,6 @@ export const SidurModuleContent: React.FC<ModuleProps> = ({ user, onBackToHub })
         onBackToHub={onBackToHub}
         preferences={preferences}
         onUpdatePreferences={updatePreferences}
-        onOpenChat={() => setChatOpen(true)}
         onToggleKavana={() => setKavanaOpen(true)}
         theme={theme}
         onThemeChange={handleThemeChange}
@@ -111,18 +116,25 @@ export const SidurModuleContent: React.FC<ModuleProps> = ({ user, onBackToHub })
         selectedTefilaId={selectedTefilaId}
         suggestedTefilaId={suggestedTefilaId}
         onSelectTefila={setSelectedTefilaId}
-        progress={progress}
-        onToggleCompleted={toggleCompleted}
       />
 
-      {/* 3. Navegador de Secciones */}
+      {/* 3. Barra de progreso subdividida estilo video de YouTube */}
+      {!kavanaOpen && (
+        <SidurProgressBar
+          sections={filteredSections}
+          activeSectionId={activeSectionId}
+          onSelectSection={setActiveSectionId}
+        />
+      )}
+
+      {/* 4. Navegador de Secciones */}
       <SidurSectionNav
-        sections={currentTefila.sections}
+        sections={filteredSections}
         activeSectionId={activeSectionId}
         onSelectSection={setActiveSectionId}
       />
 
-      {/* 4. Cuerpo de la Tefilá */}
+      {/* 5. Cuerpo de la Tefilá */}
       <main className="flex-1 max-w-4xl w-full mx-auto px-4 py-6 space-y-8">
         {/* Banner descriptivo de la tefilá */}
         <div className="bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent dark:from-amber-500/15 dark:via-amber-500/5 border-l-4 border-amber-500 p-4 rounded-r-2xl">
@@ -143,6 +155,7 @@ export const SidurModuleContent: React.FC<ModuleProps> = ({ user, onBackToHub })
         {displayedSections.map((section, sIdx) => (
           <SidurBookPage
             key={section.id}
+            id={`section-${section.id}`}
             tefilaTitleHebrew={currentTefila.nameHebrew}
             tefilaTitleSpanish={currentTefila.nameSpanish}
             sectionTitleHebrew={section.titleHebrew}
@@ -168,8 +181,8 @@ export const SidurModuleContent: React.FC<ModuleProps> = ({ user, onBackToHub })
           </SidurBookPage>
         ))}
 
-        {/* Pie de página con recomendación de estudio y asistente */}
-        <div className="mt-12 p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-center space-y-3">
+        {/* Pie de página tradicional con recomendación litúrgica */}
+        <footer className="mt-12 p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-center space-y-3">
           <div className="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-300 flex items-center justify-center mx-auto">
             <BookOpen className="w-5 h-5" />
           </div>
@@ -180,28 +193,24 @@ export const SidurModuleContent: React.FC<ModuleProps> = ({ user, onBackToHub })
             Preservando con fidelidad las formulaciones litúrgicas de las ilustres comunidades de
             Casablanca, Tánger, Fez, Meknés y Marruecos en general.
           </p>
-          <button
-            onClick={() => setChatOpen(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 hover:bg-indigo-100 dark:hover:bg-indigo-900 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-xs font-semibold transition-colors"
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>¿Preguntas sobre este rezo o leyes halájicas? Consultar Guía IA</span>
-          </button>
-        </div>
+          <p className="text-xs text-amber-800/80 dark:text-amber-400/80 font-serif italic max-w-lg mx-auto pt-1 border-t border-amber-900/10 dark:border-amber-400/15">
+            «דַּע לִפְנֵי מִי אַתָּה עוֹמֵד: לִפְנֵי מֶלֶךְ מַלְכֵי הַמְּלָכִים הַקָּדוֹשׁ בָּרוּךְ הוּא»
+            <br />
+            «Sabe ante Quién estás de pie: ante el Supremo Rey de reyes, el Santo, bendito sea Él»
+          </p>
+        </footer>
       </main>
 
-      {/* 5. Modal Modo Kavaná (Pantalla completa sin distracciones) */}
+      {/* 6. Modal Modo Kavaná (Pantalla completa sin distracciones con tema y gestos de swipe) */}
       {kavanaOpen && (
         <SidurKavanaMode
           segments={allSegments}
           tefilaTitle={currentTefila.nameSpanish}
           preferences={preferences}
+          theme={theme}
           onClose={() => setKavanaOpen(false)}
         />
       )}
-
-      {/* 6. Modal Asistente Litúrgico IA */}
-      <SidurChatModal isOpen={chatOpen} onClose={() => setChatOpen(false)} />
     </div>
   );
 };

@@ -1,33 +1,66 @@
 import React from 'react';
-import { SacredNameOption } from '../../../lib/hebrewPhonetics';
-import { ThemeMode, applyTheme } from '../../../lib/theme';
+import { ThemeMode } from '../../../lib/theme';
 import { SidurDisplayPreferences } from '../types/sidur.types';
+import { SidurPrayerMode } from '../../../../../packages/shared/src/types';
 import {
   ArrowLeft,
-  Sparkles,
   Maximize2,
   Sun,
   Moon,
   Laptop,
   Type,
-  BookOpen,
 } from 'lucide-react';
 
 interface SidurHeaderProps {
   onBackToHub: () => void;
   preferences: SidurDisplayPreferences;
   onUpdatePreferences: (updates: Partial<SidurDisplayPreferences>) => void;
-  onOpenChat: () => void;
   onToggleKavana: () => void;
   theme: ThemeMode;
   onThemeChange: (t: ThemeMode) => void;
 }
 
+const PRAYER_MODES: {
+  id: SidurPrayerMode;
+  label: string;
+  shortLabel: string;
+  icon: string;
+  description: string;
+}[] = [
+  {
+    id: 'minian',
+    label: 'Con Minián',
+    shortLabel: 'Minián',
+    icon: '👥',
+    description: 'Incluye Kaddish, Barejú, 13 Midot y respuestas comunitarias',
+  },
+  {
+    id: 'sin_minian',
+    label: 'Sin Minián',
+    shortLabel: 'Sin Minián',
+    icon: '👤',
+    description: 'Rezo individual / Tefilat Yajid (omite oraciones que exigen quórum de 10)',
+  },
+  {
+    id: 'rapido',
+    label: 'Modo Rápido',
+    shortLabel: 'Rápido',
+    icon: '⚡',
+    description: 'Núcleo halájico esencial para cuando hay apremio de tiempo',
+  },
+  {
+    id: 'completo',
+    label: 'Modo Completo',
+    shortLabel: 'Completo',
+    icon: '📖',
+    description: 'Liturgia íntegra tradicional con todos los salmos y cánticos',
+  },
+];
+
 export const SidurHeader: React.FC<SidurHeaderProps> = ({
   onBackToHub,
   preferences,
   onUpdatePreferences,
-  onOpenChat,
   onToggleKavana,
   theme,
   onThemeChange,
@@ -57,29 +90,38 @@ export const SidurHeader: React.FC<SidurHeaderProps> = ({
               </span>
             </div>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              Liturgia tradicional de días hábiles con fonética masorética y guía corporal
+              Liturgia tradicional con fonética masorética y nombres divinos consagrados (YHVH)
             </p>
           </div>
         </div>
 
-        {/* Lado derecho: Preferencias, Modo Kavaná, Asistente y Tema */}
+        {/* Lado derecho: 4 Modos, Capas, Tamaño, Kavaná y Tema */}
         <div className="flex items-center flex-wrap gap-2 text-xs">
-          {/* Selector de Nombre Sagrado */}
-          <div className="flex items-center rounded-lg bg-slate-100 dark:bg-slate-800 p-0.5 border border-slate-200 dark:border-slate-700">
-            {(['YHVH', 'Adonai', 'HaShem'] as SacredNameOption[]).map((mode) => (
-              <button
-                key={mode}
-                onClick={() => onUpdatePreferences({ sacredNameMode: mode })}
-                className={`px-2 py-1 rounded-md font-medium transition-all ${
-                  preferences.sacredNameMode === mode
-                    ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
-                title={`Modo de nombres sagrados: ${mode}`}
-              >
-                {mode === 'Adonai' ? 'Adonái' : mode}
-              </button>
-            ))}
+          {/* Selector de los 4 Modos de Rezo */}
+          <div
+            className="flex items-center rounded-lg bg-slate-100 dark:bg-slate-800 p-0.5 border border-slate-200 dark:border-slate-700"
+            role="group"
+            aria-label="Modo de rezo"
+          >
+            {PRAYER_MODES.map((m) => {
+              const isSelected = preferences.prayerMode === m.id;
+              return (
+                <button
+                  key={m.id}
+                  onClick={() => onUpdatePreferences({ prayerMode: m.id })}
+                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
+                    isSelected
+                      ? 'bg-amber-500 text-slate-950 font-bold shadow-xs'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                  title={`${m.label}: ${m.description}`}
+                >
+                  <span className="text-sm">{m.icon}</span>
+                  <span className="hidden lg:inline">{m.label}</span>
+                  <span className="inline lg:hidden">{m.shortLabel}</span>
+                </button>
+              );
+            })}
           </div>
 
           {/* Toggles de Capas (Hebreo / Fonética / Español) */}
@@ -142,21 +184,11 @@ export const SidurHeader: React.FC<SidurHeaderProps> = ({
           {/* Botón Modo Kavaná */}
           <button
             onClick={onToggleKavana}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 font-medium transition-colors"
-            title="Modo Kavaná: Pantalla completa sin distracciones"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 dark:bg-amber-500/15 dark:hover:bg-amber-500/25 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700 font-semibold transition-colors"
+            title="Modo Kavaná: Hoja completa y concentración"
           >
-            <Maximize2 className="w-3.5 h-3.5 text-amber-500" />
+            <Maximize2 className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
             <span className="hidden sm:inline">Kavaná</span>
-          </button>
-
-          {/* Botón Asistente IA */}
-          <button
-            onClick={onOpenChat}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-medium shadow-xs transition-colors"
-            title="Consultar dudas litúrgicas y de halajá con el Asistente"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-            <span>Guía IA</span>
           </button>
 
           {/* Selector de Tema */}

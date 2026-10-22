@@ -2,7 +2,9 @@ import {
   SidurTefila,
   SidurTefilaId,
   SidurSegment,
+  SidurSection,
   SidurProgress,
+  SidurPrayerMode,
 } from '../../../../../packages/shared/src/types';
 import { SIDUR_MOROCCO_TEFILOT } from '../../../../../packages/shared/src/data/sidurMoroccoData';
 import {
@@ -12,6 +14,67 @@ import {
 import { supabase } from '../../../lib/supabase';
 
 const STORAGE_PREFIX = 'sidur_progress_';
+
+/**
+ * Segmentos que requieren quórum de 10 varones (Minián) según la Halajá y el Minhag Marroquí.
+ * En rezo individual (Tefilat Yajid / Sin Minián) se omiten.
+ */
+export const MINIAN_ONLY_SEGMENTS = new Set<string>([
+  'bareju',
+  'shelosh_esreh_midot',
+  'minja_tajanun',
+  'vehu_rajum',
+]);
+
+/**
+ * Segmentos del núcleo litúrgico halájico esencial para el "Modo Rápido"
+ * (cuando hay poco tiempo antes del fin del horario del rezo / zman tefilá).
+ */
+export const ESSENTIAL_SEGMENTS = new Set<string>([
+  'netilat_yadayim',
+  'asher_yatzar',
+  'birjot_hatora',
+  'baruj_sheamar',
+  'ashrei',
+  'yishtabaj',
+  'shema_yisrael',
+  'emet_veyatziv',
+  'amida_intro',
+  'amida_1_avot',
+  'amida_2_gevurot',
+  'amida_3_kedusha',
+  'amida_4_daat',
+  'amida_5_teshuva',
+  'amida_6_selija',
+  'amida_7_geula',
+  'amida_8_refua',
+  'amida_9_shanim',
+  'amida_10_galuyot',
+  'amida_11_din',
+  'amida_12_minim',
+  'amida_13_tzadikim',
+  'amida_14_yerushalayim',
+  'amida_15_david',
+  'amida_16_shema_kolenu',
+  'amida_17_avoda',
+  'amida_18_modim',
+  'amida_19_shalom',
+  'amida_cierre',
+  'alenu_leshabeaj',
+  'minja_ashrei',
+  'minja_amida_prompt',
+  'minja_alenu',
+  'arvit_shema',
+  'arvit_amida',
+  'arvit_alenu',
+  'beraja_1_hazan',
+  'beraja_2_aretz',
+  'beraja_3_yerushalayim',
+  'beraja_4_hatov',
+  'tefilat_haderej_seg',
+  'hamapil',
+  'shema_al_hamita_verse',
+]);
 
 /**
  * Devuelve todas las tefilot disponibles en el rito marroquí.
@@ -28,10 +91,61 @@ export function getSidurTefila(id: SidurTefilaId): SidurTefila | undefined {
 }
 
 /**
+ * Determina si un segmento requiere minián.
+ */
+export function isSegmentRequiringMinian(segment: SidurSegment): boolean {
+  return Boolean(segment.requiresMinian || MINIAN_ONLY_SEGMENTS.has(segment.id));
+}
+
+/**
+ * Determina si un segmento pertenece al núcleo esencial.
+ */
+export function isSegmentEssential(segment: SidurSegment, section?: SidurSection): boolean {
+  return Boolean(
+    segment.isEssential ||
+    ESSENTIAL_SEGMENTS.has(segment.id) ||
+    section?.isEssential ||
+    section?.id === 'amida_jol' ||
+    section?.id === 'minja_amida_section' ||
+    section?.id === 'arvit_amida_section'
+  );
+}
+
+/**
+ * Filtra las secciones y segmentos según el modo litúrgico seleccionado:
+ * - 'completo': Muestra todo íntegro.
+ * - 'minian': Muestra todo (con las oraciones y respuestas que requieren minián).
+ * - 'sin_minian': Omite las oraciones que requieren quórum (Barejú, 13 Midot comunitaria, etc.).
+ * - 'rapido': Filtra exclusivamente al núcleo halájico esencial.
+ */
+export function getFilteredSections(
+  sections: SidurSection[],
+  prayerMode: SidurPrayerMode = 'completo'
+): SidurSection[] {
+  if (prayerMode === 'completo') {
+    return sections;
+  }
+
+  return sections
+    .map((sec) => {
+      let filtered = sec.segments;
+
+      if (prayerMode === 'sin_minian') {
+        filtered = filtered.filter((seg) => !isSegmentRequiringMinian(seg));
+      } else if (prayerMode === 'rapido') {
+        filtered = filtered.filter((seg) => isSegmentEssential(seg, sec));
+      }
+
+      return {
+        ...sec,
+        segments: filtered,
+      };
+    })
+    .filter((sec) => sec.segments.length > 0);
+}
+
+/**
  * Determina el rezo sugerido según la hora local actual.
- * - Mañana (04:00 - 12:59) -> Shajarit
- * - Tarde (13:00 - 18:29) -> Minjá
- * - Noche (18:30 - 03:59) -> Arvit
  */
 export function getSuggestedTefilaId(): SidurTefilaId {
   const now = new Date();
@@ -60,15 +174,14 @@ export function getTodayDateKey(): string {
 }
 
 /**
- * Genera la transliteración fonética masorética aplicando la opción de Nombre Sagrado.
+ * Genera la transliteración fonética masorética aplicando la opción de Nombre Sagrado (por defecto 'YHVH').
  */
 export function getRenderedTransliteration(
   segment: SidurSegment,
-  sacredNameMode: SacredNameOption
+  sacredNameMode: SacredNameOption = 'YHVH'
 ): string {
   if (!segment) return '';
 
-  // Si ya tiene transliteración y el modo es Adonai (estándar), la devolvemos adaptando los nombres
   if (segment.transliteration) {
     let text = segment.transliteration;
     if (sacredNameMode === 'YHVH') {
@@ -92,18 +205,17 @@ export function getRenderedTransliteration(
     return text;
   }
 
-  // Si no estuviese precomputada, se genera con el motor hebrewPhonetics
   return transliterateHebrewToSpanish(segment.hebrew, {
     sacredName: sacredNameMode,
   });
 }
 
 /**
- * Aplica el Nombre Sagrado seleccionado en la traducción al español.
+ * Aplica el Nombre Sagrado en la traducción al español (por defecto 'YHVH').
  */
 export function getRenderedSpanish(
   segment: SidurSegment,
-  sacredNameMode: SacredNameOption
+  sacredNameMode: SacredNameOption = 'YHVH'
 ): string {
   if (!segment || !segment.spanish) return '';
   let text = segment.spanish;

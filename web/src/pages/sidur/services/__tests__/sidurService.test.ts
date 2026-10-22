@@ -1,10 +1,12 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import {
   getSidurTefilot,
   getSidurTefila,
   getSuggestedTefilaId,
   getRenderedTransliteration,
   getRenderedSpanish,
+  getFilteredSections,
+  isSegmentRequiringMinian,
 } from '../sidurService';
 import { SidurSegment } from '../../../../../../packages/shared/src/types';
 
@@ -31,7 +33,7 @@ describe('sidurService - Liturgia Marroquí', () => {
     expect(amidaSection?.segments.length).toBe(21);
   });
 
-  it('debe adaptar la transliteración y el español según el modo de Nombre Sagrado', () => {
+  it('debe utilizar YHVH por defecto al generar transliteración y español', () => {
     const sampleSegment: SidurSegment = {
       id: 'test_seg',
       hebrew: 'בָּרוּךְ אַתָּה יהוה אֱלֹהֵינוּ',
@@ -39,17 +41,43 @@ describe('sidurService - Liturgia Marroquí', () => {
       spanish: 'Bendito eres Tú, YHVH nuestro Dios',
     };
 
-    // Modo YHVH
-    expect(getRenderedTransliteration(sampleSegment, 'YHVH')).toContain('YHVH');
-    expect(getRenderedSpanish(sampleSegment, 'YHVH')).toContain('YHVH');
+    // Llamadas sin especificar modo deben usar YHVH
+    expect(getRenderedTransliteration(sampleSegment)).toContain('YHVH');
+    expect(getRenderedSpanish(sampleSegment)).toContain('YHVH');
+  });
 
-    // Modo Adonai
-    expect(getRenderedTransliteration(sampleSegment, 'Adonai')).toContain('Adonái');
-    expect(getRenderedSpanish(sampleSegment, 'Adonai')).toContain('Adonái');
+  it('debe filtrar adecuadamente según los 4 modos de rezo (completo, minian, sin_minian, rapido)', () => {
+    const shajarit = getSidurTefila('shajarit');
+    expect(shajarit).toBeDefined();
+    if (!shajarit) return;
 
-    // Modo HaShem
-    expect(getRenderedTransliteration(sampleSegment, 'HaShem')).toContain('HaShem');
-    expect(getRenderedSpanish(sampleSegment, 'HaShem')).toContain('HaShem');
+    // 1. Modo Completo
+    const completo = getFilteredSections(shajarit.sections, 'completo');
+    expect(completo.length).toBe(shajarit.sections.length);
+
+    // 2. Modo Con Minián (incluye Barejú)
+    const minian = getFilteredSections(shajarit.sections, 'minian');
+    const barejuInMinian = minian.flatMap((s) => s.segments).find((seg) => seg.id === 'bareju');
+    expect(barejuInMinian).toBeDefined();
+
+    // 3. Modo Sin Minián (Tefilat Yajid: omite Barejú y 13 Midot súplica)
+    const sinMinian = getFilteredSections(shajarit.sections, 'sin_minian');
+    const barejuInSinMinian = sinMinian.flatMap((s) => s.segments).find((seg) => seg.id === 'bareju');
+    expect(barejuInSinMinian).toBeUndefined();
+
+    // 4. Modo Rápido (solo núcleo halájico esencial: Baruj Sheamar, Ashrei, Shemá, Amidá, Alénu)
+    const rapido = getFilteredSections(shajarit.sections, 'rapido');
+    const rapidoSegmentIds = rapido.flatMap((s) => s.segments).map((seg) => seg.id);
+
+    expect(rapidoSegmentIds).toContain('baruj_sheamar');
+    expect(rapidoSegmentIds).toContain('ashrei');
+    expect(rapidoSegmentIds).toContain('shema_yisrael');
+    expect(rapidoSegmentIds).toContain('amida_1_avot');
+    expect(rapidoSegmentIds).toContain('alenu_leshabeaj');
+
+    // Oraciones optativas o secundarias deben quedar excluidas en modo rápido
+    expect(rapidoSegmentIds).not.toContain('pitum_haketoret');
+    expect(rapidoSegmentIds).not.toContain('mizmor_shir_janukat');
   });
 
   it('getSuggestedTefilaId debe sugerir tefilá según la hora del día', () => {
