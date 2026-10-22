@@ -965,15 +965,28 @@ export async function syncParashaWithCloud(userId?: string): Promise<{
           new Set([...(localProg.completed_aliyot || []), ...(matchingRow.completed_aliyot || [])])
         ).sort((a, b) => a - b);
 
+        const alCounts = { ...(localProg.aliyot_counts || {}) };
+        combinedAliyot.forEach((al) => {
+          if (!alCounts[al] || alCounts[al] === 0) {
+            alCounts[al] = 1;
+          }
+        });
+
+        const currentYearStr = String(new Date().getFullYear());
+        const yHistory = { ...(localProg.years_history || {}) };
+        yHistory[currentYearStr] = Array.from(
+          new Set([...(yHistory[currentYearStr] || []), ...combinedAliyot])
+        ).sort((a, b) => a - b);
+
         const mergedProg: ParashaProgress = {
           parasha_id: canonicalId,
           completed_aliyot: combinedAliyot,
-          full_parasha_completed: matchingRow.is_completed || localProg.full_parasha_completed,
-          completed_count: Math.max(matchingRow.completed_count || 0, localProg.completed_count || 0),
+          full_parasha_completed: matchingRow.is_completed || localProg.full_parasha_completed || combinedAliyot.length >= 7,
+          completed_count: Math.max(matchingRow.is_completed ? 1 : 0, localProg.completed_count || 0),
           last_read_at: matchingRow.last_read_at || localProg.last_read_at,
-          aliyot_counts: { ...(localProg.aliyot_counts || {}), ...(matchingRow.aliyot_counts || {}) },
-          aliyot_last_read: { ...(localProg.aliyot_last_read || {}), ...(matchingRow.aliyot_last_read || {}) },
-          years_history: { ...(localProg.years_history || {}), ...(matchingRow.years_history || {}) },
+          aliyot_counts: alCounts,
+          aliyot_last_read: localProg.aliyot_last_read || {},
+          years_history: yHistory,
         };
 
         // Guardar progreso combinado localmente
@@ -1157,10 +1170,6 @@ export async function markDailyAliyahCompletedToday(
           parasha_id: canonicalId,
           completed_aliyot: progress.completed_aliyot,
           is_completed: progress.full_parasha_completed,
-          completed_count: progress.completed_count,
-          aliyot_counts: progress.aliyot_counts,
-          aliyot_last_read: progress.aliyot_last_read,
-          years_history: progress.years_history,
           last_read_at: progress.last_read_at,
           date_key: schedule.dateKey,
         },
