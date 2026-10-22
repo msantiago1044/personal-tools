@@ -103,7 +103,10 @@ export const SidurModuleContent: React.FC<ModuleProps> = ({ onBackToHub }) => {
       <SidurTefilaLauncher
         tefilot={tefilot}
         suggestedTefilaId={suggestedTefilaId}
-        onSelectTefila={setSelectedTefilaId}
+        onSelectTefilaAndMode={(tefilaId, mode) => {
+          setSelectedTefilaId(tefilaId);
+          updatePreferences({ prayerMode: mode });
+        }}
         onBackToHub={onBackToHub}
         theme={theme}
         onThemeChange={handleThemeChange}

@@ -1,7 +1,6 @@
 import React from 'react';
 import { ThemeMode } from '../../../lib/theme';
 import { SidurDisplayPreferences } from '../types/sidur.types';
-import { SidurPrayerMode } from '../../../../../packages/shared/src/types';
 import {
   ArrowLeft,
   Maximize2,
@@ -21,38 +20,6 @@ interface SidurHeaderProps {
   currentTefila?: { nameSpanish: string; nameHebrew: string };
   onChangeTefila?: () => void;
 }
-
-const PRAYER_MODES: {
-  id: SidurPrayerMode;
-  label: string;
-  icon: string;
-  description: string;
-}[] = [
-  {
-    id: 'minian',
-    label: 'Minián',
-    icon: '👥',
-    description: 'Incluye Kaddish, Barejú, 13 Midot y respuestas comunitarias',
-  },
-  {
-    id: 'individual',
-    label: 'Individual',
-    icon: '👤',
-    description: 'Tefilat Yajid: omite oraciones que exigen quórum de 10 varones',
-  },
-  {
-    id: 'rapido',
-    label: 'Rápido',
-    icon: '⚡',
-    description: 'Núcleo halájico esencial para cuando hay apremio de tiempo',
-  },
-  {
-    id: 'completo',
-    label: 'Completo',
-    icon: '📖',
-    description: 'Liturgia íntegra tradicional completa',
-  },
-];
 
 export const SidurHeader: React.FC<SidurHeaderProps> = ({
   onBackToHub,
@@ -87,16 +54,20 @@ export const SidurHeader: React.FC<SidurHeaderProps> = ({
               Núsaj Marruecos
             </span>
 
-            {/* Píldora para cambiar de rezo directamente */}
+            {/* Píldora para cambiar de rezo y modo directamente */}
             {currentTefila && onChangeTefila && (
               <button
                 onClick={onChangeTefila}
                 className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-500/15 text-amber-900 dark:bg-amber-400/15 dark:text-amber-200 border border-amber-400/40 dark:border-amber-600/40 hover:bg-amber-500/25 transition-all cursor-pointer shadow-xs ml-1"
-                title="Elegir otro rezo (Shajarit, Minjá, Arvit...)"
+                title="Cambiar rezo o modo de plegaria (Minián / Solo / Rápido)"
               >
                 <span>{currentTefila.nameSpanish}</span>
-                <span dir="rtl" className="font-serif text-[11px] opacity-75 hidden sm:inline">
-                  {currentTefila.nameHebrew}
+                <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-amber-500/25 dark:bg-amber-400/25 text-amber-950 dark:text-amber-200 font-bold">
+                  {preferences.prayerMode === 'minian'
+                    ? '👥 Minián'
+                    : preferences.prayerMode === 'rapido'
+                    ? '⚡ Rápido'
+                    : '👤 Solo'}
                 </span>
                 <span className="text-[10px] text-amber-700 dark:text-amber-400 font-normal">▾ Cambiar</span>
               </button>
@@ -104,37 +75,8 @@ export const SidurHeader: React.FC<SidurHeaderProps> = ({
           </div>
         </div>
 
-        {/* Lado derecho: 4 Modos, Capas, Tamaño, Kavaná y Tema */}
+        {/* Lado derecho: Capas, Tamaño, Kavaná y Tema */}
         <div className="flex items-center flex-wrap gap-2 text-xs">
-          {/* Selector de los 4 Modos de Rezo: Minián, Individual, Rápido, Completo */}
-          <div
-            className="flex items-center rounded-lg bg-slate-100 dark:bg-slate-800 p-0.5 border border-slate-200 dark:border-slate-700"
-            role="group"
-            aria-label="Modo de rezo"
-          >
-            {PRAYER_MODES.map((m) => {
-              const isSelected =
-                preferences.prayerMode === m.id ||
-                (m.id === 'individual' && preferences.prayerMode === 'sin_minian');
-
-              return (
-                <button
-                  key={m.id}
-                  onClick={() => onUpdatePreferences({ prayerMode: m.id })}
-                  className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
-                    isSelected
-                      ? 'bg-amber-500 text-slate-950 font-bold shadow-xs'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                  }`}
-                  title={`${m.label}: ${m.description}`}
-                >
-                  <span className="text-xs">{m.icon}</span>
-                  <span>{m.label}</span>
-                </button>
-              );
-            })}
-          </div>
-
           {/* Toggles de Capas (Hebreo / Fonética / Español) */}
           <div className="flex items-center rounded-lg bg-slate-100 dark:bg-slate-800 p-0.5 border border-slate-200 dark:border-slate-700">
             <button
