@@ -15,6 +15,7 @@ import {
   getAliyahStats,
   syncParashaWithCloud,
 } from '../../lib/parashaService';
+import { transliterateHebrewToSpanish, SacredNameOption } from '../../lib/hebrewPhonetics';
 import { ThemeMode, getStoredTheme, applyTheme } from '../../lib/theme';
 import {
   ArrowLeft,
@@ -61,6 +62,34 @@ export const ParashaModule: React.FC<ParashaModuleProps> = ({
   const [showTranslit, setShowTranslit] = useState(true);
   const [showSpanish, setShowSpanish] = useState(true);
   const [fontSize, setFontSize] = useState<'sm' | 'base' | 'lg' | 'xl'>('base');
+  const [sacredNameMode, setSacredNameMode] = useState<SacredNameOption>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('parasha_sacred_name_mode');
+      if (saved === 'Adonai' || saved === 'HaShem' || saved === 'YHVH') return saved;
+    }
+    return 'YHVH';
+  });
+
+  const handleSacredNameModeChange = (mode: SacredNameOption) => {
+    setSacredNameMode(mode);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('parasha_sacred_name_mode', mode);
+    }
+  };
+
+  const getRenderedTransliteration = (verse: ParashaVerse): string => {
+    if (!verse) return '';
+    if (
+      sacredNameMode === 'YHVH' &&
+      verse.transliteration &&
+      !verse.transliteration.includes('yehovah') &&
+      !verse.transliteration.includes('bmim') &&
+      !verse.transliteration.includes('rejb')
+    ) {
+      return verse.transliteration;
+    }
+    return transliterateHebrewToSpanish(verse.hebrew, { sacredName: sacredNameMode });
+  };
 
   // Progreso
   const [progress, setProgress] = useState<ParashaProgress>({
@@ -374,6 +403,21 @@ export const ParashaModule: React.FC<ParashaModuleProps> = ({
             >
               🔤 Fonética
             </button>
+            {showTranslit && (
+              <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800/80 rounded-lg px-2 py-0.5 border border-slate-200 dark:border-slate-700">
+                <span className="text-[10px] text-slate-400 font-semibold">Nombre:</span>
+                <select
+                  value={sacredNameMode}
+                  onChange={(e) => handleSacredNameModeChange(e.target.value as SacredNameOption)}
+                  className="text-[11px] font-bold bg-transparent text-emerald-700 dark:text-emerald-400 cursor-pointer py-0.5 focus:outline-none"
+                  title="Formato de los Nombres Sagrados en la fonética"
+                >
+                  <option value="YHVH" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">YHVH</option>
+                  <option value="Adonai" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Adonái</option>
+                  <option value="HaShem" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">HaShem</option>
+                </select>
+              </div>
+            )}
             <button
               onClick={() => setShowSpanish(!showSpanish)}
               className={`text-xs px-2.5 py-1 rounded-lg border font-medium transition ${
@@ -785,7 +829,7 @@ export const ParashaModule: React.FC<ParashaModuleProps> = ({
                         fontSize === 'sm' ? 'text-xs' : fontSize === 'base' ? 'text-sm' : fontSize === 'lg' ? 'text-base' : 'text-lg'
                       }`}
                     >
-                      {verse.transliteration}
+                      {getRenderedTransliteration(verse)}
                     </p>
                   )}
 

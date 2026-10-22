@@ -14,12 +14,17 @@ import {
   getWeekdayReadingForParasha,
   annotateParashaWithWeekdayReading as baseAnnotateParashaWithWeekdayReading,
 } from '../../../packages/shared/src/data/weekdayTorahReadings';
+import {
+  transliterateHebrewToSpanish,
+  stripCantillation,
+  SacredNameOption,
+} from './hebrewPhonetics';
 
-export { getWeekdayReadingForParasha };
-export type { WeekdayReading, WeekdayAliyahType };
+export { getWeekdayReadingForParasha, transliterateHebrewToSpanish, stripCantillation };
+export type { WeekdayReading, WeekdayAliyahType, SacredNameOption };
 
 // Claves de almacenamiento local
-const PARASHA_CACHE_PREFIX = 'parasha_data_cache_';
+const PARASHA_CACHE_PREFIX = 'parasha_data_cache_v3_';
 const PARASHA_PROGRESS_PREFIX = 'parasha_progress_';
 const DAILY_READ_KEY = 'parasha_daily_read_record';
 
@@ -145,19 +150,39 @@ export function cleanTransliterationText(rawText: string): string {
 
 /**
  * Sanitiza todos los versículos de una Parashá garantizando hebreo, fonética y español limpios.
+ * Si detecta transliteraciones ausentes o con artefactos defectuosos (como "yehovah" o corrupciones de Shuruq),
+ * las regenera al vuelo con el nuevo motor de fonética sefardí con YHVH.
  */
-export function sanitizeParashaVerses(parasha: WeeklyParasha): WeeklyParasha {
+export function sanitizeParashaVerses(parasha: WeeklyParasha, sacredName: SacredNameOption = 'YHVH'): WeeklyParasha {
   if (!parasha) return parasha;
   return {
     ...parasha,
     aliyot: (parasha.aliyot || []).map((aliyah) => ({
       ...aliyah,
-      verses: (aliyah.verses || []).map((v) => ({
-        ...v,
-        hebrew: cleanHebrewText(v.hebrew),
-        transliteration: cleanTransliterationText(v.transliteration),
-        spanish: cleanSacredNames(v.spanish),
-      })),
+      verses: (aliyah.verses || []).map((v) => {
+        const cleanHeb = cleanHebrewText(v.hebrew);
+        let cleanTrans = cleanTransliterationText(v.transliteration || '');
+
+        // Regeneración proactiva si la transliteración contiene errores conocidos
+        if (
+          !cleanTrans ||
+          cleanTrans.includes('yehovah') ||
+          cleanTrans.includes('bmim') ||
+          cleanTrans.includes('rejb') ||
+          cleanTrans.includes('gadvol') ||
+          cleanTrans.includes('lvot') ||
+          cleanTrans.includes('itvo')
+        ) {
+          cleanTrans = transliterateHebrewToSpanish(cleanHeb, { sacredName });
+        }
+
+        return {
+          ...v,
+          hebrew: cleanHeb,
+          transliteration: cleanTrans,
+          spanish: cleanSacredNames(v.spanish),
+        };
+      }),
     })),
   };
 }
@@ -171,190 +196,11 @@ export function annotateParashaWithWeekdayReading(parasha: WeeklyParasha): Weekl
 }
 
 /**
- * Transliterador fonético inteligente de Hebreo vocalizado (con Niqqud) a fonética en español.
+ * Transliterador fonético inteligente de Hebreo vocalizado (con Niqqud) a fonética en español sefardí.
+ * Preserva y reverencia el Tetragrámaton (YHVH) y todos los Nombres Sagrados.
  */
-export function hebrewToPhoneticSpanish(hebrew: string): string {
-  if (!hebrew) return '';
-
-  // Limpiar cantilaciones (trope / ta'amim) dejando solo letras y niqqud
-  // Rango de niqqud: \u05B0-\u05C7
-  const cleaned = hebrew
-    .replace(/[\u0591-\u05AF]/g, '') // Cantilaciones
-    .replace(/[\u05BD\u05BF\u05C0\u05C4\u05C5]/g, '');
-
-  let result = '';
-  let i = 0;
-
-  while (i < cleaned.length) {
-    const char = cleaned[i];
-    const code = char.charCodeAt(0);
-
-    // Detección del Nombre Inefable
-    if (cleaned.slice(i, i + 4) === 'יְהֹוָה' || cleaned.slice(i, i + 4) === 'יהוה') {
-      result += 'Adonai ';
-      i += 4;
-      continue;
-    }
-
-    // Mapeo consonantes hebreas
-    switch (char) {
-      case 'א': // Alef
-        result += "'";
-        break;
-      case 'ב':
-        // Si tiene dagesh (U+05BC) a continuación es 'B', sino 'V'
-        if (i + 1 < cleaned.length && cleaned.charCodeAt(i + 1) === 0x05bc) {
-          result += 'b';
-          i++;
-        } else {
-          result += 'v';
-        }
-        break;
-      case 'ג':
-        result += 'g';
-        break;
-      case 'ד':
-        result += 'd';
-        break;
-      case 'ה':
-        result += 'h';
-        break;
-      case 'ו':
-        // Vav: puede ser consonante V o vocal O/U si tiene holam o shuruk
-        if (i + 1 < cleaned.length && cleaned.charCodeAt(i + 1) === 0x05bc) {
-          result += 'u';
-          i++;
-        } else if (i + 1 < cleaned.length && cleaned.charCodeAt(i + 1) === 0x05b9) {
-          result += 'o';
-          i++;
-        } else {
-          result += 'v';
-        }
-        break;
-      case 'ז':
-        result += 'z';
-        break;
-      case 'ח':
-        result += 'j';
-        break;
-      case 'ט':
-        result += 't';
-        break;
-      case 'י':
-        result += 'y';
-        break;
-      case 'כ':
-      case 'ך':
-        if (i + 1 < cleaned.length && cleaned.charCodeAt(i + 1) === 0x05bc) {
-          result += 'k';
-          i++;
-        } else {
-          result += 'j';
-        }
-        break;
-      case 'ל':
-        result += 'l';
-        break;
-      case 'מ':
-      case 'ם':
-        result += 'm';
-        break;
-      case 'נ':
-      case 'ן':
-        result += 'n';
-        break;
-      case 'ס':
-        result += 's';
-        break;
-      case 'ע':
-        result += "'";
-        break;
-      case 'פ':
-      case 'ף':
-        if (i + 1 < cleaned.length && cleaned.charCodeAt(i + 1) === 0x05bc) {
-          result += 'p';
-          i++;
-        } else {
-          result += 'f';
-        }
-        break;
-      case 'צ':
-      case 'ץ':
-        result += 'tz';
-        break;
-      case 'ק':
-        result += 'k';
-        break;
-      case 'ר':
-        result += 'r';
-        break;
-      case 'ש':
-        // Shin dot (U+05C1) -> Sh; Sin dot (U+05C2) -> S
-        if (i + 1 < cleaned.length && cleaned.charCodeAt(i + 1) === 0x05c1) {
-          result += 'sh';
-          i++;
-        } else if (i + 1 < cleaned.length && cleaned.charCodeAt(i + 1) === 0x05c2) {
-          result += 's';
-          i++;
-        } else {
-          result += 'sh';
-        }
-        break;
-      case 'ת':
-        result += 't';
-        break;
-
-      // Niqqud (Vocales)
-      case '\u05B0': // Shva
-        result += 'e';
-        break;
-      case '\u05B1': // Jataf Segol
-      case '\u05B5': // Tzere
-      case '\u05B6': // Segol
-        result += 'e';
-        break;
-      case '\u05B2': // Jataf Patach
-      case '\u05B7': // Patach
-      case '\u05B8': // Qamatz
-        result += 'a';
-        break;
-      case '\u05B3': // Jataf Qamatz
-      case '\u05B9': // Cholam
-      case '\u05BA': // Cholam Jaser
-        result += 'o';
-        break;
-      case '\u05B4': // Chiriq
-        result += 'i';
-        break;
-      case '\u05BB': // Qubutz
-        result += 'u';
-        break;
-      case '\u05BC': // Dagesh (ya manejado antes)
-        break;
-      case '־': // Maqaf (guión hebreo)
-      case '-':
-        result += '-';
-        break;
-      case ' ':
-        result += ' ';
-        break;
-      default:
-        if (code >= 0x05d0 && code <= 0x05ea) {
-          // Letra hebrea sin regla especial
-          result += '';
-        } else if (code < 128) {
-          result += char;
-        }
-        break;
-    }
-    i++;
-  }
-
-  // Suavizar diptongos y terminaciones
-  return result
-    .replace(/''+/g, "'")
-    .replace(/\s+/g, ' ')
-    .trim();
+export function hebrewToPhoneticSpanish(hebrew: string, sacredName: SacredNameOption = 'YHVH'): string {
+  return transliterateHebrewToSpanish(hebrew, { sacredName });
 }
 
 /**
