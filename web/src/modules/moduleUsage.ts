@@ -6,6 +6,7 @@ export type ModuleSortMode = 'most_used' | 'recent' | 'default';
 export interface ModuleUsageStats {
   count: number;
   lastOpened: number; // Unix timestamp en ms
+  history?: number[]; // Historial de marcas de tiempo (Unix timestamp en ms) con las horas exactas de entrada
   pinned?: boolean;
   pinnedUpdatedAt?: number;
 }
@@ -84,11 +85,15 @@ export function recordModuleUsage(moduleId: string, userKey?: string): void {
 
   const stats = getModuleUsageStats(userKey);
   const current = stats[moduleId] || { count: 0, lastOpened: 0, pinned: false };
+  const prevHistory = Array.isArray(current.history) ? current.history : [];
+  // Almacenar el timestamp actual y conservar los últimos 100 accesos
+  const updatedHistory = [...prevHistory, now].slice(-100);
 
   stats[moduleId] = {
     ...current,
     count: (current.count || 0) + 1,
     lastOpened: now,
+    history: updatedHistory,
   };
 
   saveModuleUsageStats(stats, userKey);
@@ -195,10 +200,24 @@ export async function syncModuleUsageWithCloud(userKey?: string): Promise<Module
 
       const newPinnedUpdatedAt = Math.max(localItem.pinnedUpdatedAt || 0, remoteItem.pinnedUpdatedAt || 0);
 
+      // Fusionar historial sin duplicados, cronológicamente y acotando a los últimos 100 registros
+      const mergedHistory = Array.from(
+        new Set([...(localItem.history || []), ...(remoteItem.history || [])])
+      )
+        .sort((a, b) => a - b)
+        .slice(-100);
+
+      const historyChanged =
+        mergedHistory.length !== (remoteItem.history?.length || 0) ||
+        (mergedHistory.length > 0 &&
+          mergedHistory[mergedHistory.length - 1] !==
+            (remoteItem.history ? remoteItem.history[remoteItem.history.length - 1] : 0));
+
       if (
         newCount !== remoteItem.count ||
         newLastOpened !== remoteItem.lastOpened ||
-        newPinned !== remoteItem.pinned
+        newPinned !== remoteItem.pinned ||
+        historyChanged
       ) {
         hasRemoteDifference = true;
       }
@@ -208,6 +227,7 @@ export async function syncModuleUsageWithCloud(userKey?: string): Promise<Module
         lastOpened: newLastOpened,
         pinned: newPinned,
         ...(newPinnedUpdatedAt > 0 ? { pinnedUpdatedAt: newPinnedUpdatedAt } : {}),
+        history: mergedHistory,
       };
     }
 
@@ -314,3 +334,98 @@ export function formatRelativeTime(timestamp?: number): string | null {
   if (diffDays < 7) return `Hace ${diffDays} d`;
   return new Date(timestamp).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
 }
+
+export interface ModuleAccessLogItem {
+  moduleId: string;
+  timestamp: number;
+  dateStr: string;   // 'YYYY-MM-DD' en hora local
+  timeStr: string;   // 'HH:mm' en hora local
+  hour: number;      // 0 - 23
+}
+
+/**
+ * Determina si un timestamp corresponde a la fecha de hoy (en hora local del usuario)
+ */
+export function hasVisitedModuleToday(timestamp?: number): boolean {
+  if (!timestamp || timestamp <= 0) return false;
+  const visitDate = new Date(timestamp);
+  const now = new Date();
+  return (
+    visitDate.getFullYear() === now.getFullYear() &&
+    visitDate.getMonth() === now.getMonth() &&
+    visitDate.getDate() === now.getDate()
+  );
+}
+
+/**
+ * Formatea un timestamp a hora local legible (ej: "07:30" o "Hoy 07:30")
+ */
+export function formatExactTime(timestamp?: number, includeDate = false): string | null {
+  if (!timestamp || timestamp <= 0) return null;
+  const d = new Date(timestamp);
+  const hours = String(d.getHours()).padStart(2, '0');
+  const minutes = String(d.getMinutes()).padStart(2, '0');
+  const timeStr = `${hours}:${minutes}`;
+
+  if (!includeDate) return timeStr;
+
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const itemDateStr = d.toISOString().slice(0, 10);
+
+  if (todayStr === itemDateStr) {
+    return `Hoy ${timeStr}`;
+  }
+  return `${d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })} ${timeStr}`;
+}
+
+/**
+ * Retorna la cronología detallada de todas las entradas a módulos con fecha y hora exacta.
+ * Si se pasa `targetDate`, filtra únicamente los accesos de ese día en hora local.
+ */
+export function getModuleAccessTimeline(
+  userKey?: string,
+  targetDate?: Date
+): ModuleAccessLogItem[] {
+  const stats = getModuleUsageStats(userKey);
+  const items: ModuleAccessLogItem[] = [];
+
+  let targetDateFilter: string | null = null;
+  if (targetDate) {
+    const y = targetDate.getFullYear();
+    const m = String(targetDate.getMonth() + 1).padStart(2, '0');
+    const day = String(targetDate.getDate()).padStart(2, '0');
+    targetDateFilter = `${y}-${m}-${day}`;
+  }
+
+  for (const [moduleId, modStats] of Object.entries(stats)) {
+    const timestamps = Array.isArray(modStats.history) && modStats.history.length > 0
+      ? modStats.history
+      : (modStats.lastOpened ? [modStats.lastOpened] : []);
+
+    for (const ts of timestamps) {
+      const d = new Date(ts);
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      const dateStr = `${y}-${m}-${day}`;
+
+      if (targetDateFilter && dateStr !== targetDateFilter) {
+        continue;
+      }
+
+      const hours = String(d.getHours()).padStart(2, '0');
+      const minutes = String(d.getMinutes()).padStart(2, '0');
+
+      items.push({
+        moduleId,
+        timestamp: ts,
+        dateStr,
+        timeStr: `${hours}:${minutes}`,
+        hour: d.getHours(),
+      });
+    }
+  }
+
+  return items.sort((a, b) => a.timestamp - b.timestamp);
+}
+

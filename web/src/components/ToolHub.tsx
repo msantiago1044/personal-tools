@@ -16,6 +16,8 @@ import {
   setStoredSortPreference,
   sortModules,
   formatRelativeTime,
+  formatExactTime,
+  hasVisitedModuleToday,
   syncModuleUsageWithCloud,
 } from '../modules/moduleUsage';
 
@@ -232,7 +234,9 @@ export const ToolHub: React.FC<ToolHubProps> = ({
               const stats = usageStats[tool.id] || { count: 0, lastOpened: 0, pinned: false };
               const isPinned = !!stats.pinned;
               const isPirkeiRead = tool.id === 'pirkei_avot' && hasReadPirkeiAvotToday(userKey);
+              const visitedToday = isActive && hasVisitedModuleToday(stats.lastOpened);
               const relativeTime = formatRelativeTime(stats.lastOpened);
+              const exactTime = formatExactTime(stats.lastOpened);
               const shortTitle = tool.shortName || tool.name;
 
               return (
@@ -247,11 +251,13 @@ export const ToolHub: React.FC<ToolHubProps> = ({
                       handleOpenTool(tool);
                     }
                   }}
-                  title={`${tool.name}: ${tool.description}`}
+                  title={`${tool.name}: ${tool.description}${isActive ? (visitedToday ? ` (Entrado hoy${exactTime ? ` a las ${exactTime}` : ''})` : ' (Pendiente de entrar hoy)') : ''}`}
                   aria-label={`Abrir módulo ${tool.name}`}
                   className={`group relative flex flex-col items-center justify-between text-center p-3 sm:p-4 rounded-3xl transition-all duration-200 select-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none ${
                     isActive
-                      ? 'bg-white/90 dark:bg-slate-900/90 backdrop-blur-xs border border-slate-200/90 dark:border-slate-800/80 hover:border-emerald-500/50 hover:shadow-lg hover:-translate-y-1 cursor-pointer active:scale-95 shadow-xs'
+                      ? visitedToday
+                        ? 'bg-white/90 dark:bg-slate-900/90 backdrop-blur-xs border border-slate-200/90 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-lg hover:-translate-y-1 cursor-pointer active:scale-95 shadow-xs'
+                        : 'bg-emerald-50/70 dark:bg-emerald-950/25 backdrop-blur-xs border border-emerald-300/80 dark:border-emerald-700/50 hover:border-emerald-500/70 hover:shadow-lg hover:shadow-emerald-500/5 hover:-translate-y-1 cursor-pointer active:scale-95 shadow-xs'
                       : 'bg-slate-100/40 dark:bg-slate-900/30 border border-slate-200/40 dark:border-slate-800/40 opacity-45 cursor-not-allowed'
                   }`}
                 >
@@ -274,7 +280,9 @@ export const ToolHub: React.FC<ToolHubProps> = ({
                   <div
                     className={`relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl sm:rounded-3xl flex items-center justify-center text-2xl sm:text-3xl shadow-xs transition-transform duration-200 group-hover:scale-110 mb-2 mt-1 ${
                       isActive
-                        ? 'bg-gradient-to-br from-slate-100 to-slate-200/80 dark:from-slate-800 dark:to-slate-800/60 border border-slate-200/90 dark:border-slate-700/60'
+                        ? visitedToday
+                          ? 'bg-gradient-to-br from-slate-100 to-slate-200/80 dark:from-slate-800 dark:to-slate-800/60 border border-slate-200/90 dark:border-slate-700/60'
+                          : 'bg-gradient-to-br from-emerald-100/80 to-emerald-200/50 dark:from-emerald-900/40 dark:to-emerald-800/25 border border-emerald-200/80 dark:border-emerald-700/50'
                         : 'bg-slate-200/50 dark:bg-slate-800/40 text-slate-400 border border-slate-200/40 dark:border-slate-800/40'
                     }`}
                   >
@@ -307,10 +315,20 @@ export const ToolHub: React.FC<ToolHubProps> = ({
                   </span>
 
                   {/* Contador o distintivo sutil */}
-                  <span className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 truncate w-full font-medium">
-                    {sortMode === 'most_used' && stats.count > 0
-                      ? `${stats.count} ${stats.count === 1 ? 'uso' : 'usos'}`
-                      : tool.badge || (stats.lastOpened ? relativeTime : 'Activo')}
+                  <span className="text-[10px] mt-0.5 truncate w-full font-medium">
+                    {sortMode === 'most_used' && stats.count > 0 ? (
+                      <span className={visitedToday ? 'text-slate-400 dark:text-slate-500' : 'text-emerald-700 dark:text-emerald-300 font-semibold'}>
+                        {stats.count} {stats.count === 1 ? 'uso' : 'usos'}
+                      </span>
+                    ) : visitedToday ? (
+                      <span className="text-slate-400 dark:text-slate-500">
+                        {exactTime ? `Hoy ${exactTime}` : 'Entrado hoy'}
+                      </span>
+                    ) : (
+                      <span className="text-emerald-700 dark:text-emerald-300 font-semibold">
+                        {tool.badge || 'Pendiente'}
+                      </span>
+                    )}
                   </span>
                 </div>
               );
@@ -325,7 +343,9 @@ export const ToolHub: React.FC<ToolHubProps> = ({
               const isActive = tool.status === 'active';
               const stats = usageStats[tool.id] || { count: 0, lastOpened: 0, pinned: false };
               const isPinned = !!stats.pinned;
+              const visitedToday = isActive && hasVisitedModuleToday(stats.lastOpened);
               const relativeTime = formatRelativeTime(stats.lastOpened);
+              const exactTime = formatExactTime(stats.lastOpened);
 
               return (
                 <div
@@ -339,10 +359,13 @@ export const ToolHub: React.FC<ToolHubProps> = ({
                       handleOpenTool(tool);
                     }
                   }}
+                  title={`${tool.name}: ${tool.description}${isActive ? (visitedToday ? ` (Entrado hoy${exactTime ? ` a las ${exactTime}` : ''})` : ' (Pendiente de entrar hoy)') : ''}`}
                   aria-label={`Abrir módulo ${tool.name}: ${tool.description}`}
                   className={`relative rounded-2xl p-5 transition-all duration-150 flex flex-col justify-between focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none ${
                     isActive
-                      ? 'bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800/80 hover:border-emerald-500/40 hover:shadow-md cursor-pointer group shadow-xs'
+                      ? visitedToday
+                        ? 'bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-md cursor-pointer group shadow-xs'
+                        : 'bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-300/70 dark:border-emerald-700/40 hover:border-emerald-500/60 hover:shadow-md hover:shadow-emerald-500/5 cursor-pointer group shadow-xs'
                       : 'bg-slate-100/50 dark:bg-slate-900/40 border border-slate-200/50 dark:border-slate-800/40 opacity-50 cursor-not-allowed'
                   }`}
                 >
@@ -351,7 +374,9 @@ export const ToolHub: React.FC<ToolHubProps> = ({
                       <div
                         className={`w-11 h-11 rounded-2xl flex items-center justify-center text-xl shadow-xs transition-transform duration-200 group-hover:scale-105 ${
                           isActive
-                            ? 'bg-slate-100 dark:bg-slate-800/90 border border-slate-200/90 dark:border-slate-700/70'
+                            ? visitedToday
+                              ? 'bg-slate-100 dark:bg-slate-800/90 border border-slate-200/90 dark:border-slate-700/70'
+                              : 'bg-emerald-100/80 dark:bg-emerald-900/40 border border-emerald-200/80 dark:border-emerald-700/60'
                             : 'bg-slate-200/50 dark:bg-slate-800/50 text-slate-400 border border-slate-200/40 dark:border-slate-800/40'
                         }`}
                       >
@@ -384,17 +409,25 @@ export const ToolHub: React.FC<ToolHubProps> = ({
                               Cap. {getStoredPirkeiAvotBookmark(userKey).chapter}:{getStoredPirkeiAvotBookmark(userKey).mishna}
                             </span>
                           )
+                        ) : visitedToday ? (
+                          <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 flex items-center gap-1">
+                            ✓ Hoy {exactTime}
+                          </span>
                         ) : tool.badge ? (
                           <span
                             className={`text-[10px] font-semibold px-2 py-0.5 rounded-md ${
                               isActive
-                                ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/50'
+                                ? 'bg-emerald-100/80 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-300/70 dark:border-emerald-800/50'
                                 : 'bg-slate-200/60 dark:bg-slate-800/60 text-slate-500'
                             }`}
                           >
                             {tool.badge}
                           </span>
-                        ) : null}
+                        ) : (
+                          <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-emerald-100/60 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/40">
+                            Pendiente
+                          </span>
+                        )}
                       </div>
                     </div>
 
