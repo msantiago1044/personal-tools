@@ -60,10 +60,14 @@ describe('sidurService - Liturgia Marroquí', () => {
     const barejuInMinian = minian.flatMap((s) => s.segments).find((seg) => seg.id === 'bareju');
     expect(barejuInMinian).toBeDefined();
 
-    // 3. Modo Sin Minián (Tefilat Yajid: omite Barejú y 13 Midot súplica)
+    // 3. Modo Individual / Sin Minián (Tefilat Yajid: omite Barejú y 13 Midot súplica)
     const sinMinian = getFilteredSections(shajarit.sections, 'sin_minian');
     const barejuInSinMinian = sinMinian.flatMap((s) => s.segments).find((seg) => seg.id === 'bareju');
     expect(barejuInSinMinian).toBeUndefined();
+
+    const individual = getFilteredSections(shajarit.sections, 'individual');
+    const barejuInIndividual = individual.flatMap((s) => s.segments).find((seg) => seg.id === 'bareju');
+    expect(barejuInIndividual).toBeUndefined();
 
     // 4. Modo Rápido (solo núcleo halájico esencial: Baruj Sheamar, Ashrei, Shemá, Amidá, Alénu)
     const rapido = getFilteredSections(shajarit.sections, 'rapido');

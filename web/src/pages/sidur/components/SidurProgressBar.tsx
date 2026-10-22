@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SidurSection } from '../../../../../packages/shared/src/types';
 import { Layers, CheckCircle2 } from 'lucide-react';
 
@@ -16,7 +16,6 @@ export const SidurProgressBar: React.FC<SidurProgressBarProps> = ({
   const [activeIdx, setActiveIdx] = useState(0);
   const [activeSectionPercent, setActiveSectionPercent] = useState(0);
   const [overallPercent, setOverallPercent] = useState(0);
-  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -27,7 +26,6 @@ export const SidurProgressBar: React.FC<SidurProgressBarProps> = ({
       const totalPct = docHeight > 0 ? Math.min(100, Math.max(0, (scrollY / docHeight) * 100)) : 0;
       setOverallPercent(totalPct);
 
-      // Si hay una sección específica filtrada en la vista, su índice es fijo
       if (activeSectionId !== 'all') {
         const found = sections.findIndex((s) => s.id === activeSectionId);
         if (found !== -1) {
@@ -37,7 +35,6 @@ export const SidurProgressBar: React.FC<SidurProgressBarProps> = ({
         }
       }
 
-      // Cálculo por secciones visibles en el documento
       const viewportMid = scrollY + window.innerHeight * 0.35;
       let currentIdx = 0;
       let currentSectionPct = 0;
@@ -54,7 +51,10 @@ export const SidurProgressBar: React.FC<SidurProgressBarProps> = ({
 
         if (viewportMid >= top && viewportMid <= bottom) {
           currentIdx = i;
-          currentSectionPct = Math.min(100, Math.max(0, ((viewportMid - top) / Math.max(height, 1)) * 100));
+          currentSectionPct = Math.min(
+            100,
+            Math.max(0, ((viewportMid - top) / Math.max(height, 1)) * 100)
+          );
           break;
         } else if (viewportMid > bottom) {
           currentIdx = i;
@@ -67,7 +67,7 @@ export const SidurProgressBar: React.FC<SidurProgressBarProps> = ({
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll(); // Evaluación inicial
+    handleScroll();
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, [sections, activeSectionId]);
@@ -80,20 +80,20 @@ export const SidurProgressBar: React.FC<SidurProgressBarProps> = ({
     setTimeout(() => {
       const el = document.getElementById(`section-${sectionId}`);
       if (el) {
-        const yOffset = -140; // compensar header y selector sticky
+        const yOffset = -90; // compensar header sticky
         const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
         window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
       }
-    }, 50);
+    }, 40);
   };
 
   if (!sections || sections.length === 0) return null;
 
   return (
-    <div className="sticky top-[58px] md:top-[65px] z-20 backdrop-blur-md bg-white/95 dark:bg-slate-900/95 border-b border-slate-200/80 dark:border-slate-800/80 px-4 py-2 transition-all shadow-xs select-none">
-      <div className="max-w-6xl mx-auto space-y-1.5">
-        {/* Fila superior: Indicadores de sección actual y restantes estilo capítulo */}
-        <div className="flex items-center justify-between gap-2 text-xs">
+    <>
+      {/* 1. Barra de estado superior limpia y compacta (Sección X de Y) */}
+      <div className="sticky top-[57px] z-20 backdrop-blur-md bg-white/95 dark:bg-slate-900/95 border-b border-slate-200/80 dark:border-slate-800/80 px-4 py-2 transition-all shadow-xs select-none">
+        <div className="max-w-4xl mx-auto flex items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-2 overflow-hidden">
             <span className="flex items-center gap-1 font-semibold text-amber-700 dark:text-amber-400 shrink-0">
               <Layers className="w-3.5 h-3.5 text-amber-500" />
@@ -105,15 +105,6 @@ export const SidurProgressBar: React.FC<SidurProgressBarProps> = ({
             <span className="font-bold text-slate-800 dark:text-slate-100 truncate">
               {activeSection.titleSpanish}
             </span>
-
-            {activeSection.titleHebrew && (
-              <span
-                dir="rtl"
-                className="hidden sm:inline font-serif text-slate-500 dark:text-slate-400 text-[11px] truncate"
-              >
-                ({activeSection.titleHebrew})
-              </span>
-            )}
           </div>
 
           <div className="flex items-center gap-2 shrink-0 text-[11px]">
@@ -128,70 +119,60 @@ export const SidurProgressBar: React.FC<SidurProgressBarProps> = ({
                 {remainingCount === 1 ? 'sección' : 'secciones'}
               </span>
             )}
-
-            <span className="font-mono font-bold px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-              {Math.round(overallPercent)}%
-            </span>
           </div>
         </div>
+      </div>
 
-        {/* Barra de progreso subdividida estilo video de YouTube */}
-        <div className="relative flex items-center gap-1 w-full h-2.5 sm:h-3 rounded-full bg-slate-200/70 dark:bg-slate-800/80 p-0.5 overflow-hidden">
+      {/* 2. Barra de Progreso Vertical Segmentada estilo capítulos de YouTube */}
+      <aside
+        aria-label="Progreso vertical del rezo"
+        className="fixed right-2 sm:right-4 top-1/2 -translate-y-1/2 z-30 flex flex-col items-center gap-2 select-none"
+      >
+        <div
+          className="w-3 sm:w-3.5 h-64 sm:h-72 rounded-full bg-slate-200/80 dark:bg-slate-800/90 backdrop-blur-md border border-slate-300/60 dark:border-slate-700/60 p-0.5 flex flex-col gap-1 shadow-md overflow-hidden"
+          title={`Progreso: ${Math.round(overallPercent)}%`}
+        >
           {sections.map((sec, idx) => {
             const isCompleted = idx < activeIdx;
             const isCurrent = idx === activeIdx;
-            const isPending = idx > activeIdx;
 
             return (
               <div
                 key={sec.id}
                 onClick={() => handleJumpToSection(sec.id)}
-                onMouseEnter={() => setHoveredIdx(idx)}
-                onMouseLeave={() => setHoveredIdx(null)}
-                className="relative flex-1 h-full rounded-xs bg-slate-300/60 dark:bg-slate-700/60 overflow-hidden cursor-pointer group transition-all"
-                title={`${idx + 1}. ${sec.titleSpanish} (${sec.titleHebrew}) · Clic para saltar`}
+                className="relative flex-1 w-full rounded-xs bg-slate-300/50 dark:bg-slate-700/50 overflow-hidden cursor-pointer group transition-all"
               >
-                {/* Relleno del capítulo */}
+                {/* Relleno vertical del capítulo */}
                 {isCompleted && (
                   <div className="w-full h-full bg-amber-500 dark:bg-amber-400 transition-all duration-300" />
                 )}
 
                 {isCurrent && (
                   <div
-                    className="h-full bg-gradient-to-r from-amber-500 to-amber-400 dark:from-amber-400 dark:to-amber-300 transition-all duration-150 relative"
-                    style={{ width: `${Math.max(12, activeSectionPercent)}%` }}
-                  >
-                    {/* Punto brillante en el extremo activo */}
-                    <div className="absolute right-0 top-0 bottom-0 w-1 bg-white shadow-xs rounded-full animate-pulse" />
-                  </div>
+                    className="w-full bg-amber-500 dark:bg-amber-400 transition-all duration-150"
+                    style={{ height: `${activeSectionPercent}%` }}
+                  />
                 )}
 
-                {isPending && (
-                  <div className="w-0 h-full bg-amber-500/30 group-hover:w-full transition-all duration-200" />
-                )}
-
-                {/* Resaltado al pasar el ratón */}
-                <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                {/* Tooltip flotante hacia la izquierda al pasar el cursor */}
+                <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 bg-slate-900/95 dark:bg-slate-100/95 text-white dark:text-slate-900 text-xs px-2.5 py-1.5 rounded-lg whitespace-nowrap shadow-xl flex flex-col gap-0.5 z-50">
+                  <span className="font-bold">
+                    {idx + 1}. {sec.titleSpanish}
+                  </span>
+                  <span className="text-[10px] text-amber-400 dark:text-amber-700 font-sans">
+                    Clic para saltar
+                  </span>
+                </div>
               </div>
             );
           })}
         </div>
 
-        {/* Tooltip dinámico al pasar el cursor sobre un capítulo */}
-        {hoveredIdx !== null && sections[hoveredIdx] && (
-          <div className="text-[11px] text-center text-amber-800 dark:text-amber-300 font-medium py-0.5 animate-fadeIn">
-            <span>
-              Capítulo {hoveredIdx + 1}: {sections[hoveredIdx].titleSpanish}
-            </span>
-            <span dir="rtl" className="font-serif ml-1.5 opacity-80">
-              · {sections[hoveredIdx].titleHebrew}
-            </span>
-            <span className="text-slate-400 dark:text-slate-500 ml-1.5">
-              ({sections[hoveredIdx].segments.length} oraciones · Haz clic para ir)
-            </span>
-          </div>
-        )}
-      </div>
-    </div>
+        {/* Porcentaje numérico discreto al pie de la barra vertical */}
+        <span className="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-white/90 dark:bg-slate-900/90 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shadow-xs">
+          {Math.round(overallPercent)}%
+        </span>
+      </aside>
+    </>
   );
 };

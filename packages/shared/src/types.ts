@@ -433,7 +433,7 @@ export interface SidurPosture {
   instruction?: string;
 }
 
-export type SidurPrayerMode = 'minian' | 'sin_minian' | 'rapido' | 'completo';
+export type SidurPrayerMode = 'minian' | 'sin_minian' | 'individual' | 'rapido' | 'completo';
 
 export interface SidurSegment {
   id: string;

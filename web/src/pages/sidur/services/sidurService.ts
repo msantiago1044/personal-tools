@@ -130,7 +130,7 @@ export function getFilteredSections(
     .map((sec) => {
       let filtered = sec.segments;
 
-      if (prayerMode === 'sin_minian') {
+      if (prayerMode === 'sin_minian' || prayerMode === 'individual') {
         filtered = filtered.filter((seg) => !isSegmentRequiringMinian(seg));
       } else if (prayerMode === 'rapido') {
         filtered = filtered.filter((seg) => isSegmentEssential(seg, sec));

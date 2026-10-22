@@ -11,9 +11,8 @@ import {
   getFilteredSections,
 } from './services/sidurService';
 import { SidurHeader } from './components/SidurHeader';
-import { SidurTefilaSelector } from './components/SidurTefilaSelector';
+import { SidurTefilaLauncher } from './components/SidurTefilaLauncher';
 import { SidurProgressBar } from './components/SidurProgressBar';
-import { SidurSectionNav } from './components/SidurSectionNav';
 import { SidurPrayerCard } from './components/SidurPrayerCard';
 import { SidurKavanaMode } from './components/SidurKavanaMode';
 import { SidurBookPage } from './components/SidurBookPage';
@@ -24,22 +23,22 @@ export const SidurModuleContent: React.FC<ModuleProps> = ({ onBackToHub }) => {
   const tefilot = useMemo(() => getSidurTefilot(), []);
   const suggestedTefilaId = useMemo(() => getSuggestedTefilaId(), []);
 
-  // Tefilá activa
-  const [selectedTefilaId, setSelectedTefilaId] = useState<SidurTefilaId>(() => suggestedTefilaId);
-  const currentTefila = useMemo(
-    () => getSidurTefila(selectedTefilaId) || tefilot[0],
-    [selectedTefilaId, tefilot]
-  );
+  // Tefilá activa (null = pantalla de selección inicial)
+  const [selectedTefilaId, setSelectedTefilaId] = useState<SidurTefilaId | null>(null);
 
-  // Sección activa dentro de la tefilá ('all' o ID de sección)
+  const currentTefila = useMemo(() => {
+    if (!selectedTefilaId) return null;
+    return getSidurTefila(selectedTefilaId) || null;
+  }, [selectedTefilaId]);
+
+  // Sección activa ('all' o ID de sección)
   const [activeSectionId, setActiveSectionId] = useState<string | 'all'>('all');
 
-  // Al cambiar de tefilá, reseteamos la sección a 'all'
   useEffect(() => {
     setActiveSectionId('all');
   }, [selectedTefilaId]);
 
-  // Preferencias de lectura persistentes (con los 4 modos y nombres divinos consagrados)
+  // Preferencias de lectura persistentes
   const [preferences, setPreferences] = useState<SidurDisplayPreferences>(() => {
     let prayerMode: SidurPrayerMode = 'completo';
     if (typeof window !== 'undefined') {
@@ -47,10 +46,11 @@ export const SidurModuleContent: React.FC<ModuleProps> = ({ onBackToHub }) => {
       if (
         savedMode === 'minian' ||
         savedMode === 'sin_minian' ||
+        savedMode === 'individual' ||
         savedMode === 'rapido' ||
         savedMode === 'completo'
       ) {
-        prayerMode = savedMode;
+        prayerMode = savedMode === 'sin_minian' ? 'individual' : savedMode;
       }
     }
     return {
@@ -72,7 +72,6 @@ export const SidurModuleContent: React.FC<ModuleProps> = ({ onBackToHub }) => {
     });
   };
 
-  // Tema
   const handleThemeChange = (newTheme: ThemeMode) => {
     setTheme(newTheme);
     applyTheme(newTheme);
@@ -81,26 +80,40 @@ export const SidurModuleContent: React.FC<ModuleProps> = ({ onBackToHub }) => {
   // Modal Modo Kavaná
   const [kavanaOpen, setKavanaOpen] = useState(false);
 
-  // Secciones filtradas según el modo litúrgico (Con Minián / Sin Minián / Rápido / Completo)
-  const filteredSections = useMemo(
-    () => getFilteredSections(currentTefila.sections, preferences.prayerMode),
-    [currentTefila, preferences.prayerMode]
-  );
+  // Secciones filtradas según el modo litúrgico (Minián / Individual / Rápido / Completo)
+  const filteredSections = useMemo(() => {
+    if (!currentTefila) return [];
+    return getFilteredSections(currentTefila.sections, preferences.prayerMode);
+  }, [currentTefila, preferences.prayerMode]);
 
-  // Secciones a mostrar según filtro de sección seleccionada
+  // Secciones a mostrar
   const displayedSections = useMemo(() => {
     if (activeSectionId === 'all') return filteredSections;
     return filteredSections.filter((s) => s.id === activeSectionId);
   }, [filteredSections, activeSectionId]);
 
-  // Lista plana de todos los segmentos para el Modo Kavaná (respetando los filtros activos)
+  // Segmentos para el Modo Kavaná
   const allSegments = useMemo<SidurSegment[]>(() => {
     return filteredSections.flatMap((s) => s.segments);
   }, [filteredSections]);
 
+  // Si no se ha elegido tefilá, mostrar pantalla de bienvenida y selección
+  if (!selectedTefilaId || !currentTefila) {
+    return (
+      <SidurTefilaLauncher
+        tefilot={tefilot}
+        suggestedTefilaId={suggestedTefilaId}
+        onSelectTefila={setSelectedTefilaId}
+        onBackToHub={onBackToHub}
+        theme={theme}
+        onThemeChange={handleThemeChange}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-100/70 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors flex flex-col">
-      {/* 1. Barra de cabecera con preferencias y herramientas */}
+      {/* 1. Cabecera con preferencias y botón para cambiar de rezo */}
       <SidurHeader
         onBackToHub={onBackToHub}
         preferences={preferences}
@@ -108,17 +121,14 @@ export const SidurModuleContent: React.FC<ModuleProps> = ({ onBackToHub }) => {
         onToggleKavana={() => setKavanaOpen(true)}
         theme={theme}
         onThemeChange={handleThemeChange}
+        currentTefila={{
+          nameSpanish: currentTefila.nameSpanish,
+          nameHebrew: currentTefila.nameHebrew,
+        }}
+        onChangeTefila={() => setSelectedTefilaId(null)}
       />
 
-      {/* 2. Selector de Tefilot (Shajarit, Minjá, Arvit, Birkat HaMazón, etc.) */}
-      <SidurTefilaSelector
-        tefilot={tefilot}
-        selectedTefilaId={selectedTefilaId}
-        suggestedTefilaId={suggestedTefilaId}
-        onSelectTefila={setSelectedTefilaId}
-      />
-
-      {/* 3. Barra de progreso subdividida estilo video de YouTube */}
+      {/* 2. Barra de estado superior y barra vertical segmentada tipo YouTube */}
       {!kavanaOpen && (
         <SidurProgressBar
           sections={filteredSections}
@@ -127,31 +137,8 @@ export const SidurModuleContent: React.FC<ModuleProps> = ({ onBackToHub }) => {
         />
       )}
 
-      {/* 4. Navegador de Secciones */}
-      <SidurSectionNav
-        sections={filteredSections}
-        activeSectionId={activeSectionId}
-        onSelectSection={setActiveSectionId}
-      />
-
-      {/* 5. Cuerpo de la Tefilá */}
+      {/* 3. Cuerpo de la Tefilá en hojas de libro */}
       <main className="flex-1 max-w-4xl w-full mx-auto px-4 py-6 space-y-8">
-        {/* Banner descriptivo de la tefilá */}
-        <div className="bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent dark:from-amber-500/15 dark:via-amber-500/5 border-l-4 border-amber-500 p-4 rounded-r-2xl">
-          <div className="flex items-center gap-2 mb-1">
-            <h2 className="text-base font-bold text-slate-900 dark:text-white">
-              {currentTefila.nameSpanish}
-            </h2>
-            <span dir="rtl" className="text-sm font-serif text-amber-700 dark:text-amber-400">
-              {currentTefila.nameHebrew}
-            </span>
-          </div>
-          <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-            {currentTefila.description}
-          </p>
-        </div>
-
-        {/* Renderizado de Secciones envueltas en Hojas de Libro Auténticas */}
         {displayedSections.map((section, sIdx) => (
           <SidurBookPage
             key={section.id}
@@ -181,27 +168,14 @@ export const SidurModuleContent: React.FC<ModuleProps> = ({ onBackToHub }) => {
           </SidurBookPage>
         ))}
 
-        {/* Pie de página tradicional con recomendación litúrgica */}
-        <footer className="mt-12 p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-center space-y-3">
-          <div className="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-300 flex items-center justify-center mx-auto">
-            <BookOpen className="w-5 h-5" />
-          </div>
-          <h4 className="text-sm font-bold text-slate-900 dark:text-white">
-            Núsaj Kehilot Maroko · Rito Tradicional Sefardí
-          </h4>
-          <p className="text-xs text-slate-500 dark:text-slate-400 max-w-lg mx-auto">
-            Preservando con fidelidad las formulaciones litúrgicas de las ilustres comunidades de
-            Casablanca, Tánger, Fez, Meknés y Marruecos en general.
-          </p>
-          <p className="text-xs text-amber-800/80 dark:text-amber-400/80 font-serif italic max-w-lg mx-auto pt-1 border-t border-amber-900/10 dark:border-amber-400/15">
-            «דַּע לִפְנֵי מִי אַתָּה עוֹמֵד: לִפְנֵי מֶלֶךְ מַלְכֵי הַמְּלָכִים הַקָּדוֹשׁ בָּרוּךְ הוּא»
-            <br />
-            «Sabe ante Quién estás de pie: ante el Supremo Rey de reyes, el Santo, bendito sea Él»
-          </p>
+        {/* Pie de página sobrio y limpio */}
+        <footer className="mt-8 p-4 rounded-xl bg-white/70 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-800/60 text-center flex items-center justify-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+          <BookOpen className="w-3.5 h-3.5 text-amber-600" />
+          <span>Núsaj Kehilot Maroko · Rito Tradicional Sefardí</span>
         </footer>
       </main>
 
-      {/* 6. Modal Modo Kavaná (Pantalla completa sin distracciones con tema y gestos de swipe) */}
+      {/* 4. Modo Kavaná */}
       {kavanaOpen && (
         <SidurKavanaMode
           segments={allSegments}

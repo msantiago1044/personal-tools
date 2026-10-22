@@ -18,42 +18,39 @@ interface SidurHeaderProps {
   onToggleKavana: () => void;
   theme: ThemeMode;
   onThemeChange: (t: ThemeMode) => void;
+  currentTefila?: { nameSpanish: string; nameHebrew: string };
+  onChangeTefila?: () => void;
 }
 
 const PRAYER_MODES: {
   id: SidurPrayerMode;
   label: string;
-  shortLabel: string;
   icon: string;
   description: string;
 }[] = [
   {
     id: 'minian',
-    label: 'Con Minián',
-    shortLabel: 'Minián',
+    label: 'Minián',
     icon: '👥',
     description: 'Incluye Kaddish, Barejú, 13 Midot y respuestas comunitarias',
   },
   {
-    id: 'sin_minian',
-    label: 'Sin Minián',
-    shortLabel: 'Sin Minián',
+    id: 'individual',
+    label: 'Individual',
     icon: '👤',
-    description: 'Rezo individual / Tefilat Yajid (omite oraciones que exigen quórum de 10)',
+    description: 'Tefilat Yajid: omite oraciones que exigen quórum de 10 varones',
   },
   {
     id: 'rapido',
-    label: 'Modo Rápido',
-    shortLabel: 'Rápido',
+    label: 'Rápido',
     icon: '⚡',
     description: 'Núcleo halájico esencial para cuando hay apremio de tiempo',
   },
   {
     id: 'completo',
-    label: 'Modo Completo',
-    shortLabel: 'Completo',
+    label: 'Completo',
     icon: '📖',
-    description: 'Liturgia íntegra tradicional con todos los salmos y cánticos',
+    description: 'Liturgia íntegra tradicional completa',
   },
 ];
 
@@ -64,61 +61,75 @@ export const SidurHeader: React.FC<SidurHeaderProps> = ({
   onToggleKavana,
   theme,
   onThemeChange,
+  currentTefila,
+  onChangeTefila,
 }) => {
   return (
     <header className="sticky top-0 z-30 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors">
-      <div className="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
-        {/* Lado izquierdo: Botón volver + Título */}
+      <div className="max-w-6xl mx-auto px-4 py-2.5 flex flex-wrap items-center justify-between gap-3">
+        {/* Lado izquierdo: Botón volver + Título + Selector de Tefilá activo */}
         <div className="flex items-center gap-3">
           <button
             onClick={onBackToHub}
-            className="p-2 rounded-lg text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="p-1.5 rounded-lg text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             title="Volver al Centro de Módulos"
             aria-label="Volver al Centro de Módulos"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
 
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xl">📜</span>
-              <h1 className="text-lg font-bold text-slate-900 dark:text-white leading-tight">
-                Sidur · Días de Jol
-              </h1>
-              <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300 border border-amber-300 dark:border-amber-700/50">
-                Núsaj Marruecos
-              </span>
-            </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              Liturgia tradicional con fonética masorética y nombres divinos consagrados (YHVH)
-            </p>
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-lg">📜</span>
+            <h1 className="text-base font-bold text-slate-900 dark:text-white leading-tight">
+              Sidur · Días de Jol
+            </h1>
+            <span className="text-[11px] px-2 py-0.5 rounded-full font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300 border border-amber-300 dark:border-amber-700/50">
+              Núsaj Marruecos
+            </span>
+
+            {/* Píldora para cambiar de rezo directamente */}
+            {currentTefila && onChangeTefila && (
+              <button
+                onClick={onChangeTefila}
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-500/15 text-amber-900 dark:bg-amber-400/15 dark:text-amber-200 border border-amber-400/40 dark:border-amber-600/40 hover:bg-amber-500/25 transition-all cursor-pointer shadow-xs ml-1"
+                title="Elegir otro rezo (Shajarit, Minjá, Arvit...)"
+              >
+                <span>{currentTefila.nameSpanish}</span>
+                <span dir="rtl" className="font-serif text-[11px] opacity-75 hidden sm:inline">
+                  {currentTefila.nameHebrew}
+                </span>
+                <span className="text-[10px] text-amber-700 dark:text-amber-400 font-normal">▾ Cambiar</span>
+              </button>
+            )}
           </div>
         </div>
 
         {/* Lado derecho: 4 Modos, Capas, Tamaño, Kavaná y Tema */}
         <div className="flex items-center flex-wrap gap-2 text-xs">
-          {/* Selector de los 4 Modos de Rezo */}
+          {/* Selector de los 4 Modos de Rezo: Minián, Individual, Rápido, Completo */}
           <div
             className="flex items-center rounded-lg bg-slate-100 dark:bg-slate-800 p-0.5 border border-slate-200 dark:border-slate-700"
             role="group"
             aria-label="Modo de rezo"
           >
             {PRAYER_MODES.map((m) => {
-              const isSelected = preferences.prayerMode === m.id;
+              const isSelected =
+                preferences.prayerMode === m.id ||
+                (m.id === 'individual' && preferences.prayerMode === 'sin_minian');
+
               return (
                 <button
                   key={m.id}
                   onClick={() => onUpdatePreferences({ prayerMode: m.id })}
-                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
+                  className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
                     isSelected
                       ? 'bg-amber-500 text-slate-950 font-bold shadow-xs'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                   }`}
                   title={`${m.label}: ${m.description}`}
                 >
-                  <span className="text-sm">{m.icon}</span>
-                  <span className="hidden lg:inline">{m.label}</span>
-                  <span className="inline lg:hidden">{m.shortLabel}</span>
+                  <span className="text-xs">{m.icon}</span>
+                  <span>{m.label}</span>
                 </button>
               );
             })}
