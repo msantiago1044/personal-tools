@@ -23,14 +23,38 @@ describe('sidurService - Liturgia Marroquí', () => {
     expect(ids).toContain('oraciones_diarias');
   });
 
-  it('debe contener las 19 bendiciones en la sección de la Amidá de Shajarit', () => {
+  it('debe contener las 19 bendiciones completas en la Amidá de Shajarit, Minjá y Arvit', () => {
+    // 1. Shajarit
     const shajarit = getSidurTefila('shajarit');
     expect(shajarit).toBeDefined();
+    const shajaritAmida = shajarit?.sections.find((s) => s.id === 'amida_jol');
+    expect(shajaritAmida?.segments.length).toBe(21);
 
-    const amidaSection = shajarit?.sections.find((s) => s.id === 'amida_jol');
-    expect(amidaSection).toBeDefined();
-    // 1 intro + 19 bendiciones + 1 cierre
-    expect(amidaSection?.segments.length).toBe(21);
+    // 2. Minjá
+    const minja = getSidurTefila('minja');
+    expect(minja).toBeDefined();
+    const minjaAmida = minja?.sections.find((s) => s.id === 'minja_amida_section');
+    expect(minjaAmida?.segments.length).toBe(21);
+    expect(minjaAmida?.segments[1].titleSpanish).toContain('Patriarcas');
+
+    // 3. Arvit
+    const arvit = getSidurTefila('arvit');
+    expect(arvit).toBeDefined();
+    const arvitAmida = arvit?.sections.find((s) => s.id === 'arvit_amida_section');
+    expect(arvitAmida?.segments.length).toBe(21);
+
+    // 4. Shemá completo con los 3 párrafos en Shajarit y Arvit
+    const shajaritShema = shajarit?.sections
+      .find((s) => s.id === 'shema_u_virjoteha')
+      ?.segments.find((seg) => seg.id === 'shema_yisrael');
+    expect(shajaritShema?.hebrew).toContain('וְהָיָה אִם־שָׁמֹעַ');
+    expect(shajaritShema?.hebrew).toContain('וַיֹּאמֶר יהוה אֶל־מֹשֶׁה');
+
+    const arvitShema = arvit?.sections
+      .find((s) => s.id === 'arvit_inicio')
+      ?.segments.find((seg) => seg.id === 'arvit_shema');
+    expect(arvitShema?.hebrew).toContain('וְהָיָה אִם־שָׁמֹעַ');
+    expect(arvitShema?.hebrew).toContain('וַיֹּאמֶר יהוה אֶל־מֹשֶׁה');
   });
 
   it('debe utilizar YHVH por defecto al generar transliteración y español', () => {

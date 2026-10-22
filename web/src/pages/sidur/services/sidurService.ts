@@ -77,17 +77,156 @@ export const ESSENTIAL_SEGMENTS = new Set<string>([
 ]);
 
 /**
- * Devuelve todas las tefilot disponibles en el rito marroquí.
+ * Texto completo de los 3 párrafos de Keriát Shemá (Deut. 6:4-9, Deut. 11:13-21 y Núm. 15:37-41)
+ * con fonética masorética y traducción en español fiel.
+ */
+const FULL_SHEMA_PARAGRAPHS = {
+  hebrew: `שְׁמַע יִשְׂרָאֵל: יהוה אֱלֹהֵינוּ, יהוה אֶחָד:
+(בלחש): בָּרוּךְ שֵׁם כְּבוֹד מַלְכוּתוֹ לְעוֹלָם וָעֶד:
+
+וְאָהַבְתָּ אֵת יהוה אֱלֹהֶיךָ, בְּכָל־לְבָבְךָ וּבְכָל־נַפְשְׁךָ וּבְכָל־מְאֹדֶךָ: וְהָיוּ הַדְּבָרִים הָאֵלֶּה, אֲשֶׁר אָנֹכִי מְצַוְּךָ הַיּוֹם, עַל־לְבָבֶךָ: וְשִׁנַּנְתָּם לְבָנֶיךָ, וְדִבַּרְתָּ בָּם, בְּשִׁבְתְּךָ בְּבֵיתֶךָ, וּבְלֶכְתְּךָ בַדֶּרֶךְ, וּבְשָׁכְבְּךָ וּבְקוּמֶךָ: וּקְשַׁרְתָּם לְאוֹת עַל־יָדֶךָ, וְהָיוּ לְטֹטָפֹת בֵּין עֵינֶיךָ: וּכְתַבְתָּם עַל־מְזֻזוֹת בֵּיתֶךָ, וּבִשְׁעָרֶיךָ:
+
+וְהָיָה אִם־שָׁמֹעַ תִּשְׁמְעוּ אֶל־מִצְוֹתַי, אֲשֶׁר אָנֹכִי מְצַוֶּה אֶתְכֶם הַיּוֹם, לְאַהֲבָה אֶת־יהוה אֱלֹהֵיכֶם, וּלְעָבְדוֹ בְּכָל־לְבַבְכֶם וּבְכָל־נַפְשְׁכֶם: וְנָתַתִּי מְטַר־אַרְצְכֶם בְּעִתּוֹ, יוֹרֶה וּמַלְקוֹשׁ, וְאָסַפְתָּ דְגָנֶךָ וְתִירֹשְׁךָ וְיִצְהָרֶךָ: וְנָתַתִּי עֵשֶׂב בְּשָׂדְךָ לִבְהֶמְתֶּךָ, וְאָכַלְתָּ וְשָׂבָעְתָּ: הִשָּׁמְרוּ לָכֶם פֶּן־יִפְתֶּה לְבַבְכֶם, וְסַרְתֶּם וַעֲבַדְתֶּם אֱלֹהִים אֲחֵרִים, וְהִשְׁתַּחֲוִיתֶם לָהֶם: וְחָרָה אַף־יהוה בָּכֶם, וְעָצַר אֶת־הַשָּׁמַיִם וְלֹא־יִהְיֶה מָטָר, וְהָאֲדָמָה לֹא תִתֵּן אֶת־יְבוּלָהּ, וַאֲבַדְתֶּם מְהֵרָה מֵעַל הָאָרֶץ הַטֹּבָה אֲשֶׁר יהוה נֹתֵן לָכֶם: וְשַׂמְתֶּם אֶת־דְּבָרַי אֵלֶּה עַל־לְבַבְכֶם וְעַל־נַפְשְׁכֶם, וּקְשַׁרְתֶּם אֹתָם לְאוֹת עַל־יֶדְכֶם, וְהָיוּ לְטוֹטָפֹת בֵּין עֵינֵיכֶם: וְלִמַּדְתֶּם אֹתָם אֶת־בְּנֵיכֶם לְדַבֵּר בָּם, בְּשִׁבְתְּךָ בְּבֵיתֶךָ וּבְלֶכְתְּךָ בַדֶּרֶךְ וּבְשָׁכְבְּךָ וּבְקוּמֶךָ: וּכְתַבְתָּם עַל־מְזוּזוֹת בֵּיתֶךָ וּבִשְׁעָרֶיךָ: לְמַעַן יִרְבּוּ יְמֵיכֶם וִימֵי בְנֵיכֶם עַל הָאֲדָמָה אֲשֶׁר נִשְׁבַּע יהוה לַאֲבֹתֵיכֶם לָתֵת לָהֶם, כִּימֵי הַשָּׁמַיִם עַל־הָאָרֶץ:
+
+וַיֹּאמֶר יהוה אֶל־מֹשֶׁה לֵּאמֹר: דַּבֵּר אֶל־בְּנֵי יִשְׂרָאֵל וְאָמַרְתָּ אֲלֵהֶם, וְעָשׂוּ לָהֶם צִיצִת עַל־כַּנְפֵי בִגְדֵיהֶם לְדֹרֹתָם, וְנָתְנוּ עַל־צִיצִת הַכָּנָף פְּתִיל תְּכֵלֶת: וְהָיָה לָכֶם לְצִיצִת, וּרְאִיתֶם אֹתוֹ וּזְכַרְתֶּם אֶת־כָּל־מִצְוֹת יהוה וַעֲשִׂיתֶם אֹתָם, וְלֹא־תָתוּרוּ אַחֲרֵי לְבַבְכֶם וְאַחֲרֵי עֵינֵיכֶם, אֲשֶׁר־אַתֶּם זֹנִים אַחֲרֵיהֶם: לְמַעַן תִּזְכְּרוּ וַעֲשִׂיתֶם אֶת־כָּל־מִצְוֹתָי, וִהְיִיתֶם קְדֹשִׁים לֵאלֹהֵיכֶם: אֲנִי יהוה אֱלֹהֵיכֶם, אֲשֶׁר הוֹצֵאתִי אֶתְכֶם מֵאֶרֶץ מִצְרַיִם לִהְיוֹת לָכֶם לֵאלֹהִים, אֲנִי יהוה אֱלֹהֵיכֶם — אֱמֶת!`,
+
+  transliteration: `Shemá Yisraél: YHVH Elohéinu, YHVH Ejád!
+(En voz baja): Barúj shem kevód maljutó le-olám va-ed.
+
+Ve-ahavtá et YHVH Elohéja, be-jol levavjá u-ve-jol nafshejá u-ve-jol meodéja. Ve-hayú ha-dvarím ha-éleh ashér anojí metzavjá ha-yom al levavéja. Ve-shinantám le-vanéja ve-dibartá bam, be-shivtejá be-vetéja, u-ve-lejtejá va-dérej, u-ve-shojbejá u-ve-kuméja. U-kshartám le-ot al yadéja, ve-hayú le-totafót bein eynéja. U-jtavtám al mezuzót betéja u-vi-sh'aréja.
+
+Ve-hayáh im shamóa tishmeú el mitzvotái, ashér anojí metzavéh etjém ha-yom, le-ahaváh et YHVH Eloheijém, u-le-ovdó be-jol levavjém u-ve-jol nafshejém. Ve-natatí metár artzejém be-itó, yoréh u-malkósh, ve-asaftá deganéja ve-tiroshjá ve-yitzharéja. Ve-natatí ésev be-sadjá li-vhemtéja, ve-ajaltá ve-saváta. Hishamrú lajém pen yiftéh levavjém, ve-sartém va-avadtém elohím ajerím, ve-hishtajavitém lahém. Ve-jaráh af YHVH bajém, ve-atzár et ha-shamáyim ve-lo yihyéh matár, ve-ha-adamáh lo titén et yevuláh, va-avadtem meheráh me-ál ha-áretz ha-továh ashér YHVH notén lajém. Ve-samtém et devarái éleh al levavjém ve-al nafshejém, u-kshartém otám le-ot al yedjém, ve-hayú le-totafót bein eineijém. Ve-limadtém otám et beneijém le-dabér bam, be-shivtejá be-vetéja, u-ve-lejtejá va-dérej, u-ve-shojbejá u-ve-kuméja. U-jtavtám al mezuzót betéja u-vi-sh'aréja. Lemáan yirbú yemeijém vi-yméi veneijém al ha-adamáh ashér nishbá YHVH la-avoteijém latét lahém, ki-yméi ha-shamáyim al ha-áretz.
+
+Va-yómer YHVH el Moshéh lemór: Dabér el benéi Yisraél ve-amartá aleihém, ve-asú lahém tzitzít al kanféi vigdeihém le-dorotám, ve-natnú al tzitzít ha-kanáf petíl tjélet. Ve-hayáh lajém le-tzitzít, u-re'itém otó u-zjartém et kol mitzvót YHVH va-asitém otám, ve-lo tatúru ajaréi levavjém ve-ajaréi eineijém, ashér atém zoním ajareihém. Lemáan tizkerú va-asitém et kol mitzvotái, vi-hyitém kedoshím le-Eloheijém. Aní YHVH Eloheijém, ashér hotzéti etjém me-éretz Mitzráyim lihyót lajém le-Elohím, Aní YHVH Eloheijém — Emét!`,
+
+  spanish: `¡Escucha, Israel: YHVH es nuestro Dios, YHVH es Uno!
+(En voz baja): Bendito sea el Nombre de la majestad de Su reino por siempre jamás.
+
+Amarás a YHVH tu Dios con todo tu corazón, con toda tu alma y con todos tus recursos. Y estas palabras que Yo te ordeno hoy estarán sobre tu corazón. Las inculcarás con esmero a tus hijos y hablarás de ellas estando en tu casa, andando por el camino, al acostarte y al levantarte. Las atarás por señal en tu brazo y serán por divisas entre tus ojos; y las escribirás en los postes de tu casa y en tus portales (Deuteronomio 6:4-9).
+
+Y sucederá que si obedecéis diligentemente Mis mandamientos que Yo os prescribo hoy, amando a YHVH vuestro Dios y sirviéndole con todo vuestro corazón y con toda vuestra alma, entonces Yo daré la lluvia de vuestra tierra a su tiempo, la temprana y la tardía, y cosecharás tu grano, tu mosto y tu aceite. Y daré hierba en tu campo para tu ganado, y comerás y te saciarás. Guardaos, no sea que se engañe vuestro corazón, y os apartéis y sirváis a dioses extraños y os postréis ante ellos; y se encienda la ira de YHVH contra vosotros, y cierre los cielos y no haya lluvia, y la tierra no entregue su producto, y perezcáis con prontitud de sobre la buena tierra que YHVH os da. Por tanto, pondréis estas Mis palabras en vuestro corazón y en vuestra alma, y las ataréis como señal sobre vuestra mano, y serán como divisas entre vuestros ojos. Y las enseñaréis a vuestros hijos, hablando de ellas estando en tu casa, andando por el camino, al acostarte y al levantarte. Y las escribirás en los postes de tu casa y en tus portales; para que se multipliquen vuestros días y los días de vuestros hijos sobre la tierra que YHVH juró a vuestros padres darles, como los días de los cielos sobre la tierra (Deuteronomio 11:13-21).
+
+Y dijo YHVH a Moisés lo siguiente: Habla a los hijos de Israel y diles que se hagan flecos (tzitzit) en los bordes de sus vestiduras, por sus generaciones; y pongan en el fleco de cada borde un cordón de azul celeste. Y os servirá de fleco, para que lo veáis y recordéis todos los mandamientos de YHVH y los cumpláis; y no exploréis tras vuestro corazón ni tras vuestros ojos, tras los cuales soléis descarriaros; para que os acordéis y cumpláis todos Mis mandamientos, y seáis santos para vuestro Dios. Yo soy YHVH vuestro Dios, que os saqué de la tierra de Egipto para ser vuestro Dios. Yo soy YHVH vuestro Dios — ¡Es verdad! (Números 15:37-41).`,
+};
+
+let cachedAugmentedTefilot: SidurTefila[] | null = null;
+
+function buildAugmentedTefilot(): SidurTefila[] {
+  const shajarit = SIDUR_MOROCCO_TEFILOT.find((t) => t.id === 'shajarit');
+  const amidaSection = shajarit?.sections.find((s) => s.id === 'amida_jol');
+  const rawAmidaSegments = amidaSection ? amidaSection.segments : [];
+
+  return SIDUR_MOROCCO_TEFILOT.map((tefila) => {
+    // 1. Shajarit: asegurar Shemá completo con los 3 párrafos
+    if (tefila.id === 'shajarit') {
+      return {
+        ...tefila,
+        sections: tefila.sections.map((sec) => {
+          if (sec.id === 'shema_u_virjoteha') {
+            return {
+              ...sec,
+              segments: sec.segments.map((seg) => {
+                if (seg.id === 'shema_yisrael') {
+                  return {
+                    ...seg,
+                    hebrew: FULL_SHEMA_PARAGRAPHS.hebrew,
+                    transliteration: FULL_SHEMA_PARAGRAPHS.transliteration,
+                    spanish: FULL_SHEMA_PARAGRAPHS.spanish,
+                  };
+                }
+                return seg;
+              }),
+            };
+          }
+          return sec;
+        }),
+      };
+    }
+
+    // 2. Minjá: inyectar las 19 bendiciones completas de la Amidá
+    if (tefila.id === 'minja') {
+      const minjaAmidaSegments: SidurSegment[] = rawAmidaSegments.map((seg) => ({
+        ...seg,
+        id: `minja_${seg.id}`,
+      }));
+
+      return {
+        ...tefila,
+        sections: tefila.sections.map((sec) => {
+          if (sec.id === 'minja_amida_section') {
+            return {
+              ...sec,
+              titleSpanish: 'La Amidá · Las 19 Bendiciones de Minjá',
+              description: 'Las 19 bendiciones tradicionales completas recitadas de pie con pies juntos mirando a Jerusalén.',
+              segments: minjaAmidaSegments.length > 0 ? minjaAmidaSegments : sec.segments,
+            };
+          }
+          return sec;
+        }),
+      };
+    }
+
+    // 3. Arvit: inyectar Shemá completo con los 3 párrafos y la Amidá de 19 bendiciones completa
+    if (tefila.id === 'arvit') {
+      const arvitAmidaSegments: SidurSegment[] = rawAmidaSegments.map((seg) => ({
+        ...seg,
+        id: `arvit_${seg.id}`,
+      }));
+
+      return {
+        ...tefila,
+        sections: tefila.sections.map((sec) => {
+          if (sec.id === 'arvit_inicio') {
+            return {
+              ...sec,
+              segments: sec.segments.map((seg) => {
+                if (seg.id === 'arvit_shema') {
+                  return {
+                    ...seg,
+                    titleSpanish: 'Shemá Israel Nocturno (3 Párrafos Completos)',
+                    hebrew: FULL_SHEMA_PARAGRAPHS.hebrew,
+                    transliteration: FULL_SHEMA_PARAGRAPHS.transliteration,
+                    spanish: FULL_SHEMA_PARAGRAPHS.spanish,
+                  };
+                }
+                return seg;
+              }),
+            };
+          }
+
+          if (sec.id === 'arvit_amida_section') {
+            return {
+              ...sec,
+              titleSpanish: 'La Amidá · Las 19 Bendiciones de la Noche',
+              description: 'Las 19 bendiciones tradicionales nocturnas completas recitadas de pie con pies juntos en silencio.',
+              segments: arvitAmidaSegments.length > 0 ? arvitAmidaSegments : sec.segments,
+            };
+          }
+
+          return sec;
+        }),
+      };
+    }
+
+    return tefila;
+  });
+}
+
+/**
+ * Devuelve todas las tefilot disponibles en el rito marroquí (con liturgia completa en Minjá y Arvit).
  */
 export function getSidurTefilot(): SidurTefila[] {
-  return SIDUR_MOROCCO_TEFILOT;
+  if (!cachedAugmentedTefilot) {
+    cachedAugmentedTefilot = buildAugmentedTefilot();
+  }
+  return cachedAugmentedTefilot;
 }
 
 /**
  * Obtiene una tefilá específica por su ID.
  */
 export function getSidurTefila(id: SidurTefilaId): SidurTefila | undefined {
-  return SIDUR_MOROCCO_TEFILOT.find((t) => t.id === id);
+  return getSidurTefilot().find((t) => t.id === id);
 }
 
 /**
@@ -104,6 +243,8 @@ export function isSegmentEssential(segment: SidurSegment, section?: SidurSection
   return Boolean(
     segment.isEssential ||
     ESSENTIAL_SEGMENTS.has(segment.id) ||
+    segment.id.startsWith('minja_amida_') ||
+    segment.id.startsWith('arvit_amida_') ||
     section?.isEssential ||
     section?.id === 'amida_jol' ||
     section?.id === 'minja_amida_section' ||
