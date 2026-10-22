@@ -126,4 +126,64 @@ describe('sidurService - Liturgia Marroquí', () => {
 
     vi.useRealTimers();
   });
+
+  it('debe garantizar que ningún segmento de ninguna tefilá tenga textos vacíos ni puntos suspensivos (...)', () => {
+    const tefilot = getSidurTefilot();
+
+    tefilot.forEach((tefila) => {
+      tefila.sections.forEach((sec) => {
+        sec.segments.forEach((seg) => {
+          // 1. Textos no vacíos
+          expect(seg.hebrew.trim().length, `Hebreo vacío en ${tefila.id} / ${seg.id}`).toBeGreaterThan(0);
+          expect(seg.spanish.trim().length, `Español vacío en ${tefila.id} / ${seg.id}`).toBeGreaterThan(0);
+          expect(seg.transliteration.trim().length, `Transliteración vacía en ${tefila.id} / ${seg.id}`).toBeGreaterThan(0);
+
+          // 2. Cero elipsis o recortes
+          expect(seg.hebrew, `Puntos suspensivos en hebreo de ${tefila.id} / ${seg.id}`).not.toContain('...');
+          expect(seg.transliteration, `Puntos suspensivos en transliteración de ${tefila.id} / ${seg.id}`).not.toContain('...');
+          expect(seg.spanish, `Puntos suspensivos en español de ${tefila.id} / ${seg.id}`).not.toContain('...');
+        });
+      });
+    });
+  });
+
+  it('debe verificar la integridad de las secciones marroquíes ampliadas', () => {
+    // 1. Pitum HaKetoret completo (368 maneh y 11 especias)
+    const shajarit = getSidurTefila('shajarit');
+    const pitum = shajarit?.sections.find((s) => s.id === 'korbanot')?.segments.find((seg) => seg.id === 'pitum_haketoret');
+    expect(pitum?.hebrew).toContain('שְׁלֹשׁ מֵאוֹת וְשִׁשִּׁים וּשְׁמוֹנָה מָנִים');
+    expect(pitum?.hebrew).toContain('הַצֳּרִי');
+    expect(pitum?.hebrew).toContain('תָּנָא דְבֵי אֵלִיָּהוּ');
+    expect(pitum?.transliteration).toContain('Taná Devéi Eliyáhu');
+
+    // 2. Shirat HaYam completa en Pesuké deZimrá
+    const shiratHayam = shajarit?.sections.find((s) => s.id === 'pesukei_dezimra')?.segments.find((seg) => seg.id === 'shirat_hayam');
+    expect(shiratHayam).toBeDefined();
+    expect(shiratHayam?.hebrew).toContain('אָשִׁירָה לַיהוה כִּי־גָאֹה גָּאָה');
+    expect(shiratHayam?.hebrew).toContain('יהוה יִמְלֹךְ לְעֹלָם וָעֶד');
+
+    // 3. Tajanun de Shajarit con Salmo 25 íntegro de 22 versículos
+    const salmo25 = shajarit?.sections.find((s) => s.id === 'tajanun')?.segments.find((seg) => seg.id === 'salmo_25_nefilat_apayim');
+    expect(salmo25).toBeDefined();
+    expect(salmo25?.hebrew).toContain('אֵלֶיךָ יהוה נַפְשִׁי אֶשָּׂא');
+    expect(salmo25?.hebrew).toContain('פְּדֵה אֱלֹהִים אֶת־יִשְׂרָאֵל');
+
+    // 4. Uvá LeTsiyón con Kedushá de-Sidrá (Targum arameo)
+    const uvaLetsiyon = shajarit?.sections.find((s) => s.id === 'conclusion_shajarit')?.segments.find((seg) => seg.id === 'uva_letzion');
+    expect(uvaLetsiyon?.hebrew).toContain('קַדִּישׁ בִּשְׁמֵי מְרוֹמָא עִלָּאָה');
+
+    // 5. Birkat HaMazón completo con Zimmun marroquí y Salmo 126
+    const bhamazon = getSidurTefila('birkat_hamazon');
+    const zimmun = bhamazon?.sections.find((s) => s.id === 'birkat_hamazon_complete')?.segments.find((seg) => seg.id === 'zimun_morocco');
+    expect(zimmun?.hebrew).toContain('הַב לָן וְנִבְרִיךְ');
+    const harajaman = bhamazon?.sections.find((s) => s.id === 'birkat_hamazon_complete')?.segments.find((seg) => seg.id === 'harajaman_series');
+    expect(harajaman?.hebrew).toContain('הָרַחֲמָן, הוּא יְבָרֵךְ אֶת־בַּעַל הַבַּיִת הַזֶּה');
+
+    // 6. Keriát Shemá al HaMitá con HaMapíl y Salmo 91
+    const diarias = getSidurTefila('oraciones_diarias');
+    const hamapil = diarias?.sections.find((s) => s.id === 'shema_al_hamita_section')?.segments.find((seg) => seg.id === 'hamapil');
+    expect(hamapil?.hebrew).toContain('הַמַּפִּיל חֶבְלֵי שֵׁנָה');
+    const salmo91 = diarias?.sections.find((s) => s.id === 'shema_al_hamita_section')?.segments.find((seg) => seg.id === 'salmo_91_yoshev_beseter');
+    expect(salmo91?.hebrew).toContain('יֹשֵׁב בְּסֵתֶר עֶלְיוֹן');
+  });
 });
