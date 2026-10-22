@@ -75,12 +75,29 @@ const NewsModule = React.lazy(() =>
   import('../pages/news/NewsModule').then((m) => ({ default: m.NewsModule }))
 );
 
+const SidurModule = React.lazy(() =>
+  import('../pages/sidur/SidurModule').then((m) => ({ default: m.SidurModule }))
+);
+
 
 /**
  * Registro Central Desacoplado de Módulos (Architecture RFC - OCP)
  * Para añadir un nuevo módulo, solo regístralo en esta lista.
  */
 export const MODULE_REGISTRY: ModuleManifest[] = [
+  {
+    id: 'sidur',
+    name: 'Sidur Marroquí',
+    shortName: 'Sidur',
+    description: 'Liturgia de días de jol (Shajarit, Minjá, Arvit) rito marroquí con fonética y posturas.',
+    emoji: '🕍',
+    icon: 'book-open',
+    route: '/sidur',
+    hashAliases: ['sidur', 'siddur', 'tefila', 'rezo', 'marroco'],
+    status: 'active',
+    badge: 'Marruecos',
+    component: SidurModule,
+  },
   {
     id: 'parasha',
     name: 'Parashá Semanal',

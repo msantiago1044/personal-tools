@@ -412,3 +412,67 @@ export interface NetWorthSnapshot {
   net_worth: number;
   created_at: string;
 }
+
+// ============================================================================
+// MÓDULO: SIDUR (LITURGIA DÍAS DE JOL · NÚSAJ MARRUECOS)
+// ============================================================================
+export type SidurTefilaId = 'shajarit' | 'minja' | 'arvit' | 'birkat_hamazon' | 'oraciones_diarias';
+
+export type PostureType =
+  | 'standing'      // De pie (pies juntos, hacia Jerusalén)
+  | 'sitting'       // Sentado
+  | 'bowing'        // Inclinación (Modim, Barejú, Amidá)
+  | 'chest_beat'    // Golpe suave en el pecho (Vidui / Ashamnu)
+  | 'cover_eyes'    // Cubrirse los ojos con la mano derecha (Shemá)
+  | 'tzitzit'       // Beso y toma de tzitzit (Baruj Sheamar, Shemá)
+  | 'custom';
+
+export interface SidurPosture {
+  type: PostureType;
+  label: string;
+  instruction?: string;
+}
+
+export interface SidurSegment {
+  id: string;
+  titleHebrew?: string;
+  titleSpanish?: string;
+  titleTranslit?: string;
+  posture?: SidurPosture;
+  hebrew: string;
+  transliteration?: string;
+  spanish: string;
+  moroccanNote?: string;
+  isSilent?: boolean;
+  isCommunityResponse?: boolean;
+}
+
+export interface SidurSection {
+  id: string;
+  order: number;
+  titleHebrew: string;
+  titleSpanish: string;
+  titleTranslit: string;
+  description?: string;
+  segments: SidurSegment[];
+}
+
+export interface SidurTefila {
+  id: SidurTefilaId;
+  nameHebrew: string;
+  nameSpanish: string;
+  nameTranslit: string;
+  timeOfDay: 'morning' | 'afternoon' | 'evening' | 'anytime';
+  description: string;
+  sections: SidurSection[];
+}
+
+export interface SidurProgress {
+  date: string;
+  shajaritCompleted: boolean;
+  minjaCompleted: boolean;
+  arvitCompleted: boolean;
+  completedAt: Record<string, string>;
+  streakDays: number;
+  history: Record<string, string[]>;
+}
