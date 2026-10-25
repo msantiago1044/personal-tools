@@ -6,6 +6,8 @@ import {
 } from '../../../../packages/shared/src/data/weekdayTorahReadings';
 import { PARASHAT_NOACH_DATA } from '../../../../packages/shared/src/data/parashatNoachData';
 import { PARASHAT_LECH_LECHA_DATA } from '../../../../packages/shared/src/data/parashatLechLechaData';
+import { PARASHAT_VAYERA_DATA } from '../../../../packages/shared/src/data/parashatVayeraData';
+import { getDiasporaDailySchedule } from '../parashaService';
 import { WeeklyParasha } from '../../../../packages/shared/src/types';
 
 describe('Lectura de Torá para Días de Semana (Cohén, Leví, Israel)', () => {
@@ -157,4 +159,57 @@ describe('Lectura de Torá para Días de Semana (Cohén, Leví, Israel)', () => 
     expect(annotated.aliyot[0].verses[0].weekdayAliyah).toBe('cohen');
     expect(annotated.aliyot[1].verses[0].weekdayAliyah).toBe('levi');
   });
+
+  it('anota correctamente la parashá Vayerá con Cohén, Leví e Israel', () => {
+    const annotated = annotateParashaWithWeekdayReading(PARASHAT_VAYERA_DATA);
+    expect(annotated.id).toBe('vayera');
+    expect(annotated.nameSpanish).toBe('Vayerá');
+    expect(annotated.aliyot).toHaveLength(7);
+    expect(annotated.weekdayReading).toBeDefined();
+
+    const aliyah1 = annotated.aliyot[0];
+    expect(aliyah1.hasWeekdayReading).toBe(true);
+
+    const v1 = aliyah1.verses.find((v) => v.verseNumber === 1);
+    expect(v1?.weekdayAliyah).toBe('cohen');
+    expect(v1?.isWeekdayStart).toBe('cohen');
+
+    const v5 = aliyah1.verses.find((v) => v.verseNumber === 5);
+    expect(v5?.weekdayAliyah).toBe('cohen');
+
+    const v6 = aliyah1.verses.find((v) => v.verseNumber === 6);
+    expect(v6?.weekdayAliyah).toBe('levi');
+    expect(v6?.isWeekdayStart).toBe('levi');
+
+    const v9 = aliyah1.verses.find((v) => v.verseNumber === 9);
+    expect(v9?.weekdayAliyah).toBe('israel');
+    expect(v9?.isWeekdayStart).toBe('israel');
+
+    const v14 = aliyah1.verses.find((v) => v.verseNumber === 14);
+    expect(v14?.weekdayAliyah).toBe('israel');
+    expect(v14?.isWeekdayEnd).toBe(true);
+  });
+
+  it('determina dinámicamente Vayerá para la semana del 25 al 31 de Octubre de 2026', () => {
+    // Domingo 25 de Octubre de 2026
+    const sundayDate = new Date(2026, 9, 25, 10, 0, 0);
+    const scheduleSunday = getDiasporaDailySchedule(sundayDate);
+    expect(scheduleSunday.parashaId).toBe('vayera');
+    expect(scheduleSunday.parashaName).toBe('Vayerá');
+    expect(scheduleSunday.parashaHebrew).toBe('וַיֵּרָא');
+    expect(scheduleSunday.targetAliyahNumber).toBe(1);
+
+    // Shabat 24 de Octubre a las 11:00 AM (antes de Minjá) era Lej-Lejá
+    const shabbatMorning = new Date(2026, 9, 24, 11, 0, 0);
+    const scheduleShabbatMorning = getDiasporaDailySchedule(shabbatMorning);
+    expect(scheduleShabbatMorning.parashaId).toBe('lechlecha');
+    expect(scheduleShabbatMorning.parashaName).toBe('Lej-Lejá');
+
+    // Shabat 24 de Octubre a las 15:00 PM (después de Minjá) inicia Vayerá
+    const shabbatAfternoon = new Date(2026, 9, 24, 15, 0, 0);
+    const scheduleShabbatAfternoon = getDiasporaDailySchedule(shabbatAfternoon);
+    expect(scheduleShabbatAfternoon.parashaId).toBe('vayera');
+    expect(scheduleShabbatAfternoon.parashaName).toBe('Vayerá');
+  });
 });
+
