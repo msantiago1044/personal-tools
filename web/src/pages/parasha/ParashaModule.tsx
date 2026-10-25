@@ -15,7 +15,7 @@ import {
   getAliyahStats,
   syncParashaWithCloud,
 } from '../../lib/parashaService';
-import { transliterateHebrewToSpanish, SacredNameOption } from '../../lib/hebrewPhonetics';
+import { transliterateHebrewToSpanish } from '../../lib/hebrewPhonetics';
 import { ThemeMode, getStoredTheme, applyTheme } from '../../lib/theme';
 import {
   ArrowLeft,
@@ -62,33 +62,37 @@ export const ParashaModule: React.FC<ParashaModuleProps> = ({
   const [showTranslit, setShowTranslit] = useState(true);
   const [showSpanish, setShowSpanish] = useState(true);
   const [fontSize, setFontSize] = useState<'sm' | 'base' | 'lg' | 'xl'>('base');
-  const [sacredNameMode, setSacredNameMode] = useState<SacredNameOption>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('parasha_sacred_name_mode');
-      if (saved === 'Adonai' || saved === 'HaShem' || saved === 'YHVH') return saved;
-    }
-    return 'YHVH';
-  });
-
-  const handleSacredNameModeChange = (mode: SacredNameOption) => {
-    setSacredNameMode(mode);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('parasha_sacred_name_mode', mode);
-    }
-  };
-
+  // Transliteración fonética con Nombres Sagrados fijados permanentemente a YHVH
   const getRenderedTransliteration = (verse: ParashaVerse): string => {
     if (!verse) return '';
+    let trans = verse.transliteration;
     if (
-      sacredNameMode === 'YHVH' &&
-      verse.transliteration &&
-      !verse.transliteration.includes('yehovah') &&
-      !verse.transliteration.includes('bmim') &&
-      !verse.transliteration.includes('rejb')
+      !trans ||
+      trans.includes('yehovah') ||
+      trans.includes('bmim') ||
+      trans.includes('rejb') ||
+      trans.includes('gadvol') ||
+      trans.includes('lvot') ||
+      trans.includes('itvo') ||
+      trans.includes('Adonai') ||
+      trans.includes('Adonái') ||
+      trans.includes('HaShem')
     ) {
-      return verse.transliteration;
+      trans = transliterateHebrewToSpanish(verse.hebrew, { sacredName: 'YHVH' });
     }
-    return transliterateHebrewToSpanish(verse.hebrew, { sacredName: sacredNameMode });
+    return trans
+      .replace(/\bVa-Adon[aá]i\b/gi, 'Ve-YHVH')
+      .replace(/\bVe-HaShem\b/gi, 'Ve-YHVH')
+      .replace(/\bBa-Adon[aá]i\b/gi, 'Ba-YHVH')
+      .replace(/\bBa-HaShem\b/gi, 'Ba-YHVH')
+      .replace(/\bLa-Adon[aá]i\b/gi, 'La-YHVH')
+      .replace(/\bLa-HaShem\b/gi, 'La-YHVH')
+      .replace(/\bMe-Adon[aá]i\b/gi, 'Me-YHVH')
+      .replace(/\bMe-HaShem\b/gi, 'Me-YHVH')
+      .replace(/\bKa-Adon[aá]i\b/gi, 'Ka-YHVH')
+      .replace(/\bKa-HaShem\b/gi, 'Ka-YHVH')
+      .replace(/\bAdon[aá]i\b/gi, 'YHVH')
+      .replace(/\bHaShem\b/gi, 'YHVH');
   };
 
   // Progreso
@@ -106,6 +110,9 @@ export const ParashaModule: React.FC<ParashaModuleProps> = ({
 
   // Cargar datos al montar
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('parasha_sacred_name_mode');
+    }
     let isMounted = true;
     getWeeklyParasha()
       .then((data) => {
@@ -403,21 +410,7 @@ export const ParashaModule: React.FC<ParashaModuleProps> = ({
             >
               🔤 Fonética
             </button>
-            {showTranslit && (
-              <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800/80 rounded-lg px-2 py-0.5 border border-slate-200 dark:border-slate-700">
-                <span className="text-[10px] text-slate-400 font-semibold">Nombre:</span>
-                <select
-                  value={sacredNameMode}
-                  onChange={(e) => handleSacredNameModeChange(e.target.value as SacredNameOption)}
-                  className="text-[11px] font-bold bg-transparent text-emerald-700 dark:text-emerald-400 cursor-pointer py-0.5 focus:outline-none"
-                  title="Formato de los Nombres Sagrados en la fonética"
-                >
-                  <option value="YHVH" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">YHVH</option>
-                  <option value="Adonai" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Adonái</option>
-                  <option value="HaShem" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">HaShem</option>
-                </select>
-              </div>
-            )}
+
             <button
               onClick={() => setShowSpanish(!showSpanish)}
               className={`text-xs px-2.5 py-1 rounded-lg border font-medium transition ${

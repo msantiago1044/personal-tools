@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { PARASHAT_LECH_LECHA_DATA } from '../../../../packages/shared/src/data/parashatLechLechaData';
 import { PARASHAT_NOACH_DATA } from '../../../../packages/shared/src/data/parashatNoachData';
+import { sanitizeParashaVerses } from '../parashaService';
 
 describe('Auditoría e Integridad de Fonética en Parashiot', () => {
   it('garantiza que Parashat Lej-Lejá no contiene corrupciones ni errores en el Tetragrámaton', () => {
@@ -43,5 +44,38 @@ describe('Auditoría e Integridad de Fonética en Parashiot', () => {
       }
     }
     expect(noachVerses).toBeGreaterThan(20);
+  });
+
+  it('garantiza que sanitizeParashaVerses normaliza cualquier Nombre Sagrado como YHVH en la fonética', () => {
+    const rawParasha = {
+      ...PARASHAT_LECH_LECHA_DATA,
+      aliyot: [
+        {
+          ...PARASHAT_LECH_LECHA_DATA.aliyot[0],
+          verses: [
+            {
+              verseNumber: 1,
+              verseKey: 'Génesis 12:1',
+              hebrew: 'וַיֹּ֤אמֶר יְהֹוָה֙ אֶל־אַבְרָ֔ם',
+              transliteration: 'Vayómer Adonai el-Avram',
+              spanish: 'Pero YHVH había dicho a Abram',
+            },
+            {
+              verseNumber: 2,
+              verseKey: 'Génesis 12:2',
+              hebrew: 'וַיְהֹוָה אֶל־אַבְרָם',
+              transliteration: 'Ve-HaShem el-Avram',
+              spanish: 'Y YHVH a Abram',
+            },
+          ],
+        },
+      ],
+    };
+
+    const sanitized = sanitizeParashaVerses(rawParasha);
+    expect(sanitized.aliyot[0].verses[0].transliteration).toContain('YHVH');
+    expect(sanitized.aliyot[0].verses[0].transliteration).not.toContain('Adonai');
+    expect(sanitized.aliyot[0].verses[1].transliteration).toContain('Ve-YHVH');
+    expect(sanitized.aliyot[0].verses[1].transliteration).not.toContain('HaShem');
   });
 });

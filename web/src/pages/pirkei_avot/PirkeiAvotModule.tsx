@@ -242,15 +242,19 @@ export const PirkeiAvotModule: React.FC<PirkeiAvotModuleProps> = ({
     setProgressMap(newMap);
     setHasReadToday(true);
 
-    // Avanzar el punto de lectura guardado a la siguiente mishná a leer
+    // Avanzar el punto de lectura guardado a la siguiente mishná a leer según el índice real
+    const currentIndex = currentChapter.mishnayot.findIndex((m) => m.mishna === mishnaNum);
     let nextChapter = currentChapter.chapter;
-    let nextMishna = mishnaNum + 1;
+    let nextMishna = mishnaNum;
     let isBookCompleted = false;
 
-    if (mishnaNum >= currentChapter.mishnayot.length) {
+    if (currentIndex >= 0 && currentIndex < currentChapter.mishnayot.length - 1) {
+      nextMishna = currentChapter.mishnayot[currentIndex + 1].mishna;
+    } else if (currentIndex === currentChapter.mishnayot.length - 1) {
       if (currentChapter.chapter < 6) {
         nextChapter = currentChapter.chapter + 1;
-        nextMishna = 1;
+        const nextChapData = PIRKEI_AVOT_DATA.find((c) => c.chapter === nextChapter);
+        nextMishna = nextChapData?.mishnayot[0]?.mishna || 1;
       } else {
         isBookCompleted = true;
       }

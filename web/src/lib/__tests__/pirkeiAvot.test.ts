@@ -134,4 +134,36 @@ describe('pirkeiAvot service', () => {
     expect(chaptersToUpload.length).toBe(1);
     expect(chaptersToUpload[0].completed_mishnayot).toEqual([1, 2, 3]);
   });
+
+  describe('PIRKEI_AVOT_DATA integridad y completitud de capítulos y mishnayot', () => {
+    it('contiene exactamente los 6 capítulos canónicos con la totalidad de sus 108 mishnayot', async () => {
+      const { PIRKEI_AVOT_DATA } = await import('../../../../packages/shared/src/data/pirkeiAvotData');
+
+      expect(PIRKEI_AVOT_DATA.length).toBe(6);
+
+      const expectedCounts = [18, 16, 18, 22, 23, 11];
+      const actualCounts = PIRKEI_AVOT_DATA.map((ch) => ch.mishnayot.length);
+      expect(actualCounts).toEqual(expectedCounts);
+
+      const totalMishnayot = PIRKEI_AVOT_DATA.reduce((acc, ch) => acc + ch.mishnayot.length, 0);
+      expect(totalMishnayot).toBe(108);
+
+      PIRKEI_AVOT_DATA.forEach((chapter, chIdx) => {
+        expect(chapter.chapter).toBe(chIdx + 1);
+        expect(chapter.titleHebrew).toBeTruthy();
+        expect(chapter.titleTransliteration).toBeTruthy();
+        expect(chapter.titleSpanish).toBeTruthy();
+
+        chapter.mishnayot.forEach((m, mIdx) => {
+          // La numeración debe ser estrictamente secuencial sin saltos (1, 2, 3, ... N)
+          expect(m.mishna).toBe(mIdx + 1);
+          expect(m.hebrew.trim()).not.toBe('');
+          expect(m.transliteration.trim()).not.toBe('');
+          expect(m.spanish.trim()).not.toBe('');
+          expect(m.sage.trim()).not.toBe('');
+          expect(m.keyTeaching.trim()).not.toBe('');
+        });
+      });
+    });
+  });
 });

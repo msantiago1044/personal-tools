@@ -163,7 +163,7 @@ export function sanitizeParashaVerses(parasha: WeeklyParasha, sacredName: Sacred
         const cleanHeb = cleanHebrewText(v.hebrew);
         let cleanTrans = cleanTransliterationText(v.transliteration || '');
 
-        // Regeneración proactiva si la transliteración contiene errores conocidos
+        // Regeneración proactiva si la transliteración contiene errores conocidos o nombres que no sean YHVH
         if (
           !cleanTrans ||
           cleanTrans.includes('yehovah') ||
@@ -171,10 +171,28 @@ export function sanitizeParashaVerses(parasha: WeeklyParasha, sacredName: Sacred
           cleanTrans.includes('rejb') ||
           cleanTrans.includes('gadvol') ||
           cleanTrans.includes('lvot') ||
-          cleanTrans.includes('itvo')
+          cleanTrans.includes('itvo') ||
+          cleanTrans.includes('Adonai') ||
+          cleanTrans.includes('Adonái') ||
+          cleanTrans.includes('HaShem')
         ) {
-          cleanTrans = transliterateHebrewToSpanish(cleanHeb, { sacredName });
+          cleanTrans = transliterateHebrewToSpanish(cleanHeb, { sacredName: 'YHVH' });
         }
+
+        // Normalización garantizada de Nombres Sagrados a YHVH en la fonética
+        cleanTrans = cleanTrans
+          .replace(/\bVa-Adon[aá]i\b/gi, 'Ve-YHVH')
+          .replace(/\bVe-HaShem\b/gi, 'Ve-YHVH')
+          .replace(/\bBa-Adon[aá]i\b/gi, 'Ba-YHVH')
+          .replace(/\bBa-HaShem\b/gi, 'Ba-YHVH')
+          .replace(/\bLa-Adon[aá]i\b/gi, 'La-YHVH')
+          .replace(/\bLa-HaShem\b/gi, 'La-YHVH')
+          .replace(/\bMe-Adon[aá]i\b/gi, 'Me-YHVH')
+          .replace(/\bMe-HaShem\b/gi, 'Me-YHVH')
+          .replace(/\bKa-Adon[aá]i\b/gi, 'Ka-YHVH')
+          .replace(/\bKa-HaShem\b/gi, 'Ka-YHVH')
+          .replace(/\bAdon[aá]i\b/gi, 'YHVH')
+          .replace(/\bHaShem\b/gi, 'YHVH');
 
         return {
           ...v,
