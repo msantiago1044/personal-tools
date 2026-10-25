@@ -55,7 +55,13 @@ import { PriceEvolutionModal } from '../../components/pantry/PriceEvolutionModal
 import { ProductDetailModal } from '../../components/pantry/ProductDetailModal';
 import { NutritionAnalytics } from '../../components/pantry/NutritionAnalytics';
 import { IsaSection } from '../../components/pantry/IsaSection';
-import { getFoodIntelligence, calculateFoodMacroTotals, getWebEstimatedShelfLifeDays } from '../../lib/pantryFoodIntelligence';
+import {
+  getFoodIntelligence,
+  calculateFoodMacroTotals,
+  getWebEstimatedShelfLifeDays,
+  isNonFoodItem,
+  isEdibleItem,
+} from '../../lib/pantryFoodIntelligence';
 import { inferProductPhysicalPresentation } from '../../lib/productPresentationInferrer';
 
 interface PantryModuleProps {
@@ -71,12 +77,12 @@ const CATEGORIES = [
   'Lácteos',
   'Granos & Cereales',
   'Frutas & Verduras',
-  'Aseo & Limpieza',
-  'Mascotas',
   'Snacks & Bebidas',
   'Condimentos & Aceites',
   'Panadería',
   'Despensa',
+  'Aseo & Limpieza',
+  'Mascotas',
 ];
 
 export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub }) => {
@@ -87,6 +93,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Todas');
   const [statusFilter, setStatusFilter] = useState<'todos' | 'disponible' | 'agotado'>('disponible');
+  const [foodFilter, setFoodFilter] = useState<'edible' | 'all' | 'non_food'>('edible');
 
   // Modal API Key
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
@@ -175,26 +182,29 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
           const hasAbnormalCalories = Number(item.total_calories) > 3000 && !item.name.toLowerCase().includes('aceite');
           const hasAbnormalPrice = Number(item.unit_price) >= 500000;
           const hasNonStandardUnit = u === 'gran' || u === 'unid';
+          const isNonFood = isNonFoodItem(item);
+          const hasAbnormalNonFoodCals = isNonFood && (Number(item.total_calories || 0) > 0 || Number(item.calories_per_unit || 0) > 0 || Number(item.protein_g || 0) > 0 || Number(item.carbs_g || 0) > 0);
           const webShelfLife = getWebEstimatedShelfLifeDays(item.name, item.category);
           const hasOutdatedShelfLife = !item.shelf_life_days || item.shelf_life_days !== webShelfLife;
-          const needsPresentationCalibration = (isGenericUnit && totPrice >= 5000) || hasAbnormalCalories || hasAbnormalPrice || hasNonStandardUnit;
+          const needsPresentationCalibration = (isGenericUnit && totPrice >= 5000) || hasAbnormalCalories || hasAbnormalPrice || hasNonStandardUnit || hasAbnormalNonFoodCals;
 
           if (needsPresentationCalibration || hasOutdatedShelfLife) {
             const inferred = inferProductPhysicalPresentation(item.name, totPrice, undefined, item.unit, item.quantity);
+            const targetCategory = isNonFood ? (item.category === 'Mascotas' || inferred.category === 'Mascotas' ? 'Mascotas' : 'Aseo & Limpieza') : (item.category || inferred.category);
             const updated: PantryItem = {
               ...item,
-              category: item.category || inferred.category,
+              category: targetCategory,
               quantity: needsPresentationCalibration ? inferred.quantity : item.quantity,
               initial_quantity: needsPresentationCalibration ? inferred.quantity : (item.initial_quantity || item.quantity),
               unit: needsPresentationCalibration ? inferred.unit : item.unit,
               unit_price: needsPresentationCalibration ? inferred.unit_price : item.unit_price,
               total_price: totPrice > 0 ? totPrice : inferred.total_price,
               shelf_life_days: webShelfLife,
-              calories_per_unit: needsPresentationCalibration ? inferred.calories_per_unit : (item.calories_per_unit || inferred.calories_per_unit),
-              total_calories: needsPresentationCalibration ? inferred.total_calories : (item.total_calories || inferred.total_calories),
-              protein_g: needsPresentationCalibration ? inferred.protein_g : (item.protein_g || inferred.protein_g),
-              carbs_g: needsPresentationCalibration ? inferred.carbs_g : (item.carbs_g || inferred.carbs_g),
-              fat_g: needsPresentationCalibration ? inferred.fat_g : (item.fat_g || inferred.fat_g),
+              calories_per_unit: isNonFood ? 0 : (needsPresentationCalibration ? inferred.calories_per_unit : (item.calories_per_unit || inferred.calories_per_unit)),
+              total_calories: isNonFood ? 0 : (needsPresentationCalibration ? inferred.total_calories : (item.total_calories || inferred.total_calories)),
+              protein_g: isNonFood ? 0 : (needsPresentationCalibration ? inferred.protein_g : (item.protein_g || inferred.protein_g)),
+              carbs_g: isNonFood ? 0 : (needsPresentationCalibration ? inferred.carbs_g : (item.carbs_g || inferred.carbs_g)),
+              fat_g: isNonFood ? 0 : (needsPresentationCalibration ? inferred.fat_g : (item.fat_g || inferred.fat_g)),
               updated_at: new Date().toISOString(),
             };
             itemsToUpdateInDb.push(updated);
@@ -248,25 +258,28 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
               const hasAbnormalCalories = Number(item.total_calories) > 3000 && !item.name.toLowerCase().includes('aceite');
               const hasAbnormalPrice = Number(item.unit_price) >= 500000;
               const hasNonStandardUnit = u === 'gran' || u === 'unid';
+              const isNonFood = isNonFoodItem(item);
+              const hasAbnormalNonFoodCals = isNonFood && (Number(item.total_calories || 0) > 0 || Number(item.calories_per_unit || 0) > 0 || Number(item.protein_g || 0) > 0 || Number(item.carbs_g || 0) > 0);
               const webShelfLife = getWebEstimatedShelfLifeDays(item.name, item.category);
               const hasOutdatedShelfLife = !item.shelf_life_days || item.shelf_life_days !== webShelfLife;
-              const needsPresentationCalibration = (isGenericUnit && totPrice >= 5000) || hasAbnormalCalories || hasAbnormalPrice || hasNonStandardUnit;
+              const needsPresentationCalibration = (isGenericUnit && totPrice >= 5000) || hasAbnormalCalories || hasAbnormalPrice || hasNonStandardUnit || hasAbnormalNonFoodCals;
 
               if (needsPresentationCalibration || hasOutdatedShelfLife) {
                 const inferred = inferProductPhysicalPresentation(item.name, totPrice, undefined, item.unit, item.quantity);
+                const targetCategory = isNonFood ? (item.category === 'Mascotas' || inferred.category === 'Mascotas' ? 'Mascotas' : 'Aseo & Limpieza') : (item.category || inferred.category);
                 return {
                   ...item,
-                  category: item.category || inferred.category,
+                  category: targetCategory,
                   quantity: needsPresentationCalibration ? inferred.quantity : item.quantity,
                   unit: needsPresentationCalibration ? inferred.unit : item.unit,
                   unit_price: needsPresentationCalibration ? inferred.unit_price : item.unit_price,
                   total_price: totPrice > 0 ? totPrice : inferred.total_price,
                   shelf_life_days: webShelfLife,
-                  calories_per_unit: needsPresentationCalibration ? inferred.calories_per_unit : (item.calories_per_unit || inferred.calories_per_unit),
-                  total_calories: needsPresentationCalibration ? inferred.total_calories : (item.total_calories || inferred.total_calories),
-                  protein_g: needsPresentationCalibration ? inferred.protein_g : (item.protein_g || inferred.protein_g),
-                  carbs_g: needsPresentationCalibration ? inferred.carbs_g : (item.carbs_g || inferred.carbs_g),
-                  fat_g: needsPresentationCalibration ? inferred.fat_g : (item.fat_g || inferred.fat_g),
+                  calories_per_unit: isNonFood ? 0 : (needsPresentationCalibration ? inferred.calories_per_unit : (item.calories_per_unit || inferred.calories_per_unit)),
+                  total_calories: isNonFood ? 0 : (needsPresentationCalibration ? inferred.total_calories : (item.total_calories || inferred.total_calories)),
+                  protein_g: isNonFood ? 0 : (needsPresentationCalibration ? inferred.protein_g : (item.protein_g || inferred.protein_g)),
+                  carbs_g: isNonFood ? 0 : (needsPresentationCalibration ? inferred.carbs_g : (item.carbs_g || inferred.carbs_g)),
+                  fat_g: isNonFood ? 0 : (needsPresentationCalibration ? inferred.fat_g : (item.fat_g || inferred.fat_g)),
                 };
               }
               return item;
@@ -356,21 +369,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
     let totalCarbon = 0;
 
     for (const item of active) {
-      const cat = (item.category || '').toLowerCase();
-      const name = (item.name || '').toLowerCase();
-      const isNonFood =
-        cat.includes('aseo') ||
-        cat.includes('limpieza') ||
-        cat.includes('higiene') ||
-        cat.includes('mascota') ||
-        cat.includes('perro') ||
-        cat.includes('gato') ||
-        [
-          'jabon', 'detergente', 'limpido', 'cloro', 'papel higienico', 'shampoo',
-          'crema dental', 'varsol', 'suavizante', 'chunky', 'ringo', 'arena gato'
-        ].some((kw) => name.includes(kw));
-
-      if (isNonFood) continue;
+      if (isNonFoodItem(item)) continue;
 
       const intel = getFoodIntelligence(item);
       sumIsa += intel.isaScore;
@@ -804,6 +803,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
         const storeName = receipts.find((r) => r.id === item.receipt_id)?.store_name;
         const currentTotal = Number(item.total_price) || (Number(item.unit_price) * Number(item.quantity)) || 0;
 
+        const isNonFood = isNonFoodItem(item);
         const inferred = inferProductPhysicalPresentation(
           item.name,
           currentTotal,
@@ -812,29 +812,35 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
           item.quantity
         );
 
-        const webDays = getWebEstimatedShelfLifeDays(item.name, item.category);
+        const targetCategory = isNonFood
+          ? item.category === 'Mascotas' || inferred.category === 'Mascotas'
+            ? 'Mascotas'
+            : 'Aseo & Limpieza'
+          : item.category || inferred.category;
+        const webDays = getWebEstimatedShelfLifeDays(item.name, targetCategory);
         const hasChanged =
           item.unit !== inferred.unit ||
           Math.abs(Number(item.quantity) - inferred.quantity) > 0.01 ||
-          Math.abs(Number(item.calories_per_unit || 0) - inferred.calories_per_unit) > 1 ||
-          item.shelf_life_days !== webDays;
+          Math.abs(Number(item.calories_per_unit || 0) - (isNonFood ? 0 : inferred.calories_per_unit)) > 1 ||
+          item.shelf_life_days !== webDays ||
+          (isNonFood && (Number(item.total_calories || 0) > 0 || Number(item.protein_g || 0) > 0));
 
         if (hasChanged) updatedCount++;
 
         return {
           ...item,
-          category: item.category || inferred.category,
+          category: targetCategory,
           quantity: inferred.quantity,
           initial_quantity: inferred.quantity,
           unit: inferred.unit,
           unit_price: inferred.unit_price,
           total_price: currentTotal > 0 ? currentTotal : inferred.total_price,
           shelf_life_days: webDays,
-          calories_per_unit: inferred.calories_per_unit,
-          total_calories: inferred.total_calories,
-          protein_g: inferred.protein_g,
-          carbs_g: inferred.carbs_g,
-          fat_g: inferred.fat_g,
+          calories_per_unit: isNonFood ? 0 : inferred.calories_per_unit,
+          total_calories: isNonFood ? 0 : inferred.total_calories,
+          protein_g: isNonFood ? 0 : inferred.protein_g,
+          carbs_g: isNonFood ? 0 : inferred.carbs_g,
+          fat_g: isNonFood ? 0 : inferred.fat_g,
           updated_at: new Date().toISOString(),
         };
       });
@@ -1190,6 +1196,20 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
   // Filtrado de productos en despensa
   const filteredItems = useMemo(() => {
     return pantryItems.filter((item) => {
+      const nonFood = isNonFoodItem(item);
+      const isEdible = !nonFood;
+
+      // Filtro de comestibles:
+      // Si foodFilter es 'edible', solo mostrar alimentos (a menos que el usuario haya seleccionado explícitamente la categoría de Aseo o Mascotas)
+      if (foodFilter === 'edible' && !isEdible) {
+        if (selectedCategory !== 'Aseo & Limpieza' && selectedCategory !== 'Mascotas') {
+          return false;
+        }
+      }
+      if (foodFilter === 'non_food' && !nonFood) {
+        return false;
+      }
+
       const matchSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
       const matchCat = selectedCategory === 'Todas' || item.category === selectedCategory;
       const matchStatus =
@@ -1200,7 +1220,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
           : item.status === 'agotado';
       return matchSearch && matchCat && matchStatus;
     });
-  }, [pantryItems, searchTerm, selectedCategory, statusFilter]);
+  }, [pantryItems, searchTerm, selectedCategory, statusFilter, foodFilter]);
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors duration-200">
@@ -1447,12 +1467,106 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
               </div>
             )}
 
+            {/* Filtro principal de tipo: Solo Comestibles / Todo el Hogar / No Comestibles */}
+            <div className="flex flex-wrap items-center justify-between gap-3 p-2 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500 mr-1 hidden sm:inline">
+                  Filtro:
+                </span>
+                <button
+                  onClick={() => {
+                    setFoodFilter('edible');
+                    if (selectedCategory === 'Aseo & Limpieza' || selectedCategory === 'Mascotas') {
+                      setSelectedCategory('Todas');
+                    }
+                  }}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-xs ${
+                    foodFilter === 'edible'
+                      ? 'bg-emerald-600 text-white shadow-emerald-600/20'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                  title="Mostrar exclusivamente alimentos comestibles para humanos"
+                >
+                  <span>🥗 Solo Comestibles</span>
+                  <span
+                    className={`text-[10px] px-1.5 py-0.2 rounded-full font-black ${
+                      foodFilter === 'edible'
+                        ? 'bg-white/20 text-white'
+                        : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                    }`}
+                  >
+                    {pantryItems.filter((i) => !isNonFoodItem(i)).length}
+                  </span>
+                </button>
+
+                <button
+                  onClick={() => setFoodFilter('all')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-xs ${
+                    foodFilter === 'all'
+                      ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                  title="Mostrar todo el inventario registrado"
+                >
+                  <span>📦 Todo el Hogar</span>
+                  <span
+                    className={`text-[10px] px-1.5 py-0.2 rounded-full font-black ${
+                      foodFilter === 'all'
+                        ? 'bg-white/20 dark:bg-slate-200 text-white dark:text-slate-900'
+                        : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                    }`}
+                  >
+                    {pantryItems.length}
+                  </span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setFoodFilter('non_food');
+                    if (selectedCategory !== 'Todas' && selectedCategory !== 'Aseo & Limpieza' && selectedCategory !== 'Mascotas') {
+                      setSelectedCategory('Todas');
+                    }
+                  }}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-xs ${
+                    foodFilter === 'non_food'
+                      ? 'bg-cyan-700 text-white shadow-cyan-700/20'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                  title="Mostrar artículos de aseo, limpieza, cuidado personal y mascotas"
+                >
+                  <span>🧼 No Comestibles (Aseo/Mascotas)</span>
+                  <span
+                    className={`text-[10px] px-1.5 py-0.2 rounded-full font-black ${
+                      foodFilter === 'non_food'
+                        ? 'bg-white/20 text-white'
+                        : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                    }`}
+                  >
+                    {pantryItems.filter((i) => isNonFoodItem(i)).length}
+                  </span>
+                </button>
+              </div>
+
+              {foodFilter === 'edible' && (
+                <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/20">
+                  ✓ Filtrando artículos no comestibles
+                </span>
+              )}
+            </div>
+
             {/* Categorías Pills */}
             <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
               {CATEGORIES.map((cat) => (
                 <button
                   key={cat}
-                  onClick={() => setSelectedCategory(cat)}
+                  onClick={() => {
+                    setSelectedCategory(cat);
+                    if (cat === 'Aseo & Limpieza' || cat === 'Mascotas') {
+                      setFoodFilter('non_food');
+                    } else if (cat !== 'Todas' && foodFilter === 'non_food') {
+                      setFoodFilter('edible');
+                    }
+                  }}
                   className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${
                     selectedCategory === cat
                       ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold'
@@ -1582,29 +1696,45 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
                           </div>
                         )}
 
-                        {/* Métricas Nutricionales */}
-                        <div className="flex items-center gap-2 text-[11px] text-slate-600 dark:text-slate-300 mb-4">
-                          <span className="flex items-center gap-1 font-bold text-amber-600 dark:text-amber-400">
-                            <Flame className="w-3 h-3" />
-                            {Math.round(
-                              calculateFoodMacroTotals(item).totalCalories ||
-                              Number(item.total_calories) ||
-                              getFoodIntelligence(item).nutrition.totalPackageCalories ||
-                              (item.calories_per_unit * item.quantity)
-                            ).toLocaleString()} kcal
-                          </span>
-                          {item.protein_g > 0 && <span>• {item.protein_g}g Prot</span>}
-                          {item.carbs_g > 0 && <span>• {item.carbs_g}g Carb</span>}
-                        </div>
+                        {/* Métricas Nutricionales o Etiqueta de Uso */}
+                        {isNonFoodItem(item) ? (
+                          <div className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400 mb-4">
+                            <span className="px-2 py-0.5 rounded-lg font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                              {item.category === 'Mascotas' ? '🐾 Uso para mascotas' : '🧼 Hogar / No comestible'}
+                            </span>
+                            <span className="text-[10px] text-slate-400">Sin calorías humanas</span>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2 text-[11px] text-slate-600 dark:text-slate-300 mb-4">
+                            <span className="flex items-center gap-1 font-bold text-amber-600 dark:text-amber-400">
+                              <Flame className="w-3 h-3" />
+                              {Math.round(
+                                calculateFoodMacroTotals(item).totalCalories ||
+                                (Number(item.calories_per_unit || 0) * Number(item.quantity || 1)) ||
+                                0
+                              ).toLocaleString()} kcal
+                            </span>
+                            {Number(item.protein_g || 0) > 0 && <span>• {item.protein_g}g Prot</span>}
+                            {Number(item.carbs_g || 0) > 0 && <span>• {item.carbs_g}g Carb</span>}
+                          </div>
+                        )}
                       </div>
 
                       {/* Pie de la tarjeta interactivo: Abre ventana flotante al hacer clic */}
                       <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-1 text-xs font-bold text-emerald-600 dark:text-emerald-400 group-hover:underline">
-                          <Sparkles className="w-3.5 h-3.5" />
-                          <span>Nutrición & ISA</span>
-                          <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition" />
-                        </div>
+                        {isNonFoodItem(item) ? (
+                          <div className="flex items-center gap-1 text-xs font-bold text-slate-500 dark:text-slate-400 group-hover:underline">
+                            <Info className="w-3.5 h-3.5" />
+                            <span>Detalles del producto</span>
+                            <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition" />
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-1 text-xs font-bold text-emerald-600 dark:text-emerald-400 group-hover:underline">
+                            <Sparkles className="w-3.5 h-3.5" />
+                            <span>Nutrición & ISA</span>
+                            <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition" />
+                          </div>
+                        )}
 
                         {!isConsumed ? (
                           <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>

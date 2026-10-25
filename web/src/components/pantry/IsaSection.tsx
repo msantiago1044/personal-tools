@@ -20,7 +20,7 @@ import {
   Scale,
 } from 'lucide-react';
 import { PantryItem } from '../../../../packages/shared/src/types';
-import { getFoodIntelligence, FoodIntelligenceData } from '../../lib/pantryFoodIntelligence';
+import { getFoodIntelligence, FoodIntelligenceData, isNonFoodItem } from '../../lib/pantryFoodIntelligence';
 
 interface IsaSectionProps {
   pantryItems: PantryItem[];
@@ -88,19 +88,7 @@ export const IsaSection: React.FC<IsaSectionProps> = ({
       const name = (item.name || '').toLowerCase();
 
       // Excluir aseo, limpieza y mascotas
-      const isNonFood =
-        cat.includes('aseo') ||
-        cat.includes('limpieza') ||
-        cat.includes('higiene') ||
-        cat.includes('mascota') ||
-        cat.includes('perro') ||
-        cat.includes('gato') ||
-        [
-          'jabon', 'detergente', 'limpido', 'cloro', 'papel higienico', 'shampoo',
-          'crema dental', 'varsol', 'suavizante', 'chunky', 'ringo', 'arena gato'
-        ].some((kw) => name.includes(kw));
-
-      if (isNonFood) continue;
+      if (isNonFoodItem(item)) continue;
 
       const intel = getFoodIntelligence(item);
       results.push({

@@ -1635,11 +1635,136 @@ export function getWebEstimatedShelfLifeDays(productName: string, category?: str
   return 14;
 }
 
+/**
+ * Determina de forma estricta si un producto pertenece a categorías o usos no comestibles
+ * para humanos (Aseo, Limpieza, Cuidado personal, Higiene, Mascotas, etc.)
+ */
+export function isNonFoodItem(item: { name?: string; category?: string }): boolean {
+  const cat = (item.category || '').toLowerCase().trim();
+  const name = (item.name || '').toLowerCase().trim();
+
+  // 1. Categorías no comestibles para humanos
+  if (
+    cat.includes('aseo') ||
+    cat.includes('limpieza') ||
+    cat.includes('higiene') ||
+    cat.includes('cuidado personal') ||
+    cat.includes('mascota') ||
+    cat.includes('animal') ||
+    cat.includes('veterinaria') ||
+    cat.includes('perro') ||
+    cat.includes('gato') ||
+    cat.includes('hogar')
+  ) {
+    return true;
+  }
+
+  // 2. Palabras clave de Aseo, Limpieza, Cuidado Personal y Hogar
+  const cleaningKeywords = [
+    'lavalozas', 'lavaloza', 'lavaplatos', 'jabon', 'jabón', 'detergente', 'limpido', 'límpido',
+    'clorox', 'cloro', 'desinfectante', 'blanqueador', 'esponja', 'fibra abrasiva',
+    'papel higienico', 'papel higiénico', 'toallas cocina', 'servilleta', 'servilletas',
+    'crema dental', 'pasta dental', 'cepillo dental', 'cepillo de dientes', 'enjuague bucal',
+    'listerine', 'colgate', 'protex', 'palmolive', 'shampoo', 'champu', 'champú', 'acondicionador',
+    'desodorante', 'ambientador', 'bolsas basura', 'bolsa de basura', 'varsol', 'suavizante',
+    'suavitel', 'downy', 'toalla higienica', 'toallas higienicas', 'toallitas', 'panitos humedos',
+    'pañitos humedos', 'pañitos', 'panitos', 'desengrasante', 'insecticida', 'insecticidas',
+    'fabuloso', 'axion', 'vanish', 'ariel', 'ace', 'vel rosita', 'cuchilla de afeitar', 'prestobarba',
+    'afeitadora', 'crema de afeitar', 'crema corporal', 'bloqueador solar', 'bloqueador',
+    'panales', 'pañales', 'algodon', 'algodón', 'seda dental', 'copitos', 'repelente',
+    'brillametal', 'cera piso', 'trapero', 'trapeador', 'escoba', 'recogedor', 'guantes'
+  ];
+
+  if (cleaningKeywords.some((kw) => name.includes(kw))) {
+    return true;
+  }
+
+  // 3. Palabras clave de Mascotas (no comestible para humanos)
+  const petKeywords = [
+    'perro', 'perros', 'perrito', 'canino', 'canina', 'cachorro', 'cachorros',
+    'gato', 'gatos', 'gatito', 'gatitos', 'felino', 'felina', 'mascota', 'mascotas',
+    'concentrado', 'croquetas', 'cuido', 'carnaza', 'hueso perro', 'pedigree',
+    'dog chow', 'dogchow', 'cat chow', 'catchow', 'whiskas', 'purina', 'ringo',
+    'filpo', 'mirringo', 'chunky', 'monello', 'hills', 'royal canin', 'pro plan',
+    'arena para gato', 'arena gato', 'snack perro', 'snack gato', 'comida para perro',
+    'alimento para perro', 'comida para gato', 'alimento para gato', 'canamor'
+  ];
+
+  if (petKeywords.some((kw) => name.includes(kw))) {
+    return true;
+  }
+
+  return false;
+}
+
+export function isEdibleItem(item: { name?: string; category?: string }): boolean {
+  return !isNonFoodItem(item);
+}
+
 // ============================================================================
 // MOTOR DE CÁLCULO E INFERENCIA NUTRI-ECO E ISA
 // ============================================================================
 export function getFoodIntelligence(item: PantryItem): FoodIntelligenceData {
   const cleanName = item.name.toLowerCase().trim();
+
+  // Si es producto no comestible (Aseo, Mascotas), devolver perfil sin calorías ni macros
+  if (isNonFoodItem(item)) {
+    const isPet = (item.category || '').toLowerCase().includes('mascota') || cleanName.includes('perro') || cleanName.includes('gato');
+    const label = isPet ? 'Uso para mascotas' : 'Uso doméstico / Aseo';
+    return {
+      productName: item.name,
+      category: isPet ? 'Mascotas' : 'Aseo & Limpieza',
+      nutrition: {
+        servingSize: label,
+        calories: 0,
+        totalPackageCalories: 0,
+        protein_g: 0,
+        carbs_g: 0,
+        sugar_g: 0,
+        fiber_g: 0,
+        fat_g: 0,
+        saturated_fat_g: 0,
+        sodium_mg: 0,
+        colombianWarningLabels: [],
+        micronutrients: [],
+        isNaturalFood: false,
+        storageAdvice: 'Almacenar en lugar seco y seguro',
+      },
+      isa: {
+        waterLitersPerKg: 100,
+        waterCategory: 'Baja',
+        waterEquivalence: 'Huella hídrica de manufactura no comestible',
+        landUseM2PerKg: 0.1,
+        soilDegradationRisk: 'Bajo',
+        soilImpactDetail: 'Producto de aseo o mascotas',
+        carbonKgCO2ePerKg: 1.0,
+        carbonLevel: 'Bajo',
+        carbonEquivalenceKmCar: 5,
+        entropyScore: 10,
+        entropyLevel: 'Baja',
+        perishabilityRisk: 'No perecedero a corto plazo',
+        packagingImpact: 'Envase reciclable',
+        entropyExplanation: 'Artículo de uso doméstico sin degradación biológica rápida',
+      },
+      economics: {
+        pricePerUnitCOP: Number(item.unit_price) || 0,
+        totalPriceCOP: Number(item.total_price) || (Number(item.unit_price) * Number(item.quantity)) || 0,
+        totalItemGrams: 0,
+        totalItemMl: 0,
+        estimatedWeightGrams: 0,
+        pricePerGramCOP: 0,
+        pricePerProteinGramCOP: 0,
+        pricePerNutrientGramCOP: 0,
+        economicNutritionalEfficiency: 'Baja',
+        economicScore: 50,
+        economicExplanation: 'Artículo no comestible (sin aporte nutricional humano)',
+      },
+      isaScore: 50,
+      isaGrade: 'C',
+      nutriEcoBalance: 'Equilibrado',
+      balanceExplanation: 'Artículo de aseo o uso doméstico sin valor nutricional',
+    };
+  }
 
   // 1. Buscar coincidencia en la base de datos de alimentos
   let matched = KNOWN_FOODS.find((kf) =>
@@ -2145,25 +2270,7 @@ export function calculateFoodMacroTotals(item: PantryItem): CalculatedFoodMacros
   const name = (item.name || '').toLowerCase();
 
   // 1. Filtrar artículos no comestibles para humanos (Aseo, Mascotas)
-  const isNonFood =
-    cat.includes('aseo') ||
-    cat.includes('limpieza') ||
-    cat.includes('higiene') ||
-    cat.includes('cuidado personal') ||
-    cat.includes('mascota') ||
-    cat.includes('perro') ||
-    cat.includes('gato') ||
-    cat.includes('animal') ||
-    [
-      'jabon', 'jabón', 'detergente', 'limpido', 'límpido', 'cloro', 'desinfectante',
-      'lavaplatos', 'blanqueador', 'papel higienico', 'papel higiénico', 'servilletas',
-      'shampoo', 'champu', 'champú', 'crema dental', 'desodorante', 'ambientador',
-      'varsol', 'suavizante', 'toallas cocina', 'insecticida', 'perro', 'perros',
-      'gato', 'gatos', 'chunky', 'ringo', 'cat chow', 'dog chow', 'pedigree', 'purina',
-      'whiskas', 'mirringo', 'filpo', 'arena gato', 'arena para gato'
-    ].some((kw) => name.includes(kw));
-
-  if (isNonFood) {
+  if (isNonFoodItem(item)) {
     return {
       totalGrams: 0,
       totalMl: 0,

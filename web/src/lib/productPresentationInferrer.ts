@@ -7,7 +7,7 @@
  * el precio total pagado en caja ($ COP) y la tienda.
  */
 
-import { KNOWN_FOODS, getWebEstimatedShelfLifeDays } from './pantryFoodIntelligence';
+import { KNOWN_FOODS, getWebEstimatedShelfLifeDays, isNonFoodItem } from './pantryFoodIntelligence';
 
 export interface InferredProductPresentation {
   name: string;
@@ -744,23 +744,26 @@ export function inferProductPhysicalPresentation(
     totalCals = Math.round(finalQty * 80);
   }
 
+  const fallbackIsNonFood = isNonFoodItem({ name: rawName });
+  const fallbackIsPet = fallbackIsNonFood && (cleanName.includes('perro') || cleanName.includes('gato') || cleanName.includes('mascota'));
+
   return {
     name: rawName,
-    category: 'Despensa',
+    category: fallbackIsNonFood ? (fallbackIsPet ? 'Mascotas' : 'Aseo & Limpieza') : 'Despensa',
     quantity: finalQty,
     unit: finalUnit,
     unit_price: unitPrice,
     total_price: price,
-    shelf_life_days: getWebEstimatedShelfLifeDays(rawName, 'Despensa'),
-    serving_size: finalUnit === 'gramos' ? '100g' : '1 porción estándar',
-    calories_per_unit: calsPerPortion,
-    total_calories: totalCals,
-    protein_g: 2,
-    carbs_g: 15,
-    fat_g: 1.5,
-    is_human_food: true,
+    shelf_life_days: fallbackIsNonFood ? (fallbackIsPet ? 180 : 730) : getWebEstimatedShelfLifeDays(rawName, 'Despensa'),
+    serving_size: fallbackIsNonFood ? 'Uso doméstico' : (finalUnit === 'gramos' ? '100g' : '1 porción estándar'),
+    calories_per_unit: fallbackIsNonFood ? 0 : calsPerPortion,
+    total_calories: fallbackIsNonFood ? 0 : totalCals,
+    protein_g: fallbackIsNonFood ? 0 : 2,
+    carbs_g: fallbackIsNonFood ? 0 : 15,
+    fat_g: fallbackIsNonFood ? 0 : 1.5,
+    is_human_food: !fallbackIsNonFood,
     confidence: 'heuristic_default',
-    explanation: 'Presentación estándar estimada por categoría base.',
+    explanation: fallbackIsNonFood ? 'Artículo de aseo/hogar sin calorías.' : 'Presentación estándar estimada por categoría base.',
   };
 }
 
@@ -780,16 +783,20 @@ function buildPresentation(args: {
   const isMilk = cleanName.includes('leche');
   const isMeat = cleanName.includes('pollo') || cleanName.includes('carne') || cleanName.includes('res') || cleanName.includes('pechuga');
   const isPasta = cleanName.includes('pasta') || cleanName.includes('doria');
+  const isNonFood = isNonFoodItem({ name, category: undefined });
+  const isPet = isNonFood && (cleanName.includes('perro') || cleanName.includes('gato') || cleanName.includes('mascota'));
 
-  let category = 'Despensa';
-  let serving_size = '1 porción';
-  let calsPerServing = 100;
-  let protein_g = 2;
-  let carbs_g = 15;
-  let fat_g = 2;
-  let shelfLife = getWebEstimatedShelfLifeDays(name, category);
+  let category = isNonFood ? (isPet ? 'Mascotas' : 'Aseo & Limpieza') : 'Despensa';
+  let serving_size = isNonFood ? (isPet ? 'Porción mascota' : 'Uso de limpieza') : '1 porción';
+  let calsPerServing = isNonFood ? 0 : 100;
+  let protein_g = isNonFood ? 0 : 2;
+  let carbs_g = isNonFood ? 0 : 15;
+  let fat_g = isNonFood ? 0 : 2;
+  let shelfLife = isNonFood ? (isPet ? 180 : 730) : getWebEstimatedShelfLifeDays(name, category);
 
-  if (isCookingOil) {
+  if (isNonFood) {
+    // Ya configurado como no comestible
+  } else if (isCookingOil) {
     category = 'Condimentos & Aceites';
     serving_size = '1 cucharada (14g / 15ml)';
     calsPerServing = 125;
@@ -849,12 +856,12 @@ function buildPresentation(args: {
     shelf_life_days: shelfLife,
     serving_size,
     calories_per_unit: calsPerServing,
-    total_calories: approxServings * calsPerServing,
+    total_calories: isNonFood ? 0 : approxServings * calsPerServing,
     protein_g,
     carbs_g,
     fat_g,
-    is_human_food: true,
+    is_human_food: !isNonFood,
     confidence,
-    explanation,
+    explanation: isNonFood ? 'Artículo de aseo/mascotas sin aporte calórico humano.' : explanation,
   };
 }

@@ -9,7 +9,7 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { PantryItem } from '../../../../packages/shared/src/types';
-import { getFoodIntelligence, calculateFoodMacroTotals } from '../../lib/pantryFoodIntelligence';
+import { getFoodIntelligence, calculateFoodMacroTotals, isNonFoodItem } from '../../lib/pantryFoodIntelligence';
 
 export type NutritionMode = 'calories' | 'protein' | 'carbs' | 'fat';
 
@@ -22,108 +22,7 @@ interface NutritionAnalyticsProps {
   onSelectProduct: (item: PantryItem) => void;
 }
 
-// Filtro estricto para excluir productos de aseo, limpieza, mascotas y no comestibles para humanos
-const isCleaningOrNonFood = (item: PantryItem): boolean => {
-  const cat = (item.category || '').toLowerCase();
-  const name = (item.name || '').toLowerCase();
-
-  // 1. Categorías no comestibles para humanos (Aseo, Mascotas, etc.)
-  if (
-    cat.includes('aseo') ||
-    cat.includes('limpieza') ||
-    cat.includes('higiene') ||
-    cat.includes('cuidado personal') ||
-    cat.includes('mascota') ||
-    cat.includes('mascotas') ||
-    cat.includes('animal') ||
-    cat.includes('veterinaria') ||
-    cat.includes('perro') ||
-    cat.includes('gato')
-  ) {
-    return true;
-  }
-
-  // 2. Palabras clave en el nombre del producto
-  const nonFoodKeywords = [
-    // Aseo y limpieza
-    'suavizante',
-    'jabon',
-    'jabón',
-    'detergente',
-    'limpido',
-    'límpido',
-    'cloro',
-    'desinfectante',
-    'lavaplatos',
-    'blanqueador',
-    'esponja',
-    'papel higienico',
-    'papel higiénico',
-    'toallas cocina',
-    'servilletas',
-    'crema dental',
-    'shampoo',
-    'champu',
-    'champú',
-    'acondicionador',
-    'cepillo',
-    'desodorante',
-    'ambientador',
-    'bolsas basura',
-    'varsol',
-    'toalla higienica',
-    'toallitas',
-    'desengrasante',
-    'insecticida',
-
-    // Alimentos y artículos de mascotas (no comestibles para humanos)
-    'perro',
-    'perros',
-    'perrito',
-    'canino',
-    'canina',
-    'cachorro',
-    'cachorros',
-    'gato',
-    'gatos',
-    'gatito',
-    'gatitos',
-    'felino',
-    'felina',
-    'mascota',
-    'mascotas',
-    'concentrado',
-    'croquetas',
-    'cuido',
-    'carnaza',
-    'hueso perro',
-    'pedigree',
-    'dog chow',
-    'dogchow',
-    'cat chow',
-    'catchow',
-    'whiskas',
-    'purina',
-    'ringo',
-    'filpo',
-    'mirringo',
-    'chunky',
-    'monello',
-    'hills',
-    'royal canin',
-    'pro plan',
-    'arena para gato',
-    'arena gato',
-    'snack perro',
-    'snack gato',
-    'comida para perro',
-    'alimento para perro',
-    'comida para gato',
-    'alimento para gato',
-  ];
-
-  return nonFoodKeywords.some((kw) => name.includes(kw));
-};
+const isCleaningOrNonFood = isNonFoodItem;
 
 interface ProcessedFoodPoint {
   item: PantryItem;

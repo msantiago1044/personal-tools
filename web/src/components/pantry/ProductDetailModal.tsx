@@ -25,7 +25,12 @@ import {
   Check,
 } from 'lucide-react';
 import { PantryItem } from '../../../../packages/shared/src/types';
-import { getFoodIntelligence, FoodIntelligenceData, getWebEstimatedShelfLifeDays } from '../../lib/pantryFoodIntelligence';
+import {
+  getFoodIntelligence,
+  FoodIntelligenceData,
+  getWebEstimatedShelfLifeDays,
+  isNonFoodItem,
+} from '../../lib/pantryFoodIntelligence';
 
 const PANTRY_CATEGORIES = [
   'Proteínas',
@@ -403,17 +408,22 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
       const satFat = parseDecimal(editSatFat);
       const sod = parseDecimal(editSodium);
 
+      const finalName = editName.trim() || currentItem.name;
+      const finalCat = editCategory || currentItem.category;
+      const isNonFood = isNonFoodItem({ name: finalName, category: finalCat });
+
       // Si el usuario ingresó por error las calorías totales de todo el envase (>800), se normaliza a la porción
-      const savedServingCals =
-        rawCals > 800 && approxServings > 1
-          ? Math.round((rawCals / approxServings) * 10) / 10
-          : rawCals;
-      const savedTotalCals = Math.round(savedServingCals * approxServings);
+      const savedServingCals = isNonFood
+        ? 0
+        : rawCals > 800 && approxServings > 1
+        ? Math.round((rawCals / approxServings) * 10) / 10
+        : rawCals;
+      const savedTotalCals = isNonFood ? 0 : Math.round(savedServingCals * approxServings);
 
       const updatedItem: PantryItem = {
         ...currentItem,
-        name: editName.trim() || currentItem.name,
-        category: editCategory || currentItem.category,
+        name: finalName,
+        category: finalCat,
         quantity: q,
         unit: editUnit.trim() || currentItem.unit || 'un',
         unit_price: p,
@@ -421,14 +431,14 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
         shelf_life_days: sl,
         calories_per_unit: savedServingCals,
         total_calories: savedTotalCals,
-        protein_g: prot,
-        carbs_g: carbs,
-        fat_g: fat,
-        sugar_g: sugar,
-        fiber_g: fiber,
-        saturated_fat_g: satFat,
-        sodium_mg: sod,
-        serving_size: editServingSize.trim() || undefined,
+        protein_g: isNonFood ? 0 : prot,
+        carbs_g: isNonFood ? 0 : carbs,
+        fat_g: isNonFood ? 0 : fat,
+        sugar_g: isNonFood ? 0 : sugar,
+        fiber_g: isNonFood ? 0 : fiber,
+        saturated_fat_g: isNonFood ? 0 : satFat,
+        sodium_mg: isNonFood ? 0 : sod,
+        serving_size: isNonFood ? 'Uso doméstico / no comestible' : (editServingSize.trim() || undefined),
         status: q <= 0 ? 'agotado' : currentItem.status === 'agotado' ? 'disponible' : currentItem.status,
         updated_at: new Date().toISOString(),
       };
