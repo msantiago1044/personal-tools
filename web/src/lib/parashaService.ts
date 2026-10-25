@@ -26,7 +26,7 @@ export { getWeekdayReadingForParasha, transliterateHebrewToSpanish, stripCantill
 export type { WeekdayReading, WeekdayAliyahType, SacredNameOption };
 
 // Claves de almacenamiento local
-const PARASHA_CACHE_PREFIX = 'parasha_data_cache_v3_';
+const PARASHA_CACHE_PREFIX = 'parasha_data_cache_v6_';
 const PARASHA_PROGRESS_PREFIX = 'parasha_progress_';
 const DAILY_READ_KEY = 'parasha_daily_read_record';
 
@@ -413,19 +413,33 @@ export async function getWeeklyParasha(targetDate?: Date): Promise<WeeklyParasha
 
   // 1. Revisar caché local en localStorage
   if (typeof window !== 'undefined') {
+    // Purgar proactivamente cualquier clave de caché de versiones anteriores
+    try {
+      const staleKeys: string[] = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && k.startsWith('parasha_data_cache_') && !k.startsWith(PARASHA_CACHE_PREFIX)) {
+          staleKeys.push(k);
+        }
+      }
+      staleKeys.forEach((k) => localStorage.removeItem(k));
+    } catch (e) {}
+
     const cached = localStorage.getItem(cacheKey);
     if (cached) {
       try {
         const parsed = JSON.parse(cached);
         const firstVerseSpanish = parsed.aliyot?.[0]?.verses?.[0]?.spanish || '';
-        // Si el caché tiene texto en inglés, está incompleto o tiene marcas HTML sucias, invalidar de inmediato
+        // Si el caché tiene texto en inglés, está incompleto, tiene marcas HTML sucias, o no coincide con la parashá activa
         if (
           isEnglishText(firstVerseSpanish) ||
           !parsed.aliyot ||
           parsed.aliyot.length < 7 ||
           cached.includes('mam-spi') ||
           cached.includes('&thinsp;') ||
-          cached.includes('mam-kq')
+          cached.includes('mam-kq') ||
+          (parsed.id && schedule.parashaId && parsed.id !== schedule.parashaId) ||
+          (parsed.nameSpanish && schedule.parashaName && parsed.nameSpanish !== schedule.parashaName)
         ) {
           localStorage.removeItem(cacheKey);
         } else if (parsed._cachedAt && Date.now() - parsed._cachedAt < 2 * 24 * 3600 * 1000) {

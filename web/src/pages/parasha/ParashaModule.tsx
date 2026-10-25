@@ -118,6 +118,7 @@ export const ParashaModule: React.FC<ParashaModuleProps> = ({
       .then((data) => {
         if (isMounted) {
           setParasha(data);
+          setSchedule(getDiasporaDailySchedule());
           setProgress(getParashaProgress(data.id, user?.id));
           setLoading(false);
         }

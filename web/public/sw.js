@@ -1,4 +1,4 @@
-const CACHE_NAME = 'personal-tools-pwa-v5';
+const CACHE_NAME = 'personal-tools-pwa-v6';
 const PRECACHE_ASSETS = [
   '/',
   '/manifest.webmanifest',
