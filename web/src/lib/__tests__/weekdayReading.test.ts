@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   getWeekdayReadingForParasha,
   annotateParashaWithWeekdayReading,
@@ -7,10 +7,44 @@ import {
 import { PARASHAT_NOACH_DATA } from '../../../../packages/shared/src/data/parashatNoachData';
 import { PARASHAT_LECH_LECHA_DATA } from '../../../../packages/shared/src/data/parashatLechLechaData';
 import { PARASHAT_VAYERA_DATA } from '../../../../packages/shared/src/data/parashatVayeraData';
-import { getDiasporaDailySchedule } from '../parashaService';
+import {
+  getDiasporaDailySchedule,
+  getCanonicalParashaId,
+  getParashaProgress,
+  isDailyAliyahReadToday,
+} from '../parashaService';
 import { WeeklyParasha } from '../../../../packages/shared/src/types';
 
 describe('Lectura de Torá para Días de Semana (Cohén, Leví, Israel)', () => {
+  let store: Record<string, string> = {};
+
+  beforeEach(() => {
+    store = {};
+    const localStorageMock = {
+      getItem: (key: string) => store[key] || null,
+      setItem: (key: string, value: string) => {
+        store[key] = value.toString();
+      },
+      removeItem: (key: string) => {
+        delete store[key];
+      },
+      clear: () => {
+        store = {};
+      },
+      get length() {
+        return Object.keys(store).length;
+      },
+      key: (i: number) => Object.keys(store)[i] || null,
+    };
+
+    vi.stubGlobal('localStorage', localStorageMock);
+    vi.stubGlobal('window', {
+      dispatchEvent: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      localStorage: localStorageMock,
+    });
+  });
   it('normaliza nombres de parashá correctamente con acentos y mayúsculas', () => {
     expect(normalizeParashaKey('Noaj')).toBe('noaj');
     expect(normalizeParashaKey('Lej-Lejá')).toBe('lejleja');
@@ -210,6 +244,40 @@ describe('Lectura de Torá para Días de Semana (Cohén, Leví, Israel)', () => 
     const scheduleShabbatAfternoon = getDiasporaDailySchedule(shabbatAfternoon);
     expect(scheduleShabbatAfternoon.parashaId).toBe('vayera');
     expect(scheduleShabbatAfternoon.parashaName).toBe('Vayerá');
+  });
+
+  it('canonicaliza correctamente los nombres de parashot para base de datos y progreso', () => {
+    expect(getCanonicalParashaId('Vayerá')).toBe('vayera');
+    expect(getCanonicalParashaId('Parashat Vayerá')).toBe('vayera');
+    expect(getCanonicalParashaId('vayera')).toBe('vayera');
+    expect(getCanonicalParashaId('Lej-Lejá')).toBe('lechlecha');
+    expect(getCanonicalParashaId('Parashat Lej-Lejá')).toBe('lechlecha');
+    expect(getCanonicalParashaId('lechlecha')).toBe('lechlecha');
+    expect(getCanonicalParashaId('Noaj')).toBe('noach');
+    expect(getCanonicalParashaId('Bereshit')).toBe('bereshit');
+  });
+
+  it('aísla el progreso entre parashot y purga falsos positivos heredados en Vayerá', () => {
+    // Simular que existía un progreso contaminado de Lej-Lejá en localStorage bajo clave de Vayerá
+    const contaminatedData = {
+      parasha_id: 'lechlecha',
+      completed_aliyot: [1, 2, 3, 4, 5, 6, 7],
+      full_parasha_completed: true,
+      completed_count: 10,
+      aliyot_counts: { 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 2 },
+    };
+    localStorage.setItem('parasha_progress_vayera_guest', JSON.stringify(contaminatedData));
+    localStorage.removeItem('parasha_vayera_verified_v1');
+
+    // getParashaProgress debe detectar la contaminación y devolver un progreso limpio de 0 aliyot
+    const cleanProg = getParashaProgress('vayera', 'guest');
+    expect(cleanProg.parasha_id).toBe('vayera');
+    expect(cleanProg.completed_aliyot).toEqual([]);
+    expect(cleanProg.full_parasha_completed).toBe(false);
+    expect(cleanProg.completed_count).toBe(0);
+
+    // isDailyAliyahReadToday no debe dar falso positivo si Vayerá aún no fue leída hoy
+    expect(isDailyAliyahReadToday('guest')).toBe(false);
   });
 });
 
