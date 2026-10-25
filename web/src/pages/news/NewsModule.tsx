@@ -25,6 +25,9 @@ export const NewsModule: React.FC<ModuleProps> = ({ onBackToHub }) => {
     isLiveActive,
     incomingCount,
     handleApplyIncomingUpdates,
+    isRefreshing,
+    refreshNews,
+    lastRefreshedAt,
   } = useNewsData();
 
   const handleThemeChange = (newTheme: ThemeMode) => {
@@ -40,6 +43,9 @@ export const NewsModule: React.FC<ModuleProps> = ({ onBackToHub }) => {
         isLiveActive={isLiveActive}
         incomingCount={incomingCount}
         onApplyIncoming={handleApplyIncomingUpdates}
+        isRefreshing={isRefreshing}
+        onRefresh={refreshNews}
+        lastRefreshedAt={lastRefreshedAt}
         theme={theme}
         onThemeChange={handleThemeChange}
       />
@@ -92,13 +98,13 @@ export const NewsModule: React.FC<ModuleProps> = ({ onBackToHub }) => {
           </section>
         )}
 
-        {/* Sección 2: Papers y Avances */}
+        {/* Sección 2: Noticias Recientes y Papers */}
         {standaloneArticles.length > 0 && (
           <section className="space-y-3 pt-3 border-t border-slate-200/80 dark:border-slate-800/80">
             <div className="flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
               <h2 className="text-sm font-bold text-slate-900 dark:text-white">
-                Papers & Avances
+                Noticias Recientes & Papers Científicos
               </h2>
               <span className="text-[11px] px-1.5 py-0.2 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-semibold">
                 {standaloneArticles.length}

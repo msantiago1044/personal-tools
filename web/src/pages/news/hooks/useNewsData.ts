@@ -16,19 +16,30 @@ export function useNewsData() {
   const [isLiveActive, setIsLiveActive] = useState(true);
   const [incomingCount, setIncomingCount] = useState(0);
   const [lastRefreshedAt, setLastRefreshedAt] = useState<Date>(new Date());
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const pendingArticlesRef = useRef<NewsArticle[]>([]);
 
   // 1. Carga inicial desde Supabase
-  const loadData = useCallback(async () => {
+  const loadData = useCallback(async (isManual = false) => {
+    if (isManual) setIsRefreshing(true);
     try {
       const { clusters: dbClusters, articles: dbArticles } = await fetchNewsDataFromSupabase();
       if (dbClusters && dbClusters.length > 0) setClusters(dbClusters);
       if (dbArticles && dbArticles.length > 0) setStandaloneArticles(dbArticles);
       setLastRefreshedAt(new Date());
+      setIncomingCount(0);
     } catch (e) {
       console.warn('[useNewsData] Usando datos fallback:', e);
+    } finally {
+      setIsLoading(false);
+      setIsRefreshing(false);
     }
   }, []);
+
+  const refreshNews = useCallback(async () => {
+    await loadData(true);
+  }, [loadData]);
 
   useEffect(() => {
     loadData();
@@ -141,5 +152,8 @@ export function useNewsData() {
     incomingCount,
     lastRefreshedAt,
     handleApplyIncomingUpdates,
+    isRefreshing,
+    isLoading,
+    refreshNews,
   };
 }

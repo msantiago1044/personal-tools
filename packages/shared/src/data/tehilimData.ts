@@ -139,55 +139,55 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "מִזְמוֹר לְדָוִד בְּבׇרְחוֹ מִפְּנֵי אַבְשָׁלוֹם בְּנוֹ׃",
         "transliteration": "mizemoor ledavid bevrejoo mipeney aveshaloom benoo",
-        "spanish": "¡OH YHVH, cuánto se han multiplicado mis enemigos! Muchos se levantan contra mí."
+        "spanish": "Salmo de David, cuando huía de delante de su hijo Absalón."
       },
       {
         "verse": 2,
         "hebrew": "יְהֹוָה מָה רַבּוּ צָרָי רַבִּים קָמִים עָלָי׃",
         "transliteration": "Adonai mahrabu tsaray rabim kamim 'alay",
-        "spanish": "Muchos dicen de mi vida: No hay para él salud en Dios. (Sélah)"
+        "spanish": "¡OH YHVH, cuánto se han multiplicado mis enemigos! Muchos se levantan contra mí."
       },
       {
         "verse": 3,
         "hebrew": "רַבִּים אֹמְרִים לְנַפְשִׁי אֵין יְשׁוּעָתָה לּוֹ בֵאלֹהִים סֶלָה׃",
         "transliteration": "rabim omerim lenafeshi eyn yeshu'atah loo velohim selah",
-        "spanish": "Mas tú, YHVH, eres escudo alrededor de mí: Mi gloria, y el que ensalza mi cabeza."
+        "spanish": "Muchos dicen de mi vida: No hay para él salud en Dios. (Sélah)"
       },
       {
         "verse": 4,
         "hebrew": "וְאַתָּה יְהֹוָה מָגֵן בַּעֲדִי כְּבוֹדִי וּמֵרִים רֹאשִׁי׃",
         "transliteration": "veatah Adonai magen ba'adi kevuodi umerim roshi",
-        "spanish": "Con mi voz clamé a YHVH, Y él me respondió desde el monte de su santidad. (Sélah)"
+        "spanish": "Mas tú, YHVH, eres escudo alrededor de mí: Mi gloria, y el que ensalza mi cabeza."
       },
       {
         "verse": 5,
         "hebrew": "קוֹלִי אֶל יְהֹוָה אֶקְרָא וַיַּעֲנֵנִי מֵהַר קׇדְשׁוֹ סֶלָה׃",
         "transliteration": "kooli elAdonai ekera vaya'aneni mehar kdeshoo selah",
-        "spanish": "Yo me acosté, y dormí, Y desperté; porque YHVH me sostuvo."
+        "spanish": "Con mi voz clamé a YHVH, Y él me respondió desde el monte de su santidad. (Sélah)"
       },
       {
         "verse": 6,
         "hebrew": "אֲנִי שָׁכַבְתִּי וָאִישָׁנָה הֱקִיצוֹתִי כִּי יְהֹוָה יִסְמְכֵנִי׃",
         "transliteration": "ani shajaveti vaishanah hekitsooti ki Adonai isemejeni",
-        "spanish": "No temeré de diez millares de pueblos, Que pusieren cerco contra mí."
+        "spanish": "Yo me acosté, y dormí, Y desperté; porque YHVH me sostuvo."
       },
       {
         "verse": 7,
         "hebrew": "לֹא אִירָא מֵרִבְבוֹת עָם אֲשֶׁר סָבִיב שָׁתוּ עָלָי׃",
         "transliteration": "loira merivevuot 'am asher saviv shatu 'alay",
-        "spanish": "Levántate, YHVH; sálvame, Dios mío: Porque tú heriste a todos mis enemigos en la quijada; Los dientes de los malos quebrantaste."
+        "spanish": "No temeré de diez millares de pueblos, Que pusieren cerco contra mí."
       },
       {
         "verse": 8,
         "hebrew": "קוּמָה יְהֹוָה הוֹשִׁיעֵנִי אֱלֹהַי כִּי הִכִּיתָ אֶת כׇּל אֹיְבַי לֶחִי שִׁנֵּי רְשָׁעִים שִׁבַּרְתָּ׃",
         "transliteration": "kumah Adonai hooshi'eni elohay kihikita etkloyevay leji shiney resha'im shibareta",
-        "spanish": "De YHVH es la salud: Sobre tu pueblo será tu bendición. (Sélah)"
+        "spanish": "Levántate, YHVH; sálvame, Dios mío: Porque tú heriste a todos mis enemigos en la quijada; Los dientes de los malos quebrantaste."
       },
       {
         "verse": 9,
         "hebrew": "לַיהֹוָה הַיְשׁוּעָה עַל עַמְּךָ בִרְכָתֶךָ סֶּלָה׃ ",
         "transliteration": "layhovah hayeshu'ah 'al'ameja virejateja selah ",
-        "spanish": "..."
+        "spanish": "De YHVH es la salud: Sobre tu pueblo será tu bendición. (Sélah)"
       }
     ]
   },
@@ -202,55 +202,55 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ בִּנְגִינוֹת מִזְמוֹר לְדָוִד׃",
         "transliteration": "lamenatseja bineginoot mizemoor ledavid",
-        "spanish": "RESPONDEME cuando clamo, oh Dios de mi justicia: Estando en angustia, tú me hiciste ensanchar: Ten Jésed de mí, y oye mi oración."
+        "spanish": "Al Músico principal; en Neginot. Salmo de David."
       },
       {
         "verse": 2,
         "hebrew": "בְּקׇרְאִי עֲנֵנִי אֱלֹהֵי צִדְקִי בַּצָּר הִרְחַבְתָּ לִּי חׇנֵּנִי וּשְׁמַע תְּפִלָּתִי׃",
         "transliteration": "bekrei 'aneni elohey tsideki batsar hirejaveta li jneni ushema' tefilati",
-        "spanish": "Hijos de los hombres, ¿hasta cuándo volveréis mi honra en infamia, Amaréis la vanidad, y buscaréis la mentira? (Sélah)"
+        "spanish": "RESPONDEME cuando clamo, oh Dios de mi justicia: Estando en angustia, tú me hiciste ensanchar: Ten Jésed de mí, y oye mi oración."
       },
       {
         "verse": 3,
         "hebrew": "בְּנֵי אִישׁ עַד מֶה כְבוֹדִי לִכְלִמָּה תֶּאֱהָבוּן רִיק תְּבַקְשׁוּ כָזָב סֶלָה׃",
         "transliteration": "beney ish 'admeh jevuodi lijelimah teehavun rik tevakeshu jazav selah",
-        "spanish": "Sabed pues, que YHVH hizo apartar al pío para sí: YHVH oirá cuando yo a él clamare."
+        "spanish": "Hijos de los hombres, ¿hasta cuándo volveréis mi honra en infamia, Amaréis la vanidad, y buscaréis la mentira? (Sélah)"
       },
       {
         "verse": 4,
         "hebrew": "וּדְעוּ כִּי הִפְלָה יְהֹוָה חָסִיד לוֹ יְהֹוָה יִשְׁמַע בְּקׇרְאִי אֵלָיו׃",
         "transliteration": "ude'u kihifelah Adonai jasid loo Adonai ishema' bekrei elayv",
-        "spanish": "Temblad, y no pequéis: Conversad en vuestro corazón sobre vuestra cama, y desistid. (Sélah)"
+        "spanish": "Sabed pues, que YHVH hizo apartar al pío para sí: YHVH oirá cuando yo a él clamare."
       },
       {
         "verse": 5,
         "hebrew": "רִגְזוּ וְאַל תֶּחֱטָאוּ אִמְרוּ בִלְבַבְכֶם עַל מִשְׁכַּבְכֶם וְדֹמּוּ סֶלָה׃",
         "transliteration": "rigezu vealtejetau imeru vilevavejem 'almishekavejem vedomu selah",
-        "spanish": "Ofreced sacrificios de justicia, Y confiad en YHVH."
+        "spanish": "Temblad, y no pequéis: Conversad en vuestro corazón sobre vuestra cama, y desistid. (Sélah)"
       },
       {
         "verse": 6,
         "hebrew": "זִבְחוּ זִבְחֵי צֶדֶק וּבִטְחוּ אֶל יְהֹוָה׃",
         "transliteration": "ziveju zivejeytsedek uviteju elAdonai",
-        "spanish": "Muchos dicen: ¿Quién nos mostrará el bien? Alza sobre nosotros, oh YHVH, la luz de tu rostro."
+        "spanish": "Ofreced sacrificios de justicia, Y confiad en YHVH."
       },
       {
         "verse": 7,
         "hebrew": "רַבִּים אֹמְרִים מִי יַרְאֵנוּ טוֹב נְסָה עָלֵינוּ אוֹר פָּנֶיךָ יְהֹוָה׃",
         "transliteration": "rabim omerim miyareenu toov nesah'aleynu oor paneyja Adonai",
-        "spanish": "Tú diste alegría en mi corazón, Más que tienen ellos en el tiempo que se multiplicó su grano y su mosto."
+        "spanish": "Muchos dicen: ¿Quién nos mostrará el bien? Alza sobre nosotros, oh YHVH, la luz de tu rostro."
       },
       {
         "verse": 8,
         "hebrew": "נָתַתָּה שִׂמְחָה בְלִבִּי מֵעֵת דְּגָנָם וְתִירוֹשָׁם רָבּוּ׃",
         "transliteration": "natatah simejah velibi me'et deganam vetiroosham rabv",
-        "spanish": "En paz me acostaré, y asimismo dormiré; Porque solo tú, YHVH, me harás estar confiado."
+        "spanish": "Tú diste alegría en mi corazón, Más que tienen ellos en el tiempo que se multiplicó su grano y su mosto."
       },
       {
         "verse": 9,
         "hebrew": "בְּשָׁלוֹם יַחְדָּו אֶשְׁכְּבָה וְאִישָׁן כִּי אַתָּה יְהֹוָה לְבָדָד לָבֶטַח תּוֹשִׁיבֵנִי׃ ",
         "transliteration": "beshaloom yajedav eshekevah veishan kiatah Adonai levadad lavetaj tooshiveni ",
-        "spanish": "..."
+        "spanish": "En paz me acostaré, y asimismo dormiré; Porque solo tú, YHVH, me harás estar confiado."
       }
     ]
   },
@@ -265,79 +265,79 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ אֶל הַנְּחִילוֹת מִזְמוֹר לְדָוִד׃",
         "transliteration": "lamenatseja elhanejiloot mizemoor ledavid",
-        "spanish": "ESCUCHA, oh YHVH, mis palabras; Considera la meditación mía."
+        "spanish": "Al Músico principal; sobre Nehilot. Salmo de David."
       },
       {
         "verse": 2,
         "hebrew": "אֲמָרַי הַאֲזִינָה יְהֹוָה בִּינָה הֲגִיגִי׃",
         "transliteration": "amaray haazinah Adonai binah hagigi",
-        "spanish": "Está atento á la voz de mi clamor, Rey mío y Dios mío, Porque a ti oraré."
+        "spanish": "ESCUCHA, oh YHVH, mis palabras; Considera la meditación mía."
       },
       {
         "verse": 3,
         "hebrew": "הַקְשִׁיבָה לְקוֹל שַׁוְעִי מַלְכִּי וֵאלֹהָי כִּי אֵלֶיךָ אֶתְפַּלָּל׃",
         "transliteration": "hakeshivah lekool shave'i maleki velohay kieleyja etepalal",
-        "spanish": "Oh YHVH, de mañana oirás mi voz; De mañana me presentaré a ti, y esperaré."
+        "spanish": "Está atento á la voz de mi clamor, Rey mío y Dios mío, Porque a ti oraré."
       },
       {
         "verse": 4,
         "hebrew": "יְהֹוָה בֹּקֶר תִּשְׁמַע קוֹלִי בֹּקֶר אֶעֱרׇךְ לְךָ וַאֲצַפֶּה׃",
         "transliteration": "Adonai boker tishema' kooli boker e'erjeleja vaatsapeh",
-        "spanish": "Porque tú no eres un Dios que ame la maldad: El malo no habitará junto a ti."
+        "spanish": "Oh YHVH, de mañana oirás mi voz; De mañana me presentaré a ti, y esperaré."
       },
       {
         "verse": 5,
         "hebrew": "כִּי לֹא אֵל חָפֵץ רֶשַׁע אָתָּה לֹא יְגֻרְךָ רָע׃",
         "transliteration": "ki lo eljafetsresha' atah lo yegureja ra'",
-        "spanish": "No estarán los insensatos delante de tus ojos: Aborreces a todos los que obran iniquidad."
+        "spanish": "Porque tú no eres un Dios que ame la maldad: El malo no habitará junto a ti."
       },
       {
         "verse": 6,
         "hebrew": "לֹא יִתְיַצְּבוּ הוֹלְלִים לְנֶגֶד עֵינֶיךָ שָׂנֵאתָ כׇּל פֹּעֲלֵי אָוֶן׃",
         "transliteration": "loiteyatsevu hoolelim leneged 'eyneyja saneta klpo'aley aven",
-        "spanish": "Destruirás a los que hablan mentira: Al hombre de sangres y de engaño abominará YHVH."
+        "spanish": "No estarán los insensatos delante de tus ojos: Aborreces a todos los que obran iniquidad."
       },
       {
         "verse": 7,
         "hebrew": "תְּאַבֵּד דֹּבְרֵי כָזָב אִישׁ דָּמִים וּמִרְמָה יְתָעֵב יְהֹוָה׃",
         "transliteration": "teabed doverey jazav ishdamim umiremah yeta'ev Adonai",
-        "spanish": "Y yo en la multitud de Tu Jésed entraré en tu casa: Adoraré hacia el templo de tu santidad en tu temor."
+        "spanish": "Destruirás a los que hablan mentira: Al hombre de sangres y de engaño abominará YHVH."
       },
       {
         "verse": 8,
         "hebrew": "וַאֲנִי בְּרֹב חַסְדְּךָ אָבוֹא בֵיתֶךָ אֶשְׁתַּחֲוֶה אֶל הֵיכַל קׇדְשְׁךָ בְּיִרְאָתֶךָ׃",
         "transliteration": "vaani berov jasedeja avuo veyteja eshetajaveh elheyjalkdesheja beireateja",
-        "spanish": "Guíame, YHVH, en tu justicia á causa de mis enemigos; Endereza delante de mí tu camino."
+        "spanish": "Y yo en la multitud de Tu Jésed entraré en tu casa: Adoraré hacia el templo de tu santidad en tu temor."
       },
       {
         "verse": 9,
         "hebrew": "יְהֹוָה נְחֵנִי בְצִדְקָתֶךָ לְמַעַן שׁוֹרְרָי (הושר) [הַיְשַׁר] לְפָנַי דַּרְכֶּךָ׃",
         "transliteration": "Adonai nejeni vetsidekateja lema'an shooreray (hvshr) [hayeshar] lefanay darekeja",
-        "spanish": "Porque no hay en su boca rectitud: Sus entrañas son pravedades; Sepulcro abierto su garganta: Con su lengua lisonjearán."
+        "spanish": "Guíame, YHVH, en tu justicia á causa de mis enemigos; Endereza delante de mí tu camino."
       },
       {
         "verse": 10,
         "hebrew": "כִּי אֵין בְּפִיהוּ נְכוֹנָה קִרְבָּם הַוּוֹת קֶבֶר פָּתוּחַ גְּרֹנָם לְשׁוֹנָם יַחֲלִיקוּן׃",
         "transliteration": "ki eyn befihu nejoonah kirebam hauoot keverpatuja geronam leshoonam yajalikun",
-        "spanish": "Desbarátalos, oh Dios; Caigan de sus consejos: Por la multitud de sus rebeliones échalos, Porque se rebelaron contra ti."
+        "spanish": "Porque no hay en su boca rectitud: Sus entrañas son pravedades; Sepulcro abierto su garganta: Con su lengua lisonjearán."
       },
       {
         "verse": 11,
         "hebrew": "הַאֲשִׁימֵם אֱלֹהִים יִפְּלוּ מִמֹּעֲצוֹתֵיהֶם בְּרֹב פִּשְׁעֵיהֶם הַדִּיחֵמוֹ כִּי מָרוּ בָךְ׃",
         "transliteration": "haashimem Elohim ipelu mimo'atsooteyhem berov pishe'eyhem hadijemoo kimaru vaje",
-        "spanish": "Y alegrarse han todos los que en ti confían; Para siempre darán voces de júbilo, porque tú los defiendes: Y en ti se regocijarán los que aman tu nombre."
+        "spanish": "Desbarátalos, oh Dios; Caigan de sus consejos: Por la multitud de sus rebeliones échalos, Porque se rebelaron contra ti."
       },
       {
         "verse": 12,
         "hebrew": "וְיִשְׂמְחוּ כׇל חוֹסֵי בָךְ לְעוֹלָם יְרַנֵּנוּ וְתָסֵךְ עָלֵימוֹ וְיַעְלְצוּ בְךָ אֹהֲבֵי שְׁמֶךָ׃",
         "transliteration": "veisemeju jljoosey vaje le'oolam yeranenu vetaseje 'aleymoo veya'eletsu veja ohavey shemeja",
-        "spanish": "Porque tú, oh YHVH, bendecirás al justo; Lo cercarás de benevolencia como con un escudo."
+        "spanish": "Y alegrarse han todos los que en ti confían; Para siempre darán voces de júbilo, porque tú los defiendes: Y en ti se regocijarán los que aman tu nombre."
       },
       {
         "verse": 13,
         "hebrew": "כִּי אַתָּה תְּבָרֵךְ צַדִּיק יְהֹוָה כַּצִּנָּה רָצוֹן תַּעְטְרֶנּוּ׃ ",
         "transliteration": "kiatah tevareje tsadik Adonai katsinah ratsoon ta'eterenv ",
-        "spanish": "..."
+        "spanish": "Porque tú, oh YHVH, bendecirás al justo; Lo cercarás de benevolencia como con un escudo."
       }
     ]
   },
@@ -352,67 +352,67 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ בִּנְגִינוֹת עַל הַשְּׁמִינִית מִזְמוֹר לְדָוִד׃",
         "transliteration": "lamenatseja bineginoot 'alhasheminit mizemoor ledavid",
-        "spanish": "YHVH, no me reprendas en tu furor, Ni me castigues con tu ira."
+        "spanish": "Al Músico principal; en Neginot, sobre Seminit. Salmo de David."
       },
       {
         "verse": 2,
         "hebrew": "יְהֹוָה אַל בְּאַפְּךָ תוֹכִיחֵנִי וְאַל בַּחֲמָתְךָ תְיַסְּרֵנִי׃",
         "transliteration": "Adonai albeapeja toojijeni vealbajamateja teyasereni",
-        "spanish": "Ten Jésed de mí, oh YHVH, porque yo estoy debilitado: Sáname, oh YHVH, porque mis huesos están conmovidos."
+        "spanish": "YHVH, no me reprendas en tu furor, Ni me castigues con tu ira."
       },
       {
         "verse": 3,
         "hebrew": "חׇנֵּנִי יְהֹוָה כִּי אֻמְלַל אָנִי רְפָאֵנִי יְהֹוָה כִּי נִבְהֲלוּ עֲצָמָי׃",
         "transliteration": "jneni Adonai ki umelalani refaeni Adonai ki nivehalu 'atsamay",
-        "spanish": "Mi alma asimismo está muy conturbada: Y tú, YHVH, ¿hasta cuándo?"
+        "spanish": "Ten Jésed de mí, oh YHVH, porque yo estoy debilitado: Sáname, oh YHVH, porque mis huesos están conmovidos."
       },
       {
         "verse": 4,
         "hebrew": "וְנַפְשִׁי נִבְהֲלָה מְאֹד (ואת) [וְאַתָּה] יְהֹוָה עַד מָתָי׃",
         "transliteration": "venafeshi nivehalah meod (vt) [veatah] Adonai 'admatay",
-        "spanish": "Vuelve, oh YHVH, libra mi alma; Sálvame por Tu Jésed."
+        "spanish": "Mi alma asimismo está muy conturbada: Y tú, YHVH, ¿hasta cuándo?"
       },
       {
         "verse": 5,
         "hebrew": "שׁוּבָה יְהֹוָה חַלְּצָה נַפְשִׁי הוֹשִׁיעֵנִי לְמַעַן חַסְדֶּךָ׃",
         "transliteration": "shuvah Adonai jaletsah nafeshi hooshi'eni lema'an jasedeja",
-        "spanish": "Porque en la muerte no hay memoria de ti: ¿Quién te loará en el sepulcro?"
+        "spanish": "Vuelve, oh YHVH, libra mi alma; Sálvame por Tu Jésed."
       },
       {
         "verse": 6,
         "hebrew": "כִּי אֵין בַּמָּוֶת זִכְרֶךָ בִּשְׁאוֹל מִי יוֹדֶה לָּךְ׃",
         "transliteration": "ki eyn bamavet zijereja bisheool mi yoodehlaje",
-        "spanish": "Heme consumido á fuerza de gemir: Todas las noches inundo mi lecho, Riego mi estrado con mis lágrimas."
+        "spanish": "Porque en la muerte no hay memoria de ti: ¿Quién te loará en el sepulcro?"
       },
       {
         "verse": 7,
         "hebrew": "יָגַעְתִּי בְּאַנְחָתִי אַשְׂחֶה בְכׇל לַיְלָה מִטָּתִי בְּדִמְעָתִי עַרְשִׂי אַמְסֶה׃",
         "transliteration": "yaga'eti beanejati asejeh vejllayelah mitati bedime'ati 'aresi ameseh",
-        "spanish": "Mis ojos están carcomidos de descontento; Hanse envejecido á causa de todos mis angustiadores."
+        "spanish": "Heme consumido á fuerza de gemir: Todas las noches inundo mi lecho, Riego mi estrado con mis lágrimas."
       },
       {
         "verse": 8,
         "hebrew": "עָשְׁשָׁה מִכַּעַס עֵינִי עָתְקָה בְּכׇל צוֹרְרָי׃",
         "transliteration": "'asheshah mika'as 'eyni 'atekah bejltsooreray",
-        "spanish": "Apartaos de mí, todos los obradores de iniquidad; Porque YHVH ha oído la voz de mi lloro."
+        "spanish": "Mis ojos están carcomidos de descontento; Hanse envejecido á causa de todos mis angustiadores."
       },
       {
         "verse": 9,
         "hebrew": "סוּרוּ מִמֶּנִּי כׇּל פֹּעֲלֵי אָוֶן כִּי שָׁמַע יְהֹוָה קוֹל בִּכְיִי׃",
         "transliteration": "suru mimeni klpo'aley aven kishama' Adonai kool bijei",
-        "spanish": "YHVH ha oído mi ruego; Ha recibido YHVH mi oración."
+        "spanish": "Apartaos de mí, todos los obradores de iniquidad; Porque YHVH ha oído la voz de mi lloro."
       },
       {
         "verse": 10,
         "hebrew": "שָׁמַע יְהֹוָה תְּחִנָּתִי יְהֹוָה תְּפִלָּתִי יִקָּח׃",
         "transliteration": "shama' Adonai tejinati Adonai tefilati ikaj",
-        "spanish": "Se avergonzarán, y turbaránse mucho todos mis enemigos; Volveránse y serán avergonzados subitáneamente."
+        "spanish": "YHVH ha oído mi ruego; Ha recibido YHVH mi oración."
       },
       {
         "verse": 11,
         "hebrew": "יֵבֹשׁוּ וְיִבָּהֲלוּ מְאֹד כׇּל אֹיְבָי יָשֻׁבוּ יֵבֹשׁוּ רָגַע׃ ",
         "transliteration": "yevushu veibahalu meod kloyevay yashuvu yevushu raga' ",
-        "spanish": "..."
+        "spanish": "Se avergonzarán, y turbaránse mucho todos mis enemigos; Volveránse y serán avergonzados subitáneamente."
       }
     ]
   },
@@ -427,109 +427,109 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "שִׁגָּיוֹן לְדָוִד אֲשֶׁר שָׁר לַיהֹוָה עַל דִּבְרֵי כוּשׁ בֶּן יְמִינִי׃",
         "transliteration": "shigayoon ledavid ashershar layhovah 'aldivereyjush benyemini",
-        "spanish": "YHVH Dios mío, en ti he confiado: Sálvame de todos los que me persiguen, y líbrame;"
+        "spanish": "Sigaión de David, que cantó a YHVH sobre las palabras de Cus hijo de Benjamín."
       },
       {
         "verse": 2,
         "hebrew": "יְהֹוָה אֱלֹהַי בְּךָ חָסִיתִי הוֹשִׁיעֵנִי מִכׇּל רֹדְפַי וְהַצִּילֵנִי׃",
         "transliteration": "Adonai elohay beja jasiti hooshi'eni miklrodefay vehatsileni",
-        "spanish": "No sea que arrebate mi alma, cual león Que despedaza, sin que haya quien libre."
+        "spanish": "YHVH Dios mío, en ti he confiado: Sálvame de todos los que me persiguen, y líbrame;"
       },
       {
         "verse": 3,
         "hebrew": "פֶּן יִטְרֹף כְּאַרְיֵה נַפְשִׁי פֹּרֵק וְאֵין מַצִּיל׃",
         "transliteration": "peniterof keareyeh nafeshi porek veeyn matsil",
-        "spanish": "YHVH Dios mío, si yo he hecho esto, Si hay en mis manos iniquidad;"
+        "spanish": "No sea que arrebate mi alma, cual león Que despedaza, sin que haya quien libre."
       },
       {
         "verse": 4,
         "hebrew": "יְהֹוָה אֱלֹהַי אִם עָשִׂיתִי זֹאת אִם יֶשׁ עָוֶל בְּכַפָּי׃",
         "transliteration": "Adonai elohay im'asiti zot imyesh'avel bejapay",
-        "spanish": "Si dí mal pago al pacífico conmigo, (Hasta he libertado al que sin causa era mi enemigo;)"
+        "spanish": "YHVH Dios mío, si yo he hecho esto, Si hay en mis manos iniquidad;"
       },
       {
         "verse": 5,
         "hebrew": "אִם גָּמַלְתִּי שׁוֹלְמִי רָע וָאֲחַלְּצָה צוֹרְרִי רֵיקָם׃",
         "transliteration": "imgamaleti shoolemi ra' vaajaletsah tsooreri reykam",
-        "spanish": "Persiga el enemigo mi alma, y alcánce la; Y pise en tierra mi vida, Y mi honra ponga en el polvo. (Sélah)"
+        "spanish": "Si dí mal pago al pacífico conmigo, (Hasta he libertado al que sin causa era mi enemigo;)"
       },
       {
         "verse": 6,
         "hebrew": "יִרַדֹּף אוֹיֵב נַפְשִׁי וְיַשֵּׂג וְיִרְמֹס לָאָרֶץ חַיָּי וּכְבוֹדִי לֶעָפָר יַשְׁכֵּן סֶלָה׃",
         "transliteration": "iradofooyev nafeshi veyaseg veiremos laarets jayay ujevuodi le'afar yasheken selah",
-        "spanish": "Levántate; oh YHVH, con tu furor; Alzate á causa de las iras de mis angustiadores, Y despierta en favor mío el juicio que mandaste."
+        "spanish": "Persiga el enemigo mi alma, y alcánce la; Y pise en tierra mi vida, Y mi honra ponga en el polvo. (Sélah)"
       },
       {
         "verse": 7,
         "hebrew": "קוּמָה יְהֹוָה בְּאַפֶּךָ הִנָּשֵׂא בְּעַבְרוֹת צוֹרְרָי וְעוּרָה אֵלַי מִשְׁפָּט צִוִּיתָ׃",
         "transliteration": "kumah Adonai beapeja hinase be'averoot tsooreray ve'urah elay mishepat tsivita",
-        "spanish": "Y te rodeará concurso de pueblo; Por cuyo amor vuélvete luego á levantar en alto."
+        "spanish": "Levántate; oh YHVH, con tu furor; Alzate á causa de las iras de mis angustiadores, Y despierta en favor mío el juicio que mandaste."
       },
       {
         "verse": 8,
         "hebrew": "וַעֲדַת לְאֻמִּים תְּסוֹבְבֶךָּ וְעָלֶיהָ לַמָּרוֹם שׁוּבָה׃",
         "transliteration": "va'adat leumim tesooveveka ve'aleyha lamaroom shuvah",
-        "spanish": "YHVH juzgará los pueblos: Júzgame, oh YHVH, conforme a mí justicia y conforme a mí integridad."
+        "spanish": "Y te rodeará concurso de pueblo; Por cuyo amor vuélvete luego á levantar en alto."
       },
       {
         "verse": 9,
         "hebrew": "יְהֹוָה יָדִין עַמִּים שׇׁפְטֵנִי יְהֹוָה כְּצִדְקִי וּכְתֻמִּי עָלָי׃",
         "transliteration": "Adonai yadin 'amim shfeteni Adonai ketsideki ujetumi 'alay",
-        "spanish": "Consúmase ahora la malicia de los inicuos, y establece al justo; Pues el Dios justo prueba los corazones y los riñones."
+        "spanish": "YHVH juzgará los pueblos: Júzgame, oh YHVH, conforme a mí justicia y conforme a mí integridad."
       },
       {
         "verse": 10,
         "hebrew": "יִגְמׇר נָא רַע רְשָׁעִים וּתְכוֹנֵן צַדִּיק וּבֹחֵן לִבּוֹת וּכְלָיוֹת אֱלֹהִים צַדִּיק׃",
         "transliteration": "igemrna ra' resha'im utejoonen tsadik uvujen liboot ujelayoot Elohim tsadik",
-        "spanish": "Mi escudo está en Dios, Que salva a los rectos de corazón."
+        "spanish": "Consúmase ahora la malicia de los inicuos, y establece al justo; Pues el Dios justo prueba los corazones y los riñones."
       },
       {
         "verse": 11,
         "hebrew": "מָגִנִּי עַל אֱלֹהִים מוֹשִׁיעַ יִשְׁרֵי לֵב׃",
         "transliteration": "magini 'alElohim mooshi'a ishereylev",
-        "spanish": "Dios es el que juzga al justo: Y Dios está airado todos los días contra el impío."
+        "spanish": "Mi escudo está en Dios, Que salva a los rectos de corazón."
       },
       {
         "verse": 12,
         "hebrew": "אֱלֹהִים שׁוֹפֵט צַדִּיק וְאֵל זֹעֵם בְּכׇל יוֹם׃",
         "transliteration": "Elohim shoofet tsadik veel zo'em bejlyoom",
-        "spanish": "Si no se convirtiere, él afilará su espada: Armado tiene ya su arco, y lo ha preparado."
+        "spanish": "Dios es el que juzga al justo: Y Dios está airado todos los días contra el impío."
       },
       {
         "verse": 13,
         "hebrew": "אִם לֹא יָשׁוּב חַרְבּוֹ יִלְטוֹשׁ קַשְׁתּוֹ דָרַךְ וַיְכוֹנְנֶהָ׃",
         "transliteration": "imlo yashuv jareboo iletoosh kashetoo daraje vayejooneneha",
-        "spanish": "Asimismo ha aparejado para él armas de muerte; Ha labrado sus saetas para los que persiguen."
+        "spanish": "Si no se convirtiere, él afilará su espada: Armado tiene ya su arco, y lo ha preparado."
       },
       {
         "verse": 14,
         "hebrew": "וְלוֹ הֵכִין כְּלֵי מָוֶת חִצָּיו לְדֹלְקִים יִפְעָל׃",
         "transliteration": "veloo hejin keleymavet jitsayv ledolekim ife'al",
-        "spanish": "He aquí ha tenido parto de iniquidad: Concibió trabajo, y parió mentira."
+        "spanish": "Asimismo ha aparejado para él armas de muerte; Ha labrado sus saetas para los que persiguen."
       },
       {
         "verse": 15,
         "hebrew": "הִנֵּה יְחַבֶּל אָוֶן וְהָרָה עָמָל וְיָלַד שָׁקֶר׃",
         "transliteration": "hineh yejabelaven veharah 'amal veyalad shaker",
-        "spanish": "Pozo ha cavado, y ahondádolo; Y en la fosa que hizo caerá."
+        "spanish": "He aquí ha tenido parto de iniquidad: Concibió trabajo, y parió mentira."
       },
       {
         "verse": 16,
         "hebrew": "בּוֹר כָּרָה וַיַּחְפְּרֵהוּ וַיִּפֹּל בְּשַׁחַת יִפְעָל׃",
         "transliteration": "boor karah vayajeperehu vaipol beshajat ife'al",
-        "spanish": "Su trabajo se tornará sobre su cabeza, Y su agravio descenderá sobre su mollera."
+        "spanish": "Pozo ha cavado, y ahondádolo; Y en la fosa que hizo caerá."
       },
       {
         "verse": 17,
         "hebrew": "יָשׁוּב עֲמָלוֹ בְרֹאשׁוֹ וְעַל קׇדְקֳדוֹ חֲמָסוֹ יֵרֵד׃",
         "transliteration": "yashuv 'amaloo veroshoo ve'al kdekodoo jamasoo yered",
-        "spanish": "Alabaré yo a YHVH conforme á su justicia, Y cantaré al nombre de YHVH el Elyón."
+        "spanish": "Su trabajo se tornará sobre su cabeza, Y su agravio descenderá sobre su mollera."
       },
       {
         "verse": 18,
         "hebrew": "אוֹדֶה יְהֹוָה כְּצִדְקוֹ וַאֲזַמְּרָה שֵׁם יְהֹוָה עֶלְיוֹן׃ ",
         "transliteration": "oodeh Adonai ketsidekoo vaazamerah shemAdonai 'eleyoon ",
-        "spanish": "..."
+        "spanish": "Alabaré yo a YHVH conforme á su justicia, Y cantaré al nombre de YHVH el Elyón."
       }
     ]
   },
@@ -544,61 +544,61 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ עַל הַגִּתִּית מִזְמוֹר לְדָוִד׃",
         "transliteration": "lamenatseja 'alhagitit mizemoor ledavid",
-        "spanish": "OH YHVH, Señor nuestro, ¡Cuán grande es tu nombre en toda la tierra, Que has puesto tu gloria sobre los cielos!"
+        "spanish": "Al Músico principal; sobre Gitit. Salmo de David."
       },
       {
         "verse": 2,
         "hebrew": "יְהֹוָה אֲדֹנֵינוּ מָה אַדִּיר שִׁמְךָ בְּכׇל הָאָרֶץ אֲשֶׁר תְּנָה הוֹדְךָ עַל הַשָּׁמָיִם׃",
         "transliteration": "Adonai adoneynu mahadir shimeja bejlhaarets asher tenah hoodeja 'alhashamaim",
-        "spanish": "De la boca de los chiquitos y de los que maman, fundaste la fortaleza, A causa de tus enemigos, Para hacer cesar al enemigo, y al que se venga."
+        "spanish": "OH YHVH, Señor nuestro, ¡Cuán grande es tu nombre en toda la tierra, Que has puesto tu gloria sobre los cielos!"
       },
       {
         "verse": 3,
         "hebrew": "מִפִּי עוֹלְלִים וְיֹנְקִים יִסַּדְתָּ עֹז לְמַעַן צוֹרְרֶיךָ לְהַשְׁבִּית אוֹיֵב וּמִתְנַקֵּם׃",
         "transliteration": "mipi 'oolelim veyonekim isadeta 'oz lema'an tsoorereyja lehashebit ooyev umitenakem",
-        "spanish": "Cuando veo tus cielos, obra de tus dedos, La luna y las estrellas que tú formaste:"
+        "spanish": "De la boca de los chiquitos y de los que maman, fundaste la fortaleza, A causa de tus enemigos, Para hacer cesar al enemigo, y al que se venga."
       },
       {
         "verse": 4,
         "hebrew": "כִּי אֶרְאֶה שָׁמֶיךָ מַעֲשֵׂה אֶצְבְּעֹתֶיךָ יָרֵחַ וְכוֹכָבִים אֲשֶׁר כּוֹנָנְתָּה׃",
         "transliteration": "kiereeh shameyja ma'aseh etsebe'oteyja yareja vejoojavim asher koonanetah",
-        "spanish": "Digo: ¿Qué es el hombre, para que tengas de él memoria, Y el hijo del hombre, que lo visites?"
+        "spanish": "Cuando veo tus cielos, obra de tus dedos, La luna y las estrellas que tú formaste:"
       },
       {
         "verse": 5,
         "hebrew": "מָה אֱנוֹשׁ כִּי תִזְכְּרֶנּוּ וּבֶן אָדָם כִּי תִפְקְדֶנּוּ׃",
         "transliteration": "mahenoosh kitizekerenu uvenadam ki tifekedenv",
-        "spanish": "Pues le has hecho poco menor que los ángeles, Y coronástelo de gloria y de lustre."
+        "spanish": "Digo: ¿Qué es el hombre, para que tengas de él memoria, Y el hijo del hombre, que lo visites?"
       },
       {
         "verse": 6,
         "hebrew": "וַתְּחַסְּרֵהוּ מְּעַט מֵאֱלֹהִים וְכָבוֹד וְהָדָר תְּעַטְּרֵהוּ׃",
         "transliteration": "vatejaserehu me'at meElohim vejavuod vehadar te'aterehv",
-        "spanish": "Hicístelo enseñorear de las obras de tus manos; Todo lo pusiste debajo de sus pies:"
+        "spanish": "Pues le has hecho poco menor que los ángeles, Y coronástelo de gloria y de lustre."
       },
       {
         "verse": 7,
         "hebrew": "תַּמְשִׁילֵהוּ בְּמַעֲשֵׂי יָדֶיךָ כֹּל שַׁתָּה תַחַת רַגְלָיו׃",
         "transliteration": "tameshilehu bema'asey yadeyja kol shatah tajatragelayv",
-        "spanish": "Ovejas, y bueyes, todo ello; Y asimismo las bestias del campo,"
+        "spanish": "Hicístelo enseñorear de las obras de tus manos; Todo lo pusiste debajo de sus pies:"
       },
       {
         "verse": 8,
         "hebrew": "צֹנֶה וַאֲלָפִים כֻּלָּם וְגַם בַּהֲמוֹת שָׂדָי׃",
         "transliteration": "tsoneh vaalafim kulam vegam bahamoot saday",
-        "spanish": "Las aves de los cielos, y los peces de la mar; Todo cuanto pasa por los senderos de la mar."
+        "spanish": "Ovejas, y bueyes, todo ello; Y asimismo las bestias del campo,"
       },
       {
         "verse": 9,
         "hebrew": "צִפּוֹר שָׁמַיִם וּדְגֵי הַיָּם עֹבֵר אׇרְחוֹת יַמִּים׃",
         "transliteration": "tsipoor shamaim udegey hayam 'over rejoot yamim",
-        "spanish": "Oh YHVH, Señor nuestro, ¡Cuán grande es tu nombre en toda la tierra!"
+        "spanish": "Las aves de los cielos, y los peces de la mar; Todo cuanto pasa por los senderos de la mar."
       },
       {
         "verse": 10,
         "hebrew": "יְהֹוָה אֲדֹנֵינוּ מָה אַדִּיר שִׁמְךָ בְּכׇל הָאָרֶץ׃ ",
         "transliteration": "Adonai adoneynu mahadir shimeja bejlhaarets ",
-        "spanish": "..."
+        "spanish": "Oh YHVH, Señor nuestro, ¡Cuán grande es tu nombre en toda la tierra!"
       }
     ]
   },
@@ -613,127 +613,127 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ עַל מוּת לַבֵּן מִזְמוֹר לְדָוִד׃",
         "transliteration": "lamenatseja 'almut laben mizemoor ledavid",
-        "spanish": "TE alabaré, oh YHVH, con todo mi corazón; Contaré todas tus maravillas."
+        "spanish": "Al Músico principal; sobre Mut-labén. Salmo de David."
       },
       {
         "verse": 2,
         "hebrew": "אוֹדֶה יְהֹוָה בְּכׇל לִבִּי אֲסַפְּרָה כׇּל נִפְלְאוֹתֶיךָ׃",
         "transliteration": "oodeh Adonai bejllibi asaperah klnifeleooteyja",
-        "spanish": "Alegraréme y regocijaréme en ti: Cantaré á tu nombre, oh Elyón;"
+        "spanish": "TE alabaré, oh YHVH, con todo mi corazón; Contaré todas tus maravillas."
       },
       {
         "verse": 3,
         "hebrew": "אֶשְׂמְחָה וְאֶעֶלְצָה בָךְ אֲזַמְּרָה שִׁמְךָ עֶלְיוֹן׃",
         "transliteration": "esemejah vee'eletsah vaje azamerah shimeja 'eleyoon",
-        "spanish": "Por haber sido mis enemigos vueltos atrás: Caerán y perecerán delante de ti."
+        "spanish": "Alegraréme y regocijaréme en ti: Cantaré á tu nombre, oh Elyón;"
       },
       {
         "verse": 4,
         "hebrew": "בְּשׁוּב אוֹיְבַי אָחוֹר יִכָּשְׁלוּ וְיֹאבְדוּ מִפָּנֶיךָ׃",
         "transliteration": "beshuvuoyevay ajoor ikashelu veyovedu mipaneyja",
-        "spanish": "Porque has hecho mi juicio y mi causa: Sentástete en silla juzgando justicia."
+        "spanish": "Por haber sido mis enemigos vueltos atrás: Caerán y perecerán delante de ti."
       },
       {
         "verse": 5,
         "hebrew": "כִּי עָשִׂיתָ מִשְׁפָּטִי וְדִינִי יָשַׁבְתָּ לְכִסֵּא שׁוֹפֵט צֶדֶק׃",
         "transliteration": "ki'asita mishepati vedini yashaveta lejise shoofet tsedek",
-        "spanish": "Reprendiste gentes, destruiste al malo, Raíste el nombre de ellos para siempre jamás."
+        "spanish": "Porque has hecho mi juicio y mi causa: Sentástete en silla juzgando justicia."
       },
       {
         "verse": 6,
         "hebrew": "גָּעַרְתָּ גוֹיִם אִבַּדְתָּ רָשָׁע שְׁמָם מָחִיתָ לְעוֹלָם וָעֶד׃",
         "transliteration": "ga'areta gooim ibadeta rasha' shemam majita le'oolam va'ed",
-        "spanish": "Oh enemigo, acabados son para siempre los asolamientos; Y las ciudades que derribaste, Su memoria pereció con ellas."
+        "spanish": "Reprendiste gentes, destruiste al malo, Raíste el nombre de ellos para siempre jamás."
       },
       {
         "verse": 7,
         "hebrew": "הָאוֹיֵב תַּמּוּ חֳרָבוֹת לָנֶצַח וְעָרִים נָתַשְׁתָּ אָבַד זִכְרָם הֵמָּה׃",
         "transliteration": "haooyev tamu joravuot lanetsaj ve'arim natasheta avad zijeram hemah",
-        "spanish": "Mas YHVH permanecerá para siempre: Dispuesto ha su trono para juicio."
+        "spanish": "Oh enemigo, acabados son para siempre los asolamientos; Y las ciudades que derribaste, Su memoria pereció con ellas."
       },
       {
         "verse": 8,
         "hebrew": "וַיהֹוָה לְעוֹלָם יֵשֵׁב כּוֹנֵן לַמִּשְׁפָּט כִּסְאוֹ׃",
         "transliteration": "vayhovah le'oolam yeshev koonen lamishepat kiseoo",
-        "spanish": "Y él juzgará el mundo con justicia; Y juzgará los pueblos con rectitud."
+        "spanish": "Mas YHVH permanecerá para siempre: Dispuesto ha su trono para juicio."
       },
       {
         "verse": 9,
         "hebrew": "וְהוּא יִשְׁפֹּט תֵּבֵל בְּצֶדֶק יָדִין לְאֻמִּים בְּמֵישָׁרִים׃",
         "transliteration": "vehu ishepottevel betsedek yadin leumim bemeysharim",
-        "spanish": "Y será YHVH refugio al pobre, Refugio para el tiempo de angustia."
+        "spanish": "Y él juzgará el mundo con justicia; Y juzgará los pueblos con rectitud."
       },
       {
         "verse": 10,
         "hebrew": "וִיהִי יְהֹוָה מִשְׂגָּב לַדָּךְ מִשְׂגָּב לְעִתּוֹת בַּצָּרָה׃",
         "transliteration": "vihi Adonai misegav ladaje misegav le'itoot batsarah",
-        "spanish": "Y en ti confiarán los que conocen tu nombre; Por cuanto tú, oh YHVH, no desamparaste a los que te buscaron."
+        "spanish": "Y será YHVH refugio al pobre, Refugio para el tiempo de angustia."
       },
       {
         "verse": 11,
         "hebrew": "וְיִבְטְחוּ בְךָ יוֹדְעֵי שְׁמֶךָ כִּי לֹא עָזַבְתָּ דֹרְשֶׁיךָ יְהֹוָה׃",
         "transliteration": "veiveteju veja yoode'ey shemeja ki lo'azaveta doresheyja Adonai",
-        "spanish": "Cantad a YHVH, que habita en Sión: Noticiad en los pueblos sus obras."
+        "spanish": "Y en ti confiarán los que conocen tu nombre; Por cuanto tú, oh YHVH, no desamparaste a los que te buscaron."
       },
       {
         "verse": 12,
         "hebrew": "זַמְּרוּ לַיהֹוָה יֹשֵׁב צִיּוֹן הַגִּידוּ בָעַמִּים עֲלִילוֹתָיו׃",
         "transliteration": "zameru layhovah yoshev tsioon hagidu va'amim 'alilootayv",
-        "spanish": "Porque demandando la sangre se acordó de ellos: No se olvidó del clamor de los pobres."
+        "spanish": "Cantad a YHVH, que habita en Sión: Noticiad en los pueblos sus obras."
       },
       {
         "verse": 13,
         "hebrew": "כִּי דֹרֵשׁ דָּמִים אוֹתָם זָכָר לֹא שָׁכַח צַעֲקַת (עניים) [עֲנָוִים]׃",
         "transliteration": "kidoresh damim ootam zajar loshajaj tsa'akat ('nyym) ['anavim]",
-        "spanish": "Ten Jésed de mí, YHVH: Mira mi aflicción que padezco de los que me aborrecen, Tú que me levantas de las puertas de la muerte;"
+        "spanish": "Porque demandando la sangre se acordó de ellos: No se olvidó del clamor de los pobres."
       },
       {
         "verse": 14,
         "hebrew": "חָנְנֵנִי יְהֹוָה רְאֵה עׇנְיִי מִשֹּׂנְאָי מְרוֹמְמִי מִשַּׁעֲרֵי מָוֶת׃",
         "transliteration": "janeneni Adonai reeh 'nei misoneay meroomemi misha'arey mavet",
-        "spanish": "Porque cuente yo todas tus alabanzas En las puertas de la hija de Sión, Y me goce en tu salud."
+        "spanish": "Ten Jésed de mí, YHVH: Mira mi aflicción que padezco de los que me aborrecen, Tú que me levantas de las puertas de la muerte;"
       },
       {
         "verse": 15,
         "hebrew": "לְמַעַן אֲסַפְּרָה כׇּל תְּהִלָּתֶיךָ בְּשַׁעֲרֵי בַת צִיּוֹן אָגִילָה בִּישׁוּעָתֶךָ׃",
         "transliteration": "lema'an asaperah kltehilateyja besha'arey vattsioon agilah bishu'ateja",
-        "spanish": "Hundiéronse las gentes en la fosa que hicieron; En la red que escondieron fué tomado su pie."
+        "spanish": "Porque cuente yo todas tus alabanzas En las puertas de la hija de Sión, Y me goce en tu salud."
       },
       {
         "verse": 16,
         "hebrew": "טָבְעוּ גוֹיִם בְּשַׁחַת עָשׂוּ בְּרֶשֶׁת זוּ טָמָנוּ נִלְכְּדָה רַגְלָם׃",
         "transliteration": "tave'u gooim beshajat 'asu bereshetzu tamanu nilekedah ragelam",
-        "spanish": "YHVH fué conocido en el juicio que hizo; En la obra de sus manos fué enlazado el malo. (Higayón. Sélah)"
+        "spanish": "Hundiéronse las gentes en la fosa que hicieron; En la red que escondieron fué tomado su pie."
       },
       {
         "verse": 17,
         "hebrew": "נוֹדַע יְהֹוָה מִשְׁפָּט עָשָׂה בְּפֹעַל כַּפָּיו נוֹקֵשׁ רָשָׁע הִגָּיוֹן סֶלָה׃",
         "transliteration": "nooda' Adonai mishepat 'asah befo'al kapayv nookesh rasha' higayoon selah",
-        "spanish": "Los malos serán trasladados al Sheol, Todas las gentes que se olvidan de Dios."
+        "spanish": "YHVH fué conocido en el juicio que hizo; En la obra de sus manos fué enlazado el malo. (Higayón. Sélah)"
       },
       {
         "verse": 18,
         "hebrew": "יָשׁוּבוּ רְשָׁעִים לִשְׁאוֹלָה כׇּל גּוֹיִם שְׁכֵחֵי אֱלֹהִים׃",
         "transliteration": "yashuvu resha'im lisheoolah klgooim shejejey Elohim",
-        "spanish": "Porque no para siempre será olvidado el pobre; Ni la esperanza de los pobres perecerá perpetuamente."
+        "spanish": "Los malos serán trasladados al Sheol, Todas las gentes que se olvidan de Dios."
       },
       {
         "verse": 19,
         "hebrew": "כִּי לֹא לָנֶצַח יִשָּׁכַח אֶבְיוֹן תִּקְוַת (ענוים) [עֲנִיִּים] תֹּאבַד לָעַד׃",
         "transliteration": "ki lo lanetsaj ishajaj eveyoon tikevat ('nvym) ['aniim] tovad la'ad",
-        "spanish": "Levántate, oh YHVH; no se fortalezca el hombre; Sean juzgadas las gentes delante de ti."
+        "spanish": "Porque no para siempre será olvidado el pobre; Ni la esperanza de los pobres perecerá perpetuamente."
       },
       {
         "verse": 20,
         "hebrew": "קוּמָה יְהֹוָה אַל יָעֹז אֱנוֹשׁ יִשָּׁפְטוּ גוֹיִם עַל פָּנֶיךָ׃",
         "transliteration": "kumah Adonai alya'oz enoosh ishafetu gooim 'alpaneyja",
-        "spanish": "Pon, oh YHVH, temor en ellos: Conozcan las gentes que son no más que hombres. (Sélah)"
+        "spanish": "Levántate, oh YHVH; no se fortalezca el hombre; Sean juzgadas las gentes delante de ti."
       },
       {
         "verse": 21,
         "hebrew": "שִׁיתָה יְהֹוָה מוֹרָה לָהֶם יֵדְעוּ גוֹיִם אֱנוֹשׁ הֵמָּה סֶּלָה׃ ",
         "transliteration": "shitah Adonai moorah lahem yede'u gooim enoosh hemah selah ",
-        "spanish": "..."
+        "spanish": "Pon, oh YHVH, temor en ellos: Conozcan las gentes que son no más que hombres. (Sélah)"
       }
     ]
   },
@@ -916,55 +916,55 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ עַל הַשְּׁמִינִית מִזְמוֹר לְדָוִד׃",
         "transliteration": "lamenatseja 'alhasheminit mizemoor ledavid",
-        "spanish": "SALVA, oh YHVH, porque se acabaron los misericordiosos: Porque se han acabado los fieles de entre los hijos de los hombres."
+        "spanish": "Al Músico principal; sobre Seminit. Salmo de David."
       },
       {
         "verse": 2,
         "hebrew": "הוֹשִׁיעָה יְהֹוָה כִּי גָמַר חָסִיד כִּי פַסּוּ אֱמוּנִים מִבְּנֵי אָדָם׃",
         "transliteration": "hooshi'ah Adonai kigamar jasid kifasu emunim mibeney adam",
-        "spanish": "Mentira habla cada uno con su prójimo; Con labios lisonjeros, con corazón doble hablan."
+        "spanish": "SALVA, oh YHVH, porque se acabaron los misericordiosos: Porque se han acabado los fieles de entre los hijos de los hombres."
       },
       {
         "verse": 3,
         "hebrew": "שָׁוְא יְדַבְּרוּ אִישׁ אֶת רֵעֵהוּ שְׂפַת חֲלָקוֹת בְּלֵב וָלֵב יְדַבֵּרוּ׃",
         "transliteration": "shave yedaberu ish etre'ehu sefat jalakoot belev valev yedaberv",
-        "spanish": "Destruirá YHVH todos los labios lisonjeros, La lengua que habla grandezas,"
+        "spanish": "Mentira habla cada uno con su prójimo; Con labios lisonjeros, con corazón doble hablan."
       },
       {
         "verse": 4,
         "hebrew": "יַכְרֵת יְהֹוָה כׇּל שִׂפְתֵי חֲלָקוֹת לָשׁוֹן מְדַבֶּרֶת גְּדֹלוֹת׃",
         "transliteration": "yajeret Adonai klsifetey jalakoot lashoon medaberet gedoloot",
-        "spanish": "Que dijeron: Por nuestra lengua prevaleceremos; Nuestros labios están con nosotros: ¿quién nos es señor?"
+        "spanish": "Destruirá YHVH todos los labios lisonjeros, La lengua que habla grandezas,"
       },
       {
         "verse": 5,
         "hebrew": "אֲשֶׁר אָמְרוּ לִלְשֹׁנֵנוּ נַגְבִּיר שְׂפָתֵינוּ אִתָּנוּ מִי אָדוֹן לָנוּ׃",
         "transliteration": "asher ameru lileshonenu nagebir sefateynu itanu mi adoon lanv",
-        "spanish": "Por la opresión de los pobres, por el gemido de los menesterosos, Ahora me levantaré, dice YHVH: Pondrélos en salvo del que contra ellos se engríe."
+        "spanish": "Que dijeron: Por nuestra lengua prevaleceremos; Nuestros labios están con nosotros: ¿quién nos es señor?"
       },
       {
         "verse": 6,
         "hebrew": "מִשֹּׁד עֲנִיִּים מֵאֶנְקַת אֶבְיוֹנִים עַתָּה אָקוּם יֹאמַר יְהֹוָה אָשִׁית בְּיֵשַׁע יָפִיחַ לוֹ׃",
         "transliteration": "mishod 'aniim meenekat eveyoonim 'atah akum yomar Adonai ashit beyesha' yafijaloo",
-        "spanish": "Las palabras de YHVH, palabras limpias; Plata refinada en horno de tierra, Purificada siete veces."
+        "spanish": "Por la opresión de los pobres, por el gemido de los menesterosos, Ahora me levantaré, dice YHVH: Pondrélos en salvo del que contra ellos se engríe."
       },
       {
         "verse": 7,
         "hebrew": "אִמְרוֹת יְהֹוָה אֲמָרוֹת טְהֹרוֹת כֶּסֶף צָרוּף בַּעֲלִיל לָאָרֶץ מְזֻקָּק שִׁבְעָתָיִם׃",
         "transliteration": "imeroot Adonai amaroot tehoroot kesef tsaruf ba'alil laarets mezukak shive'ataim",
-        "spanish": "Tú, YHVH, los guardarás; Guárdalos para siempre de aquesta generación."
+        "spanish": "Las palabras de YHVH, palabras limpias; Plata refinada en horno de tierra, Purificada siete veces."
       },
       {
         "verse": 8,
         "hebrew": "אַתָּה יְהֹוָה תִּשְׁמְרֵם תִּצְּרֶנּוּ מִן הַדּוֹר זוּ לְעוֹלָם׃",
         "transliteration": "atahAdonai tishemerem titserenu minhadoor zu le'oolam",
-        "spanish": "Cercando andan los malos, Mientras son exaltados los más viles de los hijos de los hombres."
+        "spanish": "Tú, YHVH, los guardarás; Guárdalos para siempre de aquesta generación."
       },
       {
         "verse": 9,
         "hebrew": "סָבִיב רְשָׁעִים יִתְהַלָּכוּן כְּרֻם זֻלּוּת לִבְנֵי אָדָם׃ ",
         "transliteration": "saviv resha'im itehalajun kerum zulut liveney adam ",
-        "spanish": "..."
+        "spanish": "Cercando andan los malos, Mientras son exaltados los más viles de los hijos de los hombres."
       }
     ]
   },
@@ -1289,307 +1289,307 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ לְעֶבֶד יְהֹוָה לְדָוִד אֲשֶׁר דִּבֶּר לַיהֹוָה אֶת דִּבְרֵי הַשִּׁירָה הַזֹּאת בְּיוֹם הִצִּיל יְהֹוָה אוֹתוֹ מִכַּף כׇּל אֹיְבָיו וּמִיַּד שָׁאוּל׃",
         "transliteration": "lamenatseja le'eved Adonai ledavid asher diber layhovah etdiverey hashirah hazot beyoom hitsilAdonaiootoo mikaf kloyevayv umiad shaul",
-        "spanish": "AMARTE he, oh YHVH, fortaleza mía."
+        "spanish": "Al Músico principal; del siervo de YHVH, David, quien profirió a YHVH las palabras de este cántico el día que le libró YHVH de mano de todos sus enemigos, y de mano de Saúl."
       },
       {
         "verse": 2,
         "hebrew": "וַיֹּאמַר אֶרְחׇמְךָ יְהֹוָה חִזְקִי׃",
         "transliteration": "vayomar erejmeja Adonai jizeki",
-        "spanish": "YHVH, roca mía y castillo mío, y mi libertador; Dios mío, fuerte mío, en él confiaré; Escudo mío, y el cuerno de mi salud, mi refugio."
+        "spanish": "AMARTE he, oh YHVH, fortaleza mía."
       },
       {
         "verse": 3,
         "hebrew": "יְהֹוָה סַלְעִי וּמְצוּדָתִי וּמְפַלְטִי אֵלִי צוּרִי אֶחֱסֶה בּוֹ מָגִנִּי וְקֶרֶן יִשְׁעִי מִשְׂגַּבִּי׃",
         "transliteration": "Adonai sale'i umetsudati umefaleti eli tsuri ejesehboo magini vekerenishe'i misegabi",
-        "spanish": "Invocaré a YHVH, digno de ser alabado, Y seré salvo de mis enemigos."
+        "spanish": "YHVH, roca mía y castillo mío, y mi libertador; Dios mío, fuerte mío, en él confiaré; Escudo mío, y el cuerno de mi salud, mi refugio."
       },
       {
         "verse": 4,
         "hebrew": "מְהֻלָּל אֶקְרָא יְהֹוָה וּמִן אֹיְבַי אִוָּשֵׁעַ׃",
         "transliteration": "mehulal ekera Adonai uminoyevay ivashe'a",
-        "spanish": "Cercáronme dolores de muerte, Y torrentes de perversidad me atemorizaron."
+        "spanish": "Invocaré a YHVH, digno de ser alabado, Y seré salvo de mis enemigos."
       },
       {
         "verse": 5,
         "hebrew": "אֲפָפוּנִי חֶבְלֵי מָוֶת וְנַחֲלֵי בְלִיַּעַל יְבַעֲתוּנִי׃",
         "transliteration": "afafuni jeveleymavet venajaley velia'al yeva'atuni",
-        "spanish": "Dolores del Sheol me rodearon, Previniéronme lazos de muerte."
+        "spanish": "Cercáronme dolores de muerte, Y torrentes de perversidad me atemorizaron."
       },
       {
         "verse": 6,
         "hebrew": "חֶבְלֵי שְׁאוֹל סְבָבוּנִי קִדְּמוּנִי מוֹקְשֵׁי מָוֶת׃",
         "transliteration": "jeveley sheool sevavuni kidemuni mookeshey mavet",
-        "spanish": "En mi angustia invoqué a YHVH, Y clamé a mí Dios: El oyó mi voz desde su templo, Y mi clamor llegó delante de él, á sus oídos."
+        "spanish": "Dolores del Sheol me rodearon, Previniéronme lazos de muerte."
       },
       {
         "verse": 7,
         "hebrew": "בַּצַּר לִי אֶקְרָא יְהֹוָה וְאֶל אֱלֹהַי אֲשַׁוֵּעַ יִשְׁמַע מֵהֵיכָלוֹ קוֹלִי וְשַׁוְעָתִי לְפָנָיו תָּבוֹא בְאׇזְנָיו׃",
         "transliteration": "batsarli ekera Adonai veelelohay ashave'a ishema' meheyjaloo kooli veshave'ati lefanayv tavuo vezenayv",
-        "spanish": "Y la tierra fué conmovida y tembló; Y moviéronse los fundamentos de los montes, Y se estremecieron, porque se indignó él."
+        "spanish": "En mi angustia invoqué a YHVH, Y clamé a mí Dios: El oyó mi voz desde su templo, Y mi clamor llegó delante de él, á sus oídos."
       },
       {
         "verse": 8,
         "hebrew": "וַתִּגְעַשׁ וַתִּרְעַשׁ הָאָרֶץ וּמוֹסְדֵי הָרִים יִרְגָּזוּ וַיִּתְגָּעֲשׁוּ כִּי חָרָה לוֹ׃",
         "transliteration": "vatige'ash vatire'ash haarets umoosedey harim iregazu vaitega'ashu kijarah loo",
-        "spanish": "Humo subió de su nariz, Y de su boca consumidor fuego; Carbones fueron por él encendidos."
+        "spanish": "Y la tierra fué conmovida y tembló; Y moviéronse los fundamentos de los montes, Y se estremecieron, porque se indignó él."
       },
       {
         "verse": 9,
         "hebrew": "עָלָה עָשָׁן בְּאַפּוֹ וְאֵשׁ מִפִּיו תֹּאכֵל גֶּחָלִים בָּעֲרוּ מִמֶּנּוּ׃",
         "transliteration": "'alah 'ashan beapoo veeshmipiv tojel gejalim ba'aru mimenv",
-        "spanish": "Y bajó los cielos, y descendió; Y oscuridad debajo de sus pies."
+        "spanish": "Humo subió de su nariz, Y de su boca consumidor fuego; Carbones fueron por él encendidos."
       },
       {
         "verse": 10,
         "hebrew": "וַיֵּט שָׁמַיִם וַיֵּרַד וַעֲרָפֶל תַּחַת רַגְלָיו׃",
         "transliteration": "vayet shamaim vayerad va'arafel tajat ragelayv",
-        "spanish": "Y cabalgó sobre un querubín, y voló: Voló sobre las alas del viento."
+        "spanish": "Y bajó los cielos, y descendió; Y oscuridad debajo de sus pies."
       },
       {
         "verse": 11,
         "hebrew": "וַיִּרְכַּב עַל כְּרוּב וַיָּעֹף וַיֵּדֶא עַל כַּנְפֵי רוּחַ׃",
         "transliteration": "vairekav 'alkeruv vaya'of vayede 'alkanefeyruja",
-        "spanish": "Puso tinieblas por escondedero suyo, su pabellón en derredor de sí; Oscuridad de aguas, nubes de los cielos."
+        "spanish": "Y cabalgó sobre un querubín, y voló: Voló sobre las alas del viento."
       },
       {
         "verse": 12,
         "hebrew": "יָשֶׁת חֹשֶׁךְ סִתְרוֹ סְבִיבוֹתָיו סֻכָּתוֹ חֶשְׁכַת מַיִם עָבֵי שְׁחָקִים׃",
         "transliteration": "yashetjosheje siteroo sevivuotayv sukatoo jeshejatmaim 'avey shejakim",
-        "spanish": "Por el resplandor delante de él, sus nubes pasaron; Granizo y carbones ardientes."
+        "spanish": "Puso tinieblas por escondedero suyo, su pabellón en derredor de sí; Oscuridad de aguas, nubes de los cielos."
       },
       {
         "verse": 13,
         "hebrew": "מִנֹּגַהּ נֶגְדּוֹ עָבָיו עָבְרוּ בָּרָד וְגַחֲלֵי אֵשׁ׃",
         "transliteration": "minogah negedoo 'avayv 'averu barad vegajaleyesh",
-        "spanish": "Y tronó en los cielos YHVH, Y el Elyón dió su voz; Granizo y carbones de fuego."
+        "spanish": "Por el resplandor delante de él, sus nubes pasaron; Granizo y carbones ardientes."
       },
       {
         "verse": 14,
         "hebrew": "וַיַּרְעֵם בַּשָּׁמַיִם יְהֹוָה וְעֶלְיוֹן יִתֵּן קֹלוֹ בָּרָד וְגַחֲלֵי אֵשׁ׃",
         "transliteration": "vayare'em bashamaim Adonai ve'eleyoon iten koloo barad vegajaleyesh",
-        "spanish": "Y envió sus saetas, y desbaratólos; Y echó relámpagos, y los destruyó."
+        "spanish": "Y tronó en los cielos YHVH, Y el Elyón dió su voz; Granizo y carbones de fuego."
       },
       {
         "verse": 15,
         "hebrew": "וַיִּשְׁלַח חִצָּיו וַיְפִיצֵם וּבְרָקִים רָב וַיְהֻמֵּם׃",
         "transliteration": "vaishelaj jitsayv vayefitsem uverakim rav vayehumem",
-        "spanish": "Y aparecieron las honduras de las aguas, Y descubriéronse los cimientos del mundo, A tu reprensión, oh YHVH, Por el soplo del viento de tu nariz."
+        "spanish": "Y envió sus saetas, y desbaratólos; Y echó relámpagos, y los destruyó."
       },
       {
         "verse": 16,
         "hebrew": "וַיֵּרָאוּ אֲפִיקֵי מַיִם וַיִּגָּלוּ מוֹסְדוֹת תֵּבֵל מִגַּעֲרָתְךָ יְהֹוָה מִנִּשְׁמַת רוּחַ אַפֶּךָ׃",
         "transliteration": "vayerau afikey maim vaigalu moosedoot tevel miga'arateja Adonai minishemat ruja apeja",
-        "spanish": "Envió desde lo alto; tomóme, Sácome de las muchas aguas."
+        "spanish": "Y aparecieron las honduras de las aguas, Y descubriéronse los cimientos del mundo, A tu reprensión, oh YHVH, Por el soplo del viento de tu nariz."
       },
       {
         "verse": 17,
         "hebrew": "יִשְׁלַח מִמָּרוֹם יִקָּחֵנִי יַמְשֵׁנִי מִמַּיִם רַבִּים׃",
         "transliteration": "ishelaj mimaroom ikajeni yamesheni mimaim rabim",
-        "spanish": "Libróme de mi poderoso enemigo, Y de los que me aborrecían, aunque eran ellos más fuertes que yo."
+        "spanish": "Envió desde lo alto; tomóme, Sácome de las muchas aguas."
       },
       {
         "verse": 18,
         "hebrew": "יַצִּילֵנִי מֵאֹיְבִי עָז וּמִשֹּׂנְאַי כִּי אָמְצוּ מִמֶּנִּי׃",
         "transliteration": "yatsileni meoyevi 'az umisoneay kiametsu mimeni",
-        "spanish": "Asaltáronme en el día de mi quebranto: Mas YHVH fué mi apoyo."
+        "spanish": "Libróme de mi poderoso enemigo, Y de los que me aborrecían, aunque eran ellos más fuertes que yo."
       },
       {
         "verse": 19,
         "hebrew": "יְקַדְּמוּנִי בְיוֹם אֵידִי וַיְהִי יְהֹוָה לְמִשְׁעָן לִי׃",
         "transliteration": "yekademuni veyoomeydi vayehiAdonai lemishe'an li",
-        "spanish": "Y sacóme á anchura: Libróme, porque se agradó de mí."
+        "spanish": "Asaltáronme en el día de mi quebranto: Mas YHVH fué mi apoyo."
       },
       {
         "verse": 20,
         "hebrew": "וַיּוֹצִיאֵנִי לַמֶּרְחָב יְחַלְּצֵנִי כִּי חָפֵץ בִּי׃",
         "transliteration": "vayootsieni lamerejav yejaletseni kijafetsbi",
-        "spanish": "Hame pagado YHVH conforme a mí justicia: Conforme á la limpieza de mis manos me ha vuelto."
+        "spanish": "Y sacóme á anchura: Libróme, porque se agradó de mí."
       },
       {
         "verse": 21,
         "hebrew": "יִגְמְלֵנִי יְהֹוָה כְּצִדְקִי כְּבֹר יָדַי יָשִׁיב לִי׃",
         "transliteration": "igemeleni Adonai ketsideki kevur yaday yashiv li",
-        "spanish": "Porque yo he guardado los caminos de YHVH, Y no me aparté impíamente de mi Dios."
+        "spanish": "Hame pagado YHVH conforme a mí justicia: Conforme á la limpieza de mis manos me ha vuelto."
       },
       {
         "verse": 22,
         "hebrew": "כִּי שָׁמַרְתִּי דַּרְכֵי יְהֹוָה וְלֹא רָשַׁעְתִּי מֵאֱלֹהָי׃",
         "transliteration": "kishamareti darejey Adonai velorasha'eti meelohay",
-        "spanish": "Pues todos sus juicios estuvieron delante de mí, Y no eché de mí sus estatutos."
+        "spanish": "Porque yo he guardado los caminos de YHVH, Y no me aparté impíamente de mi Dios."
       },
       {
         "verse": 23,
         "hebrew": "כִּי כׇל מִשְׁפָּטָיו לְנֶגְדִּי וְחֻקֹּתָיו לֹא אָסִיר מֶנִּי׃",
         "transliteration": "ki jlmishepatayv lenegedi vejukotayv loasir meni",
-        "spanish": "Y fuí integro para con él, y cauteléme de mi maldad."
+        "spanish": "Pues todos sus juicios estuvieron delante de mí, Y no eché de mí sus estatutos."
       },
       {
         "verse": 24,
         "hebrew": "וָאֱהִי תָמִים עִמּוֹ וָאֶשְׁתַּמֵּר מֵעֲוֺנִי׃",
         "transliteration": "vaehi tamim 'imoo vaeshetamer me'avni",
-        "spanish": "Pagóme pues YHVH conforme a mí justicia; Conforme á la limpieza de mis manos delante de sus ojos."
+        "spanish": "Y fuí integro para con él, y cauteléme de mi maldad."
       },
       {
         "verse": 25,
         "hebrew": "וַיָּשֶׁב יְהֹוָה לִי כְצִדְקִי כְּבֹר יָדַי לְנֶגֶד עֵינָיו׃",
         "transliteration": "vayashevAdonai li jetsideki kevur yaday leneged 'eynayv",
-        "spanish": "Con el misericordioso te mostrarás misericordioso, Y recto para con el hombre íntegro."
+        "spanish": "Pagóme pues YHVH conforme a mí justicia; Conforme á la limpieza de mis manos delante de sus ojos."
       },
       {
         "verse": 26,
         "hebrew": "עִם חָסִיד תִּתְחַסָּד עִם גְּבַר תָּמִים תִּתַּמָּם׃",
         "transliteration": "'imjasid titejasad 'imgevar tamim titamam",
-        "spanish": "Limpio te mostrarás para con el limpio, Y severo serás para con el perverso."
+        "spanish": "Con el misericordioso te mostrarás misericordioso, Y recto para con el hombre íntegro."
       },
       {
         "verse": 27,
         "hebrew": "עִם נָבָר תִּתְבָּרָר וְעִם עִקֵּשׁ תִּתְפַּתָּל׃",
         "transliteration": "'imnavar titebarar ve'im'ikesh titepatal",
-        "spanish": "Y tú salvarás al pueblo humilde, Y humillarás los ojos altivos."
+        "spanish": "Limpio te mostrarás para con el limpio, Y severo serás para con el perverso."
       },
       {
         "verse": 28,
         "hebrew": "כִּי אַתָּה עַם עָנִי תוֹשִׁיעַ וְעֵינַיִם רָמוֹת תַּשְׁפִּיל׃",
         "transliteration": "kiatah 'am'ani tooshi'a ve'eynaim ramoot tashepil",
-        "spanish": "Tú pues alumbrarás mi lámpara: YHVH mi Dios alumbrará mis tinieblas."
+        "spanish": "Y tú salvarás al pueblo humilde, Y humillarás los ojos altivos."
       },
       {
         "verse": 29,
         "hebrew": "כִּי אַתָּה תָּאִיר נֵרִי יְהֹוָה אֱלֹהַי יַגִּיהַּ חׇשְׁכִּי׃",
         "transliteration": "kiatah tair neri Adonai elohay yagiha jsheki",
-        "spanish": "Porque contigo desharé ejércitos; Y con mi Dios asaltaré muros."
+        "spanish": "Tú pues alumbrarás mi lámpara: YHVH mi Dios alumbrará mis tinieblas."
       },
       {
         "verse": 30,
         "hebrew": "כִּי בְךָ אָרֻץ גְּדוּד וּבֵאלֹהַי אֲדַלֶּג שׁוּר׃",
         "transliteration": "kiveja aruts gedud uvelohay adalegshur",
-        "spanish": "Dios, perfecto su camino: Es acendrada la palabra de YHVH: Escudo es a todos los que en él esperan."
+        "spanish": "Porque contigo desharé ejércitos; Y con mi Dios asaltaré muros."
       },
       {
         "verse": 31,
         "hebrew": "הָאֵל תָּמִים דַּרְכּוֹ אִמְרַת יְהֹוָה צְרוּפָה מָגֵן הוּא לְכֹל הַחֹסִים בּוֹ׃",
         "transliteration": "hael tamim darekoo imeratAdonai tserufah magen hu lejol hajosim boo",
-        "spanish": "Porque ¿qué Dios hay fuera de YHVH? ¿Y qué fuerte fuera de nuestro Dios?"
+        "spanish": "Dios, perfecto su camino: Es acendrada la palabra de YHVH: Escudo es a todos los que en él esperan."
       },
       {
         "verse": 32,
         "hebrew": "כִּי מִי אֱלוֹהַּ מִבַּלְעֲדֵי יְהֹוָה וּמִי צוּר זוּלָתִי אֱלֹהֵינוּ׃",
         "transliteration": "ki mi elooha mibale'adey Adonai umi tsur zulati Eloheinu",
-        "spanish": "Dios es el que me ciñe de fuerza, E hizo perfecto mi camino;"
+        "spanish": "Porque ¿qué Dios hay fuera de YHVH? ¿Y qué fuerte fuera de nuestro Dios?"
       },
       {
         "verse": 33,
         "hebrew": "הָאֵל הַמְאַזְּרֵנִי חָיִל וַיִּתֵּן תָּמִים דַּרְכִּי׃",
         "transliteration": "hael hameazereni jail vaiten tamim dareki",
-        "spanish": "Quien pone mis pies como pies de ciervas, E hízome estar sobre mis alturas;"
+        "spanish": "Dios es el que me ciñe de fuerza, E hizo perfecto mi camino;"
       },
       {
         "verse": 34,
         "hebrew": "מְשַׁוֶּה רַגְלַי כָּאַיָּלוֹת וְעַל בָּמֹתַי יַעֲמִידֵנִי׃",
         "transliteration": "meshaveh ragelay kaayaloot ve'al bamotay ya'amideni",
-        "spanish": "Quien enseña mis manos para la batalla, Y será quebrado con mis brazos el arco de acero."
+        "spanish": "Quien pone mis pies como pies de ciervas, E hízome estar sobre mis alturas;"
       },
       {
         "verse": 35,
         "hebrew": "מְלַמֵּד יָדַי לַמִּלְחָמָה וְנִחֲתָה קֶשֶׁת נְחוּשָׁה זְרוֹעֹתָי׃",
         "transliteration": "melamed yaday lamilejamah venijatah keshetnejushah zeroo'otay",
-        "spanish": "Dísteme asimismo el escudo de tu salud: Y tu diestra me sustentó, Y tu benignidad me ha acrecentado."
+        "spanish": "Quien enseña mis manos para la batalla, Y será quebrado con mis brazos el arco de acero."
       },
       {
         "verse": 36,
         "hebrew": "וַתִּתֶּן לִי מָגֵן יִשְׁעֶךָ וִימִינְךָ תִסְעָדֵנִי וְעַנְוַתְךָ תַרְבֵּנִי׃",
         "transliteration": "vatitenli magen ishe'eja vimineja tise'adeni ve'anevateja tarebeni",
-        "spanish": "Ensanchaste mis pasos debajo de mí, Y no titubearon mis rodillas."
+        "spanish": "Dísteme asimismo el escudo de tu salud: Y tu diestra me sustentó, Y tu benignidad me ha acrecentado."
       },
       {
         "verse": 37,
         "hebrew": "תַּרְחִיב צַעֲדִי תַחְתָּי וְלֹא מָעֲדוּ קַרְסֻלָּי׃",
         "transliteration": "tarejiv tsa'adi tajetay velo ma'adu karesulay",
-        "spanish": "Perseguido he mis enemigos, y alcancélos, Y no volví hasta acabarlos."
+        "spanish": "Ensanchaste mis pasos debajo de mí, Y no titubearon mis rodillas."
       },
       {
         "verse": 38,
         "hebrew": "אֶרְדּוֹף אוֹיְבַי וְאַשִּׂיגֵם וְלֹא אָשׁוּב עַד כַּלּוֹתָם׃",
         "transliteration": "eredoof ooyevay veasigem veloashuv 'adkalootam",
-        "spanish": "Helos herido, y no podrán levantarse: Cayeron debajo de mis pies."
+        "spanish": "Perseguido he mis enemigos, y alcancélos, Y no volví hasta acabarlos."
       },
       {
         "verse": 39,
         "hebrew": "אֶמְחָצֵם וְלֹא יֻכְלוּ קוּם יִפְּלוּ תַּחַת רַגְלָי׃",
         "transliteration": "emejatsem veloyujelu kum ipelu tajat ragelay",
-        "spanish": "Pues me ceñiste de fortaleza para la pelea; Has agobiado mis enemigos debajo de mí."
+        "spanish": "Helos herido, y no podrán levantarse: Cayeron debajo de mis pies."
       },
       {
         "verse": 40,
         "hebrew": "וַתְּאַזְּרֵנִי חַיִל לַמִּלְחָמָה תַּכְרִיעַ קָמַי תַּחְתָּי׃",
         "transliteration": "vateazereni jail lamilejamah tajeri'a kamay tajetay",
-        "spanish": "Y dísteme la cerviz de mis enemigos, Y destruí a los que me aborrecían."
+        "spanish": "Pues me ceñiste de fortaleza para la pelea; Has agobiado mis enemigos debajo de mí."
       },
       {
         "verse": 41,
         "hebrew": "וְאֹיְבַי נָתַתָּה לִּי עֹרֶף וּמְשַׂנְאַי אַצְמִיתֵם׃",
         "transliteration": "veoyevay natatah li 'oref umesaneay atsemitem",
-        "spanish": "Clamaron, y no hubo quien salvase: Aun a YHVH, mas no los oyó."
+        "spanish": "Y dísteme la cerviz de mis enemigos, Y destruí a los que me aborrecían."
       },
       {
         "verse": 42,
         "hebrew": "יְשַׁוְּעוּ וְאֵין מוֹשִׁיעַ עַל יְהֹוָה וְלֹא עָנָם׃",
         "transliteration": "yeshave'u veeynmooshi'a 'alAdonai velo 'anam",
-        "spanish": "Y molílos como polvo delante del viento; Esparcílos como lodo de las calles."
+        "spanish": "Clamaron, y no hubo quien salvase: Aun a YHVH, mas no los oyó."
       },
       {
         "verse": 43,
         "hebrew": "וְאֶשְׁחָקֵם כְּעָפָר עַל פְּנֵי רוּחַ כְּטִיט חוּצוֹת אֲרִיקֵם׃",
         "transliteration": "veeshejakem ke'afar 'alpeneyruja ketit jutsoot arikem",
-        "spanish": "Librásteme de contiendas de pueblo: Pusísteme por cabecera de gentes: Pueblo que yo no conocía, me sirvió."
+        "spanish": "Y molílos como polvo delante del viento; Esparcílos como lodo de las calles."
       },
       {
         "verse": 44,
         "hebrew": "תְּפַלְּטֵנִי מֵרִיבֵי עָם תְּשִׂימֵנִי לְרֹאשׁ גּוֹיִם עַם לֹא יָדַעְתִּי יַעַבְדוּנִי׃",
         "transliteration": "tefaleteni merivey 'am tesimeni lerosh gooim 'am loyada'eti ya'aveduni",
-        "spanish": "Así que hubo oído, me obedeció; Los hijos de extraños me mintieron;"
+        "spanish": "Librásteme de contiendas de pueblo: Pusísteme por cabecera de gentes: Pueblo que yo no conocía, me sirvió."
       },
       {
         "verse": 45,
         "hebrew": "לְשֵׁמַע אֹזֶן יִשָּׁמְעוּ לִי בְּנֵי נֵכָר יְכַחֲשׁוּ לִי׃",
         "transliteration": "leshema' ozen ishame'u li beneynejar yejajashvli",
-        "spanish": "Los extraños flaquearon, Y tuvieron miedo desde sus encerramientos."
+        "spanish": "Así que hubo oído, me obedeció; Los hijos de extraños me mintieron;"
       },
       {
         "verse": 46,
         "hebrew": "בְּנֵי נֵכָר יִבֹּלוּ וְיַחְרְגוּ מִמִּסְגְּרוֹתֵיהֶם׃",
         "transliteration": "beneynejar ibolu veyajeregu mimisegerooteyhem",
-        "spanish": "Viva YHVH, y sea bendita mi roca; Y ensalzado sea el Dios de mi salud:"
+        "spanish": "Los extraños flaquearon, Y tuvieron miedo desde sus encerramientos."
       },
       {
         "verse": 47,
         "hebrew": "חַי יְהֹוָה וּבָרוּךְ צוּרִי וְיָרוּם אֱלוֹהֵי יִשְׁעִי׃",
         "transliteration": "jayAdonai uvaruje tsuri veyarum eloohey ishe'i",
-        "spanish": "El Dios que me da las venganzas, Y sujetó pueblos á mí."
+        "spanish": "Viva YHVH, y sea bendita mi roca; Y ensalzado sea el Dios de mi salud:"
       },
       {
         "verse": 48,
         "hebrew": "הָאֵל הַנּוֹתֵן נְקָמוֹת לִי וַיַּדְבֵּר עַמִּים תַּחְתָּי׃",
         "transliteration": "hael hanooten nekamoot li vayadeber 'amim tajetay",
-        "spanish": "Mi libertador de mis enemigos: Hicísteme también superior de mis adversarios; Librásteme de varón violento."
+        "spanish": "El Dios que me da las venganzas, Y sujetó pueblos á mí."
       },
       {
         "verse": 49,
         "hebrew": "מְפַלְּטִי מֵאֹיְבָי אַף מִן קָמַי תְּרוֹמְמֵנִי מֵאִישׁ חָמָס תַּצִּילֵנִי׃",
         "transliteration": "mefaleti meoyevay af minkamay teroomemeni meish jamas tatsileni",
-        "spanish": "Por tanto yo te confesaré entre las gentes, oh YHVH, Y cantaré á tu nombre."
+        "spanish": "Mi libertador de mis enemigos: Hicísteme también superior de mis adversarios; Librásteme de varón violento."
       },
       {
         "verse": 50,
         "hebrew": "עַל כֵּן אוֹדְךָ בַגּוֹיִם יְהֹוָה וּלְשִׁמְךָ אֲזַמֵּרָה׃",
         "transliteration": "'alken oodeja vagooim Adonai uleshimeja azamerah",
-        "spanish": "El cual engrandece las saludes de su rey, Y hace Jésed a Su Mashíaj, A David y á su simiente, para siempre."
+        "spanish": "Por tanto yo te confesaré entre las gentes, oh YHVH, Y cantaré á tu nombre."
       },
       {
         "verse": 51,
         "hebrew": "מַגְדִּל יְשׁוּעוֹת מַלְכּוֹ וְעֹשֶׂה חֶסֶד לִמְשִׁיחוֹ לְדָוִד וּלְזַרְעוֹ עַד עוֹלָם׃ ",
         "transliteration": "magedil yeshu'oot malekoo ve'oseh jesed limeshijoo ledavid ulezare'oo 'ad'oolam ",
-        "spanish": "..."
+        "spanish": "El cual engrandece las saludes de su rey, Y hace Jésed a Su Mashíaj, A David y á su simiente, para siempre."
       }
     ]
   },
@@ -1604,91 +1604,91 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ מִזְמוֹר לְדָוִד׃",
         "transliteration": "lamenatseja mizemoor ledavid",
-        "spanish": "LOS cielos cuentan la gloria de Dios, Y la expansión denuncia la obra de sus manos."
+        "spanish": "Al Músico principal. Salmo de David."
       },
       {
         "verse": 2,
         "hebrew": "הַשָּׁמַיִם מְסַפְּרִים כְּבוֹד אֵל וּמַעֲשֵׂה יָדָיו מַגִּיד הָרָקִיעַ׃",
         "transliteration": "hashamaim mesaperim kevuodel uma'aseh yadayv magid haraki'a",
-        "spanish": "El un día emite palabra al otro día, Y la una noche á la otra noche declara sabiduría."
+        "spanish": "LOS cielos cuentan la gloria de Dios, Y la expansión denuncia la obra de sus manos."
       },
       {
         "verse": 3,
         "hebrew": "יוֹם לְיוֹם יַבִּיעַ אֹמֶר וְלַיְלָה לְּלַיְלָה יְחַוֶּה דָּעַת׃",
         "transliteration": "yoom leyoom yabi'a omer velayelah lelayelah yejavehda'at",
-        "spanish": "No hay dicho, ni palabras, Ni es oída su voz."
+        "spanish": "El un día emite palabra al otro día, Y la una noche á la otra noche declara sabiduría."
       },
       {
         "verse": 4,
         "hebrew": "אֵין אֹמֶר וְאֵין דְּבָרִים בְּלִי נִשְׁמָע קוֹלָם׃",
         "transliteration": "eynomer veeyn devarim beli nishema' koolam",
-        "spanish": "Por toda la tierra salió su hilo, Y al cabo del mundo sus palabras. En ellos puso tabernáculo para el sol."
+        "spanish": "No hay dicho, ni palabras, Ni es oída su voz."
       },
       {
         "verse": 5,
         "hebrew": "בְּכׇל הָאָרֶץ יָצָא קַוָּם וּבִקְצֵה תֵבֵל מִלֵּיהֶם לַשֶּׁמֶשׁ שָׂם אֹהֶל בָּהֶם׃",
         "transliteration": "bejlhaarets yatsa kavam uviketseh tevel mileyhem lashemesh samohel bahem",
-        "spanish": "Y él, como un novio que sale de su tálamo, Alégrase cual gigante para correr el camino."
+        "spanish": "Por toda la tierra salió su hilo, Y al cabo del mundo sus palabras. En ellos puso tabernáculo para el sol."
       },
       {
         "verse": 6,
         "hebrew": "וְהוּא כְּחָתָן יֹצֵא מֵחֻפָּתוֹ יָשִׂישׂ כְּגִבּוֹר לָרוּץ אֹרַח׃",
         "transliteration": "vehu kejatan yotse mejupatoo yasis kegiboor laruts oraj",
-        "spanish": "Del un cabo de los cielos es su salida, Y su giro hasta la extremidad de ellos: Y no hay quien se esconda de su calor."
+        "spanish": "Y él, como un novio que sale de su tálamo, Alégrase cual gigante para correr el camino."
       },
       {
         "verse": 7,
         "hebrew": "מִקְצֵה הַשָּׁמַיִם מוֹצָאוֹ וּתְקוּפָתוֹ עַל קְצוֹתָם וְאֵין נִסְתָּר מֵחַמָּתוֹ׃",
         "transliteration": "miketseh hashamaim mootsaoo utekufatoo 'alketsootam veeyn nisetar mejamatoo",
-        "spanish": "La Torá de YHVH es perfecta, que vuelve el alma: El testimonio de YHVH, fiel, que hace sabio al pequeño."
+        "spanish": "Del un cabo de los cielos es su salida, Y su giro hasta la extremidad de ellos: Y no hay quien se esconda de su calor."
       },
       {
         "verse": 8,
         "hebrew": "תּוֹרַת יְהֹוָה תְּמִימָה מְשִׁיבַת נָפֶשׁ עֵדוּת יְהֹוָה נֶאֱמָנָה מַחְכִּימַת פֶּתִי׃",
         "transliteration": "toorat Adonai temimah meshivat nafesh 'edut Adonai neemanah majekimat peti",
-        "spanish": "Los mandamientos de YHVH son rectos, que alegran el corazón: El precepto de YHVH, puro, que alumbra los ojos."
+        "spanish": "La Torá de YHVH es perfecta, que vuelve el alma: El testimonio de YHVH, fiel, que hace sabio al pequeño."
       },
       {
         "verse": 9,
         "hebrew": "פִּקּוּדֵי יְהֹוָה יְשָׁרִים מְשַׂמְּחֵי לֵב מִצְוַת יְהֹוָה בָּרָה מְאִירַת עֵינָיִם׃",
         "transliteration": "pikudey Adonai yesharim mesamejeylev mitsevat Adonai barah meirat 'eynaim",
-        "spanish": "El temor de YHVH, limpio, que permanece para siempre; Los juicios de YHVH son verdad, todos justos."
+        "spanish": "Los mandamientos de YHVH son rectos, que alegran el corazón: El precepto de YHVH, puro, que alumbra los ojos."
       },
       {
         "verse": 10,
         "hebrew": "יִרְאַת יְהֹוָה טְהוֹרָה עוֹמֶדֶת לָעַד מִשְׁפְּטֵי יְהֹוָה אֱמֶת צָדְקוּ יַחְדָּו׃",
         "transliteration": "ireat Adonai tehoorah 'oomedet la'ad mishepeteyAdonai emet tsadeku yajedav",
-        "spanish": "Deseables son más que el oro, y más que mucho oro afinado; Y dulces más que miel, y que la que destila del panal."
+        "spanish": "El temor de YHVH, limpio, que permanece para siempre; Los juicios de YHVH son verdad, todos justos."
       },
       {
         "verse": 11,
         "hebrew": "הַנֶּחֱמָדִים מִזָּהָב וּמִפַּז רָב וּמְתוּקִים מִדְּבַשׁ וְנֹפֶת צוּפִים׃",
         "transliteration": "hanejemadim mizahav umipaz rav umetukim midevash venofet tsufim",
-        "spanish": "Tu siervo es además amonestado con ellos: En guardarlos hay grande galardón."
+        "spanish": "Deseables son más que el oro, y más que mucho oro afinado; Y dulces más que miel, y que la que destila del panal."
       },
       {
         "verse": 12,
         "hebrew": "גַּם עַבְדְּךָ נִזְהָר בָּהֶם בְּשׇׁמְרָם עֵקֶב רָב׃",
         "transliteration": "gam'avedeja nizehar bahem beshmeram 'ekev rav",
-        "spanish": "Los errores, ¿quién los entenderá? Líbrame de los que me son ocultos."
+        "spanish": "Tu siervo es además amonestado con ellos: En guardarlos hay grande galardón."
       },
       {
         "verse": 13,
         "hebrew": "שְׁגִיאוֹת מִי יָבִין מִנִּסְתָּרוֹת נַקֵּנִי׃",
         "transliteration": "shegioot miyavin minisetaroot nakeni",
-        "spanish": "Detén asimismo á tu siervo de las soberbias; Que no se enseñoreen de mí: Entonces seré íntegro, y estaré limpio de gran rebelión."
+        "spanish": "Los errores, ¿quién los entenderá? Líbrame de los que me son ocultos."
       },
       {
         "verse": 14,
         "hebrew": "גַּם מִזֵּדִים חֲשֹׂךְ עַבְדֶּךָ אַל יִמְשְׁלוּ בִי אָז אֵיתָם וְנִקֵּיתִי מִפֶּשַׁע רָב׃",
         "transliteration": "gam mizedim jasoje 'avedeja alimeshelvvi az eytam venikeyti mipesha' rav",
-        "spanish": "Sean gratos los dichos de mi boca y la meditación de mi corazón delante de ti, Oh YHVH, roca mía, y redentor mío"
+        "spanish": "Detén asimismo á tu siervo de las soberbias; Que no se enseñoreen de mí: Entonces seré íntegro, y estaré limpio de gran rebelión."
       },
       {
         "verse": 15,
         "hebrew": "יִהְיוּ לְרָצוֹן אִמְרֵי פִי וְהֶגְיוֹן לִבִּי לְפָנֶיךָ יְהֹוָה צוּרִי וְגֹאֲלִי׃ ",
         "transliteration": "iheyvleratsoon imereyfi vehegeyoon libi lefaneyja Adonai tsuri vegoali ",
-        "spanish": "..."
+        "spanish": "Sean gratos los dichos de mi boca y la meditación de mi corazón delante de ti, Oh YHVH, roca mía, y redentor mío"
       }
     ]
   },
@@ -1703,61 +1703,61 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ מִזְמוֹר לְדָוִד׃",
         "transliteration": "lamenatseja mizemoor ledavid",
-        "spanish": "OIGATE YHVH en el día de conflicto; Defiéndate el nombre del Dios de Jacob."
+        "spanish": "Al Músico principal. Salmo de David."
       },
       {
         "verse": 2,
         "hebrew": "יַעַנְךָ יְהֹוָה בְּיוֹם צָרָה יְשַׂגֶּבְךָ שֵׁם אֱלֹהֵי יַעֲקֹב׃",
         "transliteration": "ya'aneja Adonai beyoom tsarah yesageveja shem elohey ya'akov",
-        "spanish": "Envíete ayuda desde el santuario, Y desde Sión te sostenga."
+        "spanish": "OIGATE YHVH en el día de conflicto; Defiéndate el nombre del Dios de Jacob."
       },
       {
         "verse": 3,
         "hebrew": "יִשְׁלַח עֶזְרְךָ מִקֹּדֶשׁ וּמִצִּיּוֹן יִסְעָדֶךָּ׃",
         "transliteration": "ishelaj'ezereja mikodesh umitsioon ise'adeka",
-        "spanish": "Haga memoria de todos tus presentes, Y reduzca á ceniza tu holocausto. (Sélah)"
+        "spanish": "Envíete ayuda desde el santuario, Y desde Sión te sostenga."
       },
       {
         "verse": 4,
         "hebrew": "יִזְכֹּר כׇּל מִנְחֹתֶךָ וְעוֹלָתְךָ יְדַשְּׁנֶה סֶלָה׃",
         "transliteration": "izekor klminejoteja ve'oolateja yedasheneh selah",
-        "spanish": "Déte conforme á tu corazón, Y cumpla todo tu consejo."
+        "spanish": "Haga memoria de todos tus presentes, Y reduzca á ceniza tu holocausto. (Sélah)"
       },
       {
         "verse": 5,
         "hebrew": "יִתֶּן לְךָ כִלְבָבֶךָ וְכׇל עֲצָתְךָ יְמַלֵּא׃",
         "transliteration": "itenleja jilevaveja vejl'atsateja yemale",
-        "spanish": "Nosotros nos alegraremos por tu salud, Y alzaremos pendón en el nombre de nuestro Dios: Cumpla YHVH todas tus peticiones."
+        "spanish": "Déte conforme á tu corazón, Y cumpla todo tu consejo."
       },
       {
         "verse": 6,
         "hebrew": "נְרַנְּנָה בִּישׁוּעָתֶךָ וּבְשֵׁם אֱלֹהֵינוּ נִדְגֹּל יְמַלֵּא יְהֹוָה כׇּל מִשְׁאֲלוֹתֶיךָ׃",
         "transliteration": "neranenah bishu'ateja uveshemEloheinu nidegol yemale Adonai klmishealooteyja",
-        "spanish": "Ahora echo de ver que YHVH guarda a Su Mashíaj: Oirálo desde los cielos de su santidad, Con la fuerza de la salvación de su diestra."
+        "spanish": "Nosotros nos alegraremos por tu salud, Y alzaremos pendón en el nombre de nuestro Dios: Cumpla YHVH todas tus peticiones."
       },
       {
         "verse": 7,
         "hebrew": "עַתָּה יָדַעְתִּי כִּי הוֹשִׁיעַ יְהֹוָה מְשִׁיחוֹ יַעֲנֵהוּ מִשְּׁמֵי קׇדְשׁוֹ בִּגְבֻרוֹת יֵשַׁע יְמִינוֹ׃",
         "transliteration": "'atah yada'eti ki hooshi'a Adonai meshijoo ya'anehu mishemey kdeshoo bigevuroot yesha' yeminoo",
-        "spanish": "Estos confían en carros, y aquéllos en caballos: Mas nosotros del nombre de YHVH nuestro Dios tendremos memoria."
+        "spanish": "Ahora echo de ver que YHVH guarda a Su Mashíaj: Oirálo desde los cielos de su santidad, Con la fuerza de la salvación de su diestra."
       },
       {
         "verse": 8,
         "hebrew": "אֵלֶּה בָרֶכֶב וְאֵלֶּה בַסּוּסִים וַאֲנַחְנוּ בְּשֵׁם יְהֹוָה אֱלֹהֵינוּ נַזְכִּיר׃",
         "transliteration": "eleh varejev veeleh vasusim vaanajenu beshemAdonai Eloheinu nazekir",
-        "spanish": "Ellos arrodillaron, y cayeron; Mas nosotros nos levantamos, y nos enhestamos."
+        "spanish": "Estos confían en carros, y aquéllos en caballos: Mas nosotros del nombre de YHVH nuestro Dios tendremos memoria."
       },
       {
         "verse": 9,
         "hebrew": "הֵמָּה כָּרְעוּ וְנָפָלוּ וַאֲנַחְנוּ קַּמְנוּ וַנִּתְעוֹדָד׃",
         "transliteration": "hemah kare'u venafalu vaanajenu kamenu vanite'oodad",
-        "spanish": "Salva, YHVH: Que el Rey nos oiga el día que lo invocáremos."
+        "spanish": "Ellos arrodillaron, y cayeron; Mas nosotros nos levantamos, y nos enhestamos."
       },
       {
         "verse": 10,
         "hebrew": "יְהֹוָה הוֹשִׁיעָה הַמֶּלֶךְ יַעֲנֵנוּ בְיוֹם קׇרְאֵנוּ׃ ",
         "transliteration": "Adonai hooshi'ah hameleje ya'anenu veyoomkreenv ",
-        "spanish": "..."
+        "spanish": "Salva, YHVH: Que el Rey nos oiga el día que lo invocáremos."
       }
     ]
   },
@@ -1772,85 +1772,85 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ מִזְמוֹר לְדָוִד׃",
         "transliteration": "lamenatseja mizemoor ledavid",
-        "spanish": "ALEGRARASE el rey en tu fortaleza, oh YHVH; Y en tu salud se gozará mucho."
+        "spanish": "Al Músico principal. Salmo de David."
       },
       {
         "verse": 2,
         "hebrew": "יְהֹוָה בְּעׇזְּךָ יִשְׂמַח מֶלֶךְ וּבִישׁוּעָתְךָ מַה [יָּגֶל] (יגיל) מְאֹד׃",
         "transliteration": "Adonai be'zeja isemajmeleje uvishu'ateja mah[yagel] (ygyl) meod",
-        "spanish": "El deseo de su corazón le diste, Y no le negaste lo que sus labios pronunciaron. (Sélah)"
+        "spanish": "ALEGRARASE el rey en tu fortaleza, oh YHVH; Y en tu salud se gozará mucho."
       },
       {
         "verse": 3,
         "hebrew": "תַּאֲוַת לִבּוֹ נָתַתָּה לּוֹ וַאֲרֶשֶׁת שְׂפָתָיו בַּל מָנַעְתָּ סֶּלָה׃",
         "transliteration": "taavat liboo natatah loo vaareshet sefatayv balmana'eta selah",
-        "spanish": "Pues le has salido al encuentro con bendiciones de bien: Corona de oro fino has puesto sobre su cabeza."
+        "spanish": "El deseo de su corazón le diste, Y no le negaste lo que sus labios pronunciaron. (Sélah)"
       },
       {
         "verse": 4,
         "hebrew": "כִּי תְקַדְּמֶנּוּ בִּרְכוֹת טוֹב תָּשִׁית לְרֹאשׁוֹ עֲטֶרֶת פָּז׃",
         "transliteration": "kitekademenu birejoot toov tashit leroshoo 'ateret paz",
-        "spanish": "Vida te demandó, y dístele Largura de días por siglos y siglos."
+        "spanish": "Pues le has salido al encuentro con bendiciones de bien: Corona de oro fino has puesto sobre su cabeza."
       },
       {
         "verse": 5,
         "hebrew": "חַיִּים שָׁאַל מִמְּךָ נָתַתָּה לּוֹ אֹרֶךְ יָמִים עוֹלָם וָעֶד׃",
         "transliteration": "jaim shaal mimeja natatah loo oreje yamim 'oolam va'ed",
-        "spanish": "Grande es su gloria en tu salud: Honra y majestad has puesto sobre él."
+        "spanish": "Vida te demandó, y dístele Largura de días por siglos y siglos."
       },
       {
         "verse": 6,
         "hebrew": "גָּדוֹל כְּבוֹדוֹ בִּישׁוּעָתֶךָ הוֹד וְהָדָר תְּשַׁוֶּה עָלָיו׃",
         "transliteration": "gadool kevuodoo bishu'ateja hood vehadar teshaveh 'alayv",
-        "spanish": "Porque lo has bendecido para siempre; Llenástelo de alegría con tu rostro."
+        "spanish": "Grande es su gloria en tu salud: Honra y majestad has puesto sobre él."
       },
       {
         "verse": 7,
         "hebrew": "כִּי תְשִׁיתֵהוּ בְרָכוֹת לָעַד תְּחַדֵּהוּ בְשִׂמְחָה אֶת פָּנֶיךָ׃",
         "transliteration": "kiteshitehu verajoot la'ad tejadehu vesimejah etpaneyja",
-        "spanish": "Por cuanto el rey confía en YHVH, Y en el Jésed del Elyón, no será conmovido."
+        "spanish": "Porque lo has bendecido para siempre; Llenástelo de alegría con tu rostro."
       },
       {
         "verse": 8,
         "hebrew": "כִּי הַמֶּלֶךְ בֹּטֵחַ בַּיהֹוָה וּבְחֶסֶד עֶלְיוֹן בַּל יִמּוֹט׃",
         "transliteration": "kihameleje boteja bayhovah uvejesed 'eleyoon balimoot",
-        "spanish": "Alcanzará tu mano a todos tus enemigos; Tu diestra alcanzará a los que te aborrecen."
+        "spanish": "Por cuanto el rey confía en YHVH, Y en el Jésed del Elyón, no será conmovido."
       },
       {
         "verse": 9,
         "hebrew": "תִּמְצָא יָדְךָ לְכׇל אֹיְבֶיךָ יְמִינְךָ תִּמְצָא שֹׂנְאֶיךָ׃",
         "transliteration": "timetsa yadeja lejloyeveyja yemineja timetsa soneeyja",
-        "spanish": "Ponerlos has como horno de fuego en el tiempo de tu ira: YHVH los deshará en su furor, Y fuego los consumirá."
+        "spanish": "Alcanzará tu mano a todos tus enemigos; Tu diestra alcanzará a los que te aborrecen."
       },
       {
         "verse": 10,
         "hebrew": "תְּשִׁיתֵמוֹ כְּתַנּוּר אֵשׁ לְעֵת פָּנֶיךָ יְהֹוָה בְּאַפּוֹ יְבַלְּעֵם וְתֹאכְלֵם אֵשׁ׃",
         "transliteration": "teshitemoo ketanur esh le'et paneyja Adonai beapoo yevale'em vetojelem esh",
-        "spanish": "Su fruto destruirás de la tierra, Y su simiente de entre los hijos de los hombres."
+        "spanish": "Ponerlos has como horno de fuego en el tiempo de tu ira: YHVH los deshará en su furor, Y fuego los consumirá."
       },
       {
         "verse": 11,
         "hebrew": "פִּרְיָמוֹ מֵאֶרֶץ תְּאַבֵּד וְזַרְעָם מִבְּנֵי אָדָם׃",
         "transliteration": "pireyamoo meerets teabed vezare'am mibeney adam",
-        "spanish": "Porque trazaron el mal contra ti: Fraguaron maquinaciones, mas no prevalecerán."
+        "spanish": "Su fruto destruirás de la tierra, Y su simiente de entre los hijos de los hombres."
       },
       {
         "verse": 12,
         "hebrew": "כִּי נָטוּ עָלֶיךָ רָעָה חָשְׁבוּ מְזִמָּה בַּל יוּכָלוּ׃",
         "transliteration": "kinatu 'aleyja ra'ah jashevu mezimah balyujalv",
-        "spanish": "Pues tú los pondrás en fuga, Cuando aparejares en tus cuerdas las saetas contra sus rostros."
+        "spanish": "Porque trazaron el mal contra ti: Fraguaron maquinaciones, mas no prevalecerán."
       },
       {
         "verse": 13,
         "hebrew": "כִּי תְּשִׁיתֵמוֹ שֶׁכֶם בְּמֵיתָרֶיךָ תְּכוֹנֵן עַל פְּנֵיהֶם׃",
         "transliteration": "ki teshitemoo shejem bemeytareyja tejoonen 'alpeneyhem",
-        "spanish": "Ensálzate, oh YHVH, con tu fortaleza: Cantaremos y alabaremos tu poderío."
+        "spanish": "Pues tú los pondrás en fuga, Cuando aparejares en tus cuerdas las saetas contra sus rostros."
       },
       {
         "verse": 14,
         "hebrew": "רוּמָה יְהֹוָה בְּעֻזֶּךָ נָשִׁירָה וּנְזַמְּרָה גְּבוּרָתֶךָ׃ ",
         "transliteration": "rumah Adonai be'uzeja nashirah unezamerah gevurateja ",
-        "spanish": "..."
+        "spanish": "Ensálzate, oh YHVH, con tu fortaleza: Cantaremos y alabaremos tu poderío."
       }
     ]
   },
@@ -1865,193 +1865,193 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ עַל אַיֶּלֶת הַשַּׁחַר מִזְמוֹר לְדָוִד׃",
         "transliteration": "lamenatseja 'alayelet hashajar mizemoor ledavid",
-        "spanish": "DIOS mío, Dios mío, ¿por qué me has dejado? ¿Por qué estás lejos de mi salud, y de las palabras de mi clamor?"
+        "spanish": "Al Músico principal; sobre Ajelet-sahar. Salmo de David."
       },
       {
         "verse": 2,
         "hebrew": "אֵלִי אֵלִי לָמָה עֲזַבְתָּנִי רָחוֹק מִישׁוּעָתִי דִּבְרֵי שַׁאֲגָתִי׃",
         "transliteration": "eli eli lamah 'azavetani rajook mishu'ati diverey shaagati",
-        "spanish": "Dios mío, clamo de día, y no oyes; Y de noche, y no hay para mí silencio."
+        "spanish": "DIOS mío, Dios mío, ¿por qué me has dejado? ¿Por qué estás lejos de mi salud, y de las palabras de mi clamor?"
       },
       {
         "verse": 3,
         "hebrew": "אֱלֹהַי אֶקְרָא יוֹמָם וְלֹא תַעֲנֶה וְלַיְלָה וְלֹא דֻמִיָּה לִי׃",
         "transliteration": "elohay ekera yoomam velo ta'aneh velayelah velodumiah li",
-        "spanish": "Tú empero eres santo, Tú que habitas entre las alabanzas de Israel."
+        "spanish": "Dios mío, clamo de día, y no oyes; Y de noche, y no hay para mí silencio."
       },
       {
         "verse": 4,
         "hebrew": "וְאַתָּה קָדוֹשׁ יוֹשֵׁב תְּהִלּוֹת יִשְׂרָאֵל׃",
         "transliteration": "veatah kadoosh yooshev tehiloot iserael",
-        "spanish": "En ti esperaron nuestros padres: Esperaron, y tú los libraste."
+        "spanish": "Tú empero eres santo, Tú que habitas entre las alabanzas de Israel."
       },
       {
         "verse": 5,
         "hebrew": "בְּךָ בָּטְחוּ אֲבֹתֵינוּ בָּטְחוּ וַתְּפַלְּטֵמוֹ׃",
         "transliteration": "beja bateju avuteynu bateju vatefaletemoo",
-        "spanish": "Clamaron a ti, y fueron librados: Esperaron en ti, y no se avergonzaron."
+        "spanish": "En ti esperaron nuestros padres: Esperaron, y tú los libraste."
       },
       {
         "verse": 6,
         "hebrew": "אֵלֶיךָ זָעֲקוּ וְנִמְלָטוּ בְּךָ בָטְחוּ וְלֹא בוֹשׁוּ׃",
         "transliteration": "eleyja za'aku venimelatu beja vateju velovuoshv",
-        "spanish": "Mas yo soy gusano, y no hombre; Oprobio de los hombres, y desecho del pueblo."
+        "spanish": "Clamaron a ti, y fueron librados: Esperaron en ti, y no se avergonzaron."
       },
       {
         "verse": 7,
         "hebrew": "וְאָנֹכִי תוֹלַעַת וְלֹא אִישׁ חֶרְפַּת אָדָם וּבְזוּי עָם׃",
         "transliteration": "veanoji toola'at veloish jerepat adam uvezuy 'am",
-        "spanish": "Todos los que me ven, escarnecen de mí; Estiran los labios, menean la cabeza, diciendo:"
+        "spanish": "Mas yo soy gusano, y no hombre; Oprobio de los hombres, y desecho del pueblo."
       },
       {
         "verse": 8,
         "hebrew": "כׇּל רֹאַי יַלְעִגוּ לִי יַפְטִירוּ בְשָׂפָה יָנִיעוּ רֹאשׁ׃",
         "transliteration": "klroay yale'igu li yafetiru vesafah yani'u rosh",
-        "spanish": "Remítese a YHVH, líbrelo; Sálvele, puesto que en él se complacía."
+        "spanish": "Todos los que me ven, escarnecen de mí; Estiran los labios, menean la cabeza, diciendo:"
       },
       {
         "verse": 9,
         "hebrew": "גֹּל אֶל יְהֹוָה יְפַלְּטֵהוּ יַצִּילֵהוּ כִּי חָפֵץ בּוֹ׃",
         "transliteration": "gol elAdonai yefaletehu yatsilehu kijafetsboo",
-        "spanish": "Empero tú eres el que me sacó del vientre, El que me haces esperar desde que estaba a los pechos de mi madre."
+        "spanish": "Remítese a YHVH, líbrelo; Sálvele, puesto que en él se complacía."
       },
       {
         "verse": 10,
         "hebrew": "כִּי אַתָּה גֹחִי מִבָּטֶן מַבְטִיחִי עַל שְׁדֵי אִמִּי׃",
         "transliteration": "kiatah goji mibaten mavetiji 'alshedey imi",
-        "spanish": "Sobre ti fuí echado desde la matriz: Desde el vientre de mi madre, tú eres mi Dios."
+        "spanish": "Empero tú eres el que me sacó del vientre, El que me haces esperar desde que estaba a los pechos de mi madre."
       },
       {
         "verse": 11,
         "hebrew": "עָלֶיךָ הׇשְׁלַכְתִּי מֵרָחֶם מִבֶּטֶן אִמִּי אֵלִי אָתָּה׃",
         "transliteration": "'aleyja hshelajeti merajem mibeten imi eli atah",
-        "spanish": "No te alejes de mí, porque la angustia está cerca; Porque no hay quien ayude."
+        "spanish": "Sobre ti fuí echado desde la matriz: Desde el vientre de mi madre, tú eres mi Dios."
       },
       {
         "verse": 12,
         "hebrew": "אַל תִּרְחַק מִמֶּנִּי כִּי צָרָה קְרוֹבָה כִּי אֵין עוֹזֵר׃",
         "transliteration": "altirejak mimeni kitsarah keroovah kieyn 'oozer",
-        "spanish": "Hanme rodeado muchos toros; Fuertes toros de Basán me han cercado."
+        "spanish": "No te alejes de mí, porque la angustia está cerca; Porque no hay quien ayude."
       },
       {
         "verse": 13,
         "hebrew": "סְבָבוּנִי פָּרִים רַבִּים אַבִּירֵי בָשָׁן כִּתְּרוּנִי׃",
         "transliteration": "sevavuni parim rabim abirey vashan kiteruni",
-        "spanish": "Abrieron sobre mí su boca, Como león rapante y rugiente."
+        "spanish": "Hanme rodeado muchos toros; Fuertes toros de Basán me han cercado."
       },
       {
         "verse": 14,
         "hebrew": "פָּצוּ עָלַי פִּיהֶם אַרְיֵה טֹרֵף וְשֹׁאֵג׃",
         "transliteration": "patsu 'alay pihem areyeh toref veshoeg",
-        "spanish": "Heme escurrido como aguas, Y todos mis huesos se descoyuntaron: Mi corazón fué como cera, Desliéndose en medio de mis entrañas."
+        "spanish": "Abrieron sobre mí su boca, Como león rapante y rugiente."
       },
       {
         "verse": 15,
         "hebrew": "כַּמַּיִם נִשְׁפַּכְתִּי וְהִתְפָּרְדוּ כׇּל עַצְמוֹתָי הָיָה לִבִּי כַּדּוֹנָג נָמֵס בְּתוֹךְ מֵעָי׃",
         "transliteration": "kamaim nishepajeti vehiteparedu kl'atsemootay hayah libi kadoonag names betooje me'ay",
-        "spanish": "Secóse como un tiesto mi vigor, Y mi lengua se pegó a mí paladar; Y me has puesto en el polvo de la muerte."
+        "spanish": "Heme escurrido como aguas, Y todos mis huesos se descoyuntaron: Mi corazón fué como cera, Desliéndose en medio de mis entrañas."
       },
       {
         "verse": 16,
         "hebrew": "יָבֵשׁ כַּחֶרֶשׂ כֹּחִי וּלְשׁוֹנִי מֻדְבָּק מַלְקוֹחָי וְלַעֲפַר מָוֶת תִּשְׁפְּתֵנִי׃",
         "transliteration": "yavesh kajeres koji uleshooni mudebak malekoojay vela'afarmavet tishepeteni",
-        "spanish": "Porque perros me han rodeado, Hame cercado cuadrilla de malignos: Horadaron mis manos y mis pies."
+        "spanish": "Secóse como un tiesto mi vigor, Y mi lengua se pegó a mí paladar; Y me has puesto en el polvo de la muerte."
       },
       {
         "verse": 17,
         "hebrew": "כִּי סְבָבוּנִי כְּלָבִים עֲדַת מְרֵעִים הִקִּיפוּנִי כָּאֲרִי יָדַי וְרַגְלָי׃",
         "transliteration": "ki sevavuni kelavim 'adat mere'im hikifuni kaari yaday veragelay",
-        "spanish": "Contar puedo todos mis huesos; Ellos miran, considéranme."
+        "spanish": "Porque perros me han rodeado, Hame cercado cuadrilla de malignos: Horadaron mis manos y mis pies."
       },
       {
         "verse": 18,
         "hebrew": "אֲסַפֵּר כׇּל עַצְמוֹתָי הֵמָּה יַבִּיטוּ יִרְאוּ בִי׃",
         "transliteration": "asaper kl'atsemootay hemah yabitu irevvi",
-        "spanish": "Partieron entre sí mis vestidos, Y sobre mi ropa echaron suertes."
+        "spanish": "Contar puedo todos mis huesos; Ellos miran, considéranme."
       },
       {
         "verse": 19,
         "hebrew": "יְחַלְּקוּ בְגָדַי לָהֶם וְעַל לְבוּשִׁי יַפִּילוּ גוֹרָל׃",
         "transliteration": "yejaleku vegaday lahem ve'allevushi yapilu gooral",
-        "spanish": "Mas tú, YHVH, no te alejes; Fortaleza mía, apresúrate para mi ayuda."
+        "spanish": "Partieron entre sí mis vestidos, Y sobre mi ropa echaron suertes."
       },
       {
         "verse": 20,
         "hebrew": "וְאַתָּה יְהֹוָה אַל תִּרְחָק אֱיָלוּתִי לְעֶזְרָתִי חוּשָׁה׃",
         "transliteration": "veatah Adonai altirejak eyaluti le'ezerati jushah",
-        "spanish": "Libra de la espada mi alma; Del poder del perro mi única."
+        "spanish": "Mas tú, YHVH, no te alejes; Fortaleza mía, apresúrate para mi ayuda."
       },
       {
         "verse": 21,
         "hebrew": "הַצִּילָה מֵחֶרֶב נַפְשִׁי מִיַּד כֶּלֶב יְחִידָתִי׃",
         "transliteration": "hatsilah mejerev nafeshi miadkelev yejidati",
-        "spanish": "Sálvame de la boca del león, Y óyeme librándome de los cuernos de los unicornios."
+        "spanish": "Libra de la espada mi alma; Del poder del perro mi única."
       },
       {
         "verse": 22,
         "hebrew": "הוֹשִׁיעֵנִי מִפִּי אַרְיֵה וּמִקַּרְנֵי רֵמִים עֲנִיתָנִי׃",
         "transliteration": "hooshi'eni mipi areyeh umikareney remim 'anitani",
-        "spanish": "Anunciaré tu nombre á mis hermanos: En medio de la congregación te alabaré."
+        "spanish": "Sálvame de la boca del león, Y óyeme librándome de los cuernos de los unicornios."
       },
       {
         "verse": 23,
         "hebrew": "אֲסַפְּרָה שִׁמְךָ לְאֶחָי בְּתוֹךְ קָהָל אֲהַלְלֶךָּ׃",
         "transliteration": "asaperah shimeja leejay betooje kahal ahaleleka",
-        "spanish": "Los que teméis a YHVH, alabadle; Glorificadle, simiente toda de Jacob; Y temed de él, vosotros, simiente toda de Israel."
+        "spanish": "Anunciaré tu nombre á mis hermanos: En medio de la congregación te alabaré."
       },
       {
         "verse": 24,
         "hebrew": "יִרְאֵי יְהֹוָה הַלְלוּהוּ כׇּל זֶרַע יַעֲקֹב כַּבְּדוּהוּ וְגוּרוּ מִמֶּנּוּ כׇּל זֶרַע יִשְׂרָאֵל׃",
         "transliteration": "ireey Adonai haleluhu klzera' ya'akov kabeduhu veguru mimenu klzera' iserael",
-        "spanish": "Porque no menospreció ni abominó la aflicción del pobre, Ni de él escondió su rostro; Sino que cuando clamó a él, oyóle."
+        "spanish": "Los que teméis a YHVH, alabadle; Glorificadle, simiente toda de Jacob; Y temed de él, vosotros, simiente toda de Israel."
       },
       {
         "verse": 25,
         "hebrew": "כִּי לֹא בָזָה וְלֹא שִׁקַּץ עֱנוּת עָנִי וְלֹא הִסְתִּיר פָּנָיו מִמֶּנּוּ וּבְשַׁוְּעוֹ אֵלָיו שָׁמֵעַ׃",
         "transliteration": "ki lovazah velo shikats 'enut 'ani velohisetir panayv mimenu uveshave'oo elayv shame'a",
-        "spanish": "De ti será mi alabanza en la grande congregación; Mis votos pagaré delante de los que le temen."
+        "spanish": "Porque no menospreció ni abominó la aflicción del pobre, Ni de él escondió su rostro; Sino que cuando clamó a él, oyóle."
       },
       {
         "verse": 26,
         "hebrew": "מֵאִתְּךָ תְּהִלָּתִי בְּקָהָל רָב נְדָרַי אֲשַׁלֵּם נֶגֶד יְרֵאָיו׃",
         "transliteration": "meiteja tehilati bekahal rav nedaray ashalem neged yereayv",
-        "spanish": "Comerán los pobres, y serán saciados: Alabarán a YHVH los que le buscan: Vivirá vuestro corazón para siempre."
+        "spanish": "De ti será mi alabanza en la grande congregación; Mis votos pagaré delante de los que le temen."
       },
       {
         "verse": 27,
         "hebrew": "יֹאכְלוּ עֲנָוִים וְיִשְׂבָּעוּ יְהַלְלוּ יְהֹוָה דֹּרְשָׁיו יְחִי לְבַבְכֶם לָעַד׃",
         "transliteration": "yojelu 'anavim veiseba'u yehalelu Adonai doreshayv yeji levavejem la'ad",
-        "spanish": "Acordarse han, y volveránse a YHVH todos los términos de la tierra; Y se humillarán delante de ti todas las familias de las gentes."
+        "spanish": "Comerán los pobres, y serán saciados: Alabarán a YHVH los que le buscan: Vivirá vuestro corazón para siempre."
       },
       {
         "verse": 28,
         "hebrew": "יִזְכְּרוּ וְיָשֻׁבוּ אֶל יְהֹוָה כׇּל אַפְסֵי אָרֶץ וְיִשְׁתַּחֲווּ לְפָנֶיךָ כׇּל מִשְׁפְּחוֹת גּוֹיִם׃",
         "transliteration": "izekeru veyashuvu elAdonai klafeseyarets veishetajavu lefaneyja klmishepejoot gooim",
-        "spanish": "Porque de YHVH es el reino; Y él se enseñoreará de las gentes."
+        "spanish": "Acordarse han, y volveránse a YHVH todos los términos de la tierra; Y se humillarán delante de ti todas las familias de las gentes."
       },
       {
         "verse": 29,
         "hebrew": "כִּי לַיהֹוָה הַמְּלוּכָה וּמֹשֵׁל בַּגּוֹיִם׃",
         "transliteration": "ki layhovah hamelujah umoshel bagooim",
-        "spanish": "Comerán y adorarán todos los poderosos de la tierra: Postraránse delante de él todos los que descienden al polvo, Si bien ninguno puede conservar la vida á su propia alma."
+        "spanish": "Porque de YHVH es el reino; Y él se enseñoreará de las gentes."
       },
       {
         "verse": 30,
         "hebrew": "אָכְלוּ וַיִּשְׁתַּחֲווּ כׇּל דִּשְׁנֵי אֶרֶץ לְפָנָיו יִכְרְעוּ כׇּל יוֹרְדֵי עָפָר וְנַפְשׁוֹ לֹא חִיָּה׃",
         "transliteration": "ajelu vaishetajavu kldisheneyerets lefanayv ijere'u klyooredey 'afar venafeshoo lo jiah",
-        "spanish": "La posteridad le servirá; Será ella contada por una generación de YHVH."
+        "spanish": "Comerán y adorarán todos los poderosos de la tierra: Postraránse delante de él todos los que descienden al polvo, Si bien ninguno puede conservar la vida á su propia alma."
       },
       {
         "verse": 31,
         "hebrew": "זֶרַע יַעַבְדֶנּוּ יְסֻפַּר לַאדֹנָי לַדּוֹר׃",
         "transliteration": "zera' ya'avedenu yesupar ladonay ladoor",
-        "spanish": "Vendrán, y anunciarán al pueblo que naciere, Su justicia que él hizo."
+        "spanish": "La posteridad le servirá; Será ella contada por una generación de YHVH."
       },
       {
         "verse": 32,
         "hebrew": "יָבֹאוּ וְיַגִּידוּ צִדְקָתוֹ לְעַם נוֹלָד כִּי עָשָׂה׃ ",
         "transliteration": "yavuu veyagidu tsidekatoo le'am noolad ki 'asah ",
-        "spanish": "..."
+        "spanish": "Vendrán, y anunciarán al pueblo que naciere, Su justicia que él hizo."
       }
     ]
   },
@@ -2635,79 +2635,79 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "מִזְמוֹר שִׁיר חֲנֻכַּת הַבַּיִת לְדָוִד׃",
         "transliteration": "mizemoor shirjanukat habait ledavid",
-        "spanish": "GLORIFICARTE he, oh YHVH; porque me has ensalzado, Y no hiciste á mis enemigos alegrarse de mí."
+        "spanish": "Salmo; Cántico para la dedicación de la Casa, de David."
       },
       {
         "verse": 2,
         "hebrew": "אֲרוֹמִמְךָ יְהֹוָה כִּי דִלִּיתָנִי וְלֹא שִׂמַּחְתָּ אֹיְבַי לִי׃",
         "transliteration": "aroomimeja Adonai ki dilitani velosimajeta oyevay li",
-        "spanish": "YHVH Dios mío, A ti clamé, y me sanaste."
+        "spanish": "GLORIFICARTE he, oh YHVH; porque me has ensalzado, Y no hiciste á mis enemigos alegrarse de mí."
       },
       {
         "verse": 3,
         "hebrew": "יְהֹוָה אֱלֹהָי שִׁוַּעְתִּי אֵלֶיךָ וַתִּרְפָּאֵנִי׃",
         "transliteration": "Adonai elohay shiva'eti eleyja vatirepaeni",
-        "spanish": "Oh YHVH, hiciste subir mi alma del Sheol; Dísteme vida, para que no descendiese á la sepultura."
+        "spanish": "YHVH Dios mío, A ti clamé, y me sanaste."
       },
       {
         "verse": 4,
         "hebrew": "יְהֹוָה הֶעֱלִיתָ מִן שְׁאוֹל נַפְשִׁי חִיִּיתַנִי (מיורדי) [מִיׇּרְדִי ]בוֹר׃",
         "transliteration": "Adonai he'elita minsheool nafeshi jiitani (myvrdy) [miredi]vuor",
-        "spanish": "Cantad a YHVH, vosotros sus santos, Y celebrad la memoria de su santidad."
+        "spanish": "Oh YHVH, hiciste subir mi alma del Sheol; Dísteme vida, para que no descendiese á la sepultura."
       },
       {
         "verse": 5,
         "hebrew": "זַמְּרוּ לַיהֹוָה חֲסִידָיו וְהוֹדוּ לְזֵכֶר קׇדְשׁוֹ׃",
         "transliteration": "zameru layhovah jasidayv vehoodu lezejer kdeshoo",
-        "spanish": "Porque un momento será su furor; Mas en su voluntad está la vida: Por la tarde durará el lloró, Y á la mañana vendrá la alegría."
+        "spanish": "Cantad a YHVH, vosotros sus santos, Y celebrad la memoria de su santidad."
       },
       {
         "verse": 6,
         "hebrew": "כִּי רֶגַע בְּאַפּוֹ חַיִּים בִּרְצוֹנוֹ בָּעֶרֶב יָלִין בֶּכִי וְלַבֹּקֶר רִנָּה׃",
         "transliteration": "ki rega' beapoo jaim biretsoonoo ba'erev yalin beji velaboker rinah",
-        "spanish": "Y dije yo en mi prosperidad: No seré jamás conmovido;"
+        "spanish": "Porque un momento será su furor; Mas en su voluntad está la vida: Por la tarde durará el lloró, Y á la mañana vendrá la alegría."
       },
       {
         "verse": 7,
         "hebrew": "וַאֲנִי אָמַרְתִּי בְשַׁלְוִי בַּל אֶמּוֹט לְעוֹלָם׃",
         "transliteration": "vaani amareti veshalevi balemoot le'oolam",
-        "spanish": "Porque tú, YHVH, por tu benevolencia has asentado mi monte con fortaleza. Escondiste tu rostro, fuí conturbado."
+        "spanish": "Y dije yo en mi prosperidad: No seré jamás conmovido;"
       },
       {
         "verse": 8,
         "hebrew": "יְהֹוָה בִּרְצוֹנְךָ הֶעֱמַדְתָּה לְהַרְרִי עֹז הִסְתַּרְתָּ פָנֶיךָ הָיִיתִי נִבְהָל׃",
         "transliteration": "Adonai biretsooneja he'emadetah lehareri'oz hisetareta faneyja haiti nivehal",
-        "spanish": "A ti, oh YHVH, clamaré; Y a Adonai suplicaré."
+        "spanish": "Porque tú, YHVH, por tu benevolencia has asentado mi monte con fortaleza. Escondiste tu rostro, fuí conturbado."
       },
       {
         "verse": 9,
         "hebrew": "אֵלֶיךָ יְהֹוָה אֶקְרָא וְאֶל אֲדֹנָי אֶתְחַנָּן׃",
         "transliteration": "eleyja Adonai ekera veeladonay etejanan",
-        "spanish": "¿Qué provecho hay en mi muerte, cuando yo descienda al hoyo? ¿Te alabará el polvo? ¿anunciará tu verdad?"
+        "spanish": "A ti, oh YHVH, clamaré; Y a Adonai suplicaré."
       },
       {
         "verse": 10,
         "hebrew": "מַה בֶּצַע בְּדָמִי בְּרִדְתִּי אֶל שָׁחַת הֲיוֹדְךָ עָפָר הֲיַגִּיד אֲמִתֶּךָ׃",
         "transliteration": "mahbetsa' bedami berideti elshajat hayoodeja 'afar hayagid amiteja",
-        "spanish": "Oye, oh YHVH, y ten Jésed de mí: YHVH, sé tú mi ayudador."
+        "spanish": "¿Qué provecho hay en mi muerte, cuando yo descienda al hoyo? ¿Te alabará el polvo? ¿anunciará tu verdad?"
       },
       {
         "verse": 11,
         "hebrew": "שְׁמַע יְהֹוָה וְחׇנֵּנִי יְהֹוָה הֱיֵה עֹזֵר לִי׃",
         "transliteration": "shema'Adonai vejneni Adonai heyeh'ozer li",
-        "spanish": "Has tornado mi endecha en baile; Desataste mi saco, y ceñísteme de alegría."
+        "spanish": "Oye, oh YHVH, y ten Jésed de mí: YHVH, sé tú mi ayudador."
       },
       {
         "verse": 12,
         "hebrew": "הָפַכְתָּ מִסְפְּדִי לְמָחוֹל לִי פִּתַּחְתָּ שַׂקִּי וַתְּאַזְּרֵנִי שִׂמְחָה׃",
         "transliteration": "hafajeta misepedi lemajool li pitajeta saki vateazereni simejah",
-        "spanish": "Por tanto a ti cantaré, gloria mía, y no estaré callado. YHVH Dios mío, te alabaré para siempre."
+        "spanish": "Has tornado mi endecha en baile; Desataste mi saco, y ceñísteme de alegría."
       },
       {
         "verse": 13,
         "hebrew": "לְמַעַן יְזַמֶּרְךָ כָבוֹד וְלֹא יִדֹּם יְהֹוָה אֱלֹהַי לְעוֹלָם אוֹדֶךָּ׃ ",
         "transliteration": "lema'an yezamereja javuod velo idom Adonai elohay le'oolam oodeka ",
-        "spanish": "..."
+        "spanish": "Por tanto a ti cantaré, gloria mía, y no estaré callado. YHVH Dios mío, te alabaré para siempre."
       }
     ]
   },
@@ -2722,151 +2722,151 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ מִזְמוֹר לְדָוִד׃",
         "transliteration": "lamenatseja mizemoor ledavid",
-        "spanish": "EN ti, oh YHVH, he esperado; no sea yo confundido para siempre: Líbrame en tu justicia."
+        "spanish": "Al Músico principal. Salmo de David."
       },
       {
         "verse": 2,
         "hebrew": "בְּךָ יְהֹוָה חָסִיתִי אַל אֵבוֹשָׁה לְעוֹלָם בְּצִדְקָתְךָ פַלְּטֵנִי׃",
         "transliteration": "bejaAdonai jasiti alevuoshah le'oolam betsidekateja faleteni",
-        "spanish": "Inclina á mí tu oído, líbrame presto; Séme por roca de fortaleza, por casa fuerte para salvarme."
+        "spanish": "EN ti, oh YHVH, he esperado; no sea yo confundido para siempre: Líbrame en tu justicia."
       },
       {
         "verse": 3,
         "hebrew": "הַטֵּה אֵלַי אׇזְנְךָ מְהֵרָה הַצִּילֵנִי הֱיֵה לִי לְצוּר מָעוֹז לְבֵית מְצוּדוֹת לְהוֹשִׁיעֵנִי׃",
         "transliteration": "hateh elay zeneja meherah hatsileni heyeh li letsurma'ooz leveyt metsudoot lehooshi'eni",
-        "spanish": "Porque tú eres mi roca y mi castillo; Y por tu nombre me guiarás, y me encaminarás."
+        "spanish": "Inclina á mí tu oído, líbrame presto; Séme por roca de fortaleza, por casa fuerte para salvarme."
       },
       {
         "verse": 4,
         "hebrew": "כִּי סַלְעִי וּמְצוּדָתִי אָתָּה וּלְמַעַן שִׁמְךָ תַּנְחֵנִי וּתְנַהֲלֵנִי׃",
         "transliteration": "kisale'i umetsudati atah ulema'an shimeja tanejeni utenahaleni",
-        "spanish": "Me sacarás de la red que han escondido para mí; Porque tú eres mi fortaleza."
+        "spanish": "Porque tú eres mi roca y mi castillo; Y por tu nombre me guiarás, y me encaminarás."
       },
       {
         "verse": 5,
         "hebrew": "תּוֹצִיאֵנִי מֵרֶשֶׁת זוּ טָמְנוּ לִי כִּי אַתָּה מָעוּזִּי׃",
         "transliteration": "tootsieni mereshet zu tamenu li kiatah ma'uzi",
-        "spanish": "En tu mano encomiendo mi espíritu: Tú me has redimido, oh YHVH, Dios de verdad."
+        "spanish": "Me sacarás de la red que han escondido para mí; Porque tú eres mi fortaleza."
       },
       {
         "verse": 6,
         "hebrew": "בְּיָדְךָ אַפְקִיד רוּחִי פָּדִיתָ אוֹתִי יְהֹוָה אֵל אֱמֶת׃",
         "transliteration": "beyadeja afekid ruji padita ooti Adonai el emet",
-        "spanish": "Aborrecí a los que esperan en vanidades ilusorias; Mas yo en YHVH he esperado."
+        "spanish": "En tu mano encomiendo mi espíritu: Tú me has redimido, oh YHVH, Dios de verdad."
       },
       {
         "verse": 7,
         "hebrew": "שָׂנֵאתִי הַשֹּׁמְרִים הַבְלֵי שָׁוְא וַאֲנִי אֶל יְהֹוָה בָּטָחְתִּי׃",
         "transliteration": "saneti hashomerim haveleyshave vaani elAdonai batajeti",
-        "spanish": "Me gozaré y alegraré en Tu Jésed; Porque has visto mi aflicción; Has conocido mi alma en las angustias:"
+        "spanish": "Aborrecí a los que esperan en vanidades ilusorias; Mas yo en YHVH he esperado."
       },
       {
         "verse": 8,
         "hebrew": "אָגִילָה וְאֶשְׂמְחָה בְּחַסְדֶּךָ אֲשֶׁר רָאִיתָ אֶת עׇנְיִי יָדַעְתָּ בְּצָרוֹת נַפְשִׁי׃",
         "transliteration": "agilah veesemejah bejasedeja asher raita et'nei yada'eta betsaroot nafeshi",
-        "spanish": "Y no me encerraste en mano del enemigo; Hiciste estar mis pies en anchura."
+        "spanish": "Me gozaré y alegraré en Tu Jésed; Porque has visto mi aflicción; Has conocido mi alma en las angustias:"
       },
       {
         "verse": 9,
         "hebrew": "וְלֹא הִסְגַּרְתַּנִי בְּיַד אוֹיֵב הֶעֱמַדְתָּ בַמֶּרְחָב רַגְלָי׃",
         "transliteration": "velo hisegaretani beyadooyev he'emadeta vamerejav ragelay",
-        "spanish": "Ten Jésed de mí, oh YHVH, que estoy en angustia: Hanse consumido de pesar mis ojos, mi alma, y mis entrañas."
+        "spanish": "Y no me encerraste en mano del enemigo; Hiciste estar mis pies en anchura."
       },
       {
         "verse": 10,
         "hebrew": "חׇנֵּנִי יְהֹוָה כִּי צַר לִי עָשְׁשָׁה בְכַעַס עֵינִי נַפְשִׁי וּבִטְנִי׃",
         "transliteration": "jneni Adonai ki tsarli 'asheshah veja'as 'eyni nafeshi uviteni",
-        "spanish": "Porque mi vida se va gastando de dolor, y mis años de suspirar: Hase enflaquecido mi fuerza á causa de mi iniquidad, y mis huesos se han consumido."
+        "spanish": "Ten Jésed de mí, oh YHVH, que estoy en angustia: Hanse consumido de pesar mis ojos, mi alma, y mis entrañas."
       },
       {
         "verse": 11,
         "hebrew": "כִּי כָלוּ בְיָגוֹן חַיַּי וּשְׁנוֹתַי בַּאֲנָחָה כָּשַׁל בַּעֲוֺנִי כֹחִי וַעֲצָמַי עָשֵׁשׁוּ׃",
         "transliteration": "ki jalu veyagoon jayay ushenootay baanajah kashal ba'avni joji va'atsamay 'asheshv",
-        "spanish": "De todos mis enemigos he sido oprobio, Y de mis vecinos en gran manera, y horror á mis conocidos: Los que me veían fuera, huían de mí."
+        "spanish": "Porque mi vida se va gastando de dolor, y mis años de suspirar: Hase enflaquecido mi fuerza á causa de mi iniquidad, y mis huesos se han consumido."
       },
       {
         "verse": 12,
         "hebrew": "מִכׇּל צֹרְרַי הָיִיתִי חֶרְפָּה וְלִשְׁכֵנַי מְאֹד וּפַחַד לִמְיֻדָּעָי רֹאַי בַּחוּץ נָדְדוּ מִמֶּנִּי׃",
         "transliteration": "mikltsoreray haiti jerepah velishejenay meod ufajad limeyuda'ay roay bajuts nadedu mimeni",
-        "spanish": "He sido olvidado de su corazón como un muerto: He venido á ser como un vaso perdido."
+        "spanish": "De todos mis enemigos he sido oprobio, Y de mis vecinos en gran manera, y horror á mis conocidos: Los que me veían fuera, huían de mí."
       },
       {
         "verse": 13,
         "hebrew": "נִשְׁכַּחְתִּי כְּמֵת מִלֵּב הָיִיתִי כִּכְלִי אֹבֵד׃",
         "transliteration": "nishekajeti kemet milev haiti kijeli oved",
-        "spanish": "Porque he oído afrenta de muchos; Miedo por todas partes, Cuando consultaban juntos contra mí, E ideaban quitarme la vida."
+        "spanish": "He sido olvidado de su corazón como un muerto: He venido á ser como un vaso perdido."
       },
       {
         "verse": 14,
         "hebrew": "כִּי שָׁמַעְתִּי דִּבַּת רַבִּים מָגוֹר מִסָּבִיב בְּהִוָּסְדָם יַחַד עָלַי לָקַחַת נַפְשִׁי זָמָמוּ׃",
         "transliteration": "ki shama'eti dibat rabim magoor misaviv behivasedam yajad 'alay lakajat nafeshi zamamv",
-        "spanish": "Mas yo en ti confié, oh YHVH: Yo dije: Dios mío eres tú."
+        "spanish": "Porque he oído afrenta de muchos; Miedo por todas partes, Cuando consultaban juntos contra mí, E ideaban quitarme la vida."
       },
       {
         "verse": 15,
         "hebrew": "וַאֲנִי עָלֶיךָ בָטַחְתִּי יְהֹוָה אָמַרְתִּי אֱלֹהַי אָתָּה׃",
         "transliteration": "vaani 'aleyja vatajeti Adonai amareti elohay atah",
-        "spanish": "En tu mano están mis tiempos: Líbrame de la mano de mis enemigos, y de mis perseguidores."
+        "spanish": "Mas yo en ti confié, oh YHVH: Yo dije: Dios mío eres tú."
       },
       {
         "verse": 16,
         "hebrew": "בְּיָדְךָ עִתֹּתָי הַצִּילֵנִי מִיַּד אוֹיְבַי וּמֵרֹדְפָי׃",
         "transliteration": "beyadeja 'itotay hatsileni miadooyevay umerodefay",
-        "spanish": "Haz resplandecer tu rostro sobre tu siervo: Sálvame por Tu Jésed."
+        "spanish": "En tu mano están mis tiempos: Líbrame de la mano de mis enemigos, y de mis perseguidores."
       },
       {
         "verse": 17,
         "hebrew": "הָאִירָה פָנֶיךָ עַל עַבְדֶּךָ הוֹשִׁיעֵנִי בְחַסְדֶּךָ׃",
         "transliteration": "hairah faneyja 'al'avedeja hooshi'eni vejasedeja",
-        "spanish": "No sea yo confundido, oh YHVH, ya que te he invocado; Sean corridos los impíos, estén mudos en el profundo."
+        "spanish": "Haz resplandecer tu rostro sobre tu siervo: Sálvame por Tu Jésed."
       },
       {
         "verse": 18,
         "hebrew": "יְהֹוָה אַל אֵבוֹשָׁה כִּי קְרָאתִיךָ יֵבֹשׁוּ רְשָׁעִים יִדְּמוּ לִשְׁאוֹל׃",
         "transliteration": "Adonai alevuoshah ki keratija yevushu resha'im idemu lisheool",
-        "spanish": "Enmudezcan los labios mentirosos, Que hablan contra el justo cosas duras, Con soberbia y menosprecio."
+        "spanish": "No sea yo confundido, oh YHVH, ya que te he invocado; Sean corridos los impíos, estén mudos en el profundo."
       },
       {
         "verse": 19,
         "hebrew": "תֵּאָלַמְנָה שִׂפְתֵי שָׁקֶר הַדֹּבְרוֹת עַל צַדִּיק עָתָק בְּגַאֲוָה וָבוּז׃",
         "transliteration": "tealamenah sifeteyshaker hadoveroot 'altsadik 'atak begaavah vavuz",
-        "spanish": "¡Cuán grande es tu bien, que has guardado para los que te temen, Que has obrado para los que esperan en ti, delante de los hijos de los hombres!"
+        "spanish": "Enmudezcan los labios mentirosos, Que hablan contra el justo cosas duras, Con soberbia y menosprecio."
       },
       {
         "verse": 20,
         "hebrew": "מָה רַב טוּבְךָ אֲשֶׁר צָפַנְתָּ לִּירֵאֶיךָ פָּעַלְתָּ לַחֹסִים בָּךְ נֶגֶד בְּנֵי אָדָם׃",
         "transliteration": "mah ravtuveja ashertsafaneta lireeyja pa'aleta lajosim baje neged beney adam",
-        "spanish": "Los esconderás en el secreto de tu rostro de las arrogancias del hombre: Los pondrás en un tabernáculo á cubierto de contención de lenguas."
+        "spanish": "¡Cuán grande es tu bien, que has guardado para los que te temen, Que has obrado para los que esperan en ti, delante de los hijos de los hombres!"
       },
       {
         "verse": 21,
         "hebrew": "תַּסְתִּירֵם בְּסֵתֶר פָּנֶיךָ מֵרֻכְסֵי אִישׁ תִּצְפְּנֵם בְּסֻכָּה מֵרִיב לְשֹׁנוֹת׃",
         "transliteration": "tasetirem beseter paneyja merujeseish titsepenem besukah meriv leshonoot",
-        "spanish": "Bendito YHVH, Porque ha hecho maravillosa Su Jésed para conmigo en ciudad fuerte."
+        "spanish": "Los esconderás en el secreto de tu rostro de las arrogancias del hombre: Los pondrás en un tabernáculo á cubierto de contención de lenguas."
       },
       {
         "verse": 22,
         "hebrew": "בָּרוּךְ יְהֹוָה כִּי הִפְלִיא חַסְדּוֹ לִי בְּעִיר מָצוֹר׃",
         "transliteration": "baruje Adonai ki hifelijasedoo li be'ir matsoor",
-        "spanish": "Y decía yo en mi premura: Cortado soy de delante de tus ojos: Tú empero oíste la voz de mis ruegos, cuando a ti clamaba."
+        "spanish": "Bendito YHVH, Porque ha hecho maravillosa Su Jésed para conmigo en ciudad fuerte."
       },
       {
         "verse": 23,
         "hebrew": "וַאֲנִי אָמַרְתִּי בְחׇפְזִי נִגְרַזְתִּי מִנֶּגֶד עֵינֶיךָ אָכֵן שָׁמַעְתָּ קוֹל תַּחֲנוּנַי בְּשַׁוְּעִי אֵלֶיךָ׃",
         "transliteration": "vaani amareti vejfezi nigerazeti mineged 'eyneyja ajen shama'eta kool tajanunay beshave'i eleyja",
-        "spanish": "Amad a YHVH todos vosotros sus santos: A los fieles guarda YHVH, Y paga abundantemente al que obra con soberbia."
+        "spanish": "Y decía yo en mi premura: Cortado soy de delante de tus ojos: Tú empero oíste la voz de mis ruegos, cuando a ti clamaba."
       },
       {
         "verse": 24,
         "hebrew": "אֶהֱבוּ אֶת יְהֹוָה כׇּל חֲסִידָיו אֱמוּנִים נֹצֵר יְהֹוָה וּמְשַׁלֵּם עַל יֶתֶר עֹשֵׂה גַאֲוָה׃",
         "transliteration": "ehevu etAdonai kljasidayv emunim notser Adonai umeshalem 'alyeter 'oseh gaavah",
-        "spanish": "Esforzaos todos vosotros los que esperáis en YHVH, Y tome vuestro corazón aliento."
+        "spanish": "Amad a YHVH todos vosotros sus santos: A los fieles guarda YHVH, Y paga abundantemente al que obra con soberbia."
       },
       {
         "verse": 25,
         "hebrew": "חִזְקוּ וְיַאֲמֵץ לְבַבְכֶם כׇּל הַמְיַחֲלִים לַיהֹוָה׃ ",
         "transliteration": "jizeku veyaamets levavejem klhameyajalim layhovah ",
-        "spanish": "..."
+        "spanish": "Esforzaos todos vosotros los que esperáis en YHVH, Y tome vuestro corazón aliento."
       }
     ]
   },
@@ -3098,139 +3098,139 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לְדָוִד בְּשַׁנּוֹתוֹ אֶת טַעְמוֹ לִפְנֵי אֲבִימֶלֶךְ וַיְגָרְשֵׁהוּ וַיֵּלַךְ׃",
         "transliteration": "ledavid beshanootoo etta'emoo lifeney avimeleje vayegareshehu vayelaje",
-        "spanish": "BENDECIRÉ a YHVH en todo tiempo; Su alabanza será siempre en mi boca."
+        "spanish": "Salmo de David, cuando mudó su semblante delante de Abimelec, y él lo echó, y se fue."
       },
       {
         "verse": 2,
         "hebrew": "אֲבָרְכָה אֶת יְהֹוָה בְּכׇל עֵת תָּמִיד תְּהִלָּתוֹ בְּפִי׃",
         "transliteration": "avarejah etAdonai bejl'et tamid tehilatoo befi",
-        "spanish": "En YHVH se gloriará mi alma: Oiránlo los mansos, y se alegrarán."
+        "spanish": "BENDECIRÉ a YHVH en todo tiempo; Su alabanza será siempre en mi boca."
       },
       {
         "verse": 3,
         "hebrew": "בַּיהֹוָה תִּתְהַלֵּל נַפְשִׁי יִשְׁמְעוּ עֲנָוִים וְיִשְׂמָחוּ׃",
         "transliteration": "bayhovah titehalel nafeshi isheme'u 'anavim veisemajv",
-        "spanish": "Engrandeced a YHVH conmigo, Y ensalcemos su nombre á una."
+        "spanish": "En YHVH se gloriará mi alma: Oiránlo los mansos, y se alegrarán."
       },
       {
         "verse": 4,
         "hebrew": "גַּדְּלוּ לַיהֹוָה אִתִּי וּנְרוֹמְמָה שְׁמוֹ יַחְדָּו׃",
         "transliteration": "gadelu layhovah iti uneroomemah shemoo yajedav",
-        "spanish": "Busqué a YHVH, y él me oyó, Y libróme de todos mis temores."
+        "spanish": "Engrandeced a YHVH conmigo, Y ensalcemos su nombre á una."
       },
       {
         "verse": 5,
         "hebrew": "דָּרַשְׁתִּי אֶת יְהֹוָה וְעָנָנִי וּמִכׇּל מְגוּרוֹתַי הִצִּילָנִי׃",
         "transliteration": "darasheti etAdonai ve'anani umiklmegurootay hitsilani",
-        "spanish": "A él miraron y fueron alumbrados: Y sus rostros no se avergonzaron."
+        "spanish": "Busqué a YHVH, y él me oyó, Y libróme de todos mis temores."
       },
       {
         "verse": 6,
         "hebrew": "הִבִּיטוּ אֵלָיו וְנָהָרוּ וּפְנֵיהֶם אַל יֶחְפָּרוּ׃",
         "transliteration": "hibitu elayv venaharu ufeneyhem alyejeparv",
-        "spanish": "Este pobre clamó, y oyóle YHVH, Y librólo de todas sus angustias."
+        "spanish": "A él miraron y fueron alumbrados: Y sus rostros no se avergonzaron."
       },
       {
         "verse": 7,
         "hebrew": "זֶה עָנִי קָרָא וַיהֹוָה שָׁמֵעַ וּמִכׇּל צָרוֹתָיו הוֹשִׁיעוֹ׃",
         "transliteration": "zeh 'ani kara vayhovah shame'a umikltsarootayv hooshi'oo",
-        "spanish": "El ángel de YHVH acampa en derredor de los que le temen, Y los defiende."
+        "spanish": "Este pobre clamó, y oyóle YHVH, Y librólo de todas sus angustias."
       },
       {
         "verse": 8,
         "hebrew": "חֹנֶה מַלְאַךְ יְהֹוָה סָבִיב לִירֵאָיו וַיְחַלְּצֵם׃",
         "transliteration": "joneh maleajeAdonai saviv lireayv vayejaletsem",
-        "spanish": "Gustad, y ved que es bueno YHVH: Dichoso el hombre que confiará en él."
+        "spanish": "El ángel de YHVH acampa en derredor de los que le temen, Y los defiende."
       },
       {
         "verse": 9,
         "hebrew": "טַעֲמוּ וּרְאוּ כִּי טוֹב יְהֹוָה אַשְׁרֵי הַגֶּבֶר יֶחֱסֶה בּוֹ׃",
         "transliteration": "ta'amu ureu kitoov Adonai asherey hagever yejesehboo",
-        "spanish": "Temed a YHVH, vosotros sus santos; Porque no hay falta para los que le temen."
+        "spanish": "Gustad, y ved que es bueno YHVH: Dichoso el hombre que confiará en él."
       },
       {
         "verse": 10,
         "hebrew": "יְראוּ אֶת יְהֹוָה קְדֹשָׁיו כִּי אֵין מַחְסוֹר לִירֵאָיו׃",
         "transliteration": "yeru etAdonai kedoshayv kieyn majesoor lireayv",
-        "spanish": "Los leoncillos necesitaron, y tuvieron hambre; Pero los que buscan a YHVH, no tendrán falta de ningún bien."
+        "spanish": "Temed a YHVH, vosotros sus santos; Porque no hay falta para los que le temen."
       },
       {
         "verse": 11,
         "hebrew": "כְּפִירִים רָשׁוּ וְרָעֵבוּ וְדֹרְשֵׁי יְהֹוָה לֹא יַחְסְרוּ כׇל טוֹב׃",
         "transliteration": "kefirim rashu vera'evu vedoreshey Adonai loyajeseru jltoov",
-        "spanish": "Venid, hijos, oidme; El temor de YHVH os enseñaré."
+        "spanish": "Los leoncillos necesitaron, y tuvieron hambre; Pero los que buscan a YHVH, no tendrán falta de ningún bien."
       },
       {
         "verse": 12,
         "hebrew": "לְכוּ בָנִים שִׁמְעוּ לִי יִרְאַת יְהֹוָה אֲלַמֶּדְכֶם׃",
         "transliteration": "lejvvanim shime'vli ireat Adonai alamedejem",
-        "spanish": "¿Quién es el hombre que desea vida, Que codicia días para ver bien?"
+        "spanish": "Venid, hijos, oidme; El temor de YHVH os enseñaré."
       },
       {
         "verse": 13,
         "hebrew": "מִי הָאִישׁ הֶחָפֵץ חַיִּים אֹהֵב יָמִים לִרְאוֹת טוֹב׃",
         "transliteration": "mihaish hejafets jaim ohev yamim lireoot toov",
-        "spanish": "Guarda tu lengua de mal, Y tus labios de hablar engaño."
+        "spanish": "¿Quién es el hombre que desea vida, Que codicia días para ver bien?"
       },
       {
         "verse": 14,
         "hebrew": "נְצֹר לְשׁוֹנְךָ מֵרָע וּשְׂפָתֶיךָ מִדַּבֵּר מִרְמָה׃",
         "transliteration": "netsor leshooneja mera' usefateyja midaber miremah",
-        "spanish": "Apártate del mal, y haz el bien; Busca la paz, y síguela."
+        "spanish": "Guarda tu lengua de mal, Y tus labios de hablar engaño."
       },
       {
         "verse": 15,
         "hebrew": "סוּר מֵרָע וַעֲשֵׂה טוֹב בַּקֵּשׁ שָׁלוֹם וְרׇדְפֵהוּ׃",
         "transliteration": "sur mera' va'asehtoov bakesh shaloom verdefehv",
-        "spanish": "Los ojos de YHVH están sobre los justos, Y atentos sus oídos al clamor de ellos."
+        "spanish": "Apártate del mal, y haz el bien; Busca la paz, y síguela."
       },
       {
         "verse": 16,
         "hebrew": "עֵינֵי יְהֹוָה אֶל צַדִּיקִים וְאׇזְנָיו אֶל שַׁוְעָתָם׃",
         "transliteration": "'eyney Adonai eltsadikim vezenayv elshave'atam",
-        "spanish": "La ira de YHVH contra los que mal hacen, Para cortar de la tierra la memoria de ellos."
+        "spanish": "Los ojos de YHVH están sobre los justos, Y atentos sus oídos al clamor de ellos."
       },
       {
         "verse": 17,
         "hebrew": "פְּנֵי יְהֹוָה בְּעֹשֵׂי רָע לְהַכְרִית מֵאֶרֶץ זִכְרָם׃",
         "transliteration": "peney Adonai be'osey ra' lehajerit meerets zijeram",
-        "spanish": "Clamaron los justos, y YHVH oyó, Y librólos de todas sus angustias."
+        "spanish": "La ira de YHVH contra los que mal hacen, Para cortar de la tierra la memoria de ellos."
       },
       {
         "verse": 18,
         "hebrew": "צָעֲקוּ וַיהֹוָה שָׁמֵעַ וּמִכׇּל צָרוֹתָם הִצִּילָם׃",
         "transliteration": "tsa'aku vayhovah shame'a umikltsarootam hitsilam",
-        "spanish": "Cercano está YHVH a los quebrantados de corazón; Y salvará a los contritos de espíritu."
+        "spanish": "Clamaron los justos, y YHVH oyó, Y librólos de todas sus angustias."
       },
       {
         "verse": 19,
         "hebrew": "קָרוֹב יְהֹוָה לְנִשְׁבְּרֵי לֵב וְאֶת דַּכְּאֵי רוּחַ יוֹשִׁיעַ׃",
         "transliteration": "karoov Adonai lenishebereylev veetdakeeyruja yooshi'a",
-        "spanish": "Muchos son los males del justo; Mas de todos ellos lo librará YHVH."
+        "spanish": "Cercano está YHVH a los quebrantados de corazón; Y salvará a los contritos de espíritu."
       },
       {
         "verse": 20,
         "hebrew": "רַבּוֹת רָעוֹת צַדִּיק וּמִכֻּלָּם יַצִּילֶנּוּ יְהֹוָה׃",
         "transliteration": "raboot ra'oot tsadik umikulam yatsilenu Adonai",
-        "spanish": "El guarda todos sus huesos; Ni uno de ellos será quebrantado."
+        "spanish": "Muchos son los males del justo; Mas de todos ellos lo librará YHVH."
       },
       {
         "verse": 21,
         "hebrew": "שֹׁמֵר כׇּל עַצְמוֹתָיו אַחַת מֵהֵנָּה לֹא נִשְׁבָּרָה׃",
         "transliteration": "shomer kl'atsemootayv ajat mehenah lo nishebarah",
-        "spanish": "Matará al malo la maldad; Y los que aborrecen al justo serán asolados."
+        "spanish": "El guarda todos sus huesos; Ni uno de ellos será quebrantado."
       },
       {
         "verse": 22,
         "hebrew": "תְּמוֹתֵת רָשָׁע רָעָה וְשֹׂנְאֵי צַדִּיק יֶאְשָׁמוּ׃",
         "transliteration": "temootet rasha' ra'ah vesoneey tsadik yeeshamv",
-        "spanish": "YHVH redime el alma de sus siervos; Y no serán asolados cuantos en él confían."
+        "spanish": "Matará al malo la maldad; Y los que aborrecen al justo serán asolados."
       },
       {
         "verse": 23,
         "hebrew": "פֹּדֶה יְהֹוָה נֶפֶשׁ עֲבָדָיו וְלֹא יֶאְשְׁמוּ כׇּל הַחֹסִים בּוֹ׃ ",
         "transliteration": "podeh Adonai nefesh 'avadayv velo yeeshemu klhajosim boo ",
-        "spanish": "..."
+        "spanish": "YHVH redime el alma de sus siervos; Y no serán asolados cuantos en él confían."
       }
     ]
   },
@@ -3422,79 +3422,79 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ לְעֶבֶד יְהֹוָה לְדָוִד׃",
         "transliteration": "lamenatseja le'evedAdonai ledavid",
-        "spanish": "LA iniquidad del impío me dice al corazón: No hay temor de Dios delante de sus ojos."
+        "spanish": "Al Músico principal; del siervo de YHVH, David."
       },
       {
         "verse": 2,
         "hebrew": "נְאֻם פֶּשַׁע לָרָשָׁע בְּקֶרֶב לִבִּי אֵין פַּחַד אֱלֹהִים לְנֶגֶד עֵינָיו׃",
         "transliteration": "neumpesha' larasha' bekerev libi eynpajad Elohim leneged 'eynayv",
-        "spanish": "Lisonjéase, por tanto, en sus propios ojos, Hasta que su iniquidad sea hallada aborrecible."
+        "spanish": "LA iniquidad del impío me dice al corazón: No hay temor de Dios delante de sus ojos."
       },
       {
         "verse": 3,
         "hebrew": "כִּי הֶחֱלִיק אֵלָיו בְּעֵינָיו לִמְצֹא עֲוֺנוֹ לִשְׂנֹא׃",
         "transliteration": "kihejelik elayv be'eynayv limetso 'avnoo liseno",
-        "spanish": "Las palabras de su boca son iniquidad y fraude; No quiso entender para bien hacer."
+        "spanish": "Lisonjéase, por tanto, en sus propios ojos, Hasta que su iniquidad sea hallada aborrecible."
       },
       {
         "verse": 4,
         "hebrew": "דִּבְרֵי פִיו אָוֶן וּמִרְמָה חָדַל לְהַשְׂכִּיל לְהֵיטִיב׃",
         "transliteration": "divereyfiv aven umiremah jadal lehasekil leheytiv",
-        "spanish": "Iniquidad piensa sobre su cama; Está en camino no bueno, El mal no aborrece."
+        "spanish": "Las palabras de su boca son iniquidad y fraude; No quiso entender para bien hacer."
       },
       {
         "verse": 5,
         "hebrew": "אָוֶן יַחְשֹׁב עַל מִשְׁכָּבוֹ יִתְיַצֵּב עַל דֶּרֶךְ לֹא טוֹב רָע לֹא יִמְאָס׃",
         "transliteration": "aven yajeshov 'almishekavuo iteyatsev 'aldereje lotoov ra' lo imeas",
-        "spanish": "YHVH, hasta los cielos es Tu Jésed; Tu verdad hasta las nubes."
+        "spanish": "Iniquidad piensa sobre su cama; Está en camino no bueno, El mal no aborrece."
       },
       {
         "verse": 6,
         "hebrew": "יְהֹוָה בְּהַשָּׁמַיִם חַסְדֶּךָ אֱמוּנָתְךָ עַד שְׁחָקִים׃",
         "transliteration": "Adonai behashamaim jasedeja emunateja 'adshejakim",
-        "spanish": "Tu justicia como los montes de Dios, Tus juicios abismo grande: Oh YHVH, al hombre y al animal conservas."
+        "spanish": "YHVH, hasta los cielos es Tu Jésed; Tu verdad hasta las nubes."
       },
       {
         "verse": 7,
         "hebrew": "צִדְקָתְךָ כְּהַרְרֵי אֵל מִשְׁפָּטֶיךָ תְּהוֹם רַבָּה אָדָם וּבְהֵמָה תוֹשִׁיעַ יְהֹוָה׃",
         "transliteration": "tsidekateja keharereyel mishepateyja tehoom rabah adamuvehemah tooshi'a Adonai",
-        "spanish": "¡Cuán ilustre, oh Dios, es Tu Jésed! Por eso los hijos de los hombres se amparan bajo la sombra de tus alas."
+        "spanish": "Tu justicia como los montes de Dios, Tus juicios abismo grande: Oh YHVH, al hombre y al animal conservas."
       },
       {
         "verse": 8,
         "hebrew": "מַה יָּקָר חַסְדְּךָ אֱלֹהִים וּבְנֵי אָדָם בְּצֵל כְּנָפֶיךָ יֶחֱסָיוּן׃",
         "transliteration": "mahyakar jasedeja Elohim uveney adam betsel kenafeyja yejesayun",
-        "spanish": "Embriagarse han de la grosura de tu casa; Y tú los abrevarás del torrente de tus delicias."
+        "spanish": "¡Cuán ilustre, oh Dios, es Tu Jésed! Por eso los hijos de los hombres se amparan bajo la sombra de tus alas."
       },
       {
         "verse": 9,
         "hebrew": "יִרְוְיֻן מִדֶּשֶׁן בֵּיתֶךָ וְנַחַל עֲדָנֶיךָ תַשְׁקֵם׃",
         "transliteration": "ireveyun mideshen beyteja venajal 'adaneyja tashekem",
-        "spanish": "Porque contigo está el manantial de la vida: En tu luz veremos la luz."
+        "spanish": "Embriagarse han de la grosura de tu casa; Y tú los abrevarás del torrente de tus delicias."
       },
       {
         "verse": 10,
         "hebrew": "כִּי עִמְּךָ מְקוֹר חַיִּים בְּאוֹרְךָ נִרְאֶה אוֹר׃",
         "transliteration": "ki'imeja mekoor jaim beooreja nireehoor",
-        "spanish": "Extiende Tu Jésed a los que te conocen, Y tu justicia a los rectos de corazón."
+        "spanish": "Porque contigo está el manantial de la vida: En tu luz veremos la luz."
       },
       {
         "verse": 11,
         "hebrew": "מְשֹׁךְ חַסְדְּךָ לְיֹדְעֶיךָ וְצִדְקָתְךָ לְיִשְׁרֵי לֵב׃",
         "transliteration": "meshoje jasedeja leyode'eyja vetsidekateja leishereylev",
-        "spanish": "No venga contra mí pie de soberbia; Y mano de impíos no me mueva."
+        "spanish": "Extiende Tu Jésed a los que te conocen, Y tu justicia a los rectos de corazón."
       },
       {
         "verse": 12,
         "hebrew": "אַל תְּבוֹאֵנִי רֶגֶל גַּאֲוָה וְיַד רְשָׁעִים אַל תְּנִדֵנִי׃",
         "transliteration": "altevuoeni regel gaavah veyadresha'im altenideni",
-        "spanish": "Allí cayeron los obradores de iniquidad; Fueron rempujados, y no pudieron levantarse."
+        "spanish": "No venga contra mí pie de soberbia; Y mano de impíos no me mueva."
       },
       {
         "verse": 13,
         "hebrew": "שָׁם נָפְלוּ פֹּעֲלֵי אָוֶן דֹּחוּ וְלֹא יָכְלוּ קוּם׃ ",
         "transliteration": "sham nafelu po'aley aven doju veloyajelu kum ",
-        "spanish": "..."
+        "spanish": "Allí cayeron los obradores de iniquidad; Fueron rempujados, y no pudieron levantarse."
       }
     ]
   },
@@ -3758,139 +3758,139 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "מִזְמוֹר לְדָוִד לְהַזְכִּיר׃",
         "transliteration": "mizemoor ledavid lehazekir",
-        "spanish": "YHVH, no me reprendas en tu furor, Ni me castigues en tu ira."
+        "spanish": "Salmo de David, para recordar."
       },
       {
         "verse": 2,
         "hebrew": "יְהֹוָה אַל בְּקֶצְפְּךָ תוֹכִיחֵנִי וּבַחֲמָתְךָ תְיַסְּרֵנִי׃",
         "transliteration": "Adonai albeketsepeja toojijeni uvajamateja teyasereni",
-        "spanish": "Porque tus saetas descendieron á mí, Y sobre mí ha caído tu mano."
+        "spanish": "YHVH, no me reprendas en tu furor, Ni me castigues en tu ira."
       },
       {
         "verse": 3,
         "hebrew": "כִּי חִצֶּיךָ נִחֲתוּ בִי וַתִּנְחַת עָלַי יָדֶךָ׃",
         "transliteration": "kijitseyja nijatu vi vatinejat 'alay yadeja",
-        "spanish": "No hay sanidad en mi carne á causa de tu ira; Ni hay paz en mis huesos á causa de mi pecado."
+        "spanish": "Porque tus saetas descendieron á mí, Y sobre mí ha caído tu mano."
       },
       {
         "verse": 4,
         "hebrew": "אֵין מְתֹם בִּבְשָׂרִי מִפְּנֵי זַעְמֶךָ אֵין שָׁלוֹם בַּעֲצָמַי מִפְּנֵי חַטָּאתִי׃",
         "transliteration": "eynmetom bivesari mipeney za'emeja eynshaloom ba'atsamay mipeney jatati",
-        "spanish": "Porque mis iniquidades han pasado mi cabeza: Como carga pesada se han agravado sobre mí."
+        "spanish": "No hay sanidad en mi carne á causa de tu ira; Ni hay paz en mis huesos á causa de mi pecado."
       },
       {
         "verse": 5,
         "hebrew": "כִּי עֲוֺנֹתַי עָבְרוּ רֹאשִׁי כְּמַשָּׂא כָבֵד יִכְבְּדוּ מִמֶּנִּי׃",
         "transliteration": "ki 'avnotay 'averu roshi kemasa javed ijebedu mimeni",
-        "spanish": "Pudriéronse, corrompiéronse mis llagas, A causa de mi locura."
+        "spanish": "Porque mis iniquidades han pasado mi cabeza: Como carga pesada se han agravado sobre mí."
       },
       {
         "verse": 6,
         "hebrew": "הִבְאִישׁוּ נָמַקּוּ חַבּוּרֹתָי מִפְּנֵי אִוַּלְתִּי׃",
         "transliteration": "hiveishu namaku jaburotay mipeney ivaleti",
-        "spanish": "Estoy encorvado, estoy humillado en gran manera, Ando enlutado todo el día."
+        "spanish": "Pudriéronse, corrompiéronse mis llagas, A causa de mi locura."
       },
       {
         "verse": 7,
         "hebrew": "נַעֲוֵיתִי שַׁחֹתִי עַד מְאֹד כׇּל הַיּוֹם קֹדֵר הִלָּכְתִּי׃",
         "transliteration": "na'aveyti shajoti 'admeod klhayoom koder hilajeti",
-        "spanish": "Porque mis lomos están llenos de irritación, Y no hay sanidad en mi carne."
+        "spanish": "Estoy encorvado, estoy humillado en gran manera, Ando enlutado todo el día."
       },
       {
         "verse": 8,
         "hebrew": "כִּי כְסָלַי מָלְאוּ נִקְלֶה וְאֵין מְתֹם בִּבְשָׂרִי׃",
         "transliteration": "kijesalay maleu nikeleh veeyn metom bivesari",
-        "spanish": "Estoy debilitado y molido en gran manera; Bramo á causa de la conmoción de mi corazón."
+        "spanish": "Porque mis lomos están llenos de irritación, Y no hay sanidad en mi carne."
       },
       {
         "verse": 9,
         "hebrew": "נְפוּגוֹתִי וְנִדְכֵּיתִי עַד מְאֹד שָׁאַגְתִּי מִנַּהֲמַת לִבִּי׃",
         "transliteration": "nefugooti venidekeyti 'admeod shaageti minahamat libi",
-        "spanish": "Señor, delante de ti están todos mis deseos; Y mi suspiro no te es oculto."
+        "spanish": "Estoy debilitado y molido en gran manera; Bramo á causa de la conmoción de mi corazón."
       },
       {
         "verse": 10,
         "hebrew": "אֲדֹנָי נֶגְדְּךָ כׇל תַּאֲוָתִי וְאַנְחָתִי מִמְּךָ לֹא נִסְתָּרָה׃",
         "transliteration": "adonay negedeja jltaavati veanejati mimeja lonisetarah",
-        "spanish": "Mi corazón está acongojado, hame dejado mi vigor; Y aun la misma luz de mis ojos no está conmigo."
+        "spanish": "Señor, delante de ti están todos mis deseos; Y mi suspiro no te es oculto."
       },
       {
         "verse": 11,
         "hebrew": "לִבִּי סְחַרְחַר עֲזָבַנִי כֹחִי וְאוֹר עֵינַי גַּם הֵם אֵין אִתִּי׃",
         "transliteration": "libi sejarejar 'azavani joji veoor'eynay gamhem eyn iti",
-        "spanish": "Mis amigos y mis compañeros se quitaron de delante de mi plaga; Y mis cercanos se pusieron lejos."
+        "spanish": "Mi corazón está acongojado, hame dejado mi vigor; Y aun la misma luz de mis ojos no está conmigo."
       },
       {
         "verse": 12,
         "hebrew": "אֹהֲבַי וְרֵעַי מִנֶּגֶד נִגְעִי יַעֲמֹדוּ וּקְרוֹבַי מֵרָחֹק עָמָדוּ׃",
         "transliteration": "ohavay vere'ay mineged nige'i ya'amodu ukeroovay merajok 'amadv",
-        "spanish": "Y los que buscaban mi alma armaron lazos; Y los que procuraban mi mal hablaban iniquidades, Y meditaban fraudes todo el día."
+        "spanish": "Mis amigos y mis compañeros se quitaron de delante de mi plaga; Y mis cercanos se pusieron lejos."
       },
       {
         "verse": 13,
         "hebrew": "וַיְנַקְשׁוּ מְבַקְשֵׁי נַפְשִׁי וְדֹרְשֵׁי רָעָתִי דִּבְּרוּ הַוּוֹת וּמִרְמוֹת כׇּל הַיּוֹם יֶהְגּוּ׃",
         "transliteration": "vayenakeshu mevakeshey nafeshi vedoreshey ra'ati diberu hauoot umiremoot klhayoom yehegv",
-        "spanish": "Mas yo, como si fuera sordo no oía; Y estaba como un mudo, que no abre su boca."
+        "spanish": "Y los que buscaban mi alma armaron lazos; Y los que procuraban mi mal hablaban iniquidades, Y meditaban fraudes todo el día."
       },
       {
         "verse": 14,
         "hebrew": "וַאֲנִי כְחֵרֵשׁ לֹא אֶשְׁמָע וּכְאִלֵּם לֹא יִפְתַּח פִּיו׃",
         "transliteration": "vaani jejeresh lo eshema' ujeilem lo ifetajpiv",
-        "spanish": "Fuí pues como un hombre que no oye, Y que en su boca no tiene reprensiones."
+        "spanish": "Mas yo, como si fuera sordo no oía; Y estaba como un mudo, que no abre su boca."
       },
       {
         "verse": 15,
         "hebrew": "וָאֱהִי כְּאִישׁ אֲשֶׁר לֹא שֹׁמֵעַ וְאֵין בְּפִיו תּוֹכָחוֹת׃",
         "transliteration": "vaehi keish asher loshome'a veeyn befiv toojajoot",
-        "spanish": "Porque a ti, oh YHVH, esperé yo: Tú responderás, YHVH Dios mío."
+        "spanish": "Fuí pues como un hombre que no oye, Y que en su boca no tiene reprensiones."
       },
       {
         "verse": 16,
         "hebrew": "כִּי לְךָ יְהֹוָה הוֹחָלְתִּי אַתָּה תַעֲנֶה אֲדֹנָי אֱלֹהָי׃",
         "transliteration": "kileja Adonai hoojaleti atah ta'aneh adonay elohay",
-        "spanish": "Porque dije: Que no se alegren de mí: Cuando mi pie resbalaba, sobre mí se engrandecían."
+        "spanish": "Porque a ti, oh YHVH, esperé yo: Tú responderás, YHVH Dios mío."
       },
       {
         "verse": 17,
         "hebrew": "כִּי אָמַרְתִּי פֶּן יִשְׂמְחוּ לִי בְּמוֹט רַגְלִי עָלַי הִגְדִּילוּ׃",
         "transliteration": "kiamareti penisemejvli bemoot rageli 'alay higedilv",
-        "spanish": "Empero yo estoy á pique de claudicar, Y mi dolor está delante de mí continuamente."
+        "spanish": "Porque dije: Que no se alegren de mí: Cuando mi pie resbalaba, sobre mí se engrandecían."
       },
       {
         "verse": 18,
         "hebrew": "כִּי אֲנִי לְצֶלַע נָכוֹן וּמַכְאוֹבִי נֶגְדִּי תָמִיד׃",
         "transliteration": "kiani letsela' najoon umajeoovi negedi tamid",
-        "spanish": "Por tanto denunciaré mi maldad; Congojaréme por mi pecado."
+        "spanish": "Empero yo estoy á pique de claudicar, Y mi dolor está delante de mí continuamente."
       },
       {
         "verse": 19,
         "hebrew": "כִּי עֲוֺנִי אַגִּיד אֶדְאַג מֵחַטָּאתִי׃",
         "transliteration": "ki'avni agid edeag mejatati",
-        "spanish": "Porque mis enemigos están vivos y fuertes: Y hanse aumentado los que me aborrecen sin causa:"
+        "spanish": "Por tanto denunciaré mi maldad; Congojaréme por mi pecado."
       },
       {
         "verse": 20,
         "hebrew": "וְאֹיְבַי חַיִּים עָצֵמוּ וְרַבּוּ שֹׂנְאַי שָׁקֶר׃",
         "transliteration": "veoyevay jaim 'atsemu verabu soneay shaker",
-        "spanish": "Y pagando mal por bien Me son contrarios, por seguir yo lo bueno."
+        "spanish": "Porque mis enemigos están vivos y fuertes: Y hanse aumentado los que me aborrecen sin causa:"
       },
       {
         "verse": 21,
         "hebrew": "וּמְשַׁלְּמֵי רָעָה תַּחַת טוֹבָה יִשְׂטְנוּנִי תַּחַת (רדופי) [רׇדְפִי ]טוֹב׃",
         "transliteration": "umeshalemey ra'ah tajat toovah isetenuni tajat (rdvfy) [rdefi]toov",
-        "spanish": "No me desampares, oh YHVH: Dios mío, no te alejes de mí."
+        "spanish": "Y pagando mal por bien Me son contrarios, por seguir yo lo bueno."
       },
       {
         "verse": 22,
         "hebrew": "אַל תַּעַזְבֵנִי יְהֹוָה אֱלֹהַי אַל תִּרְחַק מִמֶּנִּי׃",
         "transliteration": "alta'azeveni Adonai elohay altirejak mimeni",
-        "spanish": "Apresúrate á ayudarme, Oh Señor, mi salud."
+        "spanish": "No me desampares, oh YHVH: Dios mío, no te alejes de mí."
       },
       {
         "verse": 23,
         "hebrew": "חוּשָׁה לְעֶזְרָתִי אֲדֹנָי תְּשׁוּעָתִי׃ ",
         "transliteration": "jushah le'ezerati adonay teshu'ati ",
-        "spanish": "..."
+        "spanish": "Apresúrate á ayudarme, Oh Señor, mi salud."
       }
     ]
   },
@@ -3905,85 +3905,85 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ (לידיתון) [לִידוּתוּן] מִזְמוֹר לְדָוִד׃",
         "transliteration": "lamenatseja (lydytvn) [lidutun] mizemoor ledavid",
-        "spanish": "YO DIJE: Atenderé á mis caminos, Para no pecar con mi lengua: Guardaré mi boca con freno, En tanto que el impío fuere contra mí."
+        "spanish": "Al Músico principal; para Jedutún. Salmo de David."
       },
       {
         "verse": 2,
         "hebrew": "אָמַרְתִּי אֶשְׁמְרָה דְרָכַי מֵחֲטוֹא בִלְשׁוֹנִי אֶשְׁמְרָה לְפִי מַחְסוֹם בְּעֹד רָשָׁע לְנֶגְדִּי׃",
         "transliteration": "amareti eshemerah derajay mejatoo vileshooni eshemerah lefi majesoom be'od rasha' lenegedi",
-        "spanish": "Enmudecí con silencio, calléme aun respecto de lo bueno: Y excitóse mi dolor."
+        "spanish": "YO DIJE: Atenderé á mis caminos, Para no pecar con mi lengua: Guardaré mi boca con freno, En tanto que el impío fuere contra mí."
       },
       {
         "verse": 3,
         "hebrew": "נֶאֱלַמְתִּי דוּמִיָּה הֶחֱשֵׁיתִי מִטּוֹב וּכְאֵבִי נֶעְכָּר׃",
         "transliteration": "neelameti dumiah hejesheyti mitoov ujeevi ne'ekar",
-        "spanish": "Enardecióse mi corazón dentro de mí; Encendióse fuego en mi meditación, Y así proferí con mi lengua:"
+        "spanish": "Enmudecí con silencio, calléme aun respecto de lo bueno: Y excitóse mi dolor."
       },
       {
         "verse": 4,
         "hebrew": "חַם לִבִּי בְּקִרְבִּי בַּהֲגִיגִי תִבְעַר אֵשׁ דִּבַּרְתִּי בִּלְשׁוֹנִי׃",
         "transliteration": "jamlibi bekirebi bahagigi tive'aresh dibareti bileshooni",
-        "spanish": "Hazme saber, YHVH, mi fin, Y cuánta sea la medida de mis días; Sepa yo cuánto tengo de ser del mundo."
+        "spanish": "Enardecióse mi corazón dentro de mí; Encendióse fuego en mi meditación, Y así proferí con mi lengua:"
       },
       {
         "verse": 5,
         "hebrew": "הוֹדִיעֵנִי יְהֹוָה קִצִּי וּמִדַּת יָמַי מַה הִיא אֵדְעָה מֶה חָדֵל אָנִי׃",
         "transliteration": "hoodi'eni Adonai kitsi umidat yamay mahhi ede'ah mehjadel ani",
-        "spanish": "He aquí diste á mis días término corto, Y mi edad es como nada delante de ti: Ciertamente es completa vanidad todo hombre que vive. (Sélah)"
+        "spanish": "Hazme saber, YHVH, mi fin, Y cuánta sea la medida de mis días; Sepa yo cuánto tengo de ser del mundo."
       },
       {
         "verse": 6,
         "hebrew": "הִנֵּה טְפָחוֹת נָתַתָּה יָמַי וְחֶלְדִּי כְאַיִן נֶגְדֶּךָ אַךְ כׇּל הֶבֶל כׇּל אָדָם נִצָּב סֶלָה׃",
         "transliteration": "hineh tefajoot natatah yamay vejeledi jeain negedeja aje klhevel kladam nitsav selah",
-        "spanish": "Ciertamente en tinieblas anda el hombre; Ciertamente en vano se inquieta: Junta, y no sabe quién lo allegará."
+        "spanish": "He aquí diste á mis días término corto, Y mi edad es como nada delante de ti: Ciertamente es completa vanidad todo hombre que vive. (Sélah)"
       },
       {
         "verse": 7,
         "hebrew": "אַךְ בְּצֶלֶם יִתְהַלֶּךְ אִישׁ אַךְ הֶבֶל יֶהֱמָיוּן יִצְבֹּר וְלֹא יֵדַע מִי אֹסְפָם׃",
         "transliteration": "ajebetselem itehalejeish ajehevel yehemayun itsebor veloyeda' miosefam",
-        "spanish": "Y ahora, Señor, ¿qué esperaré? Mi esperanza en ti está."
+        "spanish": "Ciertamente en tinieblas anda el hombre; Ciertamente en vano se inquieta: Junta, y no sabe quién lo allegará."
       },
       {
         "verse": 8,
         "hebrew": "וְעַתָּה מַה קִּוִּיתִי אֲדֹנָי תּוֹחַלְתִּי לְךָ הִיא׃",
         "transliteration": "ve'atah mahkiviti adonay toojaleti leja hi",
-        "spanish": "Líbrame de todas mis rebeliones; No me pongas por escarnio del insensato."
+        "spanish": "Y ahora, Señor, ¿qué esperaré? Mi esperanza en ti está."
       },
       {
         "verse": 9,
         "hebrew": "מִכׇּל פְּשָׁעַי הַצִּילֵנִי חֶרְפַּת נָבָל אַל תְּשִׂימֵנִי׃",
         "transliteration": "miklpesha'ay hatsileni jerepat naval altesimeni",
-        "spanish": "Enmudecí, no abrí mi boca; Porque tú lo hiciste."
+        "spanish": "Líbrame de todas mis rebeliones; No me pongas por escarnio del insensato."
       },
       {
         "verse": 10,
         "hebrew": "נֶאֱלַמְתִּי לֹא אֶפְתַּח פִּי כִּי אַתָּה עָשִׂיתָ׃",
         "transliteration": "neelameti lo efetajpi ki atah 'asita",
-        "spanish": "Quita de sobre mí tu plaga; De la guerra de tu mano soy consumido."
+        "spanish": "Enmudecí, no abrí mi boca; Porque tú lo hiciste."
       },
       {
         "verse": 11,
         "hebrew": "הָסֵר מֵעָלַי נִגְעֶךָ מִתִּגְרַת יָדְךָ אֲנִי כָלִיתִי׃",
         "transliteration": "haser me'alay nige'eja mitigerat yadeja ani jaliti",
-        "spanish": "Con castigos sobre el pecado corriges al hombre, Y haces consumirse como de polilla su grandeza: Ciertamente vanidad es todo hombre. (Sélah)"
+        "spanish": "Quita de sobre mí tu plaga; De la guerra de tu mano soy consumido."
       },
       {
         "verse": 12,
         "hebrew": "בְּתוֹכָחוֹת עַל עָוֺן יִסַּרְתָּ אִישׁ וַתֶּמֶס כָּעָשׁ חֲמוּדוֹ אַךְ הֶבֶל כׇּל אָדָם סֶלָה׃",
         "transliteration": "betoojajoot 'al'avn isareta ish vatemes ka'ash jamudoo aje hevel kladam selah",
-        "spanish": "Oye mi oración, oh YHVH, y escucha mi clamor: No calles á mis lágrimas; Porque peregrino soy para contigo, Y advenedizo, como todos mis padres."
+        "spanish": "Con castigos sobre el pecado corriges al hombre, Y haces consumirse como de polilla su grandeza: Ciertamente vanidad es todo hombre. (Sélah)"
       },
       {
         "verse": 13,
         "hebrew": "שִׁמְעָה תְפִלָּתִי יְהֹוָה וְשַׁוְעָתִי הַאֲזִינָה אֶל דִּמְעָתִי אַל תֶּחֱרַשׁ כִּי גֵר אָנֹכִי עִמָּךְ תּוֹשָׁב כְּכׇל אֲבוֹתָי׃",
         "transliteration": "shime'ahtefilati Adonai veshave'ati haazinah eldime'ati altejerash ki ger anoji 'imaje tooshav kejlavuotay",
-        "spanish": "Déjame, y tomaré fuerzas, Antes que vaya y perezca."
+        "spanish": "Oye mi oración, oh YHVH, y escucha mi clamor: No calles á mis lágrimas; Porque peregrino soy para contigo, Y advenedizo, como todos mis padres."
       },
       {
         "verse": 14,
         "hebrew": "הָשַׁע מִמֶּנִּי וְאַבְלִיגָה בְּטֶרֶם אֵלֵךְ וְאֵינֶנִּי׃ ",
         "transliteration": "hasha' mimeni veaveligah beterem eleje veeyneni ",
-        "spanish": "..."
+        "spanish": "Déjame, y tomaré fuerzas, Antes que vaya y perezca."
       }
     ]
   },
@@ -3998,109 +3998,109 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ לְדָוִד מִזְמוֹר׃",
         "transliteration": "lamenatseja ledavid mizemoor",
-        "spanish": "RESIGNADAMENTE esperé a YHVH, E inclinóse á mí, y oyó mi clamor."
+        "spanish": "Al Músico principal. Salmo de David."
       },
       {
         "verse": 2,
         "hebrew": "קַוֺּה קִוִּיתִי יְהֹוָה וַיֵּט אֵלַי וַיִּשְׁמַע שַׁוְעָתִי׃",
         "transliteration": "kavh kiviti Adonai vayet elay vaishema' shave'ati",
-        "spanish": "E hízome sacar de un lago de miseria, del lodo cenagoso; Y puso mis pies sobre peña, y enderezó mis pasos."
+        "spanish": "RESIGNADAMENTE esperé a YHVH, E inclinóse á mí, y oyó mi clamor."
       },
       {
         "verse": 3,
         "hebrew": "וַיַּעֲלֵנִי מִבּוֹר שָׁאוֹן מִטִּיט הַיָּוֵן וַיָּקֶם עַל סֶלַע רַגְלַי כּוֹנֵן אֲשֻׁרָי׃",
         "transliteration": "vaya'aleni miboor shaoon mitit hayaven vayakem 'alsela' ragelay koonen ashuray",
-        "spanish": "Puso luego en mi boca canción nueva, alabanza á nuestro Dios. Verán esto muchos, y temerán, Y esperarán en YHVH."
+        "spanish": "E hízome sacar de un lago de miseria, del lodo cenagoso; Y puso mis pies sobre peña, y enderezó mis pasos."
       },
       {
         "verse": 4,
         "hebrew": "וַיִּתֵּן בְּפִי שִׁיר חָדָשׁ תְּהִלָּה לֵאלֹהֵינוּ יִרְאוּ רַבִּים וְיִירָאוּ וְיִבְטְחוּ בַּיהֹוָה׃",
         "transliteration": "vaiten befi shir jadash tehilah leloheynu ireu rabim veirau veiveteju bayhovah",
-        "spanish": "Bienaventurado el hombre que puso a YHVH por su confianza, Y no mira a los soberbios, ni a los que declinan á la mentira."
+        "spanish": "Puso luego en mi boca canción nueva, alabanza á nuestro Dios. Verán esto muchos, y temerán, Y esperarán en YHVH."
       },
       {
         "verse": 5,
         "hebrew": "אַשְׁרֵי הַגֶּבֶר אֲשֶׁר שָׂם יְהֹוָה מִבְטַחוֹ וְלֹא פָנָה אֶל רְהָבִים וְשָׂטֵי כָזָב׃",
         "transliteration": "ashereyhagever ashersam Adonai mivetajoo velofanah elrehavim vesatey jazav",
-        "spanish": "Aumentado has tú, oh YHVH Dios mío, tus maravillas; Y tus pensamientos para con nosotros, No te los podremos contar: Si yo anunciare y hablare de ellos, No pueden ser enarrados."
+        "spanish": "Bienaventurado el hombre que puso a YHVH por su confianza, Y no mira a los soberbios, ni a los que declinan á la mentira."
       },
       {
         "verse": 6,
         "hebrew": "רַבּוֹת עָשִׂיתָ אַתָּה יְהֹוָה אֱלֹהַי נִפְלְאֹתֶיךָ וּמַחְשְׁבֹתֶיךָ אֵלֵינוּ אֵין עֲרֹךְ אֵלֶיךָ אַגִּידָה וַאֲדַבֵּרָה עָצְמוּ מִסַּפֵּר׃",
         "transliteration": "raboot 'asita atah Adonai elohay nifeleoteyja umajeshevuteyja eleynu eyn 'aroje eleyja agidah vaadaberah 'atsemu misaper",
-        "spanish": "Sacrificio y presente no te agrada; Has abierto mis oídos; Holocausto y expiación no has demandado."
+        "spanish": "Aumentado has tú, oh YHVH Dios mío, tus maravillas; Y tus pensamientos para con nosotros, No te los podremos contar: Si yo anunciare y hablare de ellos, No pueden ser enarrados."
       },
       {
         "verse": 7,
         "hebrew": "זֶבַח וּמִנְחָה לֹא חָפַצְתָּ אׇזְנַיִם כָּרִיתָ לִּי עוֹלָה וַחֲטָאָה לֹא שָׁאָלְתָּ׃",
         "transliteration": "zevaj uminejah lojafatseta zenaim karita li 'oolah vajataah lo shaaleta",
-        "spanish": "Entonces dije: He aquí, vengo; En el envoltorio del libro está escrito de mí:"
+        "spanish": "Sacrificio y presente no te agrada; Has abierto mis oídos; Holocausto y expiación no has demandado."
       },
       {
         "verse": 8,
         "hebrew": "אָז אָמַרְתִּי הִנֵּה בָאתִי בִּמְגִלַּת סֵפֶר כָּתוּב עָלָי׃",
         "transliteration": "az amareti hinehvati bimegilatsefer katuv 'alay",
-        "spanish": "El hacer tu voluntad, Dios mío, hame agradado; Y Tu Torá está en medio de mis entrañas."
+        "spanish": "Entonces dije: He aquí, vengo; En el envoltorio del libro está escrito de mí:"
       },
       {
         "verse": 9,
         "hebrew": "לַעֲשׂוֹת רְצוֹנְךָ אֱלֹהַי חָפָצְתִּי וְתוֹרָתְךָ בְּתוֹךְ מֵעָי׃",
         "transliteration": "la'asootretsooneja elohay jafatseti vetoorateja betooje me'ay",
-        "spanish": "Anunciado he justicia en grande congregación: He aquí no detuve mis labios, YHVH, tú lo sabes."
+        "spanish": "El hacer tu voluntad, Dios mío, hame agradado; Y Tu Torá está en medio de mis entrañas."
       },
       {
         "verse": 10,
         "hebrew": "בִּשַּׂרְתִּי צֶדֶק בְּקָהָל רָב הִנֵּה שְׂפָתַי לֹא אֶכְלָא יְהֹוָה אַתָּה יָדָעְתָּ׃",
         "transliteration": "bisareti tsedek bekahal rav hineh sefatay lo ejela Adonai atah yada'eta",
-        "spanish": "No encubrí tu justicia dentro de mi corazón: Tu verdad y tu salvación he dicho: No oculté Tu Jésed y tu verdad en grande concurso."
+        "spanish": "Anunciado he justicia en grande congregación: He aquí no detuve mis labios, YHVH, tú lo sabes."
       },
       {
         "verse": 11,
         "hebrew": "צִדְקָתְךָ לֹא כִסִּיתִי בְּתוֹךְ לִבִּי אֱמוּנָתְךָ וּתְשׁוּעָתְךָ אָמָרְתִּי לֹא כִחַדְתִּי חַסְדְּךָ וַאֲמִתְּךָ לְקָהָל רָב׃",
         "transliteration": "tsidekateja lojisiti betooje libi emunateja uteshu'ateja amareti lojijadeti jasedeja vaamiteja lekahal rav",
-        "spanish": "Tú, YHVH, no apartes de mí tus jasadim: Tu Jésed y tu verdad me guarden siempre."
+        "spanish": "No encubrí tu justicia dentro de mi corazón: Tu verdad y tu salvación he dicho: No oculté Tu Jésed y tu verdad en grande concurso."
       },
       {
         "verse": 12,
         "hebrew": "אַתָּה יְהֹוָה לֹא תִכְלָא רַחֲמֶיךָ מִמֶּנִּי חַסְדְּךָ וַאֲמִתְּךָ תָּמִיד יִצְּרוּנִי׃",
         "transliteration": "atah Adonai lotijela rajameyja mimeni jasedeja vaamiteja tamid itseruni",
-        "spanish": "Porque me han cercado males hasta no haber cuento: Hanme comprendido mis maldades, y no puedo levantar la vista: Hanse aumentado más que los cabellos de mi cabeza, y mi corazón me falta."
+        "spanish": "Tú, YHVH, no apartes de mí tus jasadim: Tu Jésed y tu verdad me guarden siempre."
       },
       {
         "verse": 13,
         "hebrew": "כִּי אָפְפוּ עָלַי רָעוֹת עַד אֵין מִסְפָּר הִשִּׂיגוּנִי עֲוֺנֹתַי וְלֹא יָכֹלְתִּי לִרְאוֹת עָצְמוּ מִשַּׂעֲרוֹת רֹאשִׁי וְלִבִּי עֲזָבָנִי׃",
         "transliteration": "ki afefv'alay ra'oot 'adeyn misepar hisiguni 'avnotay veloyajoleti lireoot 'atsemu misa'aroot roshi velibi 'azavani",
-        "spanish": "Quieras, oh YHVH, librarme; YHVH, apresúrate á socorrerme."
+        "spanish": "Porque me han cercado males hasta no haber cuento: Hanme comprendido mis maldades, y no puedo levantar la vista: Hanse aumentado más que los cabellos de mi cabeza, y mi corazón me falta."
       },
       {
         "verse": 14,
         "hebrew": "רְצֵה יְהֹוָה לְהַצִּילֵנִי יְהֹוָה לְעֶזְרָתִי חוּשָׁה׃",
         "transliteration": "retseh Adonai lehatsileni Adonai le'ezerati jushah",
-        "spanish": "Sean avergonzados y confusos á una Los que buscan mi vida para cortarla: Vuelvan atrás y avergüéncense Los que mi mal desean."
+        "spanish": "Quieras, oh YHVH, librarme; YHVH, apresúrate á socorrerme."
       },
       {
         "verse": 15,
         "hebrew": "יֵבֹשׁוּ וְיַחְפְּרוּ יַחַד מְבַקְשֵׁי נַפְשִׁי לִסְפּוֹתָהּ יִסֹּגוּ אָחוֹר וְיִכָּלְמוּ חֲפֵצֵי רָעָתִי׃",
         "transliteration": "yevushu veyajeperu yajad mevakeshey nafeshi lisepootah isogu ajoor veikalemu jafetsey ra'ati",
-        "spanish": "Sean asolados en pago de su afrenta Los que me dicen: ¡Ea, ea!"
+        "spanish": "Sean avergonzados y confusos á una Los que buscan mi vida para cortarla: Vuelvan atrás y avergüéncense Los que mi mal desean."
       },
       {
         "verse": 16,
         "hebrew": "יָשֹׁמּוּ עַל עֵקֶב בׇּשְׁתָּם הָאֹמְרִים לִי הֶאָח הֶאָח׃",
         "transliteration": "yashomu 'al'ekev bshetam haomerim li heaj heaj",
-        "spanish": "Gócense y alégrense en ti todos los que te buscan; Y digan siempre los que aman tu salud: YHVH sea ensalzado."
+        "spanish": "Sean asolados en pago de su afrenta Los que me dicen: ¡Ea, ea!"
       },
       {
         "verse": 17,
         "hebrew": "יָשִׂישׂוּ וְיִשְׂמְחוּ בְּךָ כׇּל מְבַקְשֶׁיךָ יֹאמְרוּ תָמִיד יִגְדַּל יְהֹוָה אֹהֲבֵי תְּשׁוּעָתֶךָ׃",
         "transliteration": "yasisu veisemeju beja klmevakesheyja yomeru tamid igedal Adonai ohavey teshu'ateja",
-        "spanish": "Aunque afligido yo y necesitado, YHVH pensará de mí: Mi ayuda y mi libertador eres tú; Dios mío, no te tardes."
+        "spanish": "Gócense y alégrense en ti todos los que te buscan; Y digan siempre los que aman tu salud: YHVH sea ensalzado."
       },
       {
         "verse": 18,
         "hebrew": "וַאֲנִי עָנִי וְאֶבְיוֹן אֲדֹנָי יַחֲשׇׁב לִי עֶזְרָתִי וּמְפַלְטִי אַתָּה אֱלֹהַי אַל תְּאַחַר׃ ",
         "transliteration": "vaani 'ani veeveyoon adonay yajashvli 'ezerati umefaleti atah elohay alteajar ",
-        "spanish": "..."
+        "spanish": "Aunque afligido yo y necesitado, YHVH pensará de mí: Mi ayuda y mi libertador eres tú; Dios mío, no te tardes."
       }
     ]
   },
@@ -4116,85 +4116,85 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ מִזְמוֹר לְדָוִד׃",
         "transliteration": "lamenatseja mizemoor ledavid",
-        "spanish": "BIENAVENTURADO el que piensa en el pobre: En el día malo lo librará YHVH."
+        "spanish": "Al Músico principal. Salmo de David."
       },
       {
         "verse": 2,
         "hebrew": "אַשְׁרֵי מַשְׂכִּיל אֶל דָּל בְּיוֹם רָעָה יְמַלְּטֵהוּ יְהֹוָה׃",
         "transliteration": "asherey masekil eldal beyoom ra'ah yemaletehu Adonai",
-        "spanish": "YHVH lo guardé, y le dé vida: sea bienaventurado en la tierra, Y no lo entregues á la voluntad de sus enemigos."
+        "spanish": "BIENAVENTURADO el que piensa en el pobre: En el día malo lo librará YHVH."
       },
       {
         "verse": 3,
         "hebrew": "יְהֹוָה יִשְׁמְרֵהוּ וִיחַיֵּהוּ (יאשר) [וְאֻשַּׁר] בָּאָרֶץ וְאַל תִּתְּנֵהוּ בְּנֶפֶשׁ אֹיְבָיו׃",
         "transliteration": "Adonai ishemerehu vijayehu (yshr) [veushar] baarets vealtitenehu benefesh oyevayv",
-        "spanish": "YHVH lo sustentará sobre el lecho del dolor: Mullirás toda su cama en su enfermedad."
+        "spanish": "YHVH lo guardé, y le dé vida: sea bienaventurado en la tierra, Y no lo entregues á la voluntad de sus enemigos."
       },
       {
         "verse": 4,
         "hebrew": "יְהֹוָה יִסְעָדֶנּוּ עַל עֶרֶשׂ דְּוָי כׇּל מִשְׁכָּבוֹ הָפַכְתָּ בְחׇלְיוֹ׃",
         "transliteration": "Adonai ise'adenu 'al'eres devay klmishekavuo hafajeta vejleyoo",
-        "spanish": "Yo dije: YHVH, ten Jésed de mí; Sana mi alma, porque contra ti he pecado."
+        "spanish": "YHVH lo sustentará sobre el lecho del dolor: Mullirás toda su cama en su enfermedad."
       },
       {
         "verse": 5,
         "hebrew": "אֲנִי אָמַרְתִּי יְהֹוָה חׇנֵּנִי רְפָאָה נַפְשִׁי כִּי חָטָאתִי לָךְ׃",
         "transliteration": "aniamareti Adonai jneni refaah nafeshi kijatati laje",
-        "spanish": "Mis enemigos dicen mal de mí preguntando: ¿Cuándo morirá, y perecerá su nombre?"
+        "spanish": "Yo dije: YHVH, ten Jésed de mí; Sana mi alma, porque contra ti he pecado."
       },
       {
         "verse": 6,
         "hebrew": "אוֹיְבַי יֹאמְרוּ רַע לִי מָתַי יָמוּת וְאָבַד שְׁמוֹ׃",
         "transliteration": "ooyevay yomeru ra' li matay yamut veavad shemoo",
-        "spanish": "Y si venía á ver me, hablaba mentira: Su corazón se amontonaba iniquidad; Y salido fuera, hablába la."
+        "spanish": "Mis enemigos dicen mal de mí preguntando: ¿Cuándo morirá, y perecerá su nombre?"
       },
       {
         "verse": 7,
         "hebrew": "וְאִם בָּא לִרְאוֹת שָׁוְא יְדַבֵּר לִבּוֹ יִקְבׇּץ אָוֶן לוֹ יֵצֵא לַחוּץ יְדַבֵּר׃",
         "transliteration": "veimba lireoot shave yedaber liboo ikebtsaven loo yetse lajuts yedaber",
-        "spanish": "Reunidos murmuraban contra mí todos los que me aborrecían: Contra mí pensaban mal, diciendo de mí:"
+        "spanish": "Y si venía á ver me, hablaba mentira: Su corazón se amontonaba iniquidad; Y salido fuera, hablába la."
       },
       {
         "verse": 8,
         "hebrew": "יַחַד עָלַי יִתְלַחֲשׁוּ כׇּל שֹׂנְאָי עָלַי יַחְשְׁבוּ רָעָה לִי׃",
         "transliteration": "yajad 'alay itelajashu klsoneay 'alay yajeshevu ra'ah li",
-        "spanish": "Cosa pestilencial de él se ha apoderado; Y el que cayó en cama, no volverá á levantarse."
+        "spanish": "Reunidos murmuraban contra mí todos los que me aborrecían: Contra mí pensaban mal, diciendo de mí:"
       },
       {
         "verse": 9,
         "hebrew": "דְּבַר בְּלִיַּעַל יָצוּק בּוֹ וַאֲשֶׁר שָׁכַב לֹא יוֹסִיף לָקוּם׃",
         "transliteration": "devarbelia'al yatsuk boo vaasher shajav loyoosif lakum",
-        "spanish": "Aun el hombre de mi paz, en quien yo confiaba, el que de mi pan comía, Alzó contra mí el calcañar."
+        "spanish": "Cosa pestilencial de él se ha apoderado; Y el que cayó en cama, no volverá á levantarse."
       },
       {
         "verse": 10,
         "hebrew": "גַּם אִישׁ שְׁלוֹמִי אֲשֶׁר בָּטַחְתִּי בוֹ אוֹכֵל לַחְמִי הִגְדִּיל עָלַי עָקֵב׃",
         "transliteration": "gamish sheloomi asherbatajeti vuo oojel lajemi higedil 'alay 'akev",
-        "spanish": "Mas tú, YHVH, ten Jésed de mí, y hazme levantar, Y daréles el pago."
+        "spanish": "Aun el hombre de mi paz, en quien yo confiaba, el que de mi pan comía, Alzó contra mí el calcañar."
       },
       {
         "verse": 11,
         "hebrew": "וְאַתָּה יְהֹוָה חׇנֵּנִי וַהֲקִימֵנִי וַאֲשַׁלְּמָה לָהֶם׃",
         "transliteration": "veatah Adonai jneni vahakimeni vaashalemah lahem",
-        "spanish": "En esto habré conocido que te he agradado, Que mi enemigo no se holgará de mí."
+        "spanish": "Mas tú, YHVH, ten Jésed de mí, y hazme levantar, Y daréles el pago."
       },
       {
         "verse": 12,
         "hebrew": "בְּזֹאת יָדַעְתִּי כִּי חָפַצְתָּ בִּי כִּי לֹא יָרִיעַ אֹיְבִי עָלָי׃",
         "transliteration": "bezot yada'eti kijafatseta bi ki loyari'a oyevi 'alay",
-        "spanish": "En cuanto á mí, en mi integridad me has sustentado, Y me has hecho estar delante de ti para siempre."
+        "spanish": "En esto habré conocido que te he agradado, Que mi enemigo no se holgará de mí."
       },
       {
         "verse": 13,
         "hebrew": "וַאֲנִי בְּתֻמִּי תָּמַכְתָּ בִּי וַתַּצִּיבֵנִי לְפָנֶיךָ לְעוֹלָם׃",
         "transliteration": "vaani betumi tamajeta bi vatatsiveni lefaneyja le'oolam",
-        "spanish": "Bendito sea YHVH, el Dios de Israel, Por siglos de siglos. Amén y Amén."
+        "spanish": "En cuanto á mí, en mi integridad me has sustentado, Y me has hecho estar delante de ti para siempre."
       },
       {
         "verse": 14,
         "hebrew": "בָּרוּךְ יְהֹוָה אֱלֹהֵי יִשְׂרָאֵל מֵהָעוֹלָם וְעַד הָעוֹלָם אָמֵן וְאָמֵן׃",
         "transliteration": "baruje Adonai elohey iserael meha'oolam ve'ad ha'oolam amen veamen",
-        "spanish": "..."
+        "spanish": "Bendito sea YHVH, el Dios de Israel, Por siglos de siglos. Amén y Amén."
       }
     ]
   },
@@ -4210,73 +4210,73 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ מַשְׂכִּיל לִבְנֵי קֹרַח׃",
         "transliteration": "lamenatseja masekil liveneykoraj",
-        "spanish": "COMO el ciervo brama por las corrientes de las aguas, Así clama por ti, oh Dios, el alma mía."
+        "spanish": "Al Músico principal. Masquil para los hijos de Coré."
       },
       {
         "verse": 2,
         "hebrew": "כְּאַיָּל תַּעֲרֹג עַל אֲפִיקֵי מָיִם כֵּן נַפְשִׁי תַעֲרֹג אֵלֶיךָ אֱלֹהִים׃",
         "transliteration": "keayal ta'arog 'alafikeymaim ken nafeshi ta'arog eleyja Elohim",
-        "spanish": "Mi alma tiene sed de Dios, del Dios vivo: ¡Cuándo vendré, y pareceré delante de Dios!"
+        "spanish": "COMO el ciervo brama por las corrientes de las aguas, Así clama por ti, oh Dios, el alma mía."
       },
       {
         "verse": 3,
         "hebrew": "צָמְאָה נַפְשִׁי לֵאלֹהִים לְאֵל חָי מָתַי אָבוֹא וְאֵרָאֶה פְּנֵי אֱלֹהִים׃",
         "transliteration": "tsameah nafeshi lelohim leel jay matay avuo veeraeh peney Elohim",
-        "spanish": "Fueron mis lágrimas mi pan de día y de noche, Mientras me dicen todos los días: ¿Dónde está tu Dios?"
+        "spanish": "Mi alma tiene sed de Dios, del Dios vivo: ¡Cuándo vendré, y pareceré delante de Dios!"
       },
       {
         "verse": 4,
         "hebrew": "הָיְתָה לִּי דִמְעָתִי לֶחֶם יוֹמָם וָלָיְלָה בֶּאֱמֹר אֵלַי כׇּל הַיּוֹם אַיֵּה אֱלֹהֶיךָ׃",
         "transliteration": "hayetahli dime'ati lejem yoomam valayelah beemor elay klhayoom ayeh eloheyja",
-        "spanish": "Acordaréme de estas cosas, y derramaré sobre mí mi alma: Cuando pasaré en el número, iré con ellos hasta la casa de Dios, Con voz de alegría y de alabanza, haciendo fiesta la multitud."
+        "spanish": "Fueron mis lágrimas mi pan de día y de noche, Mientras me dicen todos los días: ¿Dónde está tu Dios?"
       },
       {
         "verse": 5,
         "hebrew": "אֵלֶּה אֶזְכְּרָה וְאֶשְׁפְּכָה עָלַי נַפְשִׁי כִּי אֶעֱבֹר בַּסָּךְ אֶדַּדֵּם עַד בֵּית אֱלֹהִים בְּקוֹל רִנָּה וְתוֹדָה הָמוֹן חוֹגֵג׃",
         "transliteration": "eleh ezekerah veeshepejah 'alay nafeshi ki e'evur basaje edadem 'adbeytElohim bekoolrinah vetoodah hamoon joogeg",
-        "spanish": "¿Por qué te abates, oh alma mía, Y te conturbas en mí? Espera a Dios; porque aun le tengo de alabar Por las saludes de su presencia."
+        "spanish": "Acordaréme de estas cosas, y derramaré sobre mí mi alma: Cuando pasaré en el número, iré con ellos hasta la casa de Dios, Con voz de alegría y de alabanza, haciendo fiesta la multitud."
       },
       {
         "verse": 6,
         "hebrew": "מַה תִּשְׁתּוֹחֲחִי נַפְשִׁי וַתֶּהֱמִי עָלָי הוֹחִלִי לֵאלֹהִים כִּי עוֹד אוֹדֶנּוּ יְשׁוּעוֹת פָּנָיו׃",
         "transliteration": "mahtishetoojaji nafeshi vatehemi 'alay hoojili lelohim ki'ood oodenu yeshu'oot panayv",
-        "spanish": "Dios mío, mi alma está en mí abatida: Acordaréme por tanto de ti desde tierra del Jordán, Y de los Hermonitas, desde el monte de Mizhar."
+        "spanish": "¿Por qué te abates, oh alma mía, Y te conturbas en mí? Espera a Dios; porque aun le tengo de alabar Por las saludes de su presencia."
       },
       {
         "verse": 7,
         "hebrew": "אֱלֹהַי עָלַי נַפְשִׁי תִשְׁתּוֹחָח עַל כֵּן אֶזְכׇּרְךָ מֵאֶרֶץ יַרְדֵּן וְחֶרְמוֹנִים מֵהַר מִצְעָר׃",
         "transliteration": "elohay 'alay nafeshi tishetoojaj 'alken ezekreja meerets yareden vejeremoonim mehar mitse'ar",
-        "spanish": "Un abismo llama á otro á la voz de tus canales: Todas tus ondas y tus olas han pasado sobre mí."
+        "spanish": "Dios mío, mi alma está en mí abatida: Acordaréme por tanto de ti desde tierra del Jordán, Y de los Hermonitas, desde el monte de Mizhar."
       },
       {
         "verse": 8,
         "hebrew": "תְּהוֹם אֶל תְּהוֹם קוֹרֵא לְקוֹל צִנּוֹרֶיךָ כׇּל מִשְׁבָּרֶיךָ וְגַלֶּיךָ עָלַי עָבָרוּ׃",
         "transliteration": "tehoomeltehoom koore lekool tsinooreyja klmishebareyja vegaleyja 'alay 'avarv",
-        "spanish": "De día mandará YHVH Su Jésed, Y de noche su canción será conmigo, Y oración al Dios de mi vida."
+        "spanish": "Un abismo llama á otro á la voz de tus canales: Todas tus ondas y tus olas han pasado sobre mí."
       },
       {
         "verse": 9,
         "hebrew": "יוֹמָם יְצַוֶּה יְהֹוָה חַסְדּוֹ וּבַלַּיְלָה שִׁירֹה עִמִּי תְּפִלָּה לְאֵל חַיָּי׃",
         "transliteration": "yoomam yetsaveh Adonai jasedoo uvalayelah shiroh 'imi tefilah leel jayay",
-        "spanish": "Diré a Dios: Roca mía, ¿por qué te has olvidado de mí? ¿Por qué andaré yo enlutado por la opresión del enemigo?"
+        "spanish": "De día mandará YHVH Su Jésed, Y de noche su canción será conmigo, Y oración al Dios de mi vida."
       },
       {
         "verse": 10,
         "hebrew": "אוֹמְרָה לְאֵל סַלְעִי לָמָה שְׁכַחְתָּנִי לָמָּה קֹדֵר אֵלֵךְ בְּלַחַץ אוֹיֵב׃",
         "transliteration": "oomerah leel sale'i lamah shejajetani lamahkoder eleje belajats ooyev",
-        "spanish": "Mientras se están quebrantando mis huesos, mis enemigos me afrentan, Diciéndome cada día: ¿Dónde está tu Dios?"
+        "spanish": "Diré a Dios: Roca mía, ¿por qué te has olvidado de mí? ¿Por qué andaré yo enlutado por la opresión del enemigo?"
       },
       {
         "verse": 11,
         "hebrew": "בְּרֶצַח בְּעַצְמוֹתַי חֵרְפוּנִי צוֹרְרָי בְּאׇמְרָם אֵלַי כׇּל הַיּוֹם אַיֵּה אֱלֹהֶיךָ׃",
         "transliteration": "beretsaj be'atsemootay jerefuni tsooreray bemeram elay klhayoom ayeh eloheyja",
-        "spanish": "¿Por qué te abates, oh alma mía, Y por qué te conturbas en mí? Espera a Dios; porque aun le tengo de alabar; Es él salvamento delante de mí, y el Dios mío."
+        "spanish": "Mientras se están quebrantando mis huesos, mis enemigos me afrentan, Diciéndome cada día: ¿Dónde está tu Dios?"
       },
       {
         "verse": 12,
         "hebrew": "מַה תִּשְׁתּוֹחֲחִי נַפְשִׁי וּמַה תֶּהֱמִי עָלָי הוֹחִילִי לֵאלֹהִים כִּי עוֹד אוֹדֶנּוּ יְשׁוּעֹת פָּנַי וֵאלֹהָי׃ ",
         "transliteration": "mahtishetoojaji nafeshi umahtehemi 'alay hoojili lelohim ki'ood oodenu yeshu'ot panay velohay ",
-        "spanish": "..."
+        "spanish": "¿Por qué te abates, oh alma mía, Y por qué te conturbas en mí? Espera a Dios; porque aun le tengo de alabar; Es él salvamento delante de mí, y el Dios mío."
       }
     ]
   },
@@ -4330,163 +4330,163 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ לִבְנֵי קֹרַח מַשְׂכִּיל׃",
         "transliteration": "lamenatseja liveneykoraj masekil",
-        "spanish": "OH Dios, con nuestros oídos hemos oído, nuestros padres nos han contado, La obra que hiciste en sus días, en los tiempos antiguos."
+        "spanish": "Al Músico principal; para los hijos de Coré. Masquil."
       },
       {
         "verse": 2,
         "hebrew": "אֱלֹהִים בְּאׇזְנֵינוּ שָׁמַעְנוּ אֲבוֹתֵינוּ סִפְּרוּ לָנוּ פֹּעַל פָּעַלְתָּ בִימֵיהֶם בִּימֵי קֶדֶם׃",
         "transliteration": "Elohim bezeneynu shama'enu avuoteynu sipervlanu po'al pa'aleta vimeyhem bimey kedem",
-        "spanish": "Tú con tu mano echaste las gentes, y los plantaste a ellos; Afligiste los pueblos, y los arrojaste."
+        "spanish": "OH Dios, con nuestros oídos hemos oído, nuestros padres nos han contado, La obra que hiciste en sus días, en los tiempos antiguos."
       },
       {
         "verse": 3,
         "hebrew": "אַתָּה יָדְךָ גּוֹיִם הוֹרַשְׁתָּ וַתִּטָּעֵם תָּרַע לְאֻמִּים וַתְּשַׁלְּחֵם׃",
         "transliteration": "atah yadeja gooim hoorasheta vatita'em tara' leumim vateshalejem",
-        "spanish": "Porque no se apoderaron de la tierra por su espada, Ni su brazo los libró; Sino tu diestra, y tu brazo, y la luz de tu rostro, Porque te complaciste en ellos."
+        "spanish": "Tú con tu mano echaste las gentes, y los plantaste a ellos; Afligiste los pueblos, y los arrojaste."
       },
       {
         "verse": 4,
         "hebrew": "כִּי לֹא בְחַרְבָּם יָרְשׁוּ אָרֶץ וּזְרוֹעָם לֹא הוֹשִׁיעָה לָּמוֹ כִּי יְמִינְךָ וּזְרוֹעֲךָ וְאוֹר פָּנֶיךָ כִּי רְצִיתָם׃",
         "transliteration": "ki lo vejarebam yareshu arets uzeroo'am lohooshi'ah lamoo kiyemineja uzeroo'aja veoor paneyja ki retsitam",
-        "spanish": "Tú, oh Dios, eres mi rey: Manda saludes a Jacob."
+        "spanish": "Porque no se apoderaron de la tierra por su espada, Ni su brazo los libró; Sino tu diestra, y tu brazo, y la luz de tu rostro, Porque te complaciste en ellos."
       },
       {
         "verse": 5,
         "hebrew": "אַתָּה הוּא מַלְכִּי אֱלֹהִים צַוֵּה יְשׁוּעוֹת יַעֲקֹב׃",
         "transliteration": "atahhu maleki Elohim tsaveh yeshu'oot ya'akov",
-        "spanish": "Por medio de ti sacudiremos á nuestros enemigos: En tu nombre atropellaremos á nuestros adversarios."
+        "spanish": "Tú, oh Dios, eres mi rey: Manda saludes a Jacob."
       },
       {
         "verse": 6,
         "hebrew": "בְּךָ צָרֵינוּ נְנַגֵּחַ בְּשִׁמְךָ נָבוּס קָמֵינוּ׃",
         "transliteration": "beja tsareynu nenageja beshimeja navus kameynv",
-        "spanish": "Porque no confiaré en mi arco, Ni mi espada me salvará."
+        "spanish": "Por medio de ti sacudiremos á nuestros enemigos: En tu nombre atropellaremos á nuestros adversarios."
       },
       {
         "verse": 7,
         "hebrew": "כִּי לֹא בְקַשְׁתִּי אֶבְטָח וְחַרְבִּי לֹא תוֹשִׁיעֵנִי׃",
         "transliteration": "ki lo vekasheti evetaj vejarebi lo tooshi'eni",
-        "spanish": "Pues tú nos has guardado de nuestros enemigos, Y has avergonzado a los que nos aborrecían."
+        "spanish": "Porque no confiaré en mi arco, Ni mi espada me salvará."
       },
       {
         "verse": 8,
         "hebrew": "כִּי הוֹשַׁעְתָּנוּ מִצָּרֵינוּ וּמְשַׂנְאֵינוּ הֱבִישׁוֹתָ׃",
         "transliteration": "ki hoosha'etanu mitsareynu umesaneeynu hevishoota",
-        "spanish": "En Dios nos gloriaremos todo tiempo, Y para siempre loaremos tu nombre. (Sélah)"
+        "spanish": "Pues tú nos has guardado de nuestros enemigos, Y has avergonzado a los que nos aborrecían."
       },
       {
         "verse": 9,
         "hebrew": "בֵּאלֹהִים הִלַּלְנוּ כׇל הַיּוֹם וְשִׁמְךָ לְעוֹלָם נוֹדֶה סֶלָה׃",
         "transliteration": "belohim hilalenu jlhayoom veshimeja le'oolam noodeh selah",
-        "spanish": "Empero nos has desechado, y nos has hecho avergonzar; Y no sales en nuestros ejércitos."
+        "spanish": "En Dios nos gloriaremos todo tiempo, Y para siempre loaremos tu nombre. (Sélah)"
       },
       {
         "verse": 10,
         "hebrew": "אַף זָנַחְתָּ וַתַּכְלִימֵנוּ וְלֹא תֵצֵא בְּצִבְאוֹתֵינוּ׃",
         "transliteration": "afzanajeta vatajelimenu velotetse betsiveooteynv",
-        "spanish": "Nos hiciste retroceder del enemigo, Y saqueáron nos para sí los que nos aborrecían."
+        "spanish": "Empero nos has desechado, y nos has hecho avergonzar; Y no sales en nuestros ejércitos."
       },
       {
         "verse": 11,
         "hebrew": "תְּשִׁיבֵנוּ אָחוֹר מִנִּי צָר וּמְשַׂנְאֵינוּ שָׁסוּ לָמוֹ׃",
         "transliteration": "teshivenu ajoor minitsar umesaneeynu shasu lamoo",
-        "spanish": "Pusístenos como á ovejas para comida, Y esparcístenos entre las gentes."
+        "spanish": "Nos hiciste retroceder del enemigo, Y saqueáron nos para sí los que nos aborrecían."
       },
       {
         "verse": 12,
         "hebrew": "תִּתְּנֵנוּ כְּצֹאן מַאֲכָל וּבַגּוֹיִם זֵרִיתָנוּ׃",
         "transliteration": "titenenu ketson maajal uvagooim zeritanv",
-        "spanish": "Has vendido tu pueblo de balde, Y no pujaste en sus precios."
+        "spanish": "Pusístenos como á ovejas para comida, Y esparcístenos entre las gentes."
       },
       {
         "verse": 13,
         "hebrew": "תִּמְכֹּר עַמְּךָ בְלֹא הוֹן וְלֹא רִבִּיתָ בִּמְחִירֵיהֶם׃",
         "transliteration": "timekor'ameja velohoon veloribita bimejireyhem",
-        "spanish": "Pusístenos por vergüenza á nuestros vecinos, Por escarnio y por burla a los que nos rodean."
+        "spanish": "Has vendido tu pueblo de balde, Y no pujaste en sus precios."
       },
       {
         "verse": 14,
         "hebrew": "תְּשִׂימֵנוּ חֶרְפָּה לִשְׁכֵנֵינוּ לַעַג וָקֶלֶס לִסְבִיבוֹתֵינוּ׃",
         "transliteration": "tesimenu jerepah lishejeneynu la'ag vakeles lisevivuoteynv",
-        "spanish": "Pusístenos por proverbio entre las gentes, Por movimiento de cabeza en los pueblos."
+        "spanish": "Pusístenos por vergüenza á nuestros vecinos, Por escarnio y por burla a los que nos rodean."
       },
       {
         "verse": 15,
         "hebrew": "תְּשִׂימֵנוּ מָשָׁל בַּגּוֹיִם מְנוֹד רֹאשׁ בַּלְאֻמִּים׃",
         "transliteration": "tesimenu mashal bagooim menoodrosh baleumim",
-        "spanish": "Cada día mi vergüenza está delante de mí, Y cúbreme la confusión de mi rostro,"
+        "spanish": "Pusístenos por proverbio entre las gentes, Por movimiento de cabeza en los pueblos."
       },
       {
         "verse": 16,
         "hebrew": "כׇּל הַיּוֹם כְּלִמָּתִי נֶגְדִּי וּבֹשֶׁת פָּנַי כִּסָּתְנִי׃",
         "transliteration": "klhayoom kelimati negedi uvushet panay kisateni",
-        "spanish": "Por la voz del que me vitupera y deshonra, Por razón del enemigo y del que se venga."
+        "spanish": "Cada día mi vergüenza está delante de mí, Y cúbreme la confusión de mi rostro,"
       },
       {
         "verse": 17,
         "hebrew": "מִקּוֹל מְחָרֵף וּמְגַדֵּף מִפְּנֵי אוֹיֵב וּמִתְנַקֵּם׃",
         "transliteration": "mikool mejaref umegadef mipeney ooyev umitenakem",
-        "spanish": "Todo esto nos ha venido, y no nos hemos olvidado de ti; Y no hemos faltado á tu pacto."
+        "spanish": "Por la voz del que me vitupera y deshonra, Por razón del enemigo y del que se venga."
       },
       {
         "verse": 18,
         "hebrew": "כׇּל זֹאת בָּאַתְנוּ וְלֹא שְׁכַחֲנוּךָ וְלֹא שִׁקַּרְנוּ בִּבְרִיתֶךָ׃",
         "transliteration": "klzot baatenu velo shejajanuja veloshikarenu biveriteja",
-        "spanish": "No se ha vuelto atrás nuestro corazón, Ni tampoco se han apartado nuestros pasos de tus caminos."
+        "spanish": "Todo esto nos ha venido, y no nos hemos olvidado de ti; Y no hemos faltado á tu pacto."
       },
       {
         "verse": 19,
         "hebrew": "לֹא נָסוֹג אָחוֹר לִבֵּנוּ וַתֵּט אֲשֻׁרֵינוּ מִנִּי אׇרְחֶךָ׃",
         "transliteration": "lonasoog ajoor libenu vatet ashureynu mini rejeja",
-        "spanish": "Cuando nos quebrantaste en el lugar de los dragones, Y nos cubriste con sombra de muerte,"
+        "spanish": "No se ha vuelto atrás nuestro corazón, Ni tampoco se han apartado nuestros pasos de tus caminos."
       },
       {
         "verse": 20,
         "hebrew": "כִּי דִכִּיתָנוּ בִּמְקוֹם תַּנִּים וַתְּכַס עָלֵינוּ בְצַלְמָוֶת׃",
         "transliteration": "ki dikitanu bimekoom tanim vatejas 'aleynu vetsalemavet",
-        "spanish": "Si nos hubiésemos olvidado del nombre de nuestro Dios, O alzado nuestras manos á dios ajeno,"
+        "spanish": "Cuando nos quebrantaste en el lugar de los dragones, Y nos cubriste con sombra de muerte,"
       },
       {
         "verse": 21,
         "hebrew": "אִם שָׁכַחְנוּ שֵׁם אֱלֹהֵינוּ וַנִּפְרֹשׂ כַּפֵּינוּ לְאֵל זָר׃",
         "transliteration": "imshajajenu shem Eloheinu vaniferos kapeynu leel zar",
-        "spanish": "¿No demandaría Dios esto? Porque él conoce los secretos del corazón."
+        "spanish": "Si nos hubiésemos olvidado del nombre de nuestro Dios, O alzado nuestras manos á dios ajeno,"
       },
       {
         "verse": 22,
         "hebrew": "הֲלֹא אֱלֹהִים יַחֲקׇר זֹאת כִּי הוּא יֹדֵעַ תַּעֲלֻמוֹת לֵב׃",
         "transliteration": "halo Elohim yajakrzot kihu yode'a ta'alumoot lev",
-        "spanish": "Empero por tu causa nos matan cada día; Somos tenidos como ovejas para el matadero."
+        "spanish": "¿No demandaría Dios esto? Porque él conoce los secretos del corazón."
       },
       {
         "verse": 23,
         "hebrew": "כִּי עָלֶיךָ הֹרַגְנוּ כׇל הַיּוֹם נֶחְשַׁבְנוּ כְּצֹאן טִבְחָה׃",
         "transliteration": "ki'aleyja horagenu jlhayoom nejeshavenu ketson tivejah",
-        "spanish": "Despierta; ¿por qué duermes, Señor? Despierta, no te alejes para siempre."
+        "spanish": "Empero por tu causa nos matan cada día; Somos tenidos como ovejas para el matadero."
       },
       {
         "verse": 24,
         "hebrew": "עוּרָה לָמָּה תִישַׁן אֲדֹנָי הָקִיצָה אַל תִּזְנַח לָנֶצַח׃",
         "transliteration": "'urah lamah tishan adonay hakitsah altizenaj lanetsaj",
-        "spanish": "¿Por qué escondes tu rostro, Y te olvidas de nuestra aflicción, y de la opresión nuestra?"
+        "spanish": "Despierta; ¿por qué duermes, Señor? Despierta, no te alejes para siempre."
       },
       {
         "verse": 25,
         "hebrew": "לָמָּה פָנֶיךָ תַסְתִּיר תִּשְׁכַּח עׇנְיֵנוּ וְלַחֲצֵנוּ׃",
         "transliteration": "lamahfaneyja tasetir tishekaj 'neyenu velajatsenv",
-        "spanish": "Porque nuestra alma está agobiada hasta el polvo: Nuestro vientre está pegado con la tierra."
+        "spanish": "¿Por qué escondes tu rostro, Y te olvidas de nuestra aflicción, y de la opresión nuestra?"
       },
       {
         "verse": 26,
         "hebrew": "כִּי שָׁחָה לֶעָפָר נַפְשֵׁנוּ דָּבְקָה לָאָרֶץ בִּטְנֵנוּ׃",
         "transliteration": "ki shajah le'afar nafeshenu davekah laarets bitenenv",
-        "spanish": "Levántate para ayudarnos, Y redímenos por Tu Jésed."
+        "spanish": "Porque nuestra alma está agobiada hasta el polvo: Nuestro vientre está pegado con la tierra."
       },
       {
         "verse": 27,
         "hebrew": "קוּמָה עֶזְרָתָה לָּנוּ וּפְדֵנוּ לְמַעַן חַסְדֶּךָ׃ ",
         "transliteration": "kumah 'ezeratah lanu ufedenu lema'an jasedeja ",
-        "spanish": "..."
+        "spanish": "Levántate para ayudarnos, Y redímenos por Tu Jésed."
       }
     ]
   },
@@ -4501,109 +4501,109 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ עַל שֹׁשַׁנִּים לִבְנֵי קֹרַח מַשְׂכִּיל שִׁיר יְדִידֹת׃",
         "transliteration": "lamenatseja 'alshoshanim liveneykoraj masekil shir yedidot",
-        "spanish": "REBOSA mi corazón palabra buena: Refiero yo al Rey mis obras: Mi lengua es pluma de escribiente muy ligero."
+        "spanish": "Al Músico principal; sobre Sosanim. Para los hijos de Coré. Masquil; Cántico de amores."
       },
       {
         "verse": 2,
         "hebrew": "רָחַשׁ לִבִּי דָּבָר טוֹב אֹמֵר אָנִי מַעֲשַׂי לְמֶלֶךְ לְשׁוֹנִי עֵט סוֹפֵר מָהִיר׃",
         "transliteration": "rajash libi davar toov omer ani ma'asay lemeleje leshooni 'et soofer mahir",
-        "spanish": "Haste hermoseado más que los hijos de los hombres; La gracia se derramó en tus labios: Por tanto Dios te ha bendecido para siempre."
+        "spanish": "REBOSA mi corazón palabra buena: Refiero yo al Rey mis obras: Mi lengua es pluma de escribiente muy ligero."
       },
       {
         "verse": 3,
         "hebrew": "יׇפְיָפִיתָ מִבְּנֵי אָדָם הוּצַק חֵן בְּשִׂפְתוֹתֶיךָ עַל כֵּן בֵּרַכְךָ אֱלֹהִים לְעוֹלָם׃",
         "transliteration": "yfeyafita mibeney adam hutsak jen besifetooteyja 'alken berajeja Elohim le'oolam",
-        "spanish": "Cíñete tu espada sobre el muslo, oh valiente, Con tu gloria y con tu majestad."
+        "spanish": "Haste hermoseado más que los hijos de los hombres; La gracia se derramó en tus labios: Por tanto Dios te ha bendecido para siempre."
       },
       {
         "verse": 4,
         "hebrew": "חֲגוֹר חַרְבְּךָ עַל יָרֵךְ גִּבּוֹר הוֹדְךָ וַהֲדָרֶךָ׃",
         "transliteration": "jagoorjarebeja 'alyareje giboor hoodeja vahadareja",
-        "spanish": "Y en tu gloria sé prosperado: Cabalga sobre palabra de verdad, y de humildad, y de justicia; Y tu diestra te enseñará cosas terribles."
+        "spanish": "Cíñete tu espada sobre el muslo, oh valiente, Con tu gloria y con tu majestad."
       },
       {
         "verse": 5,
         "hebrew": "וַהֲדָרְךָ צְלַח רְכַב עַל דְּבַר אֱמֶת וְעַנְוָה צֶדֶק וְתוֹרְךָ נוֹרָאוֹת יְמִינֶךָ׃",
         "transliteration": "vahadareja tselaj rejav 'aldevaremet ve'anevahtsedek vetooreja nooraoot yemineja",
-        "spanish": "Tus saetas agudas Con que caerán pueblos debajo de ti, Penetrarán en el corazón de los enemigos del Rey."
+        "spanish": "Y en tu gloria sé prosperado: Cabalga sobre palabra de verdad, y de humildad, y de justicia; Y tu diestra te enseñará cosas terribles."
       },
       {
         "verse": 6,
         "hebrew": "חִצֶּיךָ שְׁנוּנִים עַמִּים תַּחְתֶּיךָ יִפְּלוּ בְּלֵב אוֹיְבֵי הַמֶּלֶךְ׃",
         "transliteration": "jitseyja shenunim 'amim tajeteyja ipelu belev ooyevey hameleje",
-        "spanish": "Tu trono, oh Dios, eterno y para siempre: Vara de justicia la vara de tu reino."
+        "spanish": "Tus saetas agudas Con que caerán pueblos debajo de ti, Penetrarán en el corazón de los enemigos del Rey."
       },
       {
         "verse": 7,
         "hebrew": "כִּסְאֲךָ אֱלֹהִים עוֹלָם וָעֶד שֵׁבֶט מִישֹׁר שֵׁבֶט מַלְכוּתֶךָ׃",
         "transliteration": "kiseaja Elohim 'oolam va'ed shevet mishor shevet malejuteja",
-        "spanish": "Amaste la justicia y aborreciste la maldad: Por tanto te ungió Dios, el Dios tuyo, Con óleo de gozo sobre tus compañeros."
+        "spanish": "Tu trono, oh Dios, eterno y para siempre: Vara de justicia la vara de tu reino."
       },
       {
         "verse": 8,
         "hebrew": "אָהַבְתָּ צֶּדֶק וַתִּשְׂנָא רֶשַׁע עַל כֵּן מְשָׁחֲךָ אֱלֹהִים אֱלֹהֶיךָ שֶׁמֶן שָׂשׂוֹן מֵחֲבֵרֶךָ׃",
         "transliteration": "ahaveta tsedek vatisenaresha' 'alken meshajaja Elohim eloheyja shemen sasoon mejavereja",
-        "spanish": "Mirra, áloe, y casia exhalan todos tus vestidos: En estancias de marfil te han recreado."
+        "spanish": "Amaste la justicia y aborreciste la maldad: Por tanto te ungió Dios, el Dios tuyo, Con óleo de gozo sobre tus compañeros."
       },
       {
         "verse": 9,
         "hebrew": "מֹר וַאֲהָלוֹת קְצִיעוֹת כׇּל בִּגְדֹתֶיךָ מִן הֵיכְלֵי שֵׁן מִנִּי שִׂמְּחוּךָ׃",
         "transliteration": "morvaahaloot ketsi'oot klbigedoteyja minheyjeley shen mini simejuja",
-        "spanish": "Hijas de reyes entre tus ilustres: Está la reina á tu diestra con oro de Ophir."
+        "spanish": "Mirra, áloe, y casia exhalan todos tus vestidos: En estancias de marfil te han recreado."
       },
       {
         "verse": 10,
         "hebrew": "בְּנוֹת מְלָכִים בְּיִקְּרוֹתֶיךָ נִצְּבָה שֵׁגַל לִימִינְךָ בְּכֶתֶם אוֹפִיר׃",
         "transliteration": "benoot melajim beikerooteyja nitsevah shegal limineja bejetem oofir",
-        "spanish": "Oye, hija, y mira, é inclina tu oído; Y olvida tu pueblo, y la casa de tu padre;"
+        "spanish": "Hijas de reyes entre tus ilustres: Está la reina á tu diestra con oro de Ophir."
       },
       {
         "verse": 11,
         "hebrew": "שִׁמְעִי בַת וּרְאִי וְהַטִּי אׇזְנֵךְ וְשִׁכְחִי עַמֵּךְ וּבֵית אָבִיךְ׃",
         "transliteration": "shime'ivat urei vehati zeneje veshijeji 'ameje uveyt avije",
-        "spanish": "Y deseará el rey tu hermosura: E inclínate a él, porque él es tu Señor."
+        "spanish": "Oye, hija, y mira, é inclina tu oído; Y olvida tu pueblo, y la casa de tu padre;"
       },
       {
         "verse": 12,
         "hebrew": "וְיִתְאָו הַמֶּלֶךְ יׇפְיֵךְ כִּי הוּא אֲדֹנַיִךְ וְהִשְׁתַּחֲוִי לוֹ׃",
         "transliteration": "veiteav hameleje yfeyeje kihu adonaije vehishetajaviloo",
-        "spanish": "Y las hijas de Tiro vendrán con presente; Implorarán tu favor los ricos del pueblo."
+        "spanish": "Y deseará el rey tu hermosura: E inclínate a él, porque él es tu Señor."
       },
       {
         "verse": 13,
         "hebrew": "וּבַת צֹר בְּמִנְחָה פָּנַיִךְ יְחַלּוּ עֲשִׁירֵי עָם׃",
         "transliteration": "uvattsor beminejah panaije yejalu 'ashirey 'am",
-        "spanish": "Toda ilustre es de dentro la hija del rey: De brocado de oro es su vestido."
+        "spanish": "Y las hijas de Tiro vendrán con presente; Implorarán tu favor los ricos del pueblo."
       },
       {
         "verse": 14,
         "hebrew": "כׇּל כְּבוּדָּה בַת מֶלֶךְ פְּנִימָה מִמִּשְׁבְּצוֹת זָהָב לְבוּשָׁהּ׃",
         "transliteration": "klkevudah vatmeleje penimah mimishebetsoot zahav levushah",
-        "spanish": "Con vestidos bordados será llevada al rey; Vírgenes en pos de ella: Sus compañeras serán traídas a ti."
+        "spanish": "Toda ilustre es de dentro la hija del rey: De brocado de oro es su vestido."
       },
       {
         "verse": 15,
         "hebrew": "לִרְקָמוֹת תּוּבַל לַמֶּלֶךְ בְּתוּלוֹת אַחֲרֶיהָ רֵעוֹתֶיהָ מוּבָאוֹת לָךְ׃",
         "transliteration": "lirekamoot tuval lameleje betuloot ajareyha re'ooteyha muvaoot laje",
-        "spanish": "Serán traídas con alegría y gozo: Entrarán en el palacio del rey."
+        "spanish": "Con vestidos bordados será llevada al rey; Vírgenes en pos de ella: Sus compañeras serán traídas a ti."
       },
       {
         "verse": 16,
         "hebrew": "תּוּבַלְנָה בִּשְׂמָחֹת וָגִיל תְּבֹאֶינָה בְּהֵיכַל מֶלֶךְ׃",
         "transliteration": "tuvalenah bisemajot vagil tevueynah beheyjal meleje",
-        "spanish": "En lugar de tus padres serán tus hijos, A quienes harás príncipes en toda la tierra."
+        "spanish": "Serán traídas con alegría y gozo: Entrarán en el palacio del rey."
       },
       {
         "verse": 17,
         "hebrew": "תַּחַת אֲבֹתֶיךָ יִהְיוּ בָנֶיךָ תְּשִׁיתֵמוֹ לְשָׂרִים בְּכׇל הָאָרֶץ׃",
         "transliteration": "tajat avuteyja iheyu vaneyja teshitemoo lesarim bejlhaarets",
-        "spanish": "Haré perpetua la memoria de tu nombre en todas las generaciones: Por lo cual te alabarán los pueblos eternamente y para siempre."
+        "spanish": "En lugar de tus padres serán tus hijos, A quienes harás príncipes en toda la tierra."
       },
       {
         "verse": 18,
         "hebrew": "אַזְכִּירָה שִׁמְךָ בְּכׇל דֹּר וָדֹר עַל כֵּן עַמִּים יְהוֹדוּךָ לְעֹלָם וָעֶד׃ ",
         "transliteration": "azekirah shimeja bejldor vador 'alken 'amim yehooduja le'olam va'ed ",
-        "spanish": "..."
+        "spanish": "Haré perpetua la memoria de tu nombre en todas las generaciones: Por lo cual te alabarán los pueblos eternamente y para siempre."
       }
     ]
   },
@@ -4618,73 +4618,73 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ לִבְנֵי קֹרַח עַל עֲלָמוֹת שִׁיר׃",
         "transliteration": "lamenatseja liveneykoraj 'al'alamoot shir",
-        "spanish": "DIOS es nuestro amparo y fortaleza, Nuestro pronto auxilio en las tribulaciones."
+        "spanish": "Al Músico principal; para los hijos de Coré. Cántico sobre Alamot."
       },
       {
         "verse": 2,
         "hebrew": "אֱלֹהִים לָנוּ מַחֲסֶה וָעֹז עֶזְרָה בְצָרוֹת נִמְצָא מְאֹד׃",
         "transliteration": "Elohim lanu majaseh va'oz 'ezerah vetsaroot nimetsa meod",
-        "spanish": "Por tanto no temeremos aunque la tierra sea removida; Aunque se traspasen los montes al corazón de la mar."
+        "spanish": "DIOS es nuestro amparo y fortaleza, Nuestro pronto auxilio en las tribulaciones."
       },
       {
         "verse": 3,
         "hebrew": "עַל כֵּן לֹא נִירָא בְּהָמִיר אָרֶץ וּבְמוֹט הָרִים בְּלֵב יַמִּים׃",
         "transliteration": "'alken lonira behamir arets uvemoot harim belev yamim",
-        "spanish": "Bramarán, turbaránse sus aguas; Temblarán los montes á causa de su braveza. (Sélah)"
+        "spanish": "Por tanto no temeremos aunque la tierra sea removida; Aunque se traspasen los montes al corazón de la mar."
       },
       {
         "verse": 4,
         "hebrew": "יֶהֱמוּ יֶחְמְרוּ מֵימָיו יִרְעֲשׁוּ הָרִים בְּגַאֲוָתוֹ סֶלָה׃",
         "transliteration": "yehemu yejemeru meymayv ire'ashvharim begaavatoo selah",
-        "spanish": "Del río sus conductos alegrarán la ciudad de Dios, El santuario de las tiendas del Elyón."
+        "spanish": "Bramarán, turbaránse sus aguas; Temblarán los montes á causa de su braveza. (Sélah)"
       },
       {
         "verse": 5,
         "hebrew": "נָהָר פְּלָגָיו יְשַׂמְּחוּ עִיר אֱלֹהִים קְדֹשׁ מִשְׁכְּנֵי עֶלְיוֹן׃",
         "transliteration": "nahar pelagayv yesameju 'irElohim kedosh mishekeney 'eleyoon",
-        "spanish": "Dios está en medio de ella; no será conmovida: Dios la ayudará al clarear la mañana."
+        "spanish": "Del río sus conductos alegrarán la ciudad de Dios, El santuario de las tiendas del Elyón."
       },
       {
         "verse": 6,
         "hebrew": "אֱלֹהִים בְּקִרְבָּהּ בַּל תִּמּוֹט יַעְזְרֶהָ אֱלֹהִים לִפְנוֹת בֹּקֶר׃",
         "transliteration": "Elohim bekirebah baltimoot ya'ezereha Elohim lifenoot boker",
-        "spanish": "Bramaron las gentes, titubearon los reinos; Dió él su voz, derritióse la tierra."
+        "spanish": "Dios está en medio de ella; no será conmovida: Dios la ayudará al clarear la mañana."
       },
       {
         "verse": 7,
         "hebrew": "הָמוּ גוֹיִם מָטוּ מַמְלָכוֹת נָתַן בְּקוֹלוֹ תָּמוּג אָרֶץ׃",
         "transliteration": "hamu gooim matu mamelajoot natan bekooloo tamug arets",
-        "spanish": "YHVH Tzevaot es con nosotros; Nuestro refugio es el Dios de Jacob. (Sélah)"
+        "spanish": "Bramaron las gentes, titubearon los reinos; Dió él su voz, derritióse la tierra."
       },
       {
         "verse": 8,
         "hebrew": "יְהֹוָה צְבָאוֹת עִמָּנוּ מִשְׂגָּב לָנוּ אֱלֹהֵי יַעֲקֹב סֶלָה׃",
         "transliteration": "Adonai tsevaoot 'imanu misegavlanu elohey ya'akov selah",
-        "spanish": "Venid, ved las obras de YHVH, Que ha puesto asolamientos en la tierra."
+        "spanish": "YHVH Tzevaot es con nosotros; Nuestro refugio es el Dios de Jacob. (Sélah)"
       },
       {
         "verse": 9,
         "hebrew": "לְכוּ חֲזוּ מִפְעֲלוֹת יְהֹוָה אֲשֶׁר שָׂם שַׁמּוֹת בָּאָרֶץ׃",
         "transliteration": "lejvjazu mife'aloot Adonai ashersam shamoot baarets",
-        "spanish": "Que hace cesar las guerras hasta los fines de la tierra: Que quiebra el arco, corta la lanza, Y quema los carros en el fuego."
+        "spanish": "Venid, ved las obras de YHVH, Que ha puesto asolamientos en la tierra."
       },
       {
         "verse": 10,
         "hebrew": "מַשְׁבִּית מִלְחָמוֹת עַד קְצֵה הָאָרֶץ קֶשֶׁת יְשַׁבֵּר וְקִצֵּץ חֲנִית עֲגָלוֹת יִשְׂרֹף בָּאֵשׁ׃",
         "transliteration": "mashebit milejamoot 'adketseh haarets keshet yeshaber vekitsets janit 'agaloot iserof baesh",
-        "spanish": "Estad quietos, y conoced que yo soy Dios: Ensalzado he de ser entre las gentes, ensalzado seré en la tierra."
+        "spanish": "Que hace cesar las guerras hasta los fines de la tierra: Que quiebra el arco, corta la lanza, Y quema los carros en el fuego."
       },
       {
         "verse": 11,
         "hebrew": "הַרְפּוּ וּדְעוּ כִּי אָנֹכִי אֱלֹהִים אָרוּם בַּגּוֹיִם אָרוּם בָּאָרֶץ׃",
         "transliteration": "harepu ude'u kianoji Elohim arum bagooim arum baarets",
-        "spanish": "YHVH Tzevaot es con nosotros; Nuestro refugio es el Dios de Jacob. (Sélah)"
+        "spanish": "Estad quietos, y conoced que yo soy Dios: Ensalzado he de ser entre las gentes, ensalzado seré en la tierra."
       },
       {
         "verse": 12,
         "hebrew": "יְהֹוָה צְבָאוֹת עִמָּנוּ מִשְׂגָּב לָנוּ אֱלֹהֵי יַעֲקֹב סֶלָה׃ ",
         "transliteration": "Adonai tsevaoot 'imanu misegavlanu elohey ya'akov selah ",
-        "spanish": "..."
+        "spanish": "YHVH Tzevaot es con nosotros; Nuestro refugio es el Dios de Jacob. (Sélah)"
       }
     ]
   },
@@ -4699,61 +4699,61 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ לִבְנֵי קֹרַח מִזְמוֹר׃",
         "transliteration": "lamenatseja liveneykoraj mizemoor",
-        "spanish": "PUEBLOS todos, batid las manos; Aclamad a Dios con voz de júbilo."
+        "spanish": "Al Músico principal; para los hijos de Coré. Salmo."
       },
       {
         "verse": 2,
         "hebrew": "כׇּל הָעַמִּים תִּקְעוּ כָף הָרִיעוּ לֵאלֹהִים בְּקוֹל רִנָּה׃",
         "transliteration": "klha'amim tike'vjaf hari'u lelohim bekool rinah",
-        "spanish": "Porque YHVH el Elyón es terrible; Rey grande sobre toda la tierra."
+        "spanish": "PUEBLOS todos, batid las manos; Aclamad a Dios con voz de júbilo."
       },
       {
         "verse": 3,
         "hebrew": "כִּי יְהֹוָה עֶלְיוֹן נוֹרָא מֶלֶךְ גָּדוֹל עַל כׇּל הָאָרֶץ׃",
         "transliteration": "kiAdonai 'eleyoon noora meleje gadool 'alklhaarets",
-        "spanish": "El sujetará a los pueblos debajo de nosotros, Y a las gentes debajo de nuestros pies."
+        "spanish": "Porque YHVH el Elyón es terrible; Rey grande sobre toda la tierra."
       },
       {
         "verse": 4,
         "hebrew": "יַדְבֵּר עַמִּים תַּחְתֵּינוּ וּלְאֻמִּים תַּחַת רַגְלֵינוּ׃",
         "transliteration": "yadeber 'amim tajeteynu uleumim tajat rageleynv",
-        "spanish": "El nos elegirá nuestras heredades; La hermosura de Jacob, al cual amó. (Sélah)"
+        "spanish": "El sujetará a los pueblos debajo de nosotros, Y a las gentes debajo de nuestros pies."
       },
       {
         "verse": 5,
         "hebrew": "יִבְחַר לָנוּ אֶת נַחֲלָתֵנוּ אֶת גְּאוֹן יַעֲקֹב אֲשֶׁר אָהֵב סֶלָה׃",
         "transliteration": "ivejarlanu etnajalatenu etgeoon ya'akov asherahev selah",
-        "spanish": "Subió Dios con júbilo, YHVH con sonido de trompeta."
+        "spanish": "El nos elegirá nuestras heredades; La hermosura de Jacob, al cual amó. (Sélah)"
       },
       {
         "verse": 6,
         "hebrew": "עָלָה אֱלֹהִים בִּתְרוּעָה יְהֹוָה בְּקוֹל שׁוֹפָר׃",
         "transliteration": "'alah Elohim biteru'ah Adonai bekool shoofar",
-        "spanish": "Cantad a Dios, cantad: Cantad á nuestro Rey, cantad."
+        "spanish": "Subió Dios con júbilo, YHVH con sonido de trompeta."
       },
       {
         "verse": 7,
         "hebrew": "זַמְּרוּ אֱלֹהִים זַמֵּרוּ זַמְּרוּ לְמַלְכֵּנוּ זַמֵּרוּ׃",
         "transliteration": "zameru Elohim zameru zameru lemalekenu zamerv",
-        "spanish": "Porque Dios es el Rey de toda la tierra: Cantad con inteligencia."
+        "spanish": "Cantad a Dios, cantad: Cantad á nuestro Rey, cantad."
       },
       {
         "verse": 8,
         "hebrew": "כִּי מֶלֶךְ כׇּל הָאָרֶץ אֱלֹהִים זַמְּרוּ מַשְׂכִּיל׃",
         "transliteration": "ki meleje klhaarets Elohim zameru masekil",
-        "spanish": "Reinó Dios sobre las gentes: Asentóse Dios sobre su santo trono."
+        "spanish": "Porque Dios es el Rey de toda la tierra: Cantad con inteligencia."
       },
       {
         "verse": 9,
         "hebrew": "מָלַךְ אֱלֹהִים עַל גּוֹיִם אֱלֹהִים יָשַׁב עַל כִּסֵּא קׇדְשׁוֹ׃",
         "transliteration": "malaje Elohim 'algooim Elohim yashav 'alkise kdeshoo",
-        "spanish": "Los príncipes de los pueblos se juntaron Al pueblo del Dios de Abraham: Porque de Dios son los escudos de la tierra; El es muy ensalzado."
+        "spanish": "Reinó Dios sobre las gentes: Asentóse Dios sobre su santo trono."
       },
       {
         "verse": 10,
         "hebrew": "נְדִיבֵי עַמִּים נֶאֱסָפוּ עַם אֱלֹהֵי אַבְרָהָם כִּי לֵאלֹהִים מָגִנֵּי אֶרֶץ מְאֹד נַעֲלָה׃ ",
         "transliteration": "nedivey 'amim neesafu 'am elohey averaham ki lelohim magineyerets meod na'alah ",
-        "spanish": "..."
+        "spanish": "Los príncipes de los pueblos se juntaron Al pueblo del Dios de Abraham: Porque de Dios son los escudos de la tierra; El es muy ensalzado."
       }
     ]
   },
@@ -4768,91 +4768,91 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "שִׁיר מִזְמוֹר לִבְנֵי קֹרַח׃",
         "transliteration": "shir mizemoor liveneykoraj",
-        "spanish": "GRANDE es YHVH y digno de ser en gran manera alabado, En la ciudad de nuestro Dios, en el monte de su santuario."
+        "spanish": "Cántico; Salmo para los hijos de Coré."
       },
       {
         "verse": 2,
         "hebrew": "גָּדוֹל יְהֹוָה וּמְהֻלָּל מְאֹד בְּעִיר אֱלֹהֵינוּ הַר קׇדְשׁוֹ׃",
         "transliteration": "gadool Adonai umehulal meod be'ir Eloheinu harkdeshoo",
-        "spanish": "Hermosa provincia, el gozo de toda la tierra Es el monte de Sión, a los lados del aquilón, La ciudad del gran Rey."
+        "spanish": "GRANDE es YHVH y digno de ser en gran manera alabado, En la ciudad de nuestro Dios, en el monte de su santuario."
       },
       {
         "verse": 3,
         "hebrew": "יְפֵה נוֹף מְשׂוֹשׂ כׇּל הָאָרֶץ הַר צִיּוֹן יַרְכְּתֵי צָפוֹן קִרְיַת מֶלֶךְ רָב׃",
         "transliteration": "yefeh noof mesoos klhaarets hartsioon yareketey tsafoon kireyat meleje rav",
-        "spanish": "Dios en sus palacios es conocido por refugio."
+        "spanish": "Hermosa provincia, el gozo de toda la tierra Es el monte de Sión, a los lados del aquilón, La ciudad del gran Rey."
       },
       {
         "verse": 4,
         "hebrew": "אֱלֹהִים בְּאַרְמְנוֹתֶיהָ נוֹדַע לְמִשְׂגָּב׃",
         "transliteration": "Elohim bearemenooteyha nooda' lemisegav",
-        "spanish": "Porque he aquí los reyes de la tierra se reunieron; Pasaron todos."
+        "spanish": "Dios en sus palacios es conocido por refugio."
       },
       {
         "verse": 5,
         "hebrew": "כִּי הִנֵּה הַמְּלָכִים נוֹעֲדוּ עָבְרוּ יַחְדָּו׃",
         "transliteration": "kihineh hamelajim noo'adu 'averu yajedav",
-        "spanish": "Y viéndola ellos así, maravilláronse, Se turbaron, diéronse priesa á huir."
+        "spanish": "Porque he aquí los reyes de la tierra se reunieron; Pasaron todos."
       },
       {
         "verse": 6,
         "hebrew": "הֵמָּה רָאוּ כֵּן תָּמָהוּ נִבְהֲלוּ נֶחְפָּזוּ׃",
         "transliteration": "hemah rau ken tamahu nivehalu nejepazv",
-        "spanish": "Tomólos allí temblor; Dolor, como á mujer que pare."
+        "spanish": "Y viéndola ellos así, maravilláronse, Se turbaron, diéronse priesa á huir."
       },
       {
         "verse": 7,
         "hebrew": "רְעָדָה אֲחָזָתַם שָׁם חִיל כַּיּוֹלֵדָה׃",
         "transliteration": "re'adah ajazatam sham jil kayooledah",
-        "spanish": "Con viento solano Quiebras tú las naves de Tharsis."
+        "spanish": "Tomólos allí temblor; Dolor, como á mujer que pare."
       },
       {
         "verse": 8,
         "hebrew": "בְּרוּחַ קָדִים תְּשַׁבֵּר אֳנִיּוֹת תַּרְשִׁישׁ׃",
         "transliteration": "beruja kadim teshaber onioot tareshish",
-        "spanish": "Como lo oímos, así hemos visto En la ciudad de YHVH Tzevaot, en la ciudad de nuestro Dios: Afirmarála Dios para siempre. (Sélah)"
+        "spanish": "Con viento solano Quiebras tú las naves de Tharsis."
       },
       {
         "verse": 9,
         "hebrew": "כַּאֲשֶׁר שָׁמַעְנוּ כֵּן רָאִינוּ בְּעִיר יְהֹוָה צְבָאוֹת בְּעִיר אֱלֹהֵינוּ אֱלֹהִים יְכוֹנְנֶהָ עַד עוֹלָם סֶלָה׃",
         "transliteration": "kaasher shama'enu ken rainu be'irAdonai tsevaoot be'ir Eloheinu Elohim yejooneneha 'ad'oolam selah",
-        "spanish": "Esperamos Tu Jésed, oh Dios, En medio de tu templo."
+        "spanish": "Como lo oímos, así hemos visto En la ciudad de YHVH Tzevaot, en la ciudad de nuestro Dios: Afirmarála Dios para siempre. (Sélah)"
       },
       {
         "verse": 10,
         "hebrew": "דִּמִּינוּ אֱלֹהִים חַסְדֶּךָ בְּקֶרֶב הֵיכָלֶךָ׃",
         "transliteration": "diminu Elohim jasedeja bekerev heyjaleja",
-        "spanish": "Conforme á tu nombre, oh Dios, Así es tu loor hasta los fines de la tierra: De justicia está llena tu diestra."
+        "spanish": "Esperamos Tu Jésed, oh Dios, En medio de tu templo."
       },
       {
         "verse": 11,
         "hebrew": "כְּשִׁמְךָ אֱלֹהִים כֵּן תְּהִלָּתְךָ עַל קַצְוֵי אֶרֶץ צֶדֶק מָלְאָה יְמִינֶךָ׃",
         "transliteration": "keshimeja Elohim ken tehilateja 'alkatseveyerets tsedek maleah yemineja",
-        "spanish": "Alegraráse el monte de Sión; Se gozarán las hijas de Judá Por tus juicios."
+        "spanish": "Conforme á tu nombre, oh Dios, Así es tu loor hasta los fines de la tierra: De justicia está llena tu diestra."
       },
       {
         "verse": 12,
         "hebrew": "יִשְׂמַח הַר צִיּוֹן תָּגֵלְנָה בְּנוֹת יְהוּדָה לְמַעַן מִשְׁפָּטֶיךָ׃",
         "transliteration": "isemaj hartsioon tagelenah benoot yehudah lema'an mishepateyja",
-        "spanish": "Andad alrededor de Sión, y rodeadla: Contad sus torres."
+        "spanish": "Alegraráse el monte de Sión; Se gozarán las hijas de Judá Por tus juicios."
       },
       {
         "verse": 13,
         "hebrew": "סֹבּוּ צִיּוֹן וְהַקִּיפוּהָ סִפְרוּ מִגְדָּלֶיהָ׃",
         "transliteration": "sobu tsioon vehakifuha siferu migedaleyha",
-        "spanish": "Poned vuestro corazón á su antemuro, Mirad sus palacios; Para que lo contéis á la generación venidera."
+        "spanish": "Andad alrededor de Sión, y rodeadla: Contad sus torres."
       },
       {
         "verse": 14,
         "hebrew": "שִׁיתוּ לִבְּכֶם לְחֵילָה פַּסְּגוּ אַרְמְנוֹתֶיהָ לְמַעַן תְּסַפְּרוּ לְדוֹר אַחֲרוֹן׃",
         "transliteration": "shitu libejem lejeylah pasegu aremenooteyha lema'an tesaperu ledoor ajaroon",
-        "spanish": "Porque este Dios es Dios nuestro eternalmente y para siempre: El nos capitaneará hasta la muerte."
+        "spanish": "Poned vuestro corazón á su antemuro, Mirad sus palacios; Para que lo contéis á la generación venidera."
       },
       {
         "verse": 15,
         "hebrew": "כִּי זֶה אֱלֹהִים אֱלֹהֵינוּ עוֹלָם וָעֶד הוּא יְנַהֲגֵנוּ עַל מוּת׃ ",
         "transliteration": "ki zeh Elohim Eloheinu 'oolam va'ed hu yenahagenu 'almut ",
-        "spanish": "..."
+        "spanish": "Porque este Dios es Dios nuestro eternalmente y para siempre: El nos capitaneará hasta la muerte."
       }
     ]
   },
@@ -4867,127 +4867,127 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ לִבְנֵי קֹרַח מִזְמוֹר׃",
         "transliteration": "lamenatseja liveneykoraj mizemoor",
-        "spanish": "OID esto, pueblos todos; Escuchad, habitadores todos del mundo:"
+        "spanish": "Al Músico principal; para los hijos de Coré. Salmo."
       },
       {
         "verse": 2,
         "hebrew": "שִׁמְעוּ זֹאת כׇּל הָעַמִּים הַאֲזִינוּ כׇּל יֹשְׁבֵי חָלֶד׃",
         "transliteration": "shime'vzot klha'amim haazinu klyoshevey jaled",
-        "spanish": "Así los plebeyos como los nobles, El rico y el pobre juntamente."
+        "spanish": "OID esto, pueblos todos; Escuchad, habitadores todos del mundo:"
       },
       {
         "verse": 3,
         "hebrew": "גַּם בְּנֵי אָדָם גַּם בְּנֵי אִישׁ יַחַד עָשִׁיר וְאֶבְיוֹן׃",
         "transliteration": "gambeney adam gambeneish yajad 'ashir veeveyoon",
-        "spanish": "Mi boca hablará sabiduría; Y el pensamiento de mi corazón inteligencia."
+        "spanish": "Así los plebeyos como los nobles, El rico y el pobre juntamente."
       },
       {
         "verse": 4,
         "hebrew": "פִּי יְדַבֵּר חׇכְמוֹת וְהָגוּת לִבִּי תְבוּנוֹת׃",
         "transliteration": "pi yedaber jjemoot vehagut libi tevunoot",
-        "spanish": "Acomodaré á ejemplos mi oído: Declararé con el arpa mi enigma."
+        "spanish": "Mi boca hablará sabiduría; Y el pensamiento de mi corazón inteligencia."
       },
       {
         "verse": 5,
         "hebrew": "אַטֶּה לְמָשָׁל אׇזְנִי אֶפְתַּח בְּכִנּוֹר חִידָתִי׃",
         "transliteration": "ateh lemashal zeni efetaj bejinoor jidati",
-        "spanish": "¿Por qué he de temer en los días de adversidad, Cuando la iniquidad de mis insidiadores me cercare?"
+        "spanish": "Acomodaré á ejemplos mi oído: Declararé con el arpa mi enigma."
       },
       {
         "verse": 6,
         "hebrew": "לָמָּה אִירָא בִּימֵי רָע עֲוֺן עֲקֵבַי יְסוּבֵּנִי׃",
         "transliteration": "lamah ira bimey ra' 'avn 'akevay yesubeni",
-        "spanish": "Los que confían en sus haciendas, Y en la muchedumbre de sus riquezas se jactan,"
+        "spanish": "¿Por qué he de temer en los días de adversidad, Cuando la iniquidad de mis insidiadores me cercare?"
       },
       {
         "verse": 7,
         "hebrew": "הַבֹּטְחִים עַל חֵילָם וּבְרֹב עׇשְׁרָם יִתְהַלָּלוּ׃",
         "transliteration": "habotejim 'aljeylam uverov 'sheram itehalalv",
-        "spanish": "Ninguno de ellos podrá en manera alguna redimir al hermano, Ni dar a Dios su rescate."
+        "spanish": "Los que confían en sus haciendas, Y en la muchedumbre de sus riquezas se jactan,"
       },
       {
         "verse": 8,
         "hebrew": "אָח לֹא פָדֹה יִפְדֶּה אִישׁ לֹא יִתֵּן לֵאלֹהִים כׇּפְרוֹ׃",
         "transliteration": "aj lofadoh ifedeh ish loiten lelohim kferoo",
-        "spanish": "(Porque la redención de su vida es de gran precio, Y no se hará jamás;)"
+        "spanish": "Ninguno de ellos podrá en manera alguna redimir al hermano, Ni dar a Dios su rescate."
       },
       {
         "verse": 9,
         "hebrew": "וְיֵקַר פִּדְיוֹן נַפְשָׁם וְחָדַל לְעוֹלָם׃",
         "transliteration": "veyekar pideyoon nafesham vejadal le'oolam",
-        "spanish": "Que viva adelante para siempre, Y nunca vea la sepultura."
+        "spanish": "(Porque la redención de su vida es de gran precio, Y no se hará jamás;)"
       },
       {
         "verse": 10,
         "hebrew": "וִיחִי עוֹד לָנֶצַח לֹא יִרְאֶה הַשָּׁחַת׃",
         "transliteration": "viji'ood lanetsaj lo ireeh hashajat",
-        "spanish": "Pues se ve que mueren los sabios, Así como el insensato y el necio perecen, Y dejan á otros sus riquezas."
+        "spanish": "Que viva adelante para siempre, Y nunca vea la sepultura."
       },
       {
         "verse": 11,
         "hebrew": "כִּי יִרְאֶה חֲכָמִים יָמוּתוּ יַחַד כְּסִיל וָבַעַר יֹאבֵדוּ וְעָזְבוּ לַאֲחֵרִים חֵילָם׃",
         "transliteration": "ki ireeh jajamim yamutu yajad kesil vava'ar yovedu ve'azevu laajerim jeylam",
-        "spanish": "En su interior tienen que sus casas serán eternas, Y sus habitaciones para generación y generación: Llamaron sus tierras de sus nombres."
+        "spanish": "Pues se ve que mueren los sabios, Así como el insensato y el necio perecen, Y dejan á otros sus riquezas."
       },
       {
         "verse": 12,
         "hebrew": "קִרְבָּם בָּתֵּימוֹ לְעוֹלָם מִשְׁכְּנֹתָם לְדוֹר וָדֹר קָרְאוּ בִשְׁמוֹתָם עֲלֵי אֲדָמוֹת׃",
         "transliteration": "kirebam bateymoo le'oolam mishekenotam ledoor vador kareu vishemootam 'aley adamoot",
-        "spanish": "Mas el hombre no permanecerá en honra: Es semejante a las bestias que perecen."
+        "spanish": "En su interior tienen que sus casas serán eternas, Y sus habitaciones para generación y generación: Llamaron sus tierras de sus nombres."
       },
       {
         "verse": 13,
         "hebrew": "וְאָדָם בִּיקָר בַּל יָלִין נִמְשַׁל כַּבְּהֵמוֹת נִדְמוּ׃",
         "transliteration": "veadam bikar balyalin nimeshal kabehemoot nidemv",
-        "spanish": "Este su camino es su locura: Con todo, corren sus descendientes por el dicho de ellos. (Sélah)"
+        "spanish": "Mas el hombre no permanecerá en honra: Es semejante a las bestias que perecen."
       },
       {
         "verse": 14,
         "hebrew": "זֶה דַרְכָּם כֵּסֶל לָמוֹ וְאַחֲרֵיהֶם בְּפִיהֶם יִרְצוּ סֶלָה׃",
         "transliteration": "zeh darekam kesel lamoo veajareyhem befihem iretsu selah",
-        "spanish": "Como rebaños serán puestos en la sepultura; La muerte se cebará en ellos; Y los rectos se enseñorearán de ellos por la mañana: Y se consumirá su bien parecer en el sepulcro de su morada."
+        "spanish": "Este su camino es su locura: Con todo, corren sus descendientes por el dicho de ellos. (Sélah)"
       },
       {
         "verse": 15,
         "hebrew": "כַּצֹּאן לִשְׁאוֹל שַׁתּוּ מָוֶת יִרְעֵם וַיִּרְדּוּ בָם יְשָׁרִים לַבֹּקֶר (וצירם) [וְצוּרָם] לְבַלּוֹת שְׁאוֹל מִזְּבֻל לוֹ׃",
         "transliteration": "katson lisheool shatu mavet ire'em vairedvvam yesharim laboker (vtsyrm) [vetsuram] levaloot sheool mizevul loo",
-        "spanish": "Empero Dios redimirá mi vida del poder de la sepultura, Cuando me tomará. (Sélah)"
+        "spanish": "Como rebaños serán puestos en la sepultura; La muerte se cebará en ellos; Y los rectos se enseñorearán de ellos por la mañana: Y se consumirá su bien parecer en el sepulcro de su morada."
       },
       {
         "verse": 16,
         "hebrew": "אַךְ אֱלֹהִים יִפְדֶּה נַפְשִׁי מִיַּד שְׁאוֹל כִּי יִקָּחֵנִי סֶלָה׃",
         "transliteration": "ajeElohim ifedeh nafeshi miadsheool ki ikajeni selah",
-        "spanish": "No temas cuando se enriquece alguno, Cuando aumenta la gloria de su casa;"
+        "spanish": "Empero Dios redimirá mi vida del poder de la sepultura, Cuando me tomará. (Sélah)"
       },
       {
         "verse": 17,
         "hebrew": "אַל תִּירָא כִּי יַעֲשִׁר אִישׁ כִּי יִרְבֶּה כְּבוֹד בֵּיתוֹ׃",
         "transliteration": "altira kiya'ashir ish kiirebeh kevuod beytoo",
-        "spanish": "Porque en muriendo no llevará nada, Ni descenderá tras él su gloria."
+        "spanish": "No temas cuando se enriquece alguno, Cuando aumenta la gloria de su casa;"
       },
       {
         "verse": 18,
         "hebrew": "כִּי לֹא בְמוֹתוֹ יִקַּח הַכֹּל לֹא יֵרֵד אַחֲרָיו כְּבוֹדוֹ׃",
         "transliteration": "ki lo vemootoo ikaj hakol loyered ajarayv kevuodoo",
-        "spanish": "Si bien mientras viviere, dirá dichosa á su alma: Y tú serás loado cuando bien te tratares."
+        "spanish": "Porque en muriendo no llevará nada, Ni descenderá tras él su gloria."
       },
       {
         "verse": 19,
         "hebrew": "כִּי נַפְשׁוֹ בְּחַיָּיו יְבָרֵךְ וְיוֹדֻךָ כִּי תֵיטִיב לָךְ׃",
         "transliteration": "kinafeshoo bejayayv yevareje veyooduja kiteytiv laje",
-        "spanish": "Entrará á la generación de sus padres: No verán luz para siempre."
+        "spanish": "Si bien mientras viviere, dirá dichosa á su alma: Y tú serás loado cuando bien te tratares."
       },
       {
         "verse": 20,
         "hebrew": "תָּבוֹא עַד דּוֹר אֲבוֹתָיו עַד נֵצַח לֹא יִרְאוּ אוֹר׃",
         "transliteration": "tavuo 'addoor avuotayv 'adnetsaj lo irevuor",
-        "spanish": "El hombre en honra que no entiende, Semejante es a las bestias que perecen."
+        "spanish": "Entrará á la generación de sus padres: No verán luz para siempre."
       },
       {
         "verse": 21,
         "hebrew": "אָדָם בִּיקָר וְלֹא יָבִין נִמְשַׁל כַּבְּהֵמוֹת נִדְמוּ׃ ",
         "transliteration": "adam bikar velo yavin nimeshal kabehemoot nidemv ",
-        "spanish": "..."
+        "spanish": "El hombre en honra que no entiende, Semejante es a las bestias que perecen."
       }
     ]
   },
@@ -5149,127 +5149,127 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ מִזְמוֹר לְדָוִד׃",
         "transliteration": "lamenatseja mizemoor ledavid",
-        "spanish": "TEN piedad de mí, oh Dios, conforme á Tu Jésed: Conforme á la multitud de tus piedades borra mis rebeliones."
+        "spanish": "Al Músico principal. Salmo de David."
       },
       {
         "verse": 2,
         "hebrew": "בְּבוֹא אֵלָיו נָתָן הַנָּבִיא כַּאֲשֶׁר בָּא אֶל בַּת שָׁבַע׃",
         "transliteration": "bevuoelayv natan hanavi kaasherba elbatshava'",
-        "spanish": "Lávame más y más de mi maldad, Y límpiame de mi pecado."
+        "spanish": "Cuando vino a él el profeta Natán, después que se llegó a Betsabé."
       },
       {
         "verse": 3,
         "hebrew": "חׇנֵּנִי אֱלֹהִים כְּחַסְדֶּךָ כְּרֹב רַחֲמֶיךָ מְחֵה פְשָׁעָי׃",
         "transliteration": "jneni Elohim kejasedeja kerov rajameyja mejeh fesha'ay",
-        "spanish": "Porque yo reconozco mis rebeliones; Y mi pecado está siempre delante de mí."
+        "spanish": "TEN piedad de mí, oh Dios, conforme á Tu Jésed: Conforme á la multitud de tus piedades borra mis rebeliones."
       },
       {
         "verse": 4,
         "hebrew": "(הרבה) [הֶרֶב] כַּבְּסֵנִי מֵעֲוֺנִי וּמֵחַטָּאתִי טַהֲרֵנִי׃",
         "transliteration": "(hrvh) [herev] kabeseni me'avni umejatati tahareni",
-        "spanish": "A ti, a ti solo he pecado, Y he hecho lo malo delante de tus ojos: Porque seas reconocido justo en tu palabra, Y tenido por puro en tu juicio."
+        "spanish": "Lávame más y más de mi maldad, Y límpiame de mi pecado."
       },
       {
         "verse": 5,
         "hebrew": "כִּי פְשָׁעַי אֲנִי אֵדָע וְחַטָּאתִי נֶגְדִּי תָמִיד׃",
         "transliteration": "kifesha'ay ani eda' vejatati negedi tamid",
-        "spanish": "He aquí, en maldad he sido formado, Y en pecado me concibió mi madre."
+        "spanish": "Porque yo reconozco mis rebeliones; Y mi pecado está siempre delante de mí."
       },
       {
         "verse": 6,
         "hebrew": "לְךָ לְבַדְּךָ חָטָאתִי וְהָרַע בְּעֵינֶיךָ עָשִׂיתִי לְמַעַן תִּצְדַּק בְּדׇבְרֶךָ תִּזְכֶּה בְשׇׁפְטֶךָ׃",
         "transliteration": "leja levadeja jatati vehara' be'eyneyja 'asiti lema'an titsedak bedvereja tizekeh veshfeteja",
-        "spanish": "He aquí, tú amas la verdad en lo íntimo: Y en lo secreto me has hecho comprender sabiduría."
+        "spanish": "A ti, a ti solo he pecado, Y he hecho lo malo delante de tus ojos: Porque seas reconocido justo en tu palabra, Y tenido por puro en tu juicio."
       },
       {
         "verse": 7,
         "hebrew": "הֵן בְּעָווֹן חוֹלָלְתִּי וּבְחֵטְא יֶחֱמַתְנִי אִמִּי׃",
         "transliteration": "henbe'avuon joolaleti uvejete yejemateni imi",
-        "spanish": "Purifícame con hisopo, y será limpio: Lávame, y seré emblanquecido más que la nieve."
+        "spanish": "He aquí, en maldad he sido formado, Y en pecado me concibió mi madre."
       },
       {
         "verse": 8,
         "hebrew": "הֵן אֱמֶת חָפַצְתָּ בַטֻּחוֹת וּבְסָתֻם חׇכְמָה תוֹדִיעֵנִי׃",
         "transliteration": "henemet jafatseta vatujoot uvesatum jjemah toodi'eni",
-        "spanish": "Hazme oir gozo y alegría; Y se recrearán los huesos que has abatido."
+        "spanish": "He aquí, tú amas la verdad en lo íntimo: Y en lo secreto me has hecho comprender sabiduría."
       },
       {
         "verse": 9,
         "hebrew": "תְּחַטְּאֵנִי בְאֵזוֹב וְאֶטְהָר תְּכַבְּסֵנִי וּמִשֶּׁלֶג אַלְבִּין׃",
         "transliteration": "tejateeni veezoov veetehar tejabeseni umisheleg alebin",
-        "spanish": "Esconde tu rostro de mis pecados, Y borra todas mis maldades."
+        "spanish": "Purifícame con hisopo, y será limpio: Lávame, y seré emblanquecido más que la nieve."
       },
       {
         "verse": 10,
         "hebrew": "תַּשְׁמִיעֵנִי שָׂשׂוֹן וְשִׂמְחָה תָּגֵלְנָה עֲצָמוֹת דִּכִּיתָ׃",
         "transliteration": "tashemi'eni sasoon vesimejah tagelenah 'atsamoot dikita",
-        "spanish": "Crea en mí, oh Dios, un corazón limpio; Y renueva un espíritu recto dentro de mí."
+        "spanish": "Hazme oir gozo y alegría; Y se recrearán los huesos que has abatido."
       },
       {
         "verse": 11,
         "hebrew": "הַסְתֵּר פָּנֶיךָ מֵחֲטָאָי וְכׇל עֲוֺנֹתַי מְחֵה׃",
         "transliteration": "haseter paneyja mejataay vejl'avnotay mejeh",
-        "spanish": "No me eches de delante de ti; Y no quites de mí tu santo espíritu."
+        "spanish": "Esconde tu rostro de mis pecados, Y borra todas mis maldades."
       },
       {
         "verse": 12,
         "hebrew": "לֵב טָהוֹר בְּרָא לִי אֱלֹהִים וְרוּחַ נָכוֹן חַדֵּשׁ בְּקִרְבִּי׃",
         "transliteration": "lev tahoor berali Elohim veruja najoon jadesh bekirebi",
-        "spanish": "Vuélveme el gozo de tu salud; Y el espíritu libre me sustente."
+        "spanish": "Crea en mí, oh Dios, un corazón limpio; Y renueva un espíritu recto dentro de mí."
       },
       {
         "verse": 13,
         "hebrew": "אַל תַּשְׁלִיכֵנִי מִלְּפָנֶיךָ וְרוּחַ קׇדְשְׁךָ אַל תִּקַּח מִמֶּנִּי׃",
         "transliteration": "altashelijeni milefaneyja veruja kdesheja altikaj mimeni",
-        "spanish": "Enseñaré a los prevaricadores tus caminos; Y los pecadores se convertirán a ti."
+        "spanish": "No me eches de delante de ti; Y no quites de mí tu santo espíritu."
       },
       {
         "verse": 14,
         "hebrew": "הָשִׁיבָה לִּי שְׂשׂוֹן יִשְׁעֶךָ וְרוּחַ נְדִיבָה תִסְמְכֵנִי׃",
         "transliteration": "hashivah li sesoon ishe'eja veruja nedivah tisemejeni",
-        "spanish": "Líbrame de homicidios, oh Dios, Dios de mi salud: Cantará mi lengua tu justicia."
+        "spanish": "Vuélveme el gozo de tu salud; Y el espíritu libre me sustente."
       },
       {
         "verse": 15,
         "hebrew": "אֲלַמְּדָה פֹשְׁעִים דְּרָכֶיךָ וְחַטָּאִים אֵלֶיךָ יָשׁוּבוּ׃",
         "transliteration": "alamedah foshe'im derajeyja vejataim eleyja yashuvv",
-        "spanish": "Señor, abre mis labios; Y publicará mi boca tu alabanza."
+        "spanish": "Enseñaré a los prevaricadores tus caminos; Y los pecadores se convertirán a ti."
       },
       {
         "verse": 16,
         "hebrew": "הַצִּילֵנִי מִדָּמִים אֱלֹהִים אֱלֹהֵי תְשׁוּעָתִי תְּרַנֵּן לְשׁוֹנִי צִדְקָתֶךָ׃",
         "transliteration": "hatsileni midamim Elohim elohey teshu'ati teranen leshooni tsidekateja",
-        "spanish": "Porque no quieres tú sacrificio, que yo daría; No quieres holocausto."
+        "spanish": "Líbrame de homicidios, oh Dios, Dios de mi salud: Cantará mi lengua tu justicia."
       },
       {
         "verse": 17,
         "hebrew": "אֲדֹנָי שְׂפָתַי תִּפְתָּח וּפִי יַגִּיד תְּהִלָּתֶךָ׃",
         "transliteration": "adonay sefatay tifetaj ufi yagid tehilateja",
-        "spanish": "Los sacrificios de Dios son el espíritu quebrantado: Al corazón contrito y humillado no despreciarás tú, oh Dios."
+        "spanish": "Señor, abre mis labios; Y publicará mi boca tu alabanza."
       },
       {
         "verse": 18,
         "hebrew": "כִּי לֹא תַחְפֹּץ זֶבַח וְאֶתֵּנָה עוֹלָה לֹא תִרְצֶה׃",
         "transliteration": "ki lotajepots zevaj veetenah 'oolah lo tiretseh",
-        "spanish": "Haz bien con tu benevolencia á Sión: Edifica los muros de Jerusalem."
+        "spanish": "Porque no quieres tú sacrificio, que yo daría; No quieres holocausto."
       },
       {
         "verse": 19,
         "hebrew": "זִבְחֵי אֱלֹהִים רוּחַ נִשְׁבָּרָה לֵב נִשְׁבָּר וְנִדְכֶּה אֱלֹהִים לֹא תִבְזֶה׃",
         "transliteration": "zivejey Elohim ruja nishebarah levnishebar venidekeh Elohim lo tivezeh",
-        "spanish": "Entonces te agradarán los sacrificios de justicia, el holocausto ú ofrenda del todo quemada: Entonces ofrecerán sobre tu altar becerros."
+        "spanish": "Los sacrificios de Dios son el espíritu quebrantado: Al corazón contrito y humillado no despreciarás tú, oh Dios."
       },
       {
         "verse": 20,
         "hebrew": "הֵיטִיבָה בִרְצוֹנְךָ אֶת צִיּוֹן תִּבְנֶה חוֹמוֹת יְרוּשָׁלָ͏ִם׃",
         "transliteration": "heytivah viretsooneja ettsioon tiveneh joomoot yerushala͏im",
-        "spanish": "..."
+        "spanish": "Haz bien con tu benevolencia á Sión: Edifica los muros de Jerusalem."
       },
       {
         "verse": 21,
         "hebrew": "אָז תַּחְפֹּץ זִבְחֵי צֶדֶק עוֹלָה וְכָלִיל אָז יַעֲלוּ עַל מִזְבַּחֲךָ פָרִים׃ ",
         "transliteration": "az tajepots zivejeytsedek 'oolah vejalil az ya'alu 'almizebajaja farim ",
-        "spanish": "..."
+        "spanish": "Entonces te agradarán los sacrificios de justicia, el holocausto ú ofrenda del todo quemada: Entonces ofrecerán sobre tu altar becerros."
       }
     ]
   },
@@ -5284,67 +5284,67 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ מַשְׂכִּיל לְדָוִד׃",
         "transliteration": "lamenatseja masekil ledavid",
-        "spanish": "¿POR qué te glorías de maldad, oh poderoso? El Jésed de Dios es continua."
+        "spanish": "Al Músico principal. Masquil de David."
       },
       {
         "verse": 2,
         "hebrew": "בְּבוֹא דּוֹאֵג הָאֲדֹמִי וַיַּגֵּד לְשָׁאוּל וַיֹּאמֶר לוֹ בָּא דָוִד אֶל בֵּית אֲחִימֶלֶךְ׃",
         "transliteration": "bevuo dooeg haadomi vayaged leshaul vayomer loo ba david elbeyt ajimeleje",
-        "spanish": "Agravios maquina tu lengua: Como navaja amolada hace engaño."
+        "spanish": "Cuando vino Doeg el edomita y dio cuenta a Saúl, diciéndole: David ha venido a la casa de Ahimelec."
       },
       {
         "verse": 3,
         "hebrew": "מַה תִּתְהַלֵּל בְּרָעָה הַגִּבּוֹר חֶסֶד אֵל כׇּל הַיּוֹם׃",
         "transliteration": "mahtitehalel bera'ah hagiboor jesed el klhayoom",
-        "spanish": "Amaste el mal más que el bien; La mentira más que hablar justicia. (Sélah)"
+        "spanish": "¿POR qué te glorías de maldad, oh poderoso? El Jésed de Dios es continua."
       },
       {
         "verse": 4,
         "hebrew": "הַוּוֹת תַּחְשֹׁב לְשׁוֹנֶךָ כְּתַעַר מְלֻטָּשׁ עֹשֵׂה רְמִיָּה׃",
         "transliteration": "hauoot tajeshov leshooneja keta'ar melutash 'oseh remiah",
-        "spanish": "Has amado toda suerte de palabras perniciosas, Engañosa lengua."
+        "spanish": "Agravios maquina tu lengua: Como navaja amolada hace engaño."
       },
       {
         "verse": 5,
         "hebrew": "אָהַבְתָּ רָּע מִטּוֹב שֶׁקֶר מִדַּבֵּר צֶדֶק סֶלָה׃",
         "transliteration": "ahaveta ra' mitoov sheker midaber tsedek selah",
-        "spanish": "Por tanto Dios te derribará para siempre: Te asolará y te arrancará de tu morada, Y te desarraigará de la tierra de los vivientes. (Sélah)"
+        "spanish": "Amaste el mal más que el bien; La mentira más que hablar justicia. (Sélah)"
       },
       {
         "verse": 6,
         "hebrew": "אָהַבְתָּ כׇל דִּבְרֵי בָלַע לְשׁוֹן מִרְמָה׃",
         "transliteration": "ahaveta jldivereyvala' leshoon miremah",
-        "spanish": "Y verán los justos, y temerán; Y reiránse de él, diciendo:"
+        "spanish": "Has amado toda suerte de palabras perniciosas, Engañosa lengua."
       },
       {
         "verse": 7,
         "hebrew": "גַּם אֵל יִתׇּצְךָ לָנֶצַח יַחְתְּךָ וְיִסָּחֲךָ מֵאֹהֶל וְשֵׁרֶשְׁךָ מֵאֶרֶץ חַיִּים סֶלָה׃",
         "transliteration": "gamel ittseja lanetsaj yajeteja veisajaja meohel vesheresheja meerets jaim selah",
-        "spanish": "He aquí el hombre que no puso a Dios por su fortaleza, Sino que confió en la multitud de sus riquezas. Y se mantuvo en su maldad."
+        "spanish": "Por tanto Dios te derribará para siempre: Te asolará y te arrancará de tu morada, Y te desarraigará de la tierra de los vivientes. (Sélah)"
       },
       {
         "verse": 8,
         "hebrew": "וְיִרְאוּ צַדִּיקִים וְיִירָאוּ וְעָלָיו יִשְׂחָקוּ׃",
         "transliteration": "veireu tsadikim veirau ve'alayv isejakv",
-        "spanish": "Mas yo estoy como oliva verde en la casa de Dios: En el Jésed de Dios confío perpetua y eternalmente."
+        "spanish": "Y verán los justos, y temerán; Y reiránse de él, diciendo:"
       },
       {
         "verse": 9,
         "hebrew": "הִנֵּה הַגֶּבֶר לֹא יָשִׂים אֱלֹהִים מָעוּזּוֹ וַיִּבְטַח בְּרֹב עׇשְׁרוֹ יָעֹז בְּהַוָּתוֹ׃",
         "transliteration": "hineh hagever lo yasim Elohim ma'uzoo vaivetaj berov 'sheroo ya'oz behavatoo",
-        "spanish": "Te alabaré para siempre por lo que has hecho: Y esperaré en tu nombre, porque es bueno, delante de tus santos."
+        "spanish": "He aquí el hombre que no puso a Dios por su fortaleza, Sino que confió en la multitud de sus riquezas. Y se mantuvo en su maldad."
       },
       {
         "verse": 10,
         "hebrew": "וַאֲנִי כְּזַיִת רַעֲנָן בְּבֵית אֱלֹהִים בָּטַחְתִּי בְחֶסֶד אֱלֹהִים עוֹלָם וָעֶד׃",
         "transliteration": "vaani kezait ra'anan beveyt Elohim batajeti vejesedElohim 'oolam va'ed",
-        "spanish": "..."
+        "spanish": "Mas yo estoy como oliva verde en la casa de Dios: En el Jésed de Dios confío perpetua y eternalmente."
       },
       {
         "verse": 11,
         "hebrew": "אוֹדְךָ לְעוֹלָם כִּי עָשִׂיתָ וַאֲקַוֶּה שִׁמְךָ כִי טוֹב נֶגֶד חֲסִידֶיךָ׃ ",
         "transliteration": "oodeja le'oolam ki 'asita vaakaveh shimeja jitoov neged jasideyja ",
-        "spanish": "..."
+        "spanish": "Te alabaré para siempre por lo que has hecho: Y esperaré en tu nombre, porque es bueno, delante de tus santos."
       }
     ]
   },
@@ -5359,43 +5359,43 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ עַל מָחֲלַת מַשְׂכִּיל לְדָוִד׃",
         "transliteration": "lamenatseja 'almajalat masekil ledavid",
-        "spanish": "DIJO el necio en su corazón: No hay Dios. Corrompiéronse é hicieron abominable maldad: No hay quien haga bien."
+        "spanish": "Al Músico principal; sobre Mahalat. Masquil de David."
       },
       {
         "verse": 2,
         "hebrew": "אָמַר נָבָל בְּלִבּוֹ אֵין אֱלֹהִים הִשְׁחִיתוּ וְהִתְעִיבוּ עָוֶל אֵין עֹשֵׂה טוֹב׃",
         "transliteration": "amar naval beliboo eyn Elohim hishejitu vehite'ivu 'avel eyn 'osehtoov",
-        "spanish": "Dios desde los cielos miró sobre los hijos de los hombres, Por ver si hay algún entendido Que busque a Dios."
+        "spanish": "DIJO el necio en su corazón: No hay Dios. Corrompiéronse é hicieron abominable maldad: No hay quien haga bien."
       },
       {
         "verse": 3,
         "hebrew": "אֱלֹהִים מִשָּׁמַיִם הִשְׁקִיף עַל בְּנֵי אָדָם לִרְאוֹת הֲיֵשׁ מַשְׂכִּיל דֹּרֵשׁ אֶת אֱלֹהִים׃",
         "transliteration": "Elohim mishamaim hishekif 'albeneyadam lireoot hayesh masekil doresh etElohim",
-        "spanish": "Cada uno se había vuelto atrás; todos se habían corrompido: No hay quien haga bien, no hay ni aun uno."
+        "spanish": "Dios desde los cielos miró sobre los hijos de los hombres, Por ver si hay algún entendido Que busque a Dios."
       },
       {
         "verse": 4,
         "hebrew": "כֻּלּוֹ סָג יַחְדָּו נֶאֱלָחוּ אֵין עֹשֵׂה טוֹב אֵין גַּם אֶחָד׃",
         "transliteration": "kuloo sag yajedav neelaju eyn 'osehtoov eyn gamejad",
-        "spanish": "¿No tienen conocimiento todos esos que obran iniquidad? Que comen a mí pueblo como si comiesen pan: A Dios no han invocado."
+        "spanish": "Cada uno se había vuelto atrás; todos se habían corrompido: No hay quien haga bien, no hay ni aun uno."
       },
       {
         "verse": 5,
         "hebrew": "הֲלֹא יָדְעוּ פֹּעֲלֵי אָוֶן אֹכְלֵי עַמִּי אָכְלוּ לֶחֶם אֱלֹהִים לֹא קָרָאוּ׃",
         "transliteration": "halo yade'u po'aley aven ojeley 'ami ajelu lejem Elohim lo karav",
-        "spanish": "Allí se sobresaltaron de pavor donde no había miedo: Porque Dios ha esparcido los huesos del que asentó campo contra ti: Los avergonzaste, porque Dios los desechó."
+        "spanish": "¿No tienen conocimiento todos esos que obran iniquidad? Que comen a mí pueblo como si comiesen pan: A Dios no han invocado."
       },
       {
         "verse": 6,
         "hebrew": "שָׁם פָּחֲדוּ פַחַד לֹא הָיָה פָחַד כִּי אֱלֹהִים פִּזַּר עַצְמוֹת חֹנָךְ הֱבִשֹׁתָה כִּי אֱלֹהִים מְאָסָם׃",
         "transliteration": "sham pajadu fajad lohayah fajad kiElohim pizar 'atsemoot jonaje hevishotah kiElohim measam",
-        "spanish": "¡Oh quién diese de Sión saludes a Israel! En volviendo Dios la cautividad de su pueblo, Gozarse ha Jacob, y alegraráse Israel."
+        "spanish": "Allí se sobresaltaron de pavor donde no había miedo: Porque Dios ha esparcido los huesos del que asentó campo contra ti: Los avergonzaste, porque Dios los desechó."
       },
       {
         "verse": 7,
         "hebrew": "מִי יִתֵּן מִצִּיּוֹן יְשֻׁעוֹת יִשְׂרָאֵל בְּשׁוּב אֱלֹהִים שְׁבוּת עַמּוֹ יָגֵל יַעֲקֹב יִשְׂמַח יִשְׂרָאֵל׃ ",
         "transliteration": "miiten mitsioon yeshu'oot iserael beshuv Elohim shevut 'amoo yagel ya'akov isemaj iserael ",
-        "spanish": "..."
+        "spanish": "¡Oh quién diese de Sión saludes a Israel! En volviendo Dios la cautividad de su pueblo, Gozarse ha Jacob, y alegraráse Israel."
       }
     ]
   },
@@ -5410,55 +5410,55 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ בִּנְגִינֹת מַשְׂכִּיל לְדָוִד׃",
         "transliteration": "lamenatseja bineginot masekil ledavid",
-        "spanish": "OH Dios, sálvame por tu nombre, Y con tu poder defiéndeme."
+        "spanish": "Al Músico principal; en Neginot. Masquil de David."
       },
       {
         "verse": 2,
         "hebrew": "בְּבֹא הַזִּיפִים וַיֹּאמְרוּ לְשָׁאוּל הֲלֹא דָוִד מִסְתַּתֵּר עִמָּנוּ׃",
         "transliteration": "bevu hazifim vayomeru leshaul halo david misetater 'imanv",
-        "spanish": "Oh Dios, oye mi oración; Escucha las razones de mi boca."
+        "spanish": "Cuando vinieron los zifeos y dijeron a Saúl: ¿No está David escondido entre nosotros?"
       },
       {
         "verse": 3,
         "hebrew": "אֱלֹהִים בְּשִׁמְךָ הוֹשִׁיעֵנִי וּבִגְבוּרָתְךָ תְדִינֵנִי׃",
         "transliteration": "Elohim beshimeja hooshi'eni uvigevurateja tedineni",
-        "spanish": "Porque extraños se han levantado contra mí, Y fuertes buscan mi alma: No han puesto a Dios delante de sí. (Sélah)"
+        "spanish": "OH Dios, sálvame por tu nombre, Y con tu poder defiéndeme."
       },
       {
         "verse": 4,
         "hebrew": "אֱלֹהִים שְׁמַע תְּפִלָּתִי הַאֲזִינָה לְאִמְרֵי פִי׃",
         "transliteration": "Elohim shema' tefilati haazinah leimereyfi",
-        "spanish": "He aquí, Dios es el que me ayuda; El Señor es con los que sostienen mi vida."
+        "spanish": "Oh Dios, oye mi oración; Escucha las razones de mi boca."
       },
       {
         "verse": 5,
         "hebrew": "כִּי זָרִים קָמוּ עָלַי וְעָרִיצִים בִּקְשׁוּ נַפְשִׁי לֹא שָׂמוּ אֱלֹהִים לְנֶגְדָּם סֶלָה׃",
         "transliteration": "ki zarim kamu 'alay ve'aritsim bikeshu nafeshi lo samu Elohim lenegedam selah",
-        "spanish": "El volverá el mal á mis enemigos: Córtalos por tu verdad."
+        "spanish": "Porque extraños se han levantado contra mí, Y fuertes buscan mi alma: No han puesto a Dios delante de sí. (Sélah)"
       },
       {
         "verse": 6,
         "hebrew": "הִנֵּה אֱלֹהִים עֹזֵר לִי אֲדֹנָי בְּסֹמְכֵי נַפְשִׁי׃",
         "transliteration": "hineh Elohim 'ozer li adonay besomejey nafeshi",
-        "spanish": "Voluntariamente sacrificaré a ti; Alabaré tu nombre, oh YHVH, porque es bueno."
+        "spanish": "He aquí, Dios es el que me ayuda; El Señor es con los que sostienen mi vida."
       },
       {
         "verse": 7,
         "hebrew": "(ישוב) [יָשִׁיב] הָרַע לְשֹׁרְרָי בַּאֲמִתְּךָ הַצְמִיתֵם׃",
         "transliteration": "(yshvv) [yashiv] hara' leshoreray baamiteja hatsemitem",
-        "spanish": "Porque me ha librado de toda angustia, Y en mis enemigos vieron mis ojos mi deseo."
+        "spanish": "El volverá el mal á mis enemigos: Córtalos por tu verdad."
       },
       {
         "verse": 8,
         "hebrew": "בִּנְדָבָה אֶזְבְּחָה לָּךְ אוֹדֶה שִּׁמְךָ יְהֹוָה כִּי טוֹב׃",
         "transliteration": "binedavah ezebejahlaje oodehshimeja Adonai kitoov",
-        "spanish": "..."
+        "spanish": "Voluntariamente sacrificaré a ti; Alabaré tu nombre, oh YHVH, porque es bueno."
       },
       {
         "verse": 9,
         "hebrew": "כִּי מִכׇּל צָרָה הִצִּילָנִי וּבְאֹיְבַי רָאֲתָה עֵינִי׃ ",
         "transliteration": "ki mikltsarah hitsilani uveoyevay raatah 'eyni ",
-        "spanish": "..."
+        "spanish": "Porque me ha librado de toda angustia, Y en mis enemigos vieron mis ojos mi deseo."
       }
     ]
   },
@@ -5473,145 +5473,145 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ בִּנְגִינֹת מַשְׂכִּיל לְדָוִד׃",
         "transliteration": "lamenatseja bineginot masekil ledavid",
-        "spanish": "ESCUCHA, oh Dios, mi oración, Y no te escondas de mi súplica."
+        "spanish": "Al Músico principal; en Neginot. Masquil de David."
       },
       {
         "verse": 2,
         "hebrew": "הַאֲזִינָה אֱלֹהִים תְּפִלָּתִי וְאַל תִּתְעַלַּם מִתְּחִנָּתִי׃",
         "transliteration": "haazinah Elohim tefilati vealtite'alam mitejinati",
-        "spanish": "Estáme atento, y respóndeme: Clamo en mi oración, y levanto el grito,"
+        "spanish": "ESCUCHA, oh Dios, mi oración, Y no te escondas de mi súplica."
       },
       {
         "verse": 3,
         "hebrew": "הַקְשִׁיבָה לִּי וַעֲנֵנִי אָרִיד בְּשִׂיחִי וְאָהִימָה׃",
         "transliteration": "hakeshivah li va'aneni arid besiji veahimah",
-        "spanish": "A causa de la voz del enemigo, Por la opresión del impío; Porque echaron sobre mí iniquidad, Y con furor me han amenazado."
+        "spanish": "Estáme atento, y respóndeme: Clamo en mi oración, y levanto el grito,"
       },
       {
         "verse": 4,
         "hebrew": "מִקּוֹל אוֹיֵב מִפְּנֵי עָקַת רָשָׁע כִּי יָמִיטוּ עָלַי אָוֶן וּבְאַף יִשְׂטְמוּנִי׃",
         "transliteration": "mikool ooyev mipeney 'akat rasha' kiyamitu 'alay aven uveaf isetemuni",
-        "spanish": "Mi corazón está doloroso dentro de mí, Y terrores de muerte sobre mí han caído."
+        "spanish": "A causa de la voz del enemigo, Por la opresión del impío; Porque echaron sobre mí iniquidad, Y con furor me han amenazado."
       },
       {
         "verse": 5,
         "hebrew": "לִבִּי יָחִיל בְּקִרְבִּי וְאֵימוֹת מָוֶת נָפְלוּ עָלָי׃",
         "transliteration": "libi yajil bekirebi veeymoot mavet nafelu 'alay",
-        "spanish": "Temor y temblor vinieron sobre mí, Y terror me ha cubierto."
+        "spanish": "Mi corazón está doloroso dentro de mí, Y terrores de muerte sobre mí han caído."
       },
       {
         "verse": 6,
         "hebrew": "יִרְאָה וָרַעַד יָבֹא בִי וַתְּכַסֵּנִי פַּלָּצוּת׃",
         "transliteration": "ireah vara'ad yavu vi vatejaseni palatsut",
-        "spanish": "Y dije: ¡Quién me diese alas como de paloma! Volaría yo, y descansaría."
+        "spanish": "Temor y temblor vinieron sobre mí, Y terror me ha cubierto."
       },
       {
         "verse": 7,
         "hebrew": "וָאֹמַר מִי יִתֶּן לִי אֵבֶר כַּיּוֹנָה אָעוּפָה וְאֶשְׁכֹּנָה׃",
         "transliteration": "vaomar miitenli ever kayoonah a'ufah veeshekonah",
-        "spanish": "Ciertamente huiría lejos: Moraría en el desierto. (Sélah)"
+        "spanish": "Y dije: ¡Quién me diese alas como de paloma! Volaría yo, y descansaría."
       },
       {
         "verse": 8,
         "hebrew": "הִנֵּה אַרְחִיק נְדֹד אָלִין בַּמִּדְבָּר סֶלָה׃",
         "transliteration": "hineh arejik nedod alin bamidebar selah",
-        "spanish": "Apresuraríame á escapar Del viento tempestuoso, de la tempestad."
+        "spanish": "Ciertamente huiría lejos: Moraría en el desierto. (Sélah)"
       },
       {
         "verse": 9,
         "hebrew": "אָחִישָׁה מִפְלָט לִי מֵרוּחַ סֹעָה מִסָּעַר׃",
         "transliteration": "ajishah mifelat li meruja so'ah misa'ar",
-        "spanish": "Deshace, oh Señor, divide la lengua de ellos; Porque he visto violencia y rencilla en la ciudad."
+        "spanish": "Apresuraríame á escapar Del viento tempestuoso, de la tempestad."
       },
       {
         "verse": 10,
         "hebrew": "בַּלַּע אֲדֹנָי פַּלַּג לְשׁוֹנָם כִּי רָאִיתִי חָמָס וְרִיב בָּעִיר׃",
         "transliteration": "bala' adonay palag leshoonam kiraiti jamas veriv ba'ir",
-        "spanish": "Día y noche la rodean sobre sus muros; E iniquidad y trabajo hay en medio de ella."
+        "spanish": "Deshace, oh Señor, divide la lengua de ellos; Porque he visto violencia y rencilla en la ciudad."
       },
       {
         "verse": 11,
         "hebrew": "יוֹמָם וָלַיְלָה יְסוֹבְבֻהָ עַל חוֹמֹתֶיהָ וְאָוֶן וְעָמָל בְּקִרְבָּהּ׃",
         "transliteration": "yoomam valayelah yesoovevuha 'aljoomoteyha veaven ve'amal bekirebah",
-        "spanish": "Agravios hay en medio de ella, Y el fraude y engaño no se apartan de sus plazas."
+        "spanish": "Día y noche la rodean sobre sus muros; E iniquidad y trabajo hay en medio de ella."
       },
       {
         "verse": 12,
         "hebrew": "הַוּוֹת בְּקִרְבָּהּ וְלֹא יָמִישׁ מֵרְחֹבָהּ תֹּךְ וּמִרְמָה׃",
         "transliteration": "hauoot bekirebah veloyamish merejovah toje umiremah",
-        "spanish": "Porque no me afrentó un enemigo, Lo cual habría soportado; Ni se alzó contra mí el que me aborrecía, Porque me hubiera ocultado de él:"
+        "spanish": "Agravios hay en medio de ella, Y el fraude y engaño no se apartan de sus plazas."
       },
       {
         "verse": 13,
         "hebrew": "כִּי לֹא אוֹיֵב יְחָרְפֵנִי וְאֶשָּׂא לֹא מְשַׂנְאִי עָלַי הִגְדִּיל וְאֶסָּתֵר מִמֶּנּוּ׃",
         "transliteration": "ki loooyev yejarefeni veesa lomesanei 'alay higedil veesater mimenv",
-        "spanish": "Mas tú, hombre, al parecer íntimo mío, Mi guía, y mi familiar:"
+        "spanish": "Porque no me afrentó un enemigo, Lo cual habría soportado; Ni se alzó contra mí el que me aborrecía, Porque me hubiera ocultado de él:"
       },
       {
         "verse": 14,
         "hebrew": "וְאַתָּה אֱנוֹשׁ כְּעֶרְכִּי אַלּוּפִי וּמְיֻדָּעִי׃",
         "transliteration": "veatah enoosh ke'ereki alufi umeyuda'i",
-        "spanish": "Que juntos comunicábamos dulcemente los secretos, A la casa de Dios andábamos en compañía."
+        "spanish": "Mas tú, hombre, al parecer íntimo mío, Mi guía, y mi familiar:"
       },
       {
         "verse": 15,
         "hebrew": "אֲשֶׁר יַחְדָּו נַמְתִּיק סוֹד בְּבֵית אֱלֹהִים נְהַלֵּךְ בְּרָגֶשׁ׃",
         "transliteration": "asher yajedav nametik sood beveyt Elohim nehaleje beragesh",
-        "spanish": "Condenados sean á muerte, Desciendan vivos al Sheol: Porque maldades hay en su compañía, entre ellos."
+        "spanish": "Que juntos comunicábamos dulcemente los secretos, A la casa de Dios andábamos en compañía."
       },
       {
         "verse": 16,
         "hebrew": "(ישימות) [יַשִּׁי מָוֶת ] עָלֵימוֹ יֵרְדוּ שְׁאוֹל חַיִּים כִּי רָעוֹת בִּמְגוּרָם בְּקִרְבָּם׃",
         "transliteration": "(yshymvt) [yashi mavet ] 'aleymoo yeredu sheool jaim kira'oot bimeguram bekirebam",
-        "spanish": "Yo a Dios clamaré; Y YHVH me salvará."
+        "spanish": "Condenados sean á muerte, Desciendan vivos al Sheol: Porque maldades hay en su compañía, entre ellos."
       },
       {
         "verse": 17,
         "hebrew": "אֲנִי אֶל אֱלֹהִים אֶקְרָא וַיהֹוָה יוֹשִׁיעֵנִי׃",
         "transliteration": "ani elElohim ekera vayhovah yooshi'eni",
-        "spanish": "Tarde y mañana y á medio día oraré y clamaré; Y él oirá mi voz."
+        "spanish": "Yo a Dios clamaré; Y YHVH me salvará."
       },
       {
         "verse": 18,
         "hebrew": "עֶרֶב וָבֹקֶר וְצׇהֳרַיִם אָשִׂיחָה וְאֶהֱמֶה וַיִּשְׁמַע קוֹלִי׃",
         "transliteration": "'erev vavuker vetshoraim asijah veehemeh vaishema' kooli",
-        "spanish": "El ha redimido en paz mi alma de la guerra contra mí; Pues fueron contra mí muchos."
+        "spanish": "Tarde y mañana y á medio día oraré y clamaré; Y él oirá mi voz."
       },
       {
         "verse": 19,
         "hebrew": "פָּדָה בְשָׁלוֹם נַפְשִׁי מִקְּרׇב לִי כִּי בְרַבִּים הָיוּ עִמָּדִי׃",
         "transliteration": "padah veshaloom nafeshi mikervli kiverabim hayu 'imadi",
-        "spanish": "Dios oirá, y los quebrantará luego, El que desde la antigüedad permanece (Sélah); Por cuanto no se mudan, Ni temen a Dios."
+        "spanish": "El ha redimido en paz mi alma de la guerra contra mí; Pues fueron contra mí muchos."
       },
       {
         "verse": 20,
         "hebrew": "יִשְׁמַע אֵל וְיַעֲנֵם וְיֹשֵׁב קֶדֶם סֶלָה אֲשֶׁר אֵין חֲלִיפוֹת לָמוֹ וְלֹא יָרְאוּ אֱלֹהִים׃",
         "transliteration": "ishema' el veya'anem veyoshev kedem selah asher eyn jalifoot lamoo velo yareu Elohim",
-        "spanish": "Extendió sus manos contra sus pacíficos: Viólo su pacto."
+        "spanish": "Dios oirá, y los quebrantará luego, El que desde la antigüedad permanece (Sélah); Por cuanto no se mudan, Ni temen a Dios."
       },
       {
         "verse": 21,
         "hebrew": "שָׁלַח יָדָיו בִּשְׁלֹמָיו חִלֵּל בְּרִיתוֹ׃",
         "transliteration": "shalaj yadayv bishelomayv jilel beritoo",
-        "spanish": "Ablandan más que manteca su boca, Pero guerra hay en su corazón: Suavizan sus palabras más que el aceite, Mas ellas son cuchillos."
+        "spanish": "Extendió sus manos contra sus pacíficos: Viólo su pacto."
       },
       {
         "verse": 22,
         "hebrew": "חָלְקוּ מַחְמָאֹת פִּיו וּקְרָב לִבּוֹ רַכּוּ דְבָרָיו מִשֶּׁמֶן וְהֵמָּה פְתִחוֹת׃",
         "transliteration": "jaleku majemaot piv ukeravliboo raku devarayv mishemen vehemah fetijoot",
-        "spanish": "Echa sobre YHVH tu carga, y él te sustentará; No dejará para siempre caído al justo."
+        "spanish": "Ablandan más que manteca su boca, Pero guerra hay en su corazón: Suavizan sus palabras más que el aceite, Mas ellas son cuchillos."
       },
       {
         "verse": 23,
         "hebrew": "הַשְׁלֵךְ עַל יְהֹוָה יְהָבְךָ וְהוּא יְכַלְכְּלֶךָ לֹא יִתֵּן לְעוֹלָם מוֹט לַצַּדִּיק׃",
         "transliteration": "hasheleje 'alAdonai yehaveja vehu yejalekeleja loiten le'oolam moot latsadik",
-        "spanish": "Mas tú, oh Dios, harás descender aquéllos al pozo de la sepultura: Los hombres sanguinarios y engañadores no demediarán sus días: Empero yo confiaré en ti."
+        "spanish": "Echa sobre YHVH tu carga, y él te sustentará; No dejará para siempre caído al justo."
       },
       {
         "verse": 24,
         "hebrew": "וְאַתָּה אֱלֹהִים תּוֹרִדֵם לִבְאֵר שַׁחַת אַנְשֵׁי דָמִים וּמִרְמָה לֹא יֶחֱצוּ יְמֵיהֶם וַאֲנִי אֶבְטַח בָּךְ׃ ",
         "transliteration": "veatah Elohim tooridem liveer shajat aneshey damim umiremah loyejetsu yemeyhem vaani evetajbaje ",
-        "spanish": "..."
+        "spanish": "Mas tú, oh Dios, harás descender aquéllos al pozo de la sepultura: Los hombres sanguinarios y engañadores no demediarán sus días: Empero yo confiaré en ti."
       }
     ]
   },
@@ -5626,85 +5626,85 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ עַל יוֹנַת אֵלֶם רְחֹקִים לְדָוִד מִכְתָּם בֶּאֱחֹז אוֹתוֹ פְלִשְׁתִּים בְּגַת׃",
         "transliteration": "lamenatseja 'alyoonat elem rejokim ledavid mijetam beejoz ootoo felishetim begat",
-        "spanish": "TEN Jésed de mí, oh Dios, porque me devoraría el hombre: Me oprime combatiéndome cada día."
+        "spanish": "Al Músico principal; sobre Jonat-elem-rejokim. Mictam de David, cuando los filisteos le prendieron en Gat."
       },
       {
         "verse": 2,
         "hebrew": "חׇנֵּנִי אֱלֹהִים כִּי שְׁאָפַנִי אֱנוֹשׁ כׇּל הַיּוֹם לֹחֵם יִלְחָצֵנִי׃",
         "transliteration": "jneni Elohim kisheafani enoosh klhayoom lojem ilejatseni",
-        "spanish": "Apúranme mis enemigos cada día; Porque muchos son los que pelean contra mí, oh Elyón."
+        "spanish": "TEN Jésed de mí, oh Dios, porque me devoraría el hombre: Me oprime combatiéndome cada día."
       },
       {
         "verse": 3,
         "hebrew": "שָׁאֲפוּ שׁוֹרְרַי כׇּל הַיּוֹם כִּי רַבִּים לֹחֲמִים לִי מָרוֹם׃",
         "transliteration": "shaafu shooreray klhayoom kirabim lojamim li maroom",
-        "spanish": "En el día que temo, Yo en ti confío."
+        "spanish": "Apúranme mis enemigos cada día; Porque muchos son los que pelean contra mí, oh Elyón."
       },
       {
         "verse": 4,
         "hebrew": "יוֹם אִירָא אֲנִי אֵלֶיךָ אֶבְטָח׃",
         "transliteration": "yoom ira ani eleyja evetaj",
-        "spanish": "En Dios alabaré su palabra: En Dios he confiado, no temeré Lo que la carne me hiciere."
+        "spanish": "En el día que temo, Yo en ti confío."
       },
       {
         "verse": 5,
         "hebrew": "בֵּאלֹהִים אֲהַלֵּל דְּבָרוֹ בֵּאלֹהִים בָּטַחְתִּי לֹא אִירָא מַה יַּעֲשֶׂה בָשָׂר לִי׃",
         "transliteration": "belohim ahalel devaroo belohim batajeti lo ira mahya'aseh vasar li",
-        "spanish": "Todos los días me contristan mis negocios; Contra mí son todos sus pensamientos para mal."
+        "spanish": "En Dios alabaré su palabra: En Dios he confiado, no temeré Lo que la carne me hiciere."
       },
       {
         "verse": 6,
         "hebrew": "כׇּל הַיּוֹם דְּבָרַי יְעַצֵּבוּ עָלַי כׇּל מַחְשְׁבֹתָם לָרָע׃",
         "transliteration": "klhayoom devaray ye'atsevu 'alay klmajeshevutam lara'",
-        "spanish": "Reúnense, escóndense, Miran ellos atentamente mis pasos, Esperando mi vida."
+        "spanish": "Todos los días me contristan mis negocios; Contra mí son todos sus pensamientos para mal."
       },
       {
         "verse": 7,
         "hebrew": "יָגוּרוּ (יצפינו) [יִצְפּוֹנוּ] הֵמָּה עֲקֵבַי יִשְׁמֹרוּ כַּאֲשֶׁר קִוּוּ נַפְשִׁי׃",
         "transliteration": "yaguru (ytsfynv) [itsepoonu] hemah 'akevay ishemoru kaasher kiuu nafeshi",
-        "spanish": "¿Escaparán ellos por la iniquidad? Oh Dios, derriba en tu furor los pueblos."
+        "spanish": "Reúnense, escóndense, Miran ellos atentamente mis pasos, Esperando mi vida."
       },
       {
         "verse": 8,
         "hebrew": "עַל אָוֶן פַּלֶּט לָמוֹ בְּאַף עַמִּים הוֹרֵד אֱלֹהִים׃",
         "transliteration": "'alaven paletlamoo beaf 'amim hoored Elohim",
-        "spanish": "Mis huídas has tú contado: Pon mis lágrimas en tu redoma: ¿No están ellas en tu libro?"
+        "spanish": "¿Escaparán ellos por la iniquidad? Oh Dios, derriba en tu furor los pueblos."
       },
       {
         "verse": 9,
         "hebrew": "נֹדִי סָפַרְתָּה אָתָּה שִׂימָה דִמְעָתִי בְנֹאדֶךָ הֲלֹא בְּסִפְרָתֶךָ׃",
         "transliteration": "nodi safaretah atah simah dime'ati venodeja halo besiferateja",
-        "spanish": "Serán luego vueltos atrás mis enemigos el día que yo clamare: En esto conozco que Dios es por mí."
+        "spanish": "Mis huídas has tú contado: Pon mis lágrimas en tu redoma: ¿No están ellas en tu libro?"
       },
       {
         "verse": 10,
         "hebrew": "אָז יָשׁוּבוּ אוֹיְבַי אָחוֹר בְּיוֹם אֶקְרָא זֶה יָדַעְתִּי כִּי אֱלֹהִים לִי׃",
         "transliteration": "az yashuvu ooyevay ajoor beyoom ekera zehyada'eti kiElohim li",
-        "spanish": "En Dios alabaré su palabra; En YHVH alabaré su palabra."
+        "spanish": "Serán luego vueltos atrás mis enemigos el día que yo clamare: En esto conozco que Dios es por mí."
       },
       {
         "verse": 11,
         "hebrew": "בֵּאלֹהִים אֲהַלֵּל דָּבָר בַּיהֹוָה אֲהַלֵּל דָּבָר׃",
         "transliteration": "belohim ahalel davar bayhovah ahalel davar",
-        "spanish": "En Dios he confiado: no temeré Lo que me hará el hombre."
+        "spanish": "En Dios alabaré su palabra; En YHVH alabaré su palabra."
       },
       {
         "verse": 12,
         "hebrew": "בֵּאלֹהִים בָּטַחְתִּי לֹּא אִירָא מַה יַּעֲשֶׂה אָדָם לִי׃",
         "transliteration": "belohim batajeti lo ira mahya'aseh adam li",
-        "spanish": "Sobre mí, oh Dios, están tus votos: Te tributaré alabanzas."
+        "spanish": "En Dios he confiado: no temeré Lo que me hará el hombre."
       },
       {
         "verse": 13,
         "hebrew": "עָלַי אֱלֹהִים נְדָרֶיךָ אֲשַׁלֵּם תּוֹדֹת לָךְ׃",
         "transliteration": "'alay Elohim nedareyja ashalem toodot laje",
-        "spanish": "Porque has librado mi vida de la muerte, Y mis pies de caída, Para que ande delante de Dios En la luz de los que viven."
+        "spanish": "Sobre mí, oh Dios, están tus votos: Te tributaré alabanzas."
       },
       {
         "verse": 14,
         "hebrew": "כִּי הִצַּלְתָּ נַפְשִׁי מִמָּוֶת הֲלֹא רַגְלַי מִדֶּחִי לְהִתְהַלֵּךְ לִפְנֵי אֱלֹהִים בְּאוֹר הַחַיִּים׃ ",
         "transliteration": "ki hitsaleta nafeshi mimavet halo ragelay mideji lehitehaleje lifeney Elohim beoor hajaim ",
-        "spanish": "..."
+        "spanish": "Porque has librado mi vida de la muerte, Y mis pies de caída, Para que ande delante de Dios En la luz de los que viven."
       }
     ]
   },
@@ -5719,73 +5719,73 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ אַל תַּשְׁחֵת לְדָוִד מִכְתָּם בְּבׇרְחוֹ מִפְּנֵי שָׁאוּל בַּמְּעָרָה׃",
         "transliteration": "lamenatseja altashejet ledavid mijetam bevrejoo mipeneyshaul bame'arah",
-        "spanish": "TEN Jésed de mí, oh Dios, ten Jésed de mí; Porque en ti ha confiado mi alma, Y en la sombra de tus alas me ampararé, Hasta que pasen los quebrantos."
+        "spanish": "Al Músico principal; sobre Al-tásjet. Mictam de David, cuando huía de delante de Saúl en la cueva."
       },
       {
         "verse": 2,
         "hebrew": "חׇנֵּנִי אֱלֹהִים חׇנֵּנִי כִּי בְךָ חָסָיָה נַפְשִׁי וּבְצֵל כְּנָפֶיךָ אֶחְסֶה עַד יַעֲבֹר הַוּוֹת׃",
         "transliteration": "jneni Elohim jneni ki veja jasayah nafeshi uvetselkenafeyja ejeseh 'ad ya'avur hauoot",
-        "spanish": "Clamaré al El Elyón, Al Dios que me favorece."
+        "spanish": "TEN Jésed de mí, oh Dios, ten Jésed de mí; Porque en ti ha confiado mi alma, Y en la sombra de tus alas me ampararé, Hasta que pasen los quebrantos."
       },
       {
         "verse": 3,
         "hebrew": "אֶקְרָא לֵאלֹהִים עֶלְיוֹן לָאֵל גֹּמֵר עָלָי׃",
         "transliteration": "ekera lelohim 'eleyoon lael gomer 'alay",
-        "spanish": "El enviará desde los cielos, y me salvará De la infamia del que me apura; (Sélah) Dios enviará Su Jésed y su verdad."
+        "spanish": "Clamaré al El Elyón, Al Dios que me favorece."
       },
       {
         "verse": 4,
         "hebrew": "יִשְׁלַח מִשָּׁמַיִם וְיוֹשִׁיעֵנִי חֵרֵף שֹׁאֲפִי סֶלָה יִשְׁלַח אֱלֹהִים חַסְדּוֹ וַאֲמִתּוֹ׃",
         "transliteration": "ishelaj mishamaim veyooshi'eni jeref shoafi selah ishelaj Elohim jasedoo vaamitoo",
-        "spanish": "Mi vida está entre leones; Estoy echado entre hijos de hombres encendidos: Sus dientes son lanzas y saetas, Y su lengua cuchillo agudo."
+        "spanish": "El enviará desde los cielos, y me salvará De la infamia del que me apura; (Sélah) Dios enviará Su Jésed y su verdad."
       },
       {
         "verse": 5,
         "hebrew": "נַפְשִׁי בְּתוֹךְ לְבָאִם אֶשְׁכְּבָה לֹהֲטִים בְּנֵי אָדָם שִׁנֵּיהֶם חֲנִית וְחִצִּים וּלְשׁוֹנָם חֶרֶב חַדָּה׃",
         "transliteration": "nafeshi betooje levaim eshekevah lohatim beneyadam shineyhem janit vejitsim uleshoonam jerev jadah",
-        "spanish": "Ensálzate sobre los cielos, oh Dios; Sobre toda la tierra tu gloria."
+        "spanish": "Mi vida está entre leones; Estoy echado entre hijos de hombres encendidos: Sus dientes son lanzas y saetas, Y su lengua cuchillo agudo."
       },
       {
         "verse": 6,
         "hebrew": "רוּמָה עַל הַשָּׁמַיִם אֱלֹהִים עַל כׇּל הָאָרֶץ כְּבוֹדֶךָ׃",
         "transliteration": "rumah 'alhashamaim Elohim 'al klhaarets kevuodeja",
-        "spanish": "Red han armado á mis pasos; Hase abatido mi alma: Hoyo han cavado delante de mí; En medio de él han caído. (Sélah)"
+        "spanish": "Ensálzate sobre los cielos, oh Dios; Sobre toda la tierra tu gloria."
       },
       {
         "verse": 7,
         "hebrew": "רֶשֶׁת הֵכִינוּ לִפְעָמַי כָּפַף נַפְשִׁי כָּרוּ לְפָנַי שִׁיחָה נָפְלוּ בְתוֹכָהּ סֶלָה׃",
         "transliteration": "reshet hejinu life'amay kafaf nafeshi karu lefanay shijah nafelu vetoojah selah",
-        "spanish": "Pronto está mi corazón, oh Dios, mi corazón está dispuesto: Cantaré, y cantaré mizmór."
+        "spanish": "Red han armado á mis pasos; Hase abatido mi alma: Hoyo han cavado delante de mí; En medio de él han caído. (Sélah)"
       },
       {
         "verse": 8,
         "hebrew": "נָכוֹן לִבִּי אֱלֹהִים נָכוֹן לִבִּי אָשִׁירָה וַאֲזַמֵּרָה׃",
         "transliteration": "najoon libi Elohim najoon libi ashirah vaazamerah",
-        "spanish": "Despierta, oh gloria mía; despierta, salterio y arpa: Levantaréme de mañana."
+        "spanish": "Pronto está mi corazón, oh Dios, mi corazón está dispuesto: Cantaré, y cantaré mizmór."
       },
       {
         "verse": 9,
         "hebrew": "עוּרָה כְבוֹדִי עוּרָה הַנֵּבֶל וְכִנּוֹר אָעִירָה שָּׁחַר׃",
         "transliteration": "'urah jevuodi 'urah hanevel vejinoor a'irah shajar",
-        "spanish": "Alabarte he en los pueblos, oh Señor; Cantaré de ti en las naciones."
+        "spanish": "Despierta, oh gloria mía; despierta, salterio y arpa: Levantaréme de mañana."
       },
       {
         "verse": 10,
         "hebrew": "אוֹדְךָ בָעַמִּים אֲדֹנָי אֲזַמֶּרְךָ בַּלְאֻמִּים׃",
         "transliteration": "oodeja va'amim adonay azamereja baleumim",
-        "spanish": "Porque grande es hasta los cielos Tu Jésed, Y hasta las nubes tu verdad."
+        "spanish": "Alabarte he en los pueblos, oh Señor; Cantaré de ti en las naciones."
       },
       {
         "verse": 11,
         "hebrew": "כִּי גָדֹל עַד שָׁמַיִם חַסְדֶּךָ וְעַד שְׁחָקִים אֲמִתֶּךָ׃",
         "transliteration": "kigadol 'adshamaim jasedeja ve'adshejakim amiteja",
-        "spanish": "Ensálzate sobre los cielos, oh Dios; Sobre toda la tierra tu gloria."
+        "spanish": "Porque grande es hasta los cielos Tu Jésed, Y hasta las nubes tu verdad."
       },
       {
         "verse": 12,
         "hebrew": "רוּמָה עַל שָׁמַיִם אֱלֹהִים עַל כׇּל הָאָרֶץ כְּבוֹדֶךָ׃ ",
         "transliteration": "rumah 'alshamaim Elohim 'al klhaarets kevuodeja ",
-        "spanish": "..."
+        "spanish": "Ensálzate sobre los cielos, oh Dios; Sobre toda la tierra tu gloria."
       }
     ]
   },
@@ -5800,73 +5800,73 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ אַל תַּשְׁחֵת לְדָוִד מִכְתָּם׃",
         "transliteration": "lamenatseja altashejet ledavid mijetam",
-        "spanish": "OH congregación, ¿pronunciáis en verdad justicia? ¿Juzgáis rectamente, hijos de los hombres?"
+        "spanish": "Al Músico principal; sobre Al-tásjet. Mictam de David."
       },
       {
         "verse": 2,
         "hebrew": "הַאֻמְנָם אֵלֶם צֶדֶק תְּדַבֵּרוּן מֵישָׁרִים תִּשְׁפְּטוּ בְּנֵי אָדָם׃",
         "transliteration": "haumenam elem tsedek tedaberun meysharim tishepetu beney adam",
-        "spanish": "Antes con el corazón obráis iniquidades: Hacéis pesar la violencia de vuestras manos en la tierra."
+        "spanish": "OH congregación, ¿pronunciáis en verdad justicia? ¿Juzgáis rectamente, hijos de los hombres?"
       },
       {
         "verse": 3,
         "hebrew": "אַף בְּלֵב עוֹלֹת תִּפְעָלוּן בָּאָרֶץ חֲמַס יְדֵיכֶם תְּפַלֵּסוּן׃",
         "transliteration": "afbelev 'oolot tife'alun baarets jamas yedeyjem tefalesun",
-        "spanish": "Enajenáronse los impíos desde la matriz; Descarriáronse desde el vientre, hablando mentira."
+        "spanish": "Antes con el corazón obráis iniquidades: Hacéis pesar la violencia de vuestras manos en la tierra."
       },
       {
         "verse": 4,
         "hebrew": "זֹרוּ רְשָׁעִים מֵרָחֶם תָּעוּ מִבֶּטֶן דֹּבְרֵי כָזָב׃",
         "transliteration": "zoru resha'im merajem ta'u mibeten doverey jazav",
-        "spanish": "Veneno tienen semejante al veneno de la serpiente: Son como áspide sordo que cierra su oído;"
+        "spanish": "Enajenáronse los impíos desde la matriz; Descarriáronse desde el vientre, hablando mentira."
       },
       {
         "verse": 5,
         "hebrew": "חֲמַת לָמוֹ כִּדְמוּת חֲמַת נָחָשׁ כְּמוֹ פֶתֶן חֵרֵשׁ יַאְטֵם אׇזְנוֹ׃",
         "transliteration": "jamatlamoo kidemut jamatnajash kemoofeten jeresh yaetem zenoo",
-        "spanish": "Que no oye la voz de los que encantan, Por más hábil que el encantador sea."
+        "spanish": "Veneno tienen semejante al veneno de la serpiente: Son como áspide sordo que cierra su oído;"
       },
       {
         "verse": 6,
         "hebrew": "אֲשֶׁר לֹא יִשְׁמַע לְקוֹל מְלַחֲשִׁים חוֹבֵר חֲבָרִים מְחֻכָּם׃",
         "transliteration": "asher loishema' lekool melajashim joover javarim mejukam",
-        "spanish": "Oh Dios, quiebra sus dientes en sus bocas: Quiebra, oh YHVH, las muelas de los leoncillos."
+        "spanish": "Que no oye la voz de los que encantan, Por más hábil que el encantador sea."
       },
       {
         "verse": 7,
         "hebrew": "אֱלֹהִים הֲרׇס שִׁנֵּימוֹ בְּפִימוֹ מַלְתְּעוֹת כְּפִירִים נְתֹץ יְהֹוָה׃",
         "transliteration": "Elohim harsshineymoo befimoo malete'oot kefirim netots Adonai",
-        "spanish": "Corránse como aguas que se van de suyo: En entesando sus saetas, luego sean hechas pedazos."
+        "spanish": "Oh Dios, quiebra sus dientes en sus bocas: Quiebra, oh YHVH, las muelas de los leoncillos."
       },
       {
         "verse": 8,
         "hebrew": "יִמָּאֲסוּ כְמוֹ מַיִם יִתְהַלְּכוּ לָמוֹ יִדְרֹךְ חִצָּו כְּמוֹ יִתְמֹלָלוּ׃",
         "transliteration": "imaasu jemoomaim itehalejvlamoo ideroje jitsav kemoo itemolalv",
-        "spanish": "Pasen ellos como el caracol que se deslíe: Como el abortivo de mujer, no vean el sol."
+        "spanish": "Corránse como aguas que se van de suyo: En entesando sus saetas, luego sean hechas pedazos."
       },
       {
         "verse": 9,
         "hebrew": "כְּמוֹ שַׁבְּלוּל תֶּמֶס יַהֲלֹךְ נֵפֶל אֵשֶׁת בַּל חָזוּ שָׁמֶשׁ׃",
         "transliteration": "kemoo shabelul temes yahaloje nefel eshet baljazu shamesh",
-        "spanish": "Antes que vuestras ollas sientan las espinas, Así vivos, así airados, los arrebatará él con tempestad."
+        "spanish": "Pasen ellos como el caracol que se deslíe: Como el abortivo de mujer, no vean el sol."
       },
       {
         "verse": 10,
         "hebrew": "בְּטֶרֶם יָבִינוּ סִּירֹתֵכֶם אָטָד כְּמוֹ חַי כְּמוֹ חָרוֹן יִשְׂעָרֶנּוּ׃",
         "transliteration": "beterem yavinu sirotejem atad kemoojay kemoojaroon ise'arenv",
-        "spanish": "Alegraráse el justo cuando viere la venganza: Sus pies lavará en la sangre del impío."
+        "spanish": "Antes que vuestras ollas sientan las espinas, Así vivos, así airados, los arrebatará él con tempestad."
       },
       {
         "verse": 11,
         "hebrew": "יִשְׂמַח צַדִּיק כִּי חָזָה נָקָם פְּעָמָיו יִרְחַץ בְּדַם הָרָשָׁע׃",
         "transliteration": "isemaj tsadik kijazah nakam pe'amayv irejats bedam harasha'",
-        "spanish": "Entonces dirá el hombre: Ciertamente hay fruto para el justo; Ciertamente hay Dios que juzga en la tierra."
+        "spanish": "Alegraráse el justo cuando viere la venganza: Sus pies lavará en la sangre del impío."
       },
       {
         "verse": 12,
         "hebrew": "וְיֹאמַר אָדָם אַךְ פְּרִי לַצַּדִּיק אַךְ יֵשׁ אֱלֹהִים שֹׁפְטִים בָּאָרֶץ׃ ",
         "transliteration": "veyomar adam ajeperi latsadik aje yeshElohim shofetim baarets ",
-        "spanish": "..."
+        "spanish": "Entonces dirá el hombre: Ciertamente hay fruto para el justo; Ciertamente hay Dios que juzga en la tierra."
       }
     ]
   },
@@ -5882,109 +5882,109 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ אַל תַּשְׁחֵת לְדָוִד מִכְתָּם בִּשְׁלֹחַ שָׁאוּל וַיִּשְׁמְרוּ אֶת הַבַּיִת לַהֲמִיתוֹ׃",
         "transliteration": "lamenatseja altashejet ledavid mijetam bisheloja shaul vaishemeru ethabait lahamitoo",
-        "spanish": "LIBRAME de mis enemigos, oh Dios mío: Ponme en salvo de los que contra mí se levantan."
+        "spanish": "Al Músico principal; sobre Al-tásjet. Mictam de David, cuando envió Saúl y guardaron la casa para matarlo."
       },
       {
         "verse": 2,
         "hebrew": "הַצִּילֵנִי מֵאֹיְבַי אֱלֹהָי מִמִּתְקוֹמְמַי תְּשַׂגְּבֵנִי׃",
         "transliteration": "hatsileni meoyevay elohay mimitekoomemay tesageveni",
-        "spanish": "Líbrame de los que obran iniquidad, Y sálvame de hombres sanguinarios."
+        "spanish": "LIBRAME de mis enemigos, oh Dios mío: Ponme en salvo de los que contra mí se levantan."
       },
       {
         "verse": 3,
         "hebrew": "הַצִּילֵנִי מִפֹּעֲלֵי אָוֶן וּמֵאַנְשֵׁי דָמִים הוֹשִׁיעֵנִי׃",
         "transliteration": "hatsileni mipo'aley aven umeaneshey damim hooshi'eni",
-        "spanish": "Porque he aquí están acechando mi vida: Hanse juntado contra mí fuertes, No por falta mía, ni pecado mío, oh YHVH."
+        "spanish": "Líbrame de los que obran iniquidad, Y sálvame de hombres sanguinarios."
       },
       {
         "verse": 4,
         "hebrew": "כִּי הִנֵּה אָרְבוּ לְנַפְשִׁי יָגוּרוּ עָלַי עַזִּים לֹא פִשְׁעִי וְלֹא חַטָּאתִי יְהֹוָה׃",
         "transliteration": "ki hineh arevu lenafeshi yaguru 'alay 'azim lofishe'i velojatati Adonai",
-        "spanish": "Sin delito mío corren y se aperciben: Despierta para venir a mí encuentro, y mira."
+        "spanish": "Porque he aquí están acechando mi vida: Hanse juntado contra mí fuertes, No por falta mía, ni pecado mío, oh YHVH."
       },
       {
         "verse": 5,
         "hebrew": "בְּלִי עָוֺן יְרֻצוּן וְיִכּוֹנָנוּ עוּרָה לִקְרָאתִי וּרְאֵה׃",
         "transliteration": "beli'avn yerutsun veikoonanu 'urah likerati ureeh",
-        "spanish": "Y tú, YHVH Dios de los ejércitos, Dios de Israel, Despierta para visitar todas las gentes: No hayas Jésed de todos los que se rebelan con iniquidad. (Sélah)"
+        "spanish": "Sin delito mío corren y se aperciben: Despierta para venir a mí encuentro, y mira."
       },
       {
         "verse": 6,
         "hebrew": "וְאַתָּה יְהֹוָה אֱלֹהִים צְבָאוֹת אֱלֹהֵי יִשְׂרָאֵל הָקִיצָה לִפְקֹד כׇּל הַגּוֹיִם אַל תָּחֹן כׇּל בֹּגְדֵי אָוֶן סֶלָה׃",
         "transliteration": "veatah AdonaiElohim tsevaoot elohey iserael hakitsah lifekod klhagooim altajon klbogedey aven selah",
-        "spanish": "Volveránse á la tarde, ladrarán como perros, Y rodearán la ciudad."
+        "spanish": "Y tú, YHVH Dios de los ejércitos, Dios de Israel, Despierta para visitar todas las gentes: No hayas Jésed de todos los que se rebelan con iniquidad. (Sélah)"
       },
       {
         "verse": 7,
         "hebrew": "יָשׁוּבוּ לָעֶרֶב יֶהֱמוּ כַכָּלֶב וִיסוֹבְבוּ עִיר׃",
         "transliteration": "yashuvu la'erev yehemu jakalev visoovevu 'ir",
-        "spanish": "He aquí proferirán con su boca; Cuchillos están en sus labios, Porque dicen: ¿Quién oye?"
+        "spanish": "Volveránse á la tarde, ladrarán como perros, Y rodearán la ciudad."
       },
       {
         "verse": 8,
         "hebrew": "הִנֵּה יַבִּיעוּן בְּפִיהֶם חֲרָבוֹת בְּשִׂפְתוֹתֵיהֶם כִּי מִי שֹׁמֵעַ׃",
         "transliteration": "hineh yabi'un befihem jaravuot besifetooteyhem kimi shome'a",
-        "spanish": "Mas tú, YHVH, te reirás de ellos, Te burlarás de todas las gentes."
+        "spanish": "He aquí proferirán con su boca; Cuchillos están en sus labios, Porque dicen: ¿Quién oye?"
       },
       {
         "verse": 9,
         "hebrew": "וְאַתָּה יְהֹוָה תִּשְׂחַק לָמוֹ תִּלְעַג לְכׇל גּוֹיִם׃",
         "transliteration": "veatah Adonai tisejaklamoo tile'ag lejlgooim",
-        "spanish": "De su fuerza esperaré yo en ti: Porque Dios es mi defensa."
+        "spanish": "Mas tú, YHVH, te reirás de ellos, Te burlarás de todas las gentes."
       },
       {
         "verse": 10,
         "hebrew": "עֻזּוֹ אֵלֶיךָ אֶשְׁמֹרָה כִּי אֱלֹהִים מִשְׂגַּבִּי׃",
         "transliteration": "'uzoo eleyja eshemorah kiElohim misegabi",
-        "spanish": "El Dios de Mi Jésed me prevendrá: Dios me hará ver en mis enemigos mi deseo."
+        "spanish": "De su fuerza esperaré yo en ti: Porque Dios es mi defensa."
       },
       {
         "verse": 11,
         "hebrew": "אֱלֹהֵי (חסדו) [חַסְדִּי] יְקַדְּמֵנִי אֱלֹהִים יַרְאֵנִי בְשֹׁרְרָי׃",
         "transliteration": "elohey (jsdv) [jasedi] yekademeni Elohim yareeni veshoreray",
-        "spanish": "No los matarás, porque mi pueblo no se olvide: Hazlos vagar con tu fortaleza, y abátelos. Oh YHVH, escudo nuestro,"
+        "spanish": "El Dios de Mi Jésed me prevendrá: Dios me hará ver en mis enemigos mi deseo."
       },
       {
         "verse": 12,
         "hebrew": "אַל תַּהַרְגֵם פֶּן יִשְׁכְּחוּ עַמִּי הֲנִיעֵמוֹ בְחֵילְךָ וְהוֹרִידֵמוֹ מָגִנֵּנוּ אֲדֹנָי׃",
         "transliteration": "altaharegem penishekeju 'ami hani'emoo vejeyleja vehooridemoo maginenu adonay",
-        "spanish": "Por el pecado de su boca, por la palabra de sus labios; Y sean presos por su soberbia, Y por la maldición y mentira que profieren."
+        "spanish": "No los matarás, porque mi pueblo no se olvide: Hazlos vagar con tu fortaleza, y abátelos. Oh YHVH, escudo nuestro,"
       },
       {
         "verse": 13,
         "hebrew": "חַטַּאת פִּימוֹ דְּבַר שְׂפָתֵימוֹ וְיִלָּכְדוּ בִגְאוֹנָם וּמֵאָלָה וּמִכַּחַשׁ יְסַפֵּרוּ׃",
         "transliteration": "jatatpimoo devarsefateymoo veilajedu vigeoonam umealah umikajash yesaperv",
-        "spanish": "Acábalos con furor, acábalos, y no sean: Y sepan que Dios domina en Jacob Hasta los fines de la tierra. (Sélah)."
+        "spanish": "Por el pecado de su boca, por la palabra de sus labios; Y sean presos por su soberbia, Y por la maldición y mentira que profieren."
       },
       {
         "verse": 14,
         "hebrew": "כַּלֵּה בְחֵמָה כַּלֵּה וְאֵינֵמוֹ וְיֵדְעוּ כִּי אֱלֹהִים מֹשֵׁל בְּיַעֲקֹב לְאַפְסֵי הָאָרֶץ סֶלָה׃",
         "transliteration": "kaleh vejemah kaleh veeynemoo veyede'u kiElohim moshel beya'akov leafesey haarets selah",
-        "spanish": "Vuelvan pues á la tarde, y ladren como perros, Y rodeen la ciudad."
+        "spanish": "Acábalos con furor, acábalos, y no sean: Y sepan que Dios domina en Jacob Hasta los fines de la tierra. (Sélah)."
       },
       {
         "verse": 15,
         "hebrew": "וְיָשֻׁבוּ לָעֶרֶב יֶהֱמוּ כַכָּלֶב וִיסוֹבְבוּ עִיר׃",
         "transliteration": "veyashuvu la'erev yehemu jakalev visoovevu 'ir",
-        "spanish": "Anden ellos errantes para hallar qué comer: Y si no se saciaren, murmuren."
+        "spanish": "Vuelvan pues á la tarde, y ladren como perros, Y rodeen la ciudad."
       },
       {
         "verse": 16,
         "hebrew": "הֵמָּה (ינועון) [יְנִיעוּן] לֶאֱכֹל אִם לֹא יִשְׂבְּעוּ וַיָּלִינוּ׃",
         "transliteration": "hemah (ynv'vn) [yeni'un] leejol imlo isebe'u vayalinv",
-        "spanish": "Yo empero cantaré tu fortaleza, Y loaré de mañana Tu Jésed: Porque has sido mi amparo Y refugio en el día de mi angustia."
+        "spanish": "Anden ellos errantes para hallar qué comer: Y si no se saciaren, murmuren."
       },
       {
         "verse": 17,
         "hebrew": "וַאֲנִי אָשִׁיר עֻזֶּךָ וַאֲרַנֵּן לַבֹּקֶר חַסְדֶּךָ כִּי הָיִיתָ מִשְׂגָּב לִי וּמָנוֹס בְּיוֹם צַר לִי׃",
         "transliteration": "vaani ashir 'uzeja vaaranen laboker jasedeja kihaita misegav li umanoos beyoom tsarli",
-        "spanish": "Fortaleza mía, a ti cantaré; Porque eres Dios de mi amparo, Dios de Mi Jésed."
+        "spanish": "Yo empero cantaré tu fortaleza, Y loaré de mañana Tu Jésed: Porque has sido mi amparo Y refugio en el día de mi angustia."
       },
       {
         "verse": 18,
         "hebrew": "עֻזִּי אֵלֶיךָ אֲזַמֵּרָה כִּי אֱלֹהִים מִשְׂגַּבִּי אֱלֹהֵי חַסְדִּי׃ ",
         "transliteration": "'uzi eleyja azamerah kiElohim misegabi elohey jasedi ",
-        "spanish": "..."
+        "spanish": "Fortaleza mía, a ti cantaré; Porque eres Dios de mi amparo, Dios de Mi Jésed."
       }
     ]
   },
@@ -5999,85 +5999,85 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ עַל שׁוּשַׁן עֵדוּת מִכְתָּם לְדָוִד לְלַמֵּד׃",
         "transliteration": "lamenatseja 'alshushan 'edut mijetam ledavid lelamed",
-        "spanish": "OH Dios, tú nos has desechado, nos disipaste; Te has airado: vuélvete á nosotros."
+        "spanish": "Al Músico principal; sobre Susán-edut. Mictam de David, para enseñar."
       },
       {
         "verse": 2,
         "hebrew": "בְּהַצּוֹתוֹ אֶת אֲרַם נַהֲרַיִם וְאֶת אֲרַם צוֹבָה וַיָּשׇׁב יוֹאָב וַיַּךְ אֶת אֱדוֹם בְּגֵיא מֶלַח שְׁנֵים עָשָׂר אָלֶף׃",
         "transliteration": "behatsootoo etaram naharaim veetaram tsoovah vayashv yooav vayaje etedoom begeymelaj sheneym 'asar alef",
-        "spanish": "Hiciste temblar la tierra, abrístela: Sana sus quiebras, porque titubea."
+        "spanish": "Cuando peleó contra Aram-Naharaim y contra Aram-Zoba, y volvió Joab y derrotó a doce mil de Edom en el valle de la Sal."
       },
       {
         "verse": 3,
         "hebrew": "אֱלֹהִים זְנַחְתָּנוּ פְרַצְתָּנוּ אָנַפְתָּ תְּשׁוֹבֵב לָנוּ׃",
         "transliteration": "Elohim zenajetanu feratsetanu anafeta teshoovev lanv",
-        "spanish": "Has hecho ver á tu pueblo duras cosas: Hicístenos beber el vino de agitación."
+        "spanish": "OH Dios, tú nos has desechado, nos disipaste; Te has airado: vuélvete á nosotros."
       },
       {
         "verse": 4,
         "hebrew": "הִרְעַשְׁתָּה אֶרֶץ פְּצַמְתָּהּ רְפָה שְׁבָרֶיהָ כִי מָטָה׃",
         "transliteration": "hire'ashetah erets petsametah refah shevareyha jimatah",
-        "spanish": "Has dado a los que te temen bandera Que alcen por la verdad. (Sélah)"
+        "spanish": "Hiciste temblar la tierra, abrístela: Sana sus quiebras, porque titubea."
       },
       {
         "verse": 5,
         "hebrew": "הִרְאִיתָ עַמְּךָ קָשָׁה הִשְׁקִיתָנוּ יַיִן תַּרְעֵלָה׃",
         "transliteration": "hireita 'ameja kashah hishekitanu yain tare'elah",
-        "spanish": "Para que se libren tus amados, Salva con tu diestra, y óyeme."
+        "spanish": "Has hecho ver á tu pueblo duras cosas: Hicístenos beber el vino de agitación."
       },
       {
         "verse": 6,
         "hebrew": "נָתַתָּה לִּירֵאֶיךָ נֵּס לְהִתְנוֹסֵס מִפְּנֵי קֹשֶׁט סֶלָה׃",
         "transliteration": "natatah lireeyja nes lehitenooses mipeney koshet selah",
-        "spanish": "Dios pronunció por su santuario; yo me alegraré; Partiré á Sichêm, y mediré el valle de Succoth."
+        "spanish": "Has dado a los que te temen bandera Que alcen por la verdad. (Sélah)"
       },
       {
         "verse": 7,
         "hebrew": "לְמַעַן יֵחָלְצוּן יְדִידֶיךָ הוֹשִׁיעָה יְמִינְךָ (ועננו) [וַעֲנֵנִי]׃",
         "transliteration": "lema'an yejaletsun yedideyja hooshi'ah yemineja (v'nnv) [va'aneni]",
-        "spanish": "Mío es Galaad, y mío es Manasés; Y Ephraim es la fortaleza de mi cabeza; Judá, mi legislador;"
+        "spanish": "Para que se libren tus amados, Salva con tu diestra, y óyeme."
       },
       {
         "verse": 8,
         "hebrew": "אֱלֹהִים דִּבֶּר בְּקׇדְשׁוֹ אֶעְלֹזָה אֲחַלְּקָה שְׁכֶם וְעֵמֶק סֻכּוֹת אֲמַדֵּד׃",
         "transliteration": "Elohim diber bekdeshoo e'elozah ajalekah shejem ve'emek sukoot amaded",
-        "spanish": "Moab, la vasija de mi lavatorio; Sobre Edom echaré mi zapato: Haz júbilo sobre mí, oh Palestina."
+        "spanish": "Dios pronunció por su santuario; yo me alegraré; Partiré á Sichêm, y mediré el valle de Succoth."
       },
       {
         "verse": 9,
         "hebrew": "לִי גִלְעָד וְלִי מְנַשֶּׁה וְאֶפְרַיִם מָעוֹז רֹאשִׁי יְהוּדָה מְחֹקְקִי׃",
         "transliteration": "li gile'ad veli menasheh veeferaim ma'ooz roshi yehudah mejokeki",
-        "spanish": "¿Quién me llevará á la ciudad fortalecida? ¿Quién me llevará hasta Idumea?"
+        "spanish": "Mío es Galaad, y mío es Manasés; Y Ephraim es la fortaleza de mi cabeza; Judá, mi legislador;"
       },
       {
         "verse": 10,
         "hebrew": "מוֹאָב סִיר רַחְצִי עַל אֱדוֹם אַשְׁלִיךְ נַעֲלִי עָלַי פְּלֶשֶׁת הִתְרוֹעָעִי׃",
         "transliteration": "mooav sir rajetsi 'aledoom ashelije na'ali 'alay peleshet hiteroo'a'i",
-        "spanish": "Ciertamente, tú, oh Dios, que nos habías desechado; Y no salías, oh Dios, con nuestros ejércitos."
+        "spanish": "Moab, la vasija de mi lavatorio; Sobre Edom echaré mi zapato: Haz júbilo sobre mí, oh Palestina."
       },
       {
         "verse": 11,
         "hebrew": "מִי יֹבִלֵנִי עִיר מָצוֹר מִי נָחַנִי עַד אֱדוֹם׃",
         "transliteration": "mi yovileni 'ir matsoor mi najani 'adedoom",
-        "spanish": "Danos socorro contra el enemigo, Que vana es la salud de los hombres."
+        "spanish": "¿Quién me llevará á la ciudad fortalecida? ¿Quién me llevará hasta Idumea?"
       },
       {
         "verse": 12,
         "hebrew": "הֲלֹא אַתָּה אֱלֹהִים זְנַחְתָּנוּ וְלֹא תֵצֵא אֱלֹהִים בְּצִבְאוֹתֵינוּ׃",
         "transliteration": "haloatah Elohim zenajetanu velotetse Elohim betsiveooteynv",
-        "spanish": "En Dios haremos proezas; Y él hollará nuestros enemigos."
+        "spanish": "Ciertamente, tú, oh Dios, que nos habías desechado; Y no salías, oh Dios, con nuestros ejércitos."
       },
       {
         "verse": 13,
         "hebrew": "הָבָה לָּנוּ עֶזְרָת מִצָּר וְשָׁוְא תְּשׁוּעַת אָדָם׃",
         "transliteration": "havahlanu 'ezerat mitsar veshave teshu'at adam",
-        "spanish": "..."
+        "spanish": "Danos socorro contra el enemigo, Que vana es la salud de los hombres."
       },
       {
         "verse": 14,
         "hebrew": "בֵּאלֹהִים נַעֲשֶׂה חָיִל וְהוּא יָבוּס צָרֵינוּ׃ ",
         "transliteration": "belohim na'asehjail vehu yavus tsareynv ",
-        "spanish": "..."
+        "spanish": "En Dios haremos proezas; Y él hollará nuestros enemigos."
       }
     ]
   },
@@ -6092,55 +6092,55 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ עַל נְגִינַת לְדָוִד׃",
         "transliteration": "lamenatseja 'alneginat ledavid",
-        "spanish": "OYE, oh Dios, mi clamor; A mi oración atiende."
+        "spanish": "Al Músico principal; sobre Neginat. Salmo de David."
       },
       {
         "verse": 2,
         "hebrew": "שִׁמְעָה אֱלֹהִים רִנָּתִי הַקְשִׁיבָה תְּפִלָּתִי׃",
         "transliteration": "shime'ah Elohim rinati hakeshivah tefilati",
-        "spanish": "Desde el cabo de la tierra clamaré a ti, cuando mi corazón desmayare: A la peña más alta que yo me conduzcas."
+        "spanish": "OYE, oh Dios, mi clamor; A mi oración atiende."
       },
       {
         "verse": 3,
         "hebrew": "מִקְצֵה הָאָרֶץ אֵלֶיךָ אֶקְרָא בַּעֲטֹף לִבִּי בְּצוּר יָרוּם מִמֶּנִּי תַנְחֵנִי׃",
         "transliteration": "miketseh haarets eleyja ekera ba'atof libi betsuryarum mimeni tanejeni",
-        "spanish": "Porque tú has sido mi refugio, Y torre de fortaleza delante del enemigo."
+        "spanish": "Desde el cabo de la tierra clamaré a ti, cuando mi corazón desmayare: A la peña más alta que yo me conduzcas."
       },
       {
         "verse": 4,
         "hebrew": "כִּי הָיִיתָ מַחְסֶה לִי מִגְדַּל עֹז מִפְּנֵי אוֹיֵב׃",
         "transliteration": "kihaita majeseh li migedal'oz mipeney ooyev",
-        "spanish": "Yo habitaré en tu tabernáculo para siempre: Estaré seguro bajo la cubierta de tus alas."
+        "spanish": "Porque tú has sido mi refugio, Y torre de fortaleza delante del enemigo."
       },
       {
         "verse": 5,
         "hebrew": "אָגוּרָה בְאׇהׇלְךָ עוֹלָמִים אֶחֱסֶה בְסֵתֶר כְּנָפֶיךָ סֶּלָה׃",
         "transliteration": "agurah vehleja 'oolamim ejeseh veseter kenafeyja selah",
-        "spanish": "Porque tú, oh Dios, has oído mis votos, Has dado heredad a los que temen tu nombre."
+        "spanish": "Yo habitaré en tu tabernáculo para siempre: Estaré seguro bajo la cubierta de tus alas."
       },
       {
         "verse": 6,
         "hebrew": "כִּי אַתָּה אֱלֹהִים שָׁמַעְתָּ לִנְדָרָי נָתַתָּ יְרֻשַּׁת יִרְאֵי שְׁמֶךָ׃",
         "transliteration": "kiatah Elohim shama'eta linedaray natata yerushat ireey shemeja",
-        "spanish": "Días sobre días añadirás al rey: Sus años serán como generación y generación."
+        "spanish": "Porque tú, oh Dios, has oído mis votos, Has dado heredad a los que temen tu nombre."
       },
       {
         "verse": 7,
         "hebrew": "יָמִים עַל יְמֵי מֶלֶךְ תּוֹסִיף שְׁנוֹתָיו כְּמוֹ דֹר וָדֹר׃",
         "transliteration": "yamim 'alyemeymeleje toosif shenootayv kemoodor vador",
-        "spanish": "Estará para siempre delante de Dios: Jésed y verdad prepara que lo conserven."
+        "spanish": "Días sobre días añadirás al rey: Sus años serán como generación y generación."
       },
       {
         "verse": 8,
         "hebrew": "יֵשֵׁב עוֹלָם לִפְנֵי אֱלֹהִים חֶסֶד וֶאֱמֶת מַן יִנְצְרֻהוּ׃",
         "transliteration": "yeshev 'oolam lifeney Elohim jesed veemet man inetseruhv",
-        "spanish": "Así cantaré tu nombre para siempre, Pagando mis votos cada día."
+        "spanish": "Estará para siempre delante de Dios: Jésed y verdad prepara que lo conserven."
       },
       {
         "verse": 9,
         "hebrew": "כֵּן אֲזַמְּרָה שִׁמְךָ לָעַד לְשַׁלְּמִי נְדָרַי יוֹם יוֹם׃ ",
         "transliteration": "ken azamerah shimeja la'ad leshalemi nedaray yoom yoom ",
-        "spanish": "..."
+        "spanish": "Así cantaré tu nombre para siempre, Pagando mis votos cada día."
       }
     ]
   },
@@ -6155,79 +6155,79 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ עַל יְדוּתוּן מִזְמוֹר לְדָוִד׃",
         "transliteration": "lamenatseja 'alyedutun mizemoor ledavid",
-        "spanish": "EN Dios solamente está callada mi alma: De él viene mi salud."
+        "spanish": "Al Músico principal; para Jedutún. Salmo de David."
       },
       {
         "verse": 2,
         "hebrew": "אַךְ אֶל אֱלֹהִים דּוּמִיָּה נַפְשִׁי מִמֶּנּוּ יְשׁוּעָתִי׃",
         "transliteration": "aje elElohim dumiah nafeshi mimenu yeshu'ati",
-        "spanish": "El solamente es mi fuerte, y mi salud; Es mi refugio, no resbalaré mucho."
+        "spanish": "EN Dios solamente está callada mi alma: De él viene mi salud."
       },
       {
         "verse": 3,
         "hebrew": "אַךְ הוּא צוּרִי וִישׁוּעָתִי מִשְׂגַּבִּי לֹא אֶמּוֹט רַבָּה׃",
         "transliteration": "ajehu tsuri vishu'ati misegabi loemoot rabah",
-        "spanish": "¿Hasta cuándo maquinaréis contra un hombre? Pereceréis todos vosotros, Caeréis como pared acostada, como cerca ruinosa."
+        "spanish": "El solamente es mi fuerte, y mi salud; Es mi refugio, no resbalaré mucho."
       },
       {
         "verse": 4,
         "hebrew": "עַד אָנָה תְּהוֹתְתוּ עַל אִישׁ תְּרָצְּחוּ כֻלְּכֶם כְּקִיר נָטוּי גָּדֵר הַדְּחוּיָה׃",
         "transliteration": "'adanah tehootetu 'alish teratseju julejem kekir natuy gader hadejuyah",
-        "spanish": "Solamente consultan de arrojarle de su grandeza; Aman la mentira, Con su boca bendicen, pero maldicen en sus entrañas. (Sélah)"
+        "spanish": "¿Hasta cuándo maquinaréis contra un hombre? Pereceréis todos vosotros, Caeréis como pared acostada, como cerca ruinosa."
       },
       {
         "verse": 5,
         "hebrew": "אַךְ מִשְּׂאֵתוֹ יָעֲצוּ לְהַדִּיחַ יִרְצוּ כָזָב בְּפִיו יְבָרֵכוּ וּבְקִרְבָּם יְקַלְלוּ סֶלָה׃",
         "transliteration": "aje miseetoo ya'atsu lehadija iretsu jazav befiv yevareju uvekirebam yekalelvselah",
-        "spanish": "Alma mía, en Dios solamente reposa; Porque de él es mi esperanza."
+        "spanish": "Solamente consultan de arrojarle de su grandeza; Aman la mentira, Con su boca bendicen, pero maldicen en sus entrañas. (Sélah)"
       },
       {
         "verse": 6,
         "hebrew": "אַךְ לֵאלֹהִים דּוֹמִּי נַפְשִׁי כִּי מִמֶּנּוּ תִּקְוָתִי׃",
         "transliteration": "aje lelohim doomi nafeshi kimimenu tikevati",
-        "spanish": "El solamente es mi fuerte y mi salud: Es mi refugio, no resbalaré."
+        "spanish": "Alma mía, en Dios solamente reposa; Porque de él es mi esperanza."
       },
       {
         "verse": 7,
         "hebrew": "אַךְ הוּא צוּרִי וִישׁוּעָתִי מִשְׂגַּבִּי לֹא אֶמּוֹט׃",
         "transliteration": "ajehu tsuri vishu'ati misegabi lo emoot",
-        "spanish": "En Dios está mi salvación y mi gloria: En Dios está la roca de mi fortaleza, y mi refugio."
+        "spanish": "El solamente es mi fuerte y mi salud: Es mi refugio, no resbalaré."
       },
       {
         "verse": 8,
         "hebrew": "עַל אֱלֹהִים יִשְׁעִי וּכְבוֹדִי צוּר עֻזִּי מַחְסִי בֵּאלֹהִים׃",
         "transliteration": "'alElohim ishe'i ujevuodi tsur'uzi majesi belohim",
-        "spanish": "Esperad en él en todo tiempo, oh pueblos; Derramad delante de él vuestro corazón: Dios es nuestro amparo. (Sélah)"
+        "spanish": "En Dios está mi salvación y mi gloria: En Dios está la roca de mi fortaleza, y mi refugio."
       },
       {
         "verse": 9,
         "hebrew": "בִּטְחוּ בוֹ בְכׇל עֵת עָם שִׁפְכוּ לְפָנָיו לְבַבְכֶם אֱלֹהִים מַחֲסֶה לָּנוּ סֶלָה׃",
         "transliteration": "bitejvvuo vejl'et 'am shifejvlefanayv levavejem Elohim majasehlanu selah",
-        "spanish": "Por cierto, vanidad son los hijos de los hombres, mentira los hijos de varón: Pesándolos a todos igualmente en la balanza, Serán menos que la vanidad."
+        "spanish": "Esperad en él en todo tiempo, oh pueblos; Derramad delante de él vuestro corazón: Dios es nuestro amparo. (Sélah)"
       },
       {
         "verse": 10,
         "hebrew": "אַךְ הֶבֶל בְּנֵי אָדָם כָּזָב בְּנֵי אִישׁ בְּמֹאזְנַיִם לַעֲלוֹת הֵמָּה מֵהֶבֶל יָחַד׃",
         "transliteration": "aje hevel beneyadam kazav beneish bemozenaim la'aloot hemah mehevel yajad",
-        "spanish": "No confiéis en la violencia, Ni en la rapiña; no os envanezcáis: Si se aumentare la hacienda, no pongáis el corazón en ella."
+        "spanish": "Por cierto, vanidad son los hijos de los hombres, mentira los hijos de varón: Pesándolos a todos igualmente en la balanza, Serán menos que la vanidad."
       },
       {
         "verse": 11,
         "hebrew": "אַל תִּבְטְחוּ בְעֹשֶׁק וּבְגָזֵל אַל תֶּהְבָּלוּ חַיִל כִּי יָנוּב אַל תָּשִׁיתוּ לֵב׃",
         "transliteration": "altiveteju ve'oshek uvegazel altehebalu jail kiyanuv altashitu lev",
-        "spanish": "Una vez habló Dios; Dos veces he oído esto: Que de Dios es la fortaleza."
+        "spanish": "No confiéis en la violencia, Ni en la rapiña; no os envanezcáis: Si se aumentare la hacienda, no pongáis el corazón en ella."
       },
       {
         "verse": 12,
         "hebrew": "אַחַת דִּבֶּר אֱלֹהִים שְׁתַּיִם זוּ שָׁמָעְתִּי כִּי עֹז לֵאלֹהִים׃",
         "transliteration": "ajat diber Elohim shetaimzu shama'eti ki 'oz lelohim",
-        "spanish": "Y de ti, oh Señor, es el Jésed: Porque tú pagas á cada uno conforme á su obra."
+        "spanish": "Una vez habló Dios; Dos veces he oído esto: Que de Dios es la fortaleza."
       },
       {
         "verse": 13,
         "hebrew": "וּלְךָ אֲדֹנָי חָסֶד כִּי אַתָּה תְשַׁלֵּם לְאִישׁ כְּמַעֲשֵׂהוּ׃ ",
         "transliteration": "ulejaadonay jased kiatah teshalem leish kema'asehv ",
-        "spanish": "..."
+        "spanish": "Y de ti, oh Señor, es el Jésed: Porque tú pagas á cada uno conforme á su obra."
       }
     ]
   },
@@ -6242,73 +6242,73 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "מִזְמוֹר לְדָוִד בִּהְיוֹתוֹ בְּמִדְבַּר יְהוּדָה׃",
         "transliteration": "mizemoor ledavid biheyootoo bemidebar yehudah",
-        "spanish": "DIOS, Dios mío eres tú: levantaréme a ti de mañana: Mi alma tiene sed de ti, mi carne te desea, En tierra de sequedad y transida sin aguas;"
+        "spanish": "Salmo de David, cuando estaba en el desierto de Judá."
       },
       {
         "verse": 2,
         "hebrew": "אֱלֹהִים אֵלִי אַתָּה אֲשַׁחֲרֶךָּ צָמְאָה לְךָ נַפְשִׁי כָּמַהּ לְךָ בְשָׂרִי בְּאֶרֶץ צִיָּה וְעָיֵף בְּלִי מָיִם׃",
         "transliteration": "Elohim eli atah ashajareka tsameah leja nafeshi kamah leja vesari beeretstsiah ve'ayef belimaim",
-        "spanish": "Para ver tu fortaleza y tu gloria, Así como te he mirado en el santuario."
+        "spanish": "DIOS, Dios mío eres tú: levantaréme a ti de mañana: Mi alma tiene sed de ti, mi carne te desea, En tierra de sequedad y transida sin aguas;"
       },
       {
         "verse": 3,
         "hebrew": "כֵּן בַּקֹּדֶשׁ חֲזִיתִךָ לִרְאוֹת עֻזְּךָ וּכְבוֹדֶךָ׃",
         "transliteration": "ken bakodesh jazitija lireoot 'uzeja ujevuodeja",
-        "spanish": "Porque mejor es Tu Jésed que la vida: Mis labios te alabarán."
+        "spanish": "Para ver tu fortaleza y tu gloria, Así como te he mirado en el santuario."
       },
       {
         "verse": 4,
         "hebrew": "כִּי טוֹב חַסְדְּךָ מֵחַיִּים שְׂפָתַי יְשַׁבְּחוּנְךָ׃",
         "transliteration": "kitoov jasedeja mejaim sefatay yeshabejuneja",
-        "spanish": "Así te bendeciré en mi vida: En tu nombre alzaré mis manos."
+        "spanish": "Porque mejor es Tu Jésed que la vida: Mis labios te alabarán."
       },
       {
         "verse": 5,
         "hebrew": "כֵּן אֲבָרֶכְךָ בְחַיָּי בְּשִׁמְךָ אֶשָּׂא כַפָּי׃",
         "transliteration": "ken avarejeja vejayay beshimeja esa japay",
-        "spanish": "Como de meollo y de grosura será saciada mi alma; Y con labios de júbilo te alabará mi boca,"
+        "spanish": "Así te bendeciré en mi vida: En tu nombre alzaré mis manos."
       },
       {
         "verse": 6,
         "hebrew": "כְּמוֹ חֵלֶב וָדֶשֶׁן תִּשְׂבַּע נַפְשִׁי וְשִׂפְתֵי רְנָנוֹת יְהַלֶּל פִּי׃",
         "transliteration": "kemoo jelev vadeshen tiseba' nafeshi vesifetey renanoot yehalelpi",
-        "spanish": "Cuando me acordaré de ti en mi lecho, Cuando meditaré de ti en las velas de la noche."
+        "spanish": "Como de meollo y de grosura será saciada mi alma; Y con labios de júbilo te alabará mi boca,"
       },
       {
         "verse": 7,
         "hebrew": "אִם זְכַרְתִּיךָ עַל יְצוּעָי בְּאַשְׁמֻרוֹת אֶהְגֶּה בָּךְ׃",
         "transliteration": "imzejaretija 'alyetsu'ay beashemuroot ehegehbaje",
-        "spanish": "Porque has sido mi socorro; Y así en la sombra de tus alas me regocijaré."
+        "spanish": "Cuando me acordaré de ti en mi lecho, Cuando meditaré de ti en las velas de la noche."
       },
       {
         "verse": 8,
         "hebrew": "כִּי הָיִיתָ עֶזְרָתָה לִּי וּבְצֵל כְּנָפֶיךָ אֲרַנֵּן׃",
         "transliteration": "kihaita 'ezeratah li uvetsel kenafeyja aranen",
-        "spanish": "Está mi alma apegada a ti: Tu diestra me ha sostenido."
+        "spanish": "Porque has sido mi socorro; Y así en la sombra de tus alas me regocijaré."
       },
       {
         "verse": 9,
         "hebrew": "דָּבְקָה נַפְשִׁי אַחֲרֶיךָ בִּי תָּמְכָה יְמִינֶךָ׃",
         "transliteration": "davekah nafeshi ajareyja bi tamejah yemineja",
-        "spanish": "Mas los que para destrucción buscaron mi alma, Caerán en los sitios bajos de la tierra."
+        "spanish": "Está mi alma apegada a ti: Tu diestra me ha sostenido."
       },
       {
         "verse": 10,
         "hebrew": "וְהֵמָּה לְשׁוֹאָה יְבַקְשׁוּ נַפְשִׁי יָבֹאוּ בְּתַחְתִּיּוֹת הָאָרֶץ׃",
         "transliteration": "vehemah leshooah yevakeshu nafeshi yavuu betajetioot haarets",
-        "spanish": "Destruiránlos á filo de espada; Serán porción de las zorras."
+        "spanish": "Mas los que para destrucción buscaron mi alma, Caerán en los sitios bajos de la tierra."
       },
       {
         "verse": 11,
         "hebrew": "יַגִּירֻהוּ עַל יְדֵי חָרֶב מְנָת שֻׁעָלִים יִהְיוּ׃",
         "transliteration": "yagiruhu 'alyedeyjarev menat shu'alim iheyv",
-        "spanish": "Empero el rey se alegrará en Dios; Será alabado cualquiera que por él jura: Porque la boca de los que hablan mentira, será cerrada."
+        "spanish": "Destruiránlos á filo de espada; Serán porción de las zorras."
       },
       {
         "verse": 12,
         "hebrew": "וְהַמֶּלֶךְ יִשְׂמַח בֵּאלֹהִים יִתְהַלֵּל כׇּל הַנִּשְׁבָּע בּוֹ כִּי יִסָּכֵר פִּי דוֹבְרֵי שָׁקֶר׃ ",
         "transliteration": "vehameleje isemaj belohim itehalel klhanisheba' boo ki isajer pi doovereyshaker ",
-        "spanish": "..."
+        "spanish": "Empero el rey se alegrará en Dios; Será alabado cualquiera que por él jura: Porque la boca de los que hablan mentira, será cerrada."
       }
     ]
   },
@@ -6323,67 +6323,67 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ מִזְמוֹר לְדָוִד׃",
         "transliteration": "lamenatseja mizemoor ledavid",
-        "spanish": "ESCUCHA, oh Dios, mi voz en mi oración: Guarda mi vida del miedo del enemigo."
+        "spanish": "Al Músico principal. Salmo de David."
       },
       {
         "verse": 2,
         "hebrew": "שְׁמַע אֱלֹהִים קוֹלִי בְשִׂיחִי מִפַּחַד אוֹיֵב תִּצֹּר חַיָּי׃",
         "transliteration": "shema'Elohim kooli vesiji mipajad ooyev titsor jayay",
-        "spanish": "Escóndeme del secreto consejo de los malignos; De la conspiración de los que obran iniquidad:"
+        "spanish": "ESCUCHA, oh Dios, mi voz en mi oración: Guarda mi vida del miedo del enemigo."
       },
       {
         "verse": 3,
         "hebrew": "תַּסְתִּירֵנִי מִסּוֹד מְרֵעִים מֵרִגְשַׁת פֹּעֲלֵי אָוֶן׃",
         "transliteration": "tasetireni misood mere'im merigeshat po'aley aven",
-        "spanish": "Que amolaron su lengua como cuchillo, Y armaron por su saeta palabra amarga;"
+        "spanish": "Escóndeme del secreto consejo de los malignos; De la conspiración de los que obran iniquidad:"
       },
       {
         "verse": 4,
         "hebrew": "אֲשֶׁר שָׁנְנוּ כַחֶרֶב לְשׁוֹנָם דָּרְכוּ חִצָּם דָּבָר מָר׃",
         "transliteration": "asher shanenu jajerev leshoonam dareju jitsam davar mar",
-        "spanish": "Para asaetear á escondidas al íntegro: De improviso lo asaetean, y no temen."
+        "spanish": "Que amolaron su lengua como cuchillo, Y armaron por su saeta palabra amarga;"
       },
       {
         "verse": 5,
         "hebrew": "לִירֹת בַּמִּסְתָּרִים תָּם פִּתְאֹם יֹרֻהוּ וְלֹא יִירָאוּ׃",
         "transliteration": "lirot bamisetarim tam piteom yoruhu velo irav",
-        "spanish": "Obstinados en su inicuo designio, Tratan de esconder los lazos, Y dicen: ¿Quién los ha de ver?"
+        "spanish": "Para asaetear á escondidas al íntegro: De improviso lo asaetean, y no temen."
       },
       {
         "verse": 6,
         "hebrew": "יְחַזְּקוּ לָמוֹ דָּבָר רָע יְסַפְּרוּ לִטְמוֹן מוֹקְשִׁים אָמְרוּ מִי יִרְאֶה לָּמוֹ׃",
         "transliteration": "yejazekvlamoo davar ra' yesaperu litemoon mookeshim ameru mi ireehlamoo",
-        "spanish": "Inquieren iniquidades, hacen una investigación exacta; Y el íntimo pensamiento de cada uno de ellos, así como el corazón, es profundo."
+        "spanish": "Obstinados en su inicuo designio, Tratan de esconder los lazos, Y dicen: ¿Quién los ha de ver?"
       },
       {
         "verse": 7,
         "hebrew": "יַחְפְּשׂוּ עוֹלֹת תַּמְנוּ חֵפֶשׂ מְחֻפָּשׂ וְקֶרֶב אִישׁ וְלֵב עָמֹק׃",
         "transliteration": "yajepesv'oolot tamenu jefes mejupas vekerev ish velev 'amok",
-        "spanish": "Mas Dios los herirá con saeta; De repente serán sus plagas."
+        "spanish": "Inquieren iniquidades, hacen una investigación exacta; Y el íntimo pensamiento de cada uno de ellos, así como el corazón, es profundo."
       },
       {
         "verse": 8,
         "hebrew": "וַיֹּרֵם אֱלֹהִים חֵץ פִּתְאוֹם הָיוּ מַכּוֹתָם׃",
         "transliteration": "vayorem Elohim jets piteoom hayu makootam",
-        "spanish": "Y harán caer sobre sí sus mismas lenguas: Se espantarán todos los que los vieren."
+        "spanish": "Mas Dios los herirá con saeta; De repente serán sus plagas."
       },
       {
         "verse": 9,
         "hebrew": "וַיַּכְשִׁילוּהוּ עָלֵימוֹ לְשׁוֹנָם יִתְנֹדְדוּ כׇּל רֹאֵה בָם׃",
         "transliteration": "vayajeshiluhu 'aleymoo leshoonam itenodedu klroeh vam",
-        "spanish": "Y temerán todos los hombres, Y anunciarán la obra de Dios, Y entenderán su hecho."
+        "spanish": "Y harán caer sobre sí sus mismas lenguas: Se espantarán todos los que los vieren."
       },
       {
         "verse": 10,
         "hebrew": "וַיִּירְאוּ כׇּל אָדָם וַיַּגִּידוּ פֹּעַל אֱלֹהִים וּמַעֲשֵׂהוּ הִשְׂכִּילוּ׃",
         "transliteration": "vaireu kladam vayagidu po'al Elohim uma'asehu hisekilv",
-        "spanish": "Alegraráse el justo en YHVH, y confiaráse en él; Y se gloriarán todos los rectos de corazón."
+        "spanish": "Y temerán todos los hombres, Y anunciarán la obra de Dios, Y entenderán su hecho."
       },
       {
         "verse": 11,
         "hebrew": "יִשְׂמַח צַדִּיק בַּיהֹוָה וְחָסָה בוֹ וְיִתְהַלְלוּ כׇּל יִשְׁרֵי לֵב׃ ",
         "transliteration": "isemaj tsadik bayhovah vejasah vuo veitehalelu klishereylev ",
-        "spanish": "..."
+        "spanish": "Alegraráse el justo en YHVH, y confiaráse en él; Y se gloriarán todos los rectos de corazón."
       }
     ]
   },
@@ -6398,85 +6398,85 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ מִזְמוֹר לְדָוִד שִׁיר׃",
         "transliteration": "lamenatseja mizemoor ledavid shir",
-        "spanish": "A TI es plácida la alabanza en Sión, oh Dios: Y a ti se pagarán los votos."
+        "spanish": "Al Músico principal. Salmo; Cántico de David."
       },
       {
         "verse": 2,
         "hebrew": "לְךָ דֻמִיָּה תְהִלָּה אֱלֹהִים בְּצִיּוֹן וּלְךָ יְשֻׁלַּם נֶדֶר׃",
         "transliteration": "leja dumiah tehilah Elohim betsioon uleja yeshulamneder",
-        "spanish": "Tú oyes la oración: A ti vendrá toda carne."
+        "spanish": "A TI es plácida la alabanza en Sión, oh Dios: Y a ti se pagarán los votos."
       },
       {
         "verse": 3,
         "hebrew": "שֹׁמֵעַ תְּפִלָּה עָדֶיךָ כׇּל בָּשָׂר יָבֹאוּ׃",
         "transliteration": "shome'a tefilah 'adeyja klbasar yavuv",
-        "spanish": "Palabras de iniquidades me sobrepujaron: Mas nuestras rebeliones tú las perdonarás."
+        "spanish": "Tú oyes la oración: A ti vendrá toda carne."
       },
       {
         "verse": 4,
         "hebrew": "דִּבְרֵי עֲוֺנֹת גָּבְרוּ מֶנִּי פְּשָׁעֵינוּ אַתָּה תְכַפְּרֵם׃",
         "transliteration": "diverey 'avnot gaveru meni pesha'eynu atah tejaperem",
-        "spanish": "Dichoso el que tú escogieres, é hicieres llegar a ti, Para que habite en tus atrios: Seremos saciados del bien de tu casa, De tu santo templo."
+        "spanish": "Palabras de iniquidades me sobrepujaron: Mas nuestras rebeliones tú las perdonarás."
       },
       {
         "verse": 5,
         "hebrew": "אַשְׁרֵי תִּבְחַר וּתְקָרֵב יִשְׁכֹּן חֲצֵרֶיךָ נִשְׂבְּעָה בְּטוּב בֵּיתֶךָ קְדֹשׁ הֵיכָלֶךָ׃",
         "transliteration": "asherey tivejar utekarev ishekon jatsereyja nisebe'ah betuv beyteja kedosh heyjaleja",
-        "spanish": "Con tremendas cosas, en justicia, nos responderás tú, Oh Dios de nuestra salud, Esperanza de todos los términos de la tierra, Y de los más remotos confines de la mar."
+        "spanish": "Dichoso el que tú escogieres, é hicieres llegar a ti, Para que habite en tus atrios: Seremos saciados del bien de tu casa, De tu santo templo."
       },
       {
         "verse": 6,
         "hebrew": "נוֹרָאוֹת בְּצֶדֶק תַּעֲנֵנוּ אֱלֹהֵי יִשְׁעֵנוּ מִבְטָח כׇּל קַצְוֵי אֶרֶץ וְיָם רְחֹקִים׃",
         "transliteration": "nooraoot betsedek ta'anenu elohey ishe'enu mivetaj klkatseveyerets veyam rejokim",
-        "spanish": "Tú, el que afirma los montes con su potencia, Ceñido de valentía:"
+        "spanish": "Con tremendas cosas, en justicia, nos responderás tú, Oh Dios de nuestra salud, Esperanza de todos los términos de la tierra, Y de los más remotos confines de la mar."
       },
       {
         "verse": 7,
         "hebrew": "מֵכִין הָרִים בְּכֹחוֹ נֶאְזָר בִּגְבוּרָה׃",
         "transliteration": "mejin harim bejojoo neezar bigevurah",
-        "spanish": "El que amansa el estruendo de los mares, el estruendo de sus ondas, Y el alboroto de las gentes."
+        "spanish": "Tú, el que afirma los montes con su potencia, Ceñido de valentía:"
       },
       {
         "verse": 8,
         "hebrew": "מַשְׁבִּיחַ שְׁאוֹן יַמִּים שְׁאוֹן גַּלֵּיהֶם וַהֲמוֹן לְאֻמִּים׃",
         "transliteration": "mashebija sheoon yamim sheoon galeyhem vahamoon leumim",
-        "spanish": "Por tanto los habitadores de los fines de la tierra temen de tus maravillas. Tú haces alegrar las salidas de la mañana y de la tarde."
+        "spanish": "El que amansa el estruendo de los mares, el estruendo de sus ondas, Y el alboroto de las gentes."
       },
       {
         "verse": 9,
         "hebrew": "וַיִּירְאוּ יֹשְׁבֵי קְצָוֺת מֵאוֹתֹתֶיךָ מוֹצָאֵי בֹקֶר וָעֶרֶב תַּרְנִין׃",
         "transliteration": "vaireu yoshevey ketsavt meoototeyja mootsaeyvuker va'erev tarenin",
-        "spanish": "Visitas la tierra, y la riegas: En gran manera la enriqueces Con el río de Dios, lleno de aguas: Preparas el grano de ellos, cuando así la dispones."
+        "spanish": "Por tanto los habitadores de los fines de la tierra temen de tus maravillas. Tú haces alegrar las salidas de la mañana y de la tarde."
       },
       {
         "verse": 10,
         "hebrew": "פָּקַדְתָּ הָאָרֶץ וַתְּשֹׁקְקֶהָ רַבַּת תַּעְשְׁרֶנָּה פֶּלֶג אֱלֹהִים מָלֵא מָיִם תָּכִין דְּגָנָם כִּי כֵן תְּכִינֶהָ׃",
         "transliteration": "pakadetahaarets vateshokekeha rabat ta'esherenah peleg Elohim male maim tajin deganam kijen tejineha",
-        "spanish": "Haces se empapen sus surcos, Haces descender sus canales: Ablándasla con lluvias, Bendices sus renuevos."
+        "spanish": "Visitas la tierra, y la riegas: En gran manera la enriqueces Con el río de Dios, lleno de aguas: Preparas el grano de ellos, cuando así la dispones."
       },
       {
         "verse": 11,
         "hebrew": "תְּלָמֶיהָ רַוֵּה נַחֵת גְּדוּדֶהָ בִּרְבִיבִים תְּמֹגְגֶנָּה צִמְחָהּ תְּבָרֵךְ׃",
         "transliteration": "telameyha raveh najet gedudeha birevivim temogegenah tsimejah tevareje",
-        "spanish": "Tú coronas el año de tus bienes; Y tus nubes destilan grosura."
+        "spanish": "Haces se empapen sus surcos, Haces descender sus canales: Ablándasla con lluvias, Bendices sus renuevos."
       },
       {
         "verse": 12,
         "hebrew": "עִטַּרְתָּ שְׁנַת טוֹבָתֶךָ וּמַעְגָּלֶיךָ יִרְעֲפוּן דָּשֶׁן׃",
         "transliteration": "'itareta shenat toovateja uma'egaleyja ire'afun dashen",
-        "spanish": "Destilan sobre las estancias del desierto; Y los collados se ciñen de alegría."
+        "spanish": "Tú coronas el año de tus bienes; Y tus nubes destilan grosura."
       },
       {
         "verse": 13,
         "hebrew": "יִרְעֲפוּ נְאוֹת מִדְבָּר וְגִיל גְּבָעוֹת תַּחְגֹּרְנָה׃",
         "transliteration": "ire'afu neoot midebar vegil geva'oot tajegorenah",
-        "spanish": "Vístense los llanos de manadas, Y los valles se cubren de grano: Dan voces de júbilo, y aun cantan."
+        "spanish": "Destilan sobre las estancias del desierto; Y los collados se ciñen de alegría."
       },
       {
         "verse": 14,
         "hebrew": "לָבְשׁוּ כָרִים הַצֹּאן וַעֲמָקִים יַעַטְפוּ בָר יִתְרוֹעֲעוּ אַף יָשִׁירוּ׃ ",
         "transliteration": "laveshu jarim hatson va'amakim ya'atefvvar iteroo'a'u afyashirv ",
-        "spanish": "..."
+        "spanish": "Vístense los llanos de manadas, Y los valles se cubren de grano: Dan voces de júbilo, y aun cantan."
       }
     ]
   },
@@ -6620,49 +6620,49 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ בִּנְגִינֹת מִזְמוֹר שִׁיר׃",
         "transliteration": "lamenatseja bineginot mizemoor shir",
-        "spanish": "DIOS tenga Jésed de nosotros, y nos bendiga; Haga resplandecer su rostro sobre nosotros (Sélah);"
+        "spanish": "Al Músico principal; en Neginot. Salmo; Cántico."
       },
       {
         "verse": 2,
         "hebrew": "אֱלֹהִים יְחׇנֵּנוּ וִיבָרְכֵנוּ יָאֵר פָּנָיו אִתָּנוּ סֶלָה׃",
         "transliteration": "Elohim yejnenu vivarejenu yaerpanayv itanu selah",
-        "spanish": "Para que sea conocido en la tierra tu camino, En todas las gentes tu salud."
+        "spanish": "DIOS tenga Jésed de nosotros, y nos bendiga; Haga resplandecer su rostro sobre nosotros (Sélah);"
       },
       {
         "verse": 3,
         "hebrew": "לָדַעַת בָּאָרֶץ דַּרְכֶּךָ בְּכׇל גּוֹיִם יְשׁוּעָתֶךָ׃",
         "transliteration": "lada'at baarets darekeja bejlgooim yeshu'ateja",
-        "spanish": "Alábente los pueblos, oh Dios; Alábente los pueblos todos."
+        "spanish": "Para que sea conocido en la tierra tu camino, En todas las gentes tu salud."
       },
       {
         "verse": 4,
         "hebrew": "יוֹדוּךָ עַמִּים אֱלֹהִים יוֹדוּךָ עַמִּים כֻּלָּם׃",
         "transliteration": "yooduja 'amim Elohim yooduja 'amim kulam",
-        "spanish": "Alégrense y gocénse las gentes; Porque juzgarás los pueblos con equidad, Y pastorearás las naciones en la tierra. (Sélah)"
+        "spanish": "Alábente los pueblos, oh Dios; Alábente los pueblos todos."
       },
       {
         "verse": 5,
         "hebrew": "יִשְׂמְחוּ וִירַנְּנוּ לְאֻמִּים כִּי תִשְׁפֹּט עַמִּים מִישֹׁר וּלְאֻמִּים בָּאָרֶץ תַּנְחֵם סֶלָה׃",
         "transliteration": "isemeju viranenu leumim kitishepot 'amim mishor uleumim baarets tanejem selah",
-        "spanish": "Alábente los pueblos, oh Dios: Todos los pueblos te alaben."
+        "spanish": "Alégrense y gocénse las gentes; Porque juzgarás los pueblos con equidad, Y pastorearás las naciones en la tierra. (Sélah)"
       },
       {
         "verse": 6,
         "hebrew": "יוֹדוּךָ עַמִּים אֱלֹהִים יוֹדוּךָ עַמִּים כֻּלָּם׃",
         "transliteration": "yooduja 'amim Elohim yooduja 'amim kulam",
-        "spanish": "La tierra dará su fruto: Nos bendecirá Dios, el Dios nuestro."
+        "spanish": "Alábente los pueblos, oh Dios: Todos los pueblos te alaben."
       },
       {
         "verse": 7,
         "hebrew": "אֶרֶץ נָתְנָה יְבוּלָהּ יְבָרְכֵנוּ אֱלֹהִים אֱלֹהֵינוּ׃",
         "transliteration": "erets natenah yevulah yevarejenu Elohim Eloheinu",
-        "spanish": "Bendíganos Dios, Y témanlo todos los fines de la tierra."
+        "spanish": "La tierra dará su fruto: Nos bendecirá Dios, el Dios nuestro."
       },
       {
         "verse": 8,
         "hebrew": "יְבָרְכֵנוּ אֱלֹהִים וְיִירְאוּ אוֹתוֹ כׇּל אַפְסֵי אָרֶץ׃ ",
         "transliteration": "yevarejenu Elohim veireu ootoo klafeseyarets ",
-        "spanish": "..."
+        "spanish": "Bendíganos Dios, Y témanlo todos los fines de la tierra."
       }
     ]
   },
@@ -6677,217 +6677,217 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ לְדָוִד מִזְמוֹר שִׁיר׃",
         "transliteration": "lamenatseja ledavid mizemoor shir",
-        "spanish": "LEVANTESE Dios, sean esparcidos sus enemigos, Y huyan de su presencia los que le aborrecen."
+        "spanish": "Al Músico principal; de David. Salmo; Cántico."
       },
       {
         "verse": 2,
         "hebrew": "יָקוּם אֱלֹהִים יָפוּצוּ אוֹיְבָיו וְיָנוּסוּ מְשַׂנְאָיו מִפָּנָיו׃",
         "transliteration": "yakum Elohim yafutsu ooyevayv veyanusu mesaneayv mipanayv",
-        "spanish": "Como es lanzado el humo, los lanzarás: Como se derrite la cera delante del fuego, Así perecerán los impíos delante de Dios."
+        "spanish": "LEVANTESE Dios, sean esparcidos sus enemigos, Y huyan de su presencia los que le aborrecen."
       },
       {
         "verse": 3,
         "hebrew": "כְּהִנְדֹּף עָשָׁן תִּנְדֹּף כְּהִמֵּס דּוֹנַג מִפְּנֵי אֵשׁ יֹאבְדוּ רְשָׁעִים מִפְּנֵי אֱלֹהִים׃",
         "transliteration": "kehinedof 'ashan tinedof kehimes doonag mipeneyesh yovedu resha'im mipeney Elohim",
-        "spanish": "Mas los justos se alegrarán: gozarse han delante de Dios, Y saltarán de alegría."
+        "spanish": "Como es lanzado el humo, los lanzarás: Como se derrite la cera delante del fuego, Así perecerán los impíos delante de Dios."
       },
       {
         "verse": 4,
         "hebrew": "וְצַדִּיקִים יִשְׂמְחוּ יַעַלְצוּ לִפְנֵי אֱלֹהִים וְיָשִׂישׂוּ בְשִׂמְחָה׃",
         "transliteration": "vetsadikim isemeju ya'aletsu lifeney Elohim veyasisu vesimejah",
-        "spanish": "Cantad a Dios, canten mizmór á su nombre: Ensalzad al que sube sobre los cielos En Yah su nombre, y alegraos delante de él."
+        "spanish": "Mas los justos se alegrarán: gozarse han delante de Dios, Y saltarán de alegría."
       },
       {
         "verse": 5,
         "hebrew": "שִׁירוּ לֵאלֹהִים זַמְּרוּ שְׁמוֹ סֹלּוּ לָרֹכֵב בָּעֲרָבוֹת בְּיָהּ שְׁמוֹ וְעִלְזוּ לְפָנָיו׃",
         "transliteration": "shiru lelohim zameru shemoo solu larojev ba'aravuot beyah shemoo ve'ilezu lefanayv",
-        "spanish": "Padre de huérfanos y defensor de viudas, Es Dios en la morada de su santuario:"
+        "spanish": "Cantad a Dios, canten mizmór á su nombre: Ensalzad al que sube sobre los cielos En Yah su nombre, y alegraos delante de él."
       },
       {
         "verse": 6,
         "hebrew": "אֲבִי יְתוֹמִים וְדַיַּן אַלְמָנוֹת אֱלֹהִים בִּמְעוֹן קׇדְשׁוֹ׃",
         "transliteration": "avi yetoomim vedayan alemanoot Elohim bime'oon kdeshoo",
-        "spanish": "El Dios que hace habitar en familia los solos; Que saca a los aprisionados con grillos: Mas los rebeldes habitan en sequedad."
+        "spanish": "Padre de huérfanos y defensor de viudas, Es Dios en la morada de su santuario:"
       },
       {
         "verse": 7,
         "hebrew": "אֱלֹהִים מוֹשִׁיב יְחִידִים בַּיְתָה מוֹצִיא אֲסִירִים בַּכּוֹשָׁרוֹת אַךְ סוֹרְרִים שָׁכְנוּ צְחִיחָה׃",
         "transliteration": "Elohim mooshiv yejidim bayetah mootsi asirim bakoosharoot aje soorerim shajenu tsejijah",
-        "spanish": "Oh Dios, cuando tú saliste delante de tu pueblo, Cuando anduviste por el desierto, (Sélah,)"
+        "spanish": "El Dios que hace habitar en familia los solos; Que saca a los aprisionados con grillos: Mas los rebeldes habitan en sequedad."
       },
       {
         "verse": 8,
         "hebrew": "אֱלֹהִים בְּצֵאתְךָ לִפְנֵי עַמֶּךָ בְּצַעְדְּךָ בִישִׁימוֹן סֶלָה׃",
         "transliteration": "Elohim betseteja lifeney 'ameja betsa'edeja vishimoon selah",
-        "spanish": "La tierra tembló; También destilaron los cielos á la presencia de Dios: Aquel Sinaí tembló delante de Dios, del Dios de Israel."
+        "spanish": "Oh Dios, cuando tú saliste delante de tu pueblo, Cuando anduviste por el desierto, (Sélah,)"
       },
       {
         "verse": 9,
         "hebrew": "אֶרֶץ רָעָשָׁה אַף שָׁמַיִם נָטְפוּ מִפְּנֵי אֱלֹהִים זֶה סִינַי מִפְּנֵי אֱלֹהִים אֱלֹהֵי יִשְׂרָאֵל׃",
         "transliteration": "erets ra'ashah afshamaim natefu mipeney Elohim zeh sinay mipeney Elohim elohey iserael",
-        "spanish": "Abundante lluvia esparciste, oh Dios, á tu heredad; Y cuando se cansó, tú la recreaste."
+        "spanish": "La tierra tembló; También destilaron los cielos á la presencia de Dios: Aquel Sinaí tembló delante de Dios, del Dios de Israel."
       },
       {
         "verse": 10,
         "hebrew": "גֶּשֶׁם נְדָבוֹת תָּנִיף אֱלֹהִים נַחֲלָתְךָ וְנִלְאָה אַתָּה כוֹנַנְתָּהּ׃",
         "transliteration": "geshem nedavuot tanif Elohim najalateja venileah atah joonanetah",
-        "spanish": "Los que son de tu grey han morado en ella: Por tu bondad, oh Dios, has provisto al pobre."
+        "spanish": "Abundante lluvia esparciste, oh Dios, á tu heredad; Y cuando se cansó, tú la recreaste."
       },
       {
         "verse": 11,
         "hebrew": "חַיָּתְךָ יָשְׁבוּ בָהּ תָּכִין בְּטוֹבָתְךָ לֶעָנִי אֱלֹהִים׃",
         "transliteration": "jayateja yashevvvah tajinbetoovateja le'ani Elohim",
-        "spanish": "El Señor daba palabra: De las evangelizantes había grande ejército."
+        "spanish": "Los que son de tu grey han morado en ella: Por tu bondad, oh Dios, has provisto al pobre."
       },
       {
         "verse": 12,
         "hebrew": "אֲדֹנָי יִתֶּן אֹמֶר הַמְבַשְּׂרוֹת צָבָא רָב׃",
         "transliteration": "adonay itenomer hamevaseroot tsava rav",
-        "spanish": "Huyeron, huyeron reyes de ejércitos; Y las que se quedaban en casa partían los despojos."
+        "spanish": "El Señor daba palabra: De las evangelizantes había grande ejército."
       },
       {
         "verse": 13,
         "hebrew": "מַלְכֵי צְבָאוֹת יִדֹּדוּן יִדֹּדוּן וּנְוַת בַּיִת תְּחַלֵּק שָׁלָל׃",
         "transliteration": "malejey tsevaoot idodun idodun unevatbait tejalek shalal",
-        "spanish": "Bien que fuiesteis echados entre los tiestos, Seréis como las alas de la paloma cubierta de plata, Y sus plumas con amarillez de oro."
+        "spanish": "Huyeron, huyeron reyes de ejércitos; Y las que se quedaban en casa partían los despojos."
       },
       {
         "verse": 14,
         "hebrew": "אִם תִּשְׁכְּבוּן בֵּין שְׁפַתָּיִם כַּנְפֵי יוֹנָה נֶחְפָּה בַכֶּסֶף וְאֶבְרוֹתֶיהָ בִּירַקְרַק חָרוּץ׃",
         "transliteration": "imtishekevun beyn shefataim kanefey yoonah nejepah vakesef veeverooteyha birakerak jaruts",
-        "spanish": "Cuando esparció el Omnipotente los reyes en ella, Emblanquecióse ésta como la nieve en Salmón."
+        "spanish": "Bien que fuiesteis echados entre los tiestos, Seréis como las alas de la paloma cubierta de plata, Y sus plumas con amarillez de oro."
       },
       {
         "verse": 15,
         "hebrew": "בְּפָרֵשׂ שַׁדַּי מְלָכִים בָּהּ תַּשְׁלֵג בְּצַלְמוֹן׃",
         "transliteration": "befares shaday melajim bah tasheleg betsalemoon",
-        "spanish": "Monte de Dios es el monte de Basán; Monte alto el de Basán."
+        "spanish": "Cuando esparció el Omnipotente los reyes en ella, Emblanquecióse ésta como la nieve en Salmón."
       },
       {
         "verse": 16,
         "hebrew": "הַר אֱלֹהִים הַר בָּשָׁן הַר גַּבְנֻנִּים הַר בָּשָׁן׃",
         "transliteration": "harElohim harbashan har gavenunim harbashan",
-        "spanish": "¿Por qué os levantáis, oh montes altos? Este monte amó Dios para su asiento; Ciertamente YHVH habitará en él para siempre."
+        "spanish": "Monte de Dios es el monte de Basán; Monte alto el de Basán."
       },
       {
         "verse": 17,
         "hebrew": "לָמָּה תְּרַצְּדוּן הָרִים גַּבְנֻנִּים הָהָר חָמַד אֱלֹהִים לְשִׁבְתּוֹ אַף יְהֹוָה יִשְׁכֹּן לָנֶצַח׃",
         "transliteration": "lamah teratsedun harim gavenunim hahar jamad Elohim leshivetoo afAdonai ishekon lanetsaj",
-        "spanish": "Los carros de Dios son veinte mil, y más millares de ángeles. El Señor entre ellos, como en Sinaí, así en el santuario."
+        "spanish": "¿Por qué os levantáis, oh montes altos? Este monte amó Dios para su asiento; Ciertamente YHVH habitará en él para siempre."
       },
       {
         "verse": 18,
         "hebrew": "רֶכֶב אֱלֹהִים רִבֹּתַיִם אַלְפֵי שִׁנְאָן אֲדֹנָי בָם סִינַי בַּקֹּדֶשׁ׃",
         "transliteration": "rejev Elohim ribotaim alefey shinean adonay vam sinay bakodesh",
-        "spanish": "Subiste á lo alto, cautivaste la cautividad, Tomaste dones para los hombres, Y también para los rebeldes, para que habite entre ellos Yah Dios."
+        "spanish": "Los carros de Dios son veinte mil, y más millares de ángeles. El Señor entre ellos, como en Sinaí, así en el santuario."
       },
       {
         "verse": 19,
         "hebrew": "עָלִיתָ לַמָּרוֹם שָׁבִיתָ שֶּׁבִי לָקַחְתָּ מַתָּנוֹת בָּאָדָם וְאַף סוֹרְרִים לִשְׁכֹּן יָהּ אֱלֹהִים׃",
         "transliteration": "'alita lamaroom shavita shevi lakajeta matanoot baadam veaf soorerim lishekon yah Elohim",
-        "spanish": "Bendito el Señor; cada día nos colma de beneficios El Dios de nuestra salud. (Sélah)"
+        "spanish": "Subiste á lo alto, cautivaste la cautividad, Tomaste dones para los hombres, Y también para los rebeldes, para que habite entre ellos Yah Dios."
       },
       {
         "verse": 20,
         "hebrew": "בָּרוּךְ אֲדֹנָי יוֹם יוֹם יַעֲמׇס לָנוּ הָאֵל יְשׁוּעָתֵנוּ סֶלָה׃",
         "transliteration": "baruje adonay yoom yoom ya'amslanu hael yeshu'atenu selah",
-        "spanish": "Dios, nuestro Dios ha de salvarnos; Y de Dios YHVH es el librar de la muerte."
+        "spanish": "Bendito el Señor; cada día nos colma de beneficios El Dios de nuestra salud. (Sélah)"
       },
       {
         "verse": 21,
         "hebrew": "הָאֵל לָנוּ אֵל לְמוֹשָׁעוֹת וְלֵיהֹוִה אֲדֹנָי לַמָּוֶת תֹּצָאוֹת׃",
         "transliteration": "hael lanu el lemoosha'oot veleyhovih adonay lamavet totsaoot",
-        "spanish": "Ciertamente Dios herirá la cabeza de sus enemigos, La cabelluda mollera del que camina en sus pecados."
+        "spanish": "Dios, nuestro Dios ha de salvarnos; Y de Dios YHVH es el librar de la muerte."
       },
       {
         "verse": 22,
         "hebrew": "אַךְ אֱלֹהִים יִמְחַץ רֹאשׁ אֹיְבָיו קׇדְקֹד שֵׂעָר מִתְהַלֵּךְ בַּאֲשָׁמָיו׃",
         "transliteration": "ajeElohim imejats rosh oyevayv kdekod se'ar mitehaleje baashamayv",
-        "spanish": "El Señor dijo: De Basán haré volver, Te haré volver de los profundos de la mar:"
+        "spanish": "Ciertamente Dios herirá la cabeza de sus enemigos, La cabelluda mollera del que camina en sus pecados."
       },
       {
         "verse": 23,
         "hebrew": "אָמַר אֲדֹנָי מִבָּשָׁן אָשִׁיב אָשִׁיב מִמְּצֻלוֹת יָם׃",
         "transliteration": "amar adonay mibashan ashiv ashiv mimetsuloot yam",
-        "spanish": "Porque tu pie se enrojecerá de sangre de tus enemigos, Y de ella la lengua de tus perros."
+        "spanish": "El Señor dijo: De Basán haré volver, Te haré volver de los profundos de la mar:"
       },
       {
         "verse": 24,
         "hebrew": "לְמַעַן תִּמְחַץ רַגְלְךָ בְּדָם לְשׁוֹן כְּלָבֶיךָ מֵאֹיְבִים מִנֵּהוּ׃",
         "transliteration": "lema'an timejats rageleja bedam leshoon kelaveyja meoyevim minehv",
-        "spanish": "Vieron tus caminos, oh Dios; Los caminos de mi Dios, de mi Rey, en el santuario."
+        "spanish": "Porque tu pie se enrojecerá de sangre de tus enemigos, Y de ella la lengua de tus perros."
       },
       {
         "verse": 25,
         "hebrew": "רָאוּ הֲלִיכוֹתֶיךָ אֱלֹהִים הֲלִיכוֹת אֵלִי מַלְכִּי בַקֹּדֶשׁ׃",
         "transliteration": "rau halijooteyja Elohim halijoot eli maleki vakodesh",
-        "spanish": "Los cantores iban delante, los tañedores detrás; En medio, las doncellas, con adufes."
+        "spanish": "Vieron tus caminos, oh Dios; Los caminos de mi Dios, de mi Rey, en el santuario."
       },
       {
         "verse": 26,
         "hebrew": "קִדְּמוּ שָׁרִים אַחַר נֹגְנִים בְּתוֹךְ עֲלָמוֹת תּוֹפֵפוֹת׃",
         "transliteration": "kidemu sharim ajar nogenim betooje 'alamoot toofefoot",
-        "spanish": "Bendecid a Dios en congregaciones: Al Señor, vosotros de la estirpe de Israel."
+        "spanish": "Los cantores iban delante, los tañedores detrás; En medio, las doncellas, con adufes."
       },
       {
         "verse": 27,
         "hebrew": "בְּמַקְהֵלוֹת בָּרְכוּ אֱלֹהִים אֲדֹנָי מִמְּקוֹר יִשְׂרָאֵל׃",
         "transliteration": "bemakeheloot bareju Elohim adonay mimekoor iserael",
-        "spanish": "Allí estaba el joven Benjamín señoreador de ellos, Los príncipes de Judá en su congregación, Los príncipes de Zabulón, los príncipes de Nephtalí."
+        "spanish": "Bendecid a Dios en congregaciones: Al Señor, vosotros de la estirpe de Israel."
       },
       {
         "verse": 28,
         "hebrew": "שָׁם בִּנְיָמִן צָעִיר רֹדֵם שָׂרֵי יְהוּדָה רִגְמָתָם שָׂרֵי זְבֻלוּן שָׂרֵי נַפְתָּלִי׃",
         "transliteration": "sham bineyamin tsa'ir rodem sarey yehudah rigematam sarey zevulun sarey nafetali",
-        "spanish": "Tu Dios ha ordenado tu fuerza; Confirma, oh Dios, lo que has obrado en nosotros."
+        "spanish": "Allí estaba el joven Benjamín señoreador de ellos, Los príncipes de Judá en su congregación, Los príncipes de Zabulón, los príncipes de Nephtalí."
       },
       {
         "verse": 29,
         "hebrew": "צִוָּה אֱלֹהֶיךָ עֻזֶּךָ עוּזָּה אֱלֹהִים זוּ פָּעַלְתָּ לָּנוּ׃",
         "transliteration": "tsivah eloheyja 'uzeja 'uzah Elohim zu pa'aleta lanv",
-        "spanish": "Por razón de tu templo en Jerusalem Los reyes te ofrecerán dones."
+        "spanish": "Tu Dios ha ordenado tu fuerza; Confirma, oh Dios, lo que has obrado en nosotros."
       },
       {
         "verse": 30,
         "hebrew": "מֵהֵיכָלֶךָ עַל יְרוּשָׁלָ͏ִם לְךָ יוֹבִילוּ מְלָכִים שָׁי׃",
         "transliteration": "meheyjaleja 'alyerushala͏im leja yoovilu melajim shay",
-        "spanish": "Reprime la reunión de gentes armadas, La multitud de toros con los becerros de los pueblos, Hasta que todos se sometan con sus piezas de plata: Disipa los pueblos que se complacen en la guerra."
+        "spanish": "Por razón de tu templo en Jerusalem Los reyes te ofrecerán dones."
       },
       {
         "verse": 31,
         "hebrew": "גְּעַר חַיַּת קָנֶה עֲדַת אַבִּירִים בְּעֶגְלֵי עַמִּים מִתְרַפֵּס בְּרַצֵּי כָסֶף בִּזַּר עַמִּים קְרָבוֹת יֶחְפָּצוּ׃",
         "transliteration": "ge'ar jayat kaneh 'adat abirim be'egeley 'amim miterapes beratseyjasef bizar 'amim keravuot yejepatsv",
-        "spanish": "Vendrán príncipes de Egipto; Etiopía apresurará sus manos a Dios."
+        "spanish": "Reprime la reunión de gentes armadas, La multitud de toros con los becerros de los pueblos, Hasta que todos se sometan con sus piezas de plata: Disipa los pueblos que se complacen en la guerra."
       },
       {
         "verse": 32,
         "hebrew": "יֶאֱתָיוּ חַשְׁמַנִּים מִנִּי מִצְרָיִם כּוּשׁ תָּרִיץ יָדָיו לֵאלֹהִים׃",
         "transliteration": "yeetayu jashemanim mini mitseraim kush tarits yadayv lelohim",
-        "spanish": "Reinos de la tierra, cantad a Dios, Cantad al Señor (Sélah);"
+        "spanish": "Vendrán príncipes de Egipto; Etiopía apresurará sus manos a Dios."
       },
       {
         "verse": 33,
         "hebrew": "מַמְלְכוֹת הָאָרֶץ שִׁירוּ לֵאלֹהִים זַמְּרוּ אֲדֹנָי סֶלָה׃",
         "transliteration": "mamelejoot haarets shiru lelohim zameru adonay selah",
-        "spanish": "Al que cabalga sobre los cielos de los cielos que son de antiguo: He aquí á su voz dará voz de fortaleza."
+        "spanish": "Reinos de la tierra, cantad a Dios, Cantad al Señor (Sélah);"
       },
       {
         "verse": 34,
         "hebrew": "לָרֹכֵב בִּשְׁמֵי שְׁמֵי קֶדֶם הֵן יִתֵּן בְּקוֹלוֹ קוֹל עֹז׃",
         "transliteration": "larojev bishemey shemeykedem hen iten bekooloo kool 'oz",
-        "spanish": "Atribuid fortaleza a Dios: Sobre Israel es su magnificencia, Y su poder está en los cielos."
+        "spanish": "Al que cabalga sobre los cielos de los cielos que son de antiguo: He aquí á su voz dará voz de fortaleza."
       },
       {
         "verse": 35,
         "hebrew": "תְּנוּ עֹז לֵאלֹהִים עַל יִשְׂרָאֵל גַּאֲוָתוֹ וְעֻזּוֹ בַּשְּׁחָקִים׃",
         "transliteration": "tenu 'oz lelohim 'aliserael gaavatoo ve'uzoo bashejakim",
-        "spanish": "Terrible eres, oh Dios, desde tus santuarios: El Dios de Israel, él da fortaleza y vigor á su pueblo. Bendito Dios."
+        "spanish": "Atribuid fortaleza a Dios: Sobre Israel es su magnificencia, Y su poder está en los cielos."
       },
       {
         "verse": 36,
         "hebrew": "נוֹרָא אֱלֹהִים מִמִּקְדָּשֶׁיךָ אֵל יִשְׂרָאֵל הוּא נֹתֵן עֹז וְתַעֲצֻמוֹת לָעָם בָּרוּךְ אֱלֹהִים׃ ",
         "transliteration": "noora Elohim mimikedasheyja el iserael hu noten 'oz veta'atsumoot la'am baruje Elohim ",
-        "spanish": "..."
+        "spanish": "Terrible eres, oh Dios, desde tus santuarios: El Dios de Israel, él da fortaleza y vigor á su pueblo. Bendito Dios."
       }
     ]
   },
@@ -6902,223 +6902,223 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ עַל שׁוֹשַׁנִּים לְדָוִד׃",
         "transliteration": "lamenatseja 'alshooshanim ledavid",
-        "spanish": "SALVAME, oh Dios, Porque las aguas han entrado hasta el alma."
+        "spanish": "Al Músico principal; sobre Sosanim. De David."
       },
       {
         "verse": 2,
         "hebrew": "הוֹשִׁיעֵנִי אֱלֹהִים כִּי בָאוּ מַיִם עַד נָפֶשׁ׃",
         "transliteration": "hooshi'eni Elohim ki vau maim 'adnafesh",
-        "spanish": "Estoy hundido en cieno profundo, donde no hay pie: He venido á abismos de aguas, y la corriente me ha anegado."
+        "spanish": "SALVAME, oh Dios, Porque las aguas han entrado hasta el alma."
       },
       {
         "verse": 3,
         "hebrew": "טָבַעְתִּי בִּיוֵן מְצוּלָה וְאֵין מׇעֳמָד בָּאתִי בְמַעֲמַקֵּי מַיִם וְשִׁבֹּלֶת שְׁטָפָתְנִי׃",
         "transliteration": "tava'eti biven metsulah veeyn m'omad bati vema'amakeymaim veshibolet shetafateni",
-        "spanish": "Cansado estoy de llamar; mi garganta se ha enronquecido; Han desfallecido mis ojos esperando a mí Dios."
+        "spanish": "Estoy hundido en cieno profundo, donde no hay pie: He venido á abismos de aguas, y la corriente me ha anegado."
       },
       {
         "verse": 4,
         "hebrew": "יָגַעְתִּי בְקׇרְאִי נִחַר גְּרוֹנִי כָּלוּ עֵינַי מְיַחֵל לֵאלֹהָי׃",
         "transliteration": "yaga'eti vekrei nijar gerooni kalu 'eynay meyajel lelohay",
-        "spanish": "Hanse aumentado más que los cabellos de mi cabeza los que me aborrecen sin causa; Hanse fortalecido mis enemigos, los que me destruyen sin por qué: He venido pues á pagar lo que no he tomado."
+        "spanish": "Cansado estoy de llamar; mi garganta se ha enronquecido; Han desfallecido mis ojos esperando a mí Dios."
       },
       {
         "verse": 5,
         "hebrew": "רַבּוּ מִשַּׂעֲרוֹת רֹאשִׁי שֹׂנְאַי חִנָּם עָצְמוּ מַצְמִיתַי אֹיְבַי שֶׁקֶר אֲשֶׁר לֹא גָזַלְתִּי אָז אָשִׁיב׃",
         "transliteration": "rabu misa'aroot roshi soneay jinam 'atsemu matsemitay oyevay sheker asher logazaleti az ashiv",
-        "spanish": "Dios, tú sabes mi locura; Y mis delitos no te son ocultos."
+        "spanish": "Hanse aumentado más que los cabellos de mi cabeza los que me aborrecen sin causa; Hanse fortalecido mis enemigos, los que me destruyen sin por qué: He venido pues á pagar lo que no he tomado."
       },
       {
         "verse": 6,
         "hebrew": "אֱלֹהִים אַתָּה יָדַעְתָּ לְאִוַּלְתִּי וְאַשְׁמוֹתַי מִמְּךָ לֹא נִכְחָדוּ׃",
         "transliteration": "Elohim atah yada'eta leivaleti veashemootay mimeja lonijejadv",
-        "spanish": "No sean avergonzados por mi causa los que te esperan, oh Señor YHVH Tzevaot; No sean confusos por mí los que te buscan, oh Dios de Israel."
+        "spanish": "Dios, tú sabes mi locura; Y mis delitos no te son ocultos."
       },
       {
         "verse": 7,
         "hebrew": "אַל יֵבֹשׁוּ בִי קֹוֶיךָ אֲדֹנָי יֱהֹוִה צְבָאוֹת אַל יִכָּלְמוּ בִי מְבַקְשֶׁיךָ אֱלֹהֵי יִשְׂרָאֵל׃",
         "transliteration": "alyevushu vi koveyja adonay yehovih tsevaoot alikalemu vi mevakesheyja elohey iserael",
-        "spanish": "Porque por amor de ti he sufrido afrenta; Confusión ha cubierto mi rostro."
+        "spanish": "No sean avergonzados por mi causa los que te esperan, oh Señor YHVH Tzevaot; No sean confusos por mí los que te buscan, oh Dios de Israel."
       },
       {
         "verse": 8,
         "hebrew": "כִּי עָלֶיךָ נָשָׂאתִי חֶרְפָּה כִּסְּתָה כְלִמָּה פָנָי׃",
         "transliteration": "ki'aleyja nasati jerepah kisetah jelimah fanay",
-        "spanish": "He sido extrañado de mis hermanos, Y extraño a los hijos de mi madre."
+        "spanish": "Porque por amor de ti he sufrido afrenta; Confusión ha cubierto mi rostro."
       },
       {
         "verse": 9,
         "hebrew": "מוּזָר הָיִיתִי לְאֶחָי וְנׇכְרִי לִבְנֵי אִמִּי׃",
         "transliteration": "muzar haiti leejay venjeri liveney imi",
-        "spanish": "Porque me consumió el celo de tu casa; Y los denuestos de los que te vituperaban, cayeron sobre mí."
+        "spanish": "He sido extrañado de mis hermanos, Y extraño a los hijos de mi madre."
       },
       {
         "verse": 10,
         "hebrew": "כִּי קִנְאַת בֵּיתְךָ אֲכָלָתְנִי וְחֶרְפּוֹת חוֹרְפֶיךָ נָפְלוּ עָלָי׃",
         "transliteration": "kikineat beyteja ajalateni vejerepoot joorefeyja nafelu 'alay",
-        "spanish": "Y lloré afligiendo con ayuno mi alma; Y esto me ha sido por afrenta."
+        "spanish": "Porque me consumió el celo de tu casa; Y los denuestos de los que te vituperaban, cayeron sobre mí."
       },
       {
         "verse": 11,
         "hebrew": "וָאֶבְכֶּה בַצּוֹם נַפְשִׁי וַתְּהִי לַחֲרָפוֹת לִי׃",
         "transliteration": "vaevekeh vatsoom nafeshi vatehi lajarafoot li",
-        "spanish": "Puse además saco por mi vestido; Y vine á serles por proverbio."
+        "spanish": "Y lloré afligiendo con ayuno mi alma; Y esto me ha sido por afrenta."
       },
       {
         "verse": 12,
         "hebrew": "וָאֶתְּנָה לְבוּשִׁי שָׂק וָאֱהִי לָהֶם לְמָשָׁל׃",
         "transliteration": "vaetenah levushi sak vaehi lahem lemashal",
-        "spanish": "Hablaban contra mí los que se sentaban á la puerta, Y me zaherían en las canciones de los bebederos de sidra."
+        "spanish": "Puse además saco por mi vestido; Y vine á serles por proverbio."
       },
       {
         "verse": 13,
         "hebrew": "יָשִׂיחוּ בִי יֹשְׁבֵי שָׁעַר וּנְגִינוֹת שׁוֹתֵי שֵׁכָר׃",
         "transliteration": "yasiju vi yoshevey sha'ar uneginoot shootey shejar",
-        "spanish": "Empero yo enderezaba mi oración a ti, oh YHVH, al tiempo de tu buena voluntad: Oh Dios, por la multitud de Tu Jésed, Por la verdad de tu salud, óyeme."
+        "spanish": "Hablaban contra mí los que se sentaban á la puerta, Y me zaherían en las canciones de los bebederos de sidra."
       },
       {
         "verse": 14,
         "hebrew": "וַאֲנִי תְפִלָּתִי לְךָ יְהֹוָה עֵת רָצוֹן אֱלֹהִים בְּרׇב חַסְדֶּךָ עֲנֵנִי בֶּאֱמֶת יִשְׁעֶךָ׃",
         "transliteration": "vaani tefilatileja Adonai 'et ratsoon Elohim bervjasedeja 'aneni beemet ishe'eja",
-        "spanish": "Sácame del lodo, y no sea yo sumergido: Sea yo libertado de los que me aborrecen, y del profundo de las aguas."
+        "spanish": "Empero yo enderezaba mi oración a ti, oh YHVH, al tiempo de tu buena voluntad: Oh Dios, por la multitud de Tu Jésed, Por la verdad de tu salud, óyeme."
       },
       {
         "verse": 15,
         "hebrew": "הַצִּילֵנִי מִטִּיט וְאַל אֶטְבָּעָה אִנָּצְלָה מִשֹּׂנְאַי וּמִמַּעֲמַקֵּי מָיִם׃",
         "transliteration": "hatsileni mitit vealeteba'ah inatselah misoneay umima'amakeymaim",
-        "spanish": "No me anegue el ímpetu de las aguas, Ni me suerba la hondura, Ni el pozo cierre sobre mí su boca."
+        "spanish": "Sácame del lodo, y no sea yo sumergido: Sea yo libertado de los que me aborrecen, y del profundo de las aguas."
       },
       {
         "verse": 16,
         "hebrew": "אַל תִּשְׁטְפֵנִי שִׁבֹּלֶת מַיִם וְאַל תִּבְלָעֵנִי מְצוּלָה וְאַל תֶּאְטַר עָלַי בְּאֵר פִּיהָ׃",
         "transliteration": "altishetefeni shibolet maim vealtivela'eni metsulah vealteetar'alay beer piha",
-        "spanish": "Oyeme, YHVH, porque apacible es Tu Jésed; Mírame conforme á la multitud de tus miseraciones."
+        "spanish": "No me anegue el ímpetu de las aguas, Ni me suerba la hondura, Ni el pozo cierre sobre mí su boca."
       },
       {
         "verse": 17,
         "hebrew": "עֲנֵנִי יְהֹוָה כִּי טוֹב חַסְדֶּךָ כְּרֹב רַחֲמֶיךָ פְּנֵה אֵלָי׃",
         "transliteration": "'aneni Adonai kitoov jasedeja kerov rajameyja peneh elay",
-        "spanish": "Y no escondas tu rostro de tu siervo; Porque estoy angustiado; apresúrate, óyeme."
+        "spanish": "Oyeme, YHVH, porque apacible es Tu Jésed; Mírame conforme á la multitud de tus miseraciones."
       },
       {
         "verse": 18,
         "hebrew": "וְאַל תַּסְתֵּר פָּנֶיךָ מֵעַבְדֶּךָ כִּי צַר לִי מַהֵר עֲנֵנִי׃",
         "transliteration": "vealtaseter paneyja me'avedeja kitsarli maher 'aneni",
-        "spanish": "Acércate a mí alma, redímela: Líbrame á causa de mis enemigos."
+        "spanish": "Y no escondas tu rostro de tu siervo; Porque estoy angustiado; apresúrate, óyeme."
       },
       {
         "verse": 19,
         "hebrew": "קׇרְבָה אֶל נַפְשִׁי גְאָלָהּ לְמַעַן אֹיְבַי פְּדֵנִי׃",
         "transliteration": "krevah elnafeshi gealah lema'an oyevay pedeni",
-        "spanish": "Tú sabes mi afrenta, y mi confusión, y mi oprobio: Delante de ti están todos mis enemigos."
+        "spanish": "Acércate a mí alma, redímela: Líbrame á causa de mis enemigos."
       },
       {
         "verse": 20,
         "hebrew": "אַתָּה יָדַעְתָּ חֶרְפָּתִי וּבׇשְׁתִּי וּכְלִמָּתִי נֶגְדְּךָ כׇּל צוֹרְרָי׃",
         "transliteration": "atah yada'eta jerepati uvsheti ujelimati negedeja kltsooreray",
-        "spanish": "La afrenta ha quebrantado mi corazón, y estoy acongojado: Y esperé quien se compadeciese de mí, y no lo hubo: Y consoladores, y ninguno hallé."
+        "spanish": "Tú sabes mi afrenta, y mi confusión, y mi oprobio: Delante de ti están todos mis enemigos."
       },
       {
         "verse": 21,
         "hebrew": "חֶרְפָּה שָׁבְרָה לִבִּי וָאָנוּשָׁה וָאֲקַוֶּה לָנוּד וָאַיִן וְלַמְנַחֲמִים וְלֹא מָצָאתִי׃",
         "transliteration": "jerepah shaverah libi vaanushah vaakaveh lanud vaain velamenajamim velo matsati",
-        "spanish": "Pusiéronme además hiel por comida, Y en mi sed me dieron á beber vinagre."
+        "spanish": "La afrenta ha quebrantado mi corazón, y estoy acongojado: Y esperé quien se compadeciese de mí, y no lo hubo: Y consoladores, y ninguno hallé."
       },
       {
         "verse": 22,
         "hebrew": "וַיִּתְּנוּ בְּבָרוּתִי רֹאשׁ וְלִצְמָאִי יַשְׁקוּנִי חֹמֶץ׃",
         "transliteration": "vaitenu bevaruti rosh velitsemai yashekuni jomets",
-        "spanish": "Sea su mesa delante de ellos por lazo, Y lo que es para bien por tropiezo."
+        "spanish": "Pusiéronme además hiel por comida, Y en mi sed me dieron á beber vinagre."
       },
       {
         "verse": 23,
         "hebrew": "יְהִי שֻׁלְחָנָם לִפְנֵיהֶם לְפָח וְלִשְׁלוֹמִים לְמוֹקֵשׁ׃",
         "transliteration": "yehishulejanam lifeneyhem lefaj velisheloomim lemookesh",
-        "spanish": "Sean oscurecidos sus ojos para ver, Y haz siempre titubear sus lomos."
+        "spanish": "Sea su mesa delante de ellos por lazo, Y lo que es para bien por tropiezo."
       },
       {
         "verse": 24,
         "hebrew": "תֶּחְשַׁכְנָה עֵינֵיהֶם מֵרְאוֹת וּמׇתְנֵיהֶם תָּמִיד הַמְעַד׃",
         "transliteration": "tejeshajenah 'eyneyhem mereoot umteneyhem tamid hame'ad",
-        "spanish": "Derrama sobre ellos tu ira, Y el furor de tu enojo los alcance."
+        "spanish": "Sean oscurecidos sus ojos para ver, Y haz siempre titubear sus lomos."
       },
       {
         "verse": 25,
         "hebrew": "שְׁפׇךְ עֲלֵיהֶם זַעְמֶךָ וַחֲרוֹן אַפְּךָ יַשִּׂיגֵם׃",
         "transliteration": "shefje'aleyhem za'emeja vajaroon apeja yasigem",
-        "spanish": "Sea su palacio asolado: En sus tiendas no haya morador."
+        "spanish": "Derrama sobre ellos tu ira, Y el furor de tu enojo los alcance."
       },
       {
         "verse": 26,
         "hebrew": "תְּהִי טִירָתָם נְשַׁמָּה בְּאׇהֳלֵיהֶם אַל יְהִי יֹשֵׁב׃",
         "transliteration": "tehitiratam neshamah beholeyhem alyehi yoshev",
-        "spanish": "Porque persiguieron al que tú heriste; Y cuentan del dolor de los que tú llagaste."
+        "spanish": "Sea su palacio asolado: En sus tiendas no haya morador."
       },
       {
         "verse": 27,
         "hebrew": "כִּי אַתָּה אֲשֶׁר הִכִּיתָ רָדָפוּ וְאֶל מַכְאוֹב חֲלָלֶיךָ יְסַפֵּרוּ׃",
         "transliteration": "kiatah asherhikita radafu veelmajeoov jalaleyja yesaperv",
-        "spanish": "Pon maldad sobre su maldad, Y no entren en tu justicia."
+        "spanish": "Porque persiguieron al que tú heriste; Y cuentan del dolor de los que tú llagaste."
       },
       {
         "verse": 28,
         "hebrew": "תְּנָה עָוֺן עַל עֲוֺנָם וְאַל יָבֹאוּ בְּצִדְקָתֶךָ׃",
         "transliteration": "tenah'avn 'al'avnam vealyavuu betsidekateja",
-        "spanish": "Sean raídos del libro de los vivientes, Y no sean escritos con los justos."
+        "spanish": "Pon maldad sobre su maldad, Y no entren en tu justicia."
       },
       {
         "verse": 29,
         "hebrew": "יִמָּחוּ מִסֵּפֶר חַיִּים וְעִם צַדִּיקִים אַל יִכָּתֵבוּ׃",
         "transliteration": "imaju misefer jaim ve'im tsadikim alikatevv",
-        "spanish": "Y yo afligido y dolorido, Tu salud, oh Dios, me defenderá."
+        "spanish": "Sean raídos del libro de los vivientes, Y no sean escritos con los justos."
       },
       {
         "verse": 30,
         "hebrew": "וַאֲנִי עָנִי וְכוֹאֵב יְשׁוּעָתְךָ אֱלֹהִים תְּשַׂגְּבֵנִי׃",
         "transliteration": "vaani 'ani vejooev yeshu'ateja Elohim tesageveni",
-        "spanish": "Alabaré yo el nombre de Dios con cántico, Ensalzarélo con alabanza."
+        "spanish": "Y yo afligido y dolorido, Tu salud, oh Dios, me defenderá."
       },
       {
         "verse": 31,
         "hebrew": "אֲהַלְלָה שֵׁם אֱלֹהִים בְּשִׁיר וַאֲגַדְּלֶנּוּ בְתוֹדָה׃",
         "transliteration": "ahalelah shemElohim beshir vaagadelenu vetoodah",
-        "spanish": "Y agradará a YHVH más que sacrificio de buey, O becerro que echa cuernos y uñas."
+        "spanish": "Alabaré yo el nombre de Dios con cántico, Ensalzarélo con alabanza."
       },
       {
         "verse": 32,
         "hebrew": "וְתִיטַב לַיהֹוָה מִשּׁוֹר פָּר מַקְרִן מַפְרִיס׃",
         "transliteration": "vetitav layhovah mishoor par makerin maferis",
-        "spanish": "Veránlo los humildes, y se gozarán; Buscad a Dios, y vivirá vuestro corazón."
+        "spanish": "Y agradará a YHVH más que sacrificio de buey, O becerro que echa cuernos y uñas."
       },
       {
         "verse": 33,
         "hebrew": "רָאוּ עֲנָוִים יִשְׂמָחוּ דֹּרְשֵׁי אֱלֹהִים וִיחִי לְבַבְכֶם׃",
         "transliteration": "rau 'anavim isemaju doreshey Elohim viji levavejem",
-        "spanish": "Porque YHVH oye a los menesterosos, Y no menosprecia á sus prisioneros."
+        "spanish": "Veránlo los humildes, y se gozarán; Buscad a Dios, y vivirá vuestro corazón."
       },
       {
         "verse": 34,
         "hebrew": "כִּי שֹׁמֵעַ אֶל אֶבְיוֹנִים יְהֹוָה וְאֶת אֲסִירָיו לֹא בָזָה׃",
         "transliteration": "kishome'a eleveyoonim Adonai veetasirayv lo vazah",
-        "spanish": "Alábenlo los cielos y la tierra, Los mares, y todo lo que se mueve en ellos."
+        "spanish": "Porque YHVH oye a los menesterosos, Y no menosprecia á sus prisioneros."
       },
       {
         "verse": 35,
         "hebrew": "יְהַלְלוּהוּ שָׁמַיִם וָאָרֶץ יַמִּים וְכׇל רֹמֵשׂ בָּם׃",
         "transliteration": "yehaleluhu shamaim vaarets yamim vejlromes bam",
-        "spanish": "Porque Dios guardará á Sión, y reedificará las ciudades de Judá; Y habitarán allí, y la poseerán."
+        "spanish": "Alábenlo los cielos y la tierra, Los mares, y todo lo que se mueve en ellos."
       },
       {
         "verse": 36,
         "hebrew": "כִּי אֱלֹהִים יוֹשִׁיעַ צִיּוֹן וְיִבְנֶה עָרֵי יְהוּדָה וְיָשְׁבוּ שָׁם וִירֵשׁוּהָ׃",
         "transliteration": "ki Elohim yooshi'a tsioon veiveneh 'arey yehudah veyashevu sham vireshuha",
-        "spanish": "Y la simiente de sus siervos la heredará, Y los que aman su nombre habitarán en ella."
+        "spanish": "Porque Dios guardará á Sión, y reedificará las ciudades de Judá; Y habitarán allí, y la poseerán."
       },
       {
         "verse": 37,
         "hebrew": "וְזֶרַע עֲבָדָיו יִנְחָלוּהָ וְאֹהֲבֵי שְׁמוֹ יִשְׁכְּנוּ בָהּ׃ ",
         "transliteration": "vezera' 'avadayv inejaluha veohavey shemoo ishekenvvah ",
-        "spanish": "..."
+        "spanish": "Y la simiente de sus siervos la heredará, Y los que aman su nombre habitarán en ella."
       }
     ]
   },
@@ -7133,37 +7133,37 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ לְדָוִד לְהַזְכִּיר׃",
         "transliteration": "lamenatseja ledavid lehazekir",
-        "spanish": "OH Dios, acude á librarme; Apresúrate, oh Dios, á socorrerme."
+        "spanish": "Al Músico principal; de David, para recordar."
       },
       {
         "verse": 2,
         "hebrew": "אֱלֹהִים לְהַצִּילֵנִי יְהֹוָה לְעֶזְרָתִי חוּשָׁה׃",
         "transliteration": "Elohim lehatsileni Adonai le'ezerati jushah",
-        "spanish": "Sean avergonzados y confusos Los que buscan mi vida; Sean vueltos atrás y avergonzados Los que mi mal desean."
+        "spanish": "OH Dios, acude á librarme; Apresúrate, oh Dios, á socorrerme."
       },
       {
         "verse": 3,
         "hebrew": "יֵבֹשׁוּ וְיַחְפְּרוּ מְבַקְשֵׁי נַפְשִׁי יִסֹּגוּ אָחוֹר וְיִכָּלְמוּ חֲפֵצֵי רָעָתִי׃",
         "transliteration": "yevushu veyajeperu mevakeshey nafeshi isogu ajoor veikalemu jafetsey ra'ati",
-        "spanish": "Sean vueltos, en pago de su afrenta hecha, Los que dicen: ¡Ah! ¡ah!"
+        "spanish": "Sean avergonzados y confusos Los que buscan mi vida; Sean vueltos atrás y avergonzados Los que mi mal desean."
       },
       {
         "verse": 4,
         "hebrew": "יָשׁוּבוּ עַל עֵקֶב בׇּשְׁתָּם הָאֹמְרִים הֶאָח הֶאָח׃",
         "transliteration": "yashuvu 'al'ekev bshetam haomerim heaj heaj",
-        "spanish": "Gócense y alégrense en ti todos los que te buscan; Y digan siempre los que aman tu salud: Engrandecido sea Dios."
+        "spanish": "Sean vueltos, en pago de su afrenta hecha, Los que dicen: ¡Ah! ¡ah!"
       },
       {
         "verse": 5,
         "hebrew": "יָשִׂישׂוּ וְיִשְׂמְחוּ בְּךָ כׇּל מְבַקְשֶׁיךָ וְיֹאמְרוּ תָמִיד יִגְדַּל אֱלֹהִים אֹהֲבֵי יְשׁוּעָתֶךָ׃",
         "transliteration": "yasisu veisemeju beja klmevakesheyja veyomeru tamid igedal Elohim ohavey yeshu'ateja",
-        "spanish": "Yo estoy afligido y menesteroso; Apresúrate á mí, oh Dios: Ayuda mía y mi libertador eres tú; Oh YHVH, no te detengas."
+        "spanish": "Gócense y alégrense en ti todos los que te buscan; Y digan siempre los que aman tu salud: Engrandecido sea Dios."
       },
       {
         "verse": 6,
         "hebrew": "וַאֲנִי עָנִי וְאֶבְיוֹן אֱלֹהִים חוּשָׁה לִּי עֶזְרִי וּמְפַלְטִי אַתָּה יְהֹוָה אַל תְּאַחַר׃ ",
         "transliteration": "vaani 'ani veeveyoon Elohim jushahli 'ezeri umefaleti atah Adonai alteajar ",
-        "spanish": "..."
+        "spanish": "Yo estoy afligido y menesteroso; Apresúrate á mí, oh Dios: Ayuda mía y mi libertador eres tú; Oh YHVH, no te detengas."
       }
     ]
   },
@@ -7784,67 +7784,67 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ אַל תַּשְׁחֵת מִזְמוֹר לְאָסָף שִׁיר׃",
         "transliteration": "lamenatseja altashejet mizemoor leasaf shir",
-        "spanish": "ALABARÉMOSTE, oh Dios, alabaremos; Que cercano está tu nombre: Cuenten tus maravillas."
+        "spanish": "Al Músico principal; sobre Al-tásjet. Salmo; Cántico de Asaf."
       },
       {
         "verse": 2,
         "hebrew": "הוֹדִינוּ לְּךָ אֱלֹהִים הוֹדִינוּ וְקָרוֹב שְׁמֶךָ סִפְּרוּ נִפְלְאוֹתֶיךָ׃",
         "transliteration": "hoodinu leja Elohim hoodinu vekaroov shemeja siperu nifeleooteyja",
-        "spanish": "Cuando yo tuviere tiempo, Yo juzgaré rectamente."
+        "spanish": "ALABARÉMOSTE, oh Dios, alabaremos; Que cercano está tu nombre: Cuenten tus maravillas."
       },
       {
         "verse": 3,
         "hebrew": "כִּי אֶקַּח מוֹעֵד אֲנִי מֵישָׁרִים אֶשְׁפֹּט׃",
         "transliteration": "ki ekaj moo'ed ani meysharim eshepot",
-        "spanish": "Arruinábase la tierra y sus moradores: Yo sostengo sus columnas. (Sélah)"
+        "spanish": "Cuando yo tuviere tiempo, Yo juzgaré rectamente."
       },
       {
         "verse": 4,
         "hebrew": "נְמֹגִים אֶרֶץ וְכׇל יֹשְׁבֶיהָ אָנֹכִי תִכַּנְתִּי עַמּוּדֶיהָ סֶּלָה׃",
         "transliteration": "nemogim erets vejlyosheveyha anoji tikaneti 'amudeyha selah",
-        "spanish": "Dije a los insensatos: No os infatuéis; Y a los impíos: No levantéis el cuerno:"
+        "spanish": "Arruinábase la tierra y sus moradores: Yo sostengo sus columnas. (Sélah)"
       },
       {
         "verse": 5,
         "hebrew": "אָמַרְתִּי לַהוֹלְלִים אַל תָּהֹלּוּ וְלָרְשָׁעִים אַל תָּרִימוּ קָרֶן׃",
         "transliteration": "amareti lahoolelim altaholu velaresha'im altarimu karen",
-        "spanish": "No levantéis en alto vuestro cuerno; No habléis con cerviz erguida."
+        "spanish": "Dije a los insensatos: No os infatuéis; Y a los impíos: No levantéis el cuerno:"
       },
       {
         "verse": 6,
         "hebrew": "אַל תָּרִימוּ לַמָּרוֹם קַרְנְכֶם תְּדַבְּרוּ בְצַוָּאר עָתָק׃",
         "transliteration": "altarimu lamaroom karenejem tedaberu vetsavar 'atak",
-        "spanish": "Porque ni de oriente, ni de occidente, Ni del desierto viene el ensalzamiento."
+        "spanish": "No levantéis en alto vuestro cuerno; No habléis con cerviz erguida."
       },
       {
         "verse": 7,
         "hebrew": "כִּי לֹא מִמּוֹצָא וּמִמַּעֲרָב וְלֹא מִמִּדְבַּר הָרִים׃",
         "transliteration": "ki lo mimootsa umima'arav velo mimidebar harim",
-        "spanish": "Mas Dios es el juez: A éste abate, y á aquel ensalza."
+        "spanish": "Porque ni de oriente, ni de occidente, Ni del desierto viene el ensalzamiento."
       },
       {
         "verse": 8,
         "hebrew": "כִּי אֱלֹהִים שֹׁפֵט זֶה יַשְׁפִּיל וְזֶה יָרִים׃",
         "transliteration": "kiElohim shofet zeh yashepil vezeh yarim",
-        "spanish": "Porque el cáliz está en la mano de YHVH, y el vino es tinto, Lleno de mistura; y él derrama del mismo: Ciertamente sus heces chuparán y beberán todos los impíos de la tierra."
+        "spanish": "Mas Dios es el juez: A éste abate, y á aquel ensalza."
       },
       {
         "verse": 9,
         "hebrew": "כִּי כוֹס בְּיַד יְהֹוָה וְיַיִן חָמַר מָלֵא מֶסֶךְ וַיַּגֵּר מִזֶּה אַךְ שְׁמָרֶיהָ יִמְצוּ יִשְׁתּוּ כֹּל רִשְׁעֵי אָרֶץ׃",
         "transliteration": "ki joos beyadAdonai veyain jamar male meseje vayager mizeh ajeshemareyha imetsu ishetu kol rishe'eyarets",
-        "spanish": "Mas yo anunciaré siempre, Cantaré alabanzas al Dios de Jacob."
+        "spanish": "Porque el cáliz está en la mano de YHVH, y el vino es tinto, Lleno de mistura; y él derrama del mismo: Ciertamente sus heces chuparán y beberán todos los impíos de la tierra."
       },
       {
         "verse": 10,
         "hebrew": "וַאֲנִי אַגִּיד לְעֹלָם אֲזַמְּרָה לֵאלֹהֵי יַעֲקֹב׃",
         "transliteration": "vaani agid le'olam azamerah lelohey ya'akov",
-        "spanish": "Y quebraré todos los cuernos de los pecadores: Los cuernos del justo serán ensalzados."
+        "spanish": "Mas yo anunciaré siempre, Cantaré alabanzas al Dios de Jacob."
       },
       {
         "verse": 11,
         "hebrew": "וְכׇל קַרְנֵי רְשָׁעִים אֲגַדֵּעַ תְּרוֹמַמְנָה קַרְנוֹת צַדִּיק׃ ",
         "transliteration": "vejlkareney resha'im agade'a teroomamenah karenoot tsadik ",
-        "spanish": "..."
+        "spanish": "Y quebraré todos los cuernos de los pecadores: Los cuernos del justo serán ensalzados."
       }
     ]
   },
@@ -7859,79 +7859,79 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ בִּנְגִינֹת מִזְמוֹר לְאָסָף שִׁיר׃",
         "transliteration": "lamenatseja bineginot mizemoor leasaf shir",
-        "spanish": "DIOS es conocido en Judá: En Israel es grande su nombre."
+        "spanish": "Al Músico principal; en Neginot. Salmo; Cántico de Asaf."
       },
       {
         "verse": 2,
         "hebrew": "נוֹדָע בִּיהוּדָה אֱלֹהִים בְּיִשְׂרָאֵל גָּדוֹל שְׁמוֹ׃",
         "transliteration": "nooda' bihudah Elohim beiserael gadool shemoo",
-        "spanish": "Y en Salem está su tabernáculo, Y su habitación en Sión."
+        "spanish": "DIOS es conocido en Judá: En Israel es grande su nombre."
       },
       {
         "verse": 3,
         "hebrew": "וַיְהִי בְשָׁלֵם סוּכּוֹ וּמְעוֹנָתוֹ בְצִיּוֹן׃",
         "transliteration": "vayehi veshalem sukoo ume'oonatoo vetsioon",
-        "spanish": "Allí quebró las saetas del arco, El escudo, y la espada, y tren de guerra. (Sélah)"
+        "spanish": "Y en Salem está su tabernáculo, Y su habitación en Sión."
       },
       {
         "verse": 4,
         "hebrew": "שָׁמָּה שִׁבַּר רִשְׁפֵי קָשֶׁת מָגֵן וְחֶרֶב וּמִלְחָמָה סֶלָה׃",
         "transliteration": "shamah shibar rishefeykashet magen vejerev umilejamah selah",
-        "spanish": "Ilustre eres tú; fuerte, más que los montes de caza."
+        "spanish": "Allí quebró las saetas del arco, El escudo, y la espada, y tren de guerra. (Sélah)"
       },
       {
         "verse": 5,
         "hebrew": "נָאוֹר אַתָּה אַדִּיר מֵהַרְרֵי טָרֶף׃",
         "transliteration": "naoor atah adir meharereytaref",
-        "spanish": "Los fuertes de corazón fueron despojados, durmieron su sueño; Y nada hallaron en sus manos todos los varones fuertes."
+        "spanish": "Ilustre eres tú; fuerte, más que los montes de caza."
       },
       {
         "verse": 6,
         "hebrew": "אֶשְׁתּוֹלְלוּ אַבִּירֵי לֵב נָמוּ שְׁנָתָם וְלֹא מָצְאוּ כׇל אַנְשֵׁי חַיִל יְדֵיהֶם׃",
         "transliteration": "eshetoolelu abirey lev namu shenatam velomatseu jlanesheyjail yedeyhem",
-        "spanish": "A tu reprensión, oh Dios de Jacob, El carro y el caballo fueron entorpecidos."
+        "spanish": "Los fuertes de corazón fueron despojados, durmieron su sueño; Y nada hallaron en sus manos todos los varones fuertes."
       },
       {
         "verse": 7,
         "hebrew": "מִגַּעֲרָתְךָ אֱלֹהֵי יַעֲקֹב נִרְדָּם וְרֶכֶב וָסוּס׃",
         "transliteration": "miga'arateja elohey ya'akov niredam verejev vasus",
-        "spanish": "Tú, terrible eres tú: ¿Y quién parará delante de ti, en comenzando tu ira?"
+        "spanish": "A tu reprensión, oh Dios de Jacob, El carro y el caballo fueron entorpecidos."
       },
       {
         "verse": 8,
         "hebrew": "אַתָּה נוֹרָא אַתָּה וּמִי יַעֲמֹד לְפָנֶיךָ מֵאָז אַפֶּךָ׃",
         "transliteration": "atah noora atah umiya'amod lefaneyja meaz apeja",
-        "spanish": "Desde los cielos hiciste oir juicio; La tierra tuvo temor y quedó suspensa,"
+        "spanish": "Tú, terrible eres tú: ¿Y quién parará delante de ti, en comenzando tu ira?"
       },
       {
         "verse": 9,
         "hebrew": "מִשָּׁמַיִם הִשְׁמַעְתָּ דִּין אֶרֶץ יָרְאָה וְשָׁקָטָה׃",
         "transliteration": "mishamaim hishema'eta din erets yareah veshakatah",
-        "spanish": "Cuando te levantaste, oh Dios, al juicio, Para salvar a todos los mansos de la tierra. (Sélah)"
+        "spanish": "Desde los cielos hiciste oir juicio; La tierra tuvo temor y quedó suspensa,"
       },
       {
         "verse": 10,
         "hebrew": "בְּקוּם לַמִּשְׁפָּט אֱלֹהִים לְהוֹשִׁיעַ כׇּל עַנְוֵי אֶרֶץ סֶלָה׃",
         "transliteration": "bekumlamishepat Elohim lehooshi'a kl'aneveyerets selah",
-        "spanish": "Ciertamente la ira del hombre te acarreará alabanza: Tú reprimirás el resto de las iras."
+        "spanish": "Cuando te levantaste, oh Dios, al juicio, Para salvar a todos los mansos de la tierra. (Sélah)"
       },
       {
         "verse": 11,
         "hebrew": "כִּי חֲמַת אָדָם תּוֹדֶךָּ שְׁאֵרִית חֵמֹת תַּחְגֹּר׃",
         "transliteration": "kijamat adam toodeka sheerit jemot tajegor",
-        "spanish": "Prometed, y pagad a YHVH vuestro Dios: Todos los que están alrededor de él, traigan presentes al Terrible."
+        "spanish": "Ciertamente la ira del hombre te acarreará alabanza: Tú reprimirás el resto de las iras."
       },
       {
         "verse": 12,
         "hebrew": "נִדְרוּ וְשַׁלְּמוּ לַיהֹוָה אֱלֹהֵיכֶם כׇּל סְבִיבָיו יֹבִילוּ שַׁי לַמּוֹרָא׃",
         "transliteration": "nideru veshalemu layhovah eloheyjem klsevivayv yovilu shay lamoora",
-        "spanish": "Cortará él el espíritu de los príncipes: Terrible es a los reyes de la tierra."
+        "spanish": "Prometed, y pagad a YHVH vuestro Dios: Todos los que están alrededor de él, traigan presentes al Terrible."
       },
       {
         "verse": 13,
         "hebrew": "יִבְצֹר רוּחַ נְגִידִים נוֹרָא לְמַלְכֵי אָרֶץ׃ ",
         "transliteration": "ivetsor ruja negidim noora lemalejeyarets ",
-        "spanish": "..."
+        "spanish": "Cortará él el espíritu de los príncipes: Terrible es a los reyes de la tierra."
       }
     ]
   },
@@ -7947,127 +7947,127 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ עַל [יְדוּתוּן] (ידיתון) לְאָסָף מִזְמוֹר׃",
         "transliteration": "lamenatseja 'al[yedutun] (ydytvn) leasaf mizemoor",
-        "spanish": "CON mi voz clamé a Dios, A Dios clamé, y él me escuchará."
+        "spanish": "Al Músico principal; para Jedutún. Salmo de Asaf."
       },
       {
         "verse": 2,
         "hebrew": "קוֹלִי אֶל אֱלֹהִים וְאֶצְעָקָה קוֹלִי אֶל אֱלֹהִים וְהַאֲזִין אֵלָי׃",
         "transliteration": "kooli elElohim veetse'akah kooli elElohim vehaazin elay",
-        "spanish": "Al Señor busqué en el día de mi angustia: Mi mal corría de noche y no cesaba: Mi alma rehusaba consuelo."
+        "spanish": "CON mi voz clamé a Dios, A Dios clamé, y él me escuchará."
       },
       {
         "verse": 3,
         "hebrew": "בְּיוֹם צָרָתִי אֲדֹנָי דָּרָשְׁתִּי יָדִי לַיְלָה נִגְּרָה וְלֹא תָפוּג מֵאֲנָה הִנָּחֵם נַפְשִׁי׃",
         "transliteration": "beyoom tsarati adonay darasheti yadi layelah nigerah velo tafug meanah hinajem nafeshi",
-        "spanish": "Acordábame de Dios, y gritaba: Quejábame, y desmayaba mi espíritu. (Sélah)"
+        "spanish": "Al Señor busqué en el día de mi angustia: Mi mal corría de noche y no cesaba: Mi alma rehusaba consuelo."
       },
       {
         "verse": 4,
         "hebrew": "אֶזְכְּרָה אֱלֹהִים וְאֶהֱמָיָה אָשִׂיחָה וְתִתְעַטֵּף רוּחִי סֶלָה׃",
         "transliteration": "ezekerah Elohim veehemayah asijah vetite'atef ruji selah",
-        "spanish": "Tenías los párpados de mis ojos: Estaba yo quebrantado, y no hablaba."
+        "spanish": "Acordábame de Dios, y gritaba: Quejábame, y desmayaba mi espíritu. (Sélah)"
       },
       {
         "verse": 5,
         "hebrew": "אָחַזְתָּ שְׁמֻרוֹת עֵינָי נִפְעַמְתִּי וְלֹא אֲדַבֵּר׃",
         "transliteration": "ajazeta shemuroot 'eynay nife'ameti velo adaber",
-        "spanish": "Consideraba los días desde el principio, Los años de los siglos."
+        "spanish": "Tenías los párpados de mis ojos: Estaba yo quebrantado, y no hablaba."
       },
       {
         "verse": 6,
         "hebrew": "חִשַּׁבְתִּי יָמִים מִקֶּדֶם שְׁנוֹת עוֹלָמִים׃",
         "transliteration": "jishaveti yamim mikedem shenoot 'oolamim",
-        "spanish": "Acordábame de mis canciones de noche; Meditaba con mi corazón, Y mi espíritu inquiría."
+        "spanish": "Consideraba los días desde el principio, Los años de los siglos."
       },
       {
         "verse": 7,
         "hebrew": "אֶזְכְּרָה נְגִינָתִי בַּלָּיְלָה עִם לְבָבִי אָשִׂיחָה וַיְחַפֵּשׂ רוּחִי׃",
         "transliteration": "ezekerah neginati balayelah 'imlevavi asijah vayejapes ruji",
-        "spanish": "¿Desechará el Señor para siempre, Y no volverá más á amar?"
+        "spanish": "Acordábame de mis canciones de noche; Meditaba con mi corazón, Y mi espíritu inquiría."
       },
       {
         "verse": 8,
         "hebrew": "הַלְעוֹלָמִים יִזְנַח אֲדֹנָי וְלֹא יֹסִיף לִרְצוֹת עוֹד׃",
         "transliteration": "hale'oolamim izenaj adonay veloyosif liretsoot 'ood",
-        "spanish": "¿Hase acabado para siempre Su Jésed? ¿Hase acabado la palabra suya para generación y generación?"
+        "spanish": "¿Desechará el Señor para siempre, Y no volverá más á amar?"
       },
       {
         "verse": 9,
         "hebrew": "הֶאָפֵס לָנֶצַח חַסְדּוֹ גָּמַר אֹמֶר לְדֹר וָדֹר׃",
         "transliteration": "heafes lanetsaj jasedoo gamar omer ledor vador",
-        "spanish": "¿Ha olvidado Dios el tener Jésed? ¿Ha encerrado con ira sus piedades? (Sélah)"
+        "spanish": "¿Hase acabado para siempre Su Jésed? ¿Hase acabado la palabra suya para generación y generación?"
       },
       {
         "verse": 10,
         "hebrew": "הֲשָׁכַח חַנּוֹת אֵל אִם קָפַץ בְּאַף רַחֲמָיו סֶלָה׃",
         "transliteration": "hashajaj janoot el imkafats beaf rajamayv selah",
-        "spanish": "Y dije: Enfermedad mía es esta; Traeré pues á la memoria los años de la diestra del Elyón."
+        "spanish": "¿Ha olvidado Dios el tener Jésed? ¿Ha encerrado con ira sus piedades? (Sélah)"
       },
       {
         "verse": 11,
         "hebrew": "וָאֹמַר חַלּוֹתִי הִיא שְׁנוֹת יְמִין עֶלְיוֹן׃",
         "transliteration": "vaomar jalooti hi shenoot yemin 'eleyoon",
-        "spanish": "Acordaréme de las obras de Yah: Sí, haré yo memoria de tus maravillas antiguas."
+        "spanish": "Y dije: Enfermedad mía es esta; Traeré pues á la memoria los años de la diestra del Elyón."
       },
       {
         "verse": 12,
         "hebrew": "(אזכיר) [אֶזְכּוֹר] מַעַלְלֵי יָהּ כִּי אֶזְכְּרָה מִקֶּדֶם פִּלְאֶךָ׃",
         "transliteration": "(zjyr) [ezekoor] ma'aleleyyah kiezekerah mikedem pileeja",
-        "spanish": "Y meditaré en todas tus obras, Y hablaré de tus hechos."
+        "spanish": "Acordaréme de las obras de Yah: Sí, haré yo memoria de tus maravillas antiguas."
       },
       {
         "verse": 13,
         "hebrew": "וְהָגִיתִי בְכׇל פׇּעֳלֶךָ וּבַעֲלִילוֹתֶיךָ אָשִׂיחָה׃",
         "transliteration": "vehagiti vejlp'oleja uva'alilooteyja asijah",
-        "spanish": "Oh Dios, en santidad es tu camino: ¿Qué Dios grande como el Dios nuestro?"
+        "spanish": "Y meditaré en todas tus obras, Y hablaré de tus hechos."
       },
       {
         "verse": 14,
         "hebrew": "אֱלֹהִים בַּקֹּדֶשׁ דַּרְכֶּךָ מִי אֵל גָּדוֹל כֵּאלֹהִים׃",
         "transliteration": "Elohim bakodesh darekeja miel gadool kelohim",
-        "spanish": "Tú eres el Dios que hace maravillas: Tú hiciste notoria en los pueblos tu fortaleza."
+        "spanish": "Oh Dios, en santidad es tu camino: ¿Qué Dios grande como el Dios nuestro?"
       },
       {
         "verse": 15,
         "hebrew": "אַתָּה הָאֵל עֹשֵׂה פֶלֶא הוֹדַעְתָּ בָעַמִּים עֻזֶּךָ׃",
         "transliteration": "atah hael 'oseh fele hooda'eta va'amim 'uzeja",
-        "spanish": "Con tu brazo redimiste á tu pueblo, A los hijos de Jacob y de José. (Sélah)"
+        "spanish": "Tú eres el Dios que hace maravillas: Tú hiciste notoria en los pueblos tu fortaleza."
       },
       {
         "verse": 16,
         "hebrew": "גָּאַלְתָּ בִּזְרוֹעַ עַמֶּךָ בְּנֵי יַעֲקֹב וְיוֹסֵף סֶלָה׃",
         "transliteration": "gaaleta bizeroo'a 'ameja beneyya'akov veyoosef selah",
-        "spanish": "Viéronte las aguas, oh Dios; Viéronte las aguas, temieron; Y temblaron los abismos."
+        "spanish": "Con tu brazo redimiste á tu pueblo, A los hijos de Jacob y de José. (Sélah)"
       },
       {
         "verse": 17,
         "hebrew": "רָאוּךָ מַּיִם אֱלֹהִים רָאוּךָ מַּיִם יָחִילוּ אַף יִרְגְּזוּ תְהֹמוֹת׃",
         "transliteration": "rauja maim Elohim rauja maim yajilu af iregezu tehomoot",
-        "spanish": "Las nubes echaron inundaciones de aguas; Tronaron los cielos, Y discurrieron tus rayos."
+        "spanish": "Viéronte las aguas, oh Dios; Viéronte las aguas, temieron; Y temblaron los abismos."
       },
       {
         "verse": 18,
         "hebrew": "זֹרְמוּ מַיִם עָבוֹת קוֹל נָתְנוּ שְׁחָקִים אַף חֲצָצֶיךָ יִתְהַלָּכוּ׃",
         "transliteration": "zoremu maim 'avuot kool natenu shejakim afjatsatseyja itehalajv",
-        "spanish": "Anduvo en derredor el sonido de tus truenos; Los relámpagos alumbraron el mundo; Estremecióse y tembló la tierra."
+        "spanish": "Las nubes echaron inundaciones de aguas; Tronaron los cielos, Y discurrieron tus rayos."
       },
       {
         "verse": 19,
         "hebrew": "קוֹל רַעַמְךָ בַּגַּלְגַּל הֵאִירוּ בְרָקִים תֵּבֵל רָגְזָה וַתִּרְעַשׁ הָאָרֶץ׃",
         "transliteration": "kool ra'ameja bagalegal heiru verakim tevel ragezah vatire'ash haarets",
-        "spanish": "En la mar fué tu camino, Y tus sendas en las muchas aguas; Y tus pisadas no fueron conocidas."
+        "spanish": "Anduvo en derredor el sonido de tus truenos; Los relámpagos alumbraron el mundo; Estremecióse y tembló la tierra."
       },
       {
         "verse": 20,
         "hebrew": "בַּיָּם דַּרְכֶּךָ (ושביליך) [וּשְׁבִילְךָ] בְּמַיִם רַבִּים וְעִקְּבוֹתֶיךָ לֹא נֹדָעוּ׃",
         "transliteration": "bayam darekeja (vshvylyj) [ushevileja] bemaim rabim ve'ikevuoteyja lo noda'v",
-        "spanish": "Condujiste á tu pueblo como ovejas, Por mano de Moisés y de Aarón."
+        "spanish": "En la mar fué tu camino, Y tus sendas en las muchas aguas; Y tus pisadas no fueron conocidas."
       },
       {
         "verse": 21,
         "hebrew": "נָחִיתָ כַצֹּאן עַמֶּךָ בְּיַד מֹשֶׁה וְאַהֲרֹן׃ ",
         "transliteration": "najita jatson 'ameja beyadmosheh veaharon ",
-        "spanish": "..."
+        "spanish": "Condujiste á tu pueblo como ovejas, Por mano de Moisés y de Aarón."
       }
     ]
   },
@@ -8610,121 +8610,121 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ אֶל שֹׁשַׁנִּים עֵדוּת לְאָסָף מִזְמוֹר׃",
         "transliteration": "lamenatseja elshoshanim 'edut leasaf mizemoor",
-        "spanish": "OH Pastor de Israel, escucha: Tú que pastoreas como á ovejas á José, Que estás entre querubines, resplandece."
+        "spanish": "Al Músico principal; sobre Sosanim-edut. Salmo de Asaf."
       },
       {
         "verse": 2,
         "hebrew": "רֹעֵה יִשְׂרָאֵל הַאֲזִינָה נֹהֵג כַּצֹּאן יוֹסֵף יֹשֵׁב הַכְּרוּבִים הוֹפִיעָה׃",
         "transliteration": "ro'eh iserael haazinah noheg katson yoosef yoshev hakeruvim hoofi'ah",
-        "spanish": "Despierta tu valentía delante de Ephraim, y de Benjamín, y de Manasés, Y ven á salvarnos."
+        "spanish": "OH Pastor de Israel, escucha: Tú que pastoreas como á ovejas á José, Que estás entre querubines, resplandece."
       },
       {
         "verse": 3,
         "hebrew": "לִפְנֵי אֶפְרַיִם וּבִנְיָמִן וּמְנַשֶּׁה עוֹרְרָה אֶת גְּבוּרָתֶךָ וּלְכָה לִישֻׁעָתָה לָּנוּ׃",
         "transliteration": "lifeney eferaim uvineyamin umenasheh 'oorerah etgevurateja ulejah lishu'atah lanv",
-        "spanish": "Oh Dios, haznos tornar; Y haz resplandecer tu rostro, y seremos salvos."
+        "spanish": "Despierta tu valentía delante de Ephraim, y de Benjamín, y de Manasés, Y ven á salvarnos."
       },
       {
         "verse": 4,
         "hebrew": "אֱלֹהִים הֲשִׁיבֵנוּ וְהָאֵר פָּנֶיךָ וְנִוָּשֵׁעָה׃",
         "transliteration": "Elohim hashivenu vehaer paneyja venivashe'ah",
-        "spanish": "YHVH, Dios de los ejércitos, ¿Hasta cuándo humearás tú contra la oración de tu pueblo?"
+        "spanish": "Oh Dios, haznos tornar; Y haz resplandecer tu rostro, y seremos salvos."
       },
       {
         "verse": 5,
         "hebrew": "יְהֹוָה אֱלֹהִים צְבָאוֹת עַד מָתַי עָשַׁנְתָּ בִּתְפִלַּת עַמֶּךָ׃",
         "transliteration": "Adonai Elohim tsevaoot 'admatay 'ashaneta bitefilat 'ameja",
-        "spanish": "Dísteles á comer pan de lágrimas, Y dísteles á beber lágrimas en gran abundancia."
+        "spanish": "YHVH, Dios de los ejércitos, ¿Hasta cuándo humearás tú contra la oración de tu pueblo?"
       },
       {
         "verse": 6,
         "hebrew": "הֶאֱכַלְתָּם לֶחֶם דִּמְעָה וַתַּשְׁקֵמוֹ בִּדְמָעוֹת שָׁלִישׁ׃",
         "transliteration": "heejaletam lejem dime'ah vatashekemoo bidema'oot shalish",
-        "spanish": "Pusístenos por contienda á nuestros vecinos: Y nuestros enemigos se burlan entre sí."
+        "spanish": "Dísteles á comer pan de lágrimas, Y dísteles á beber lágrimas en gran abundancia."
       },
       {
         "verse": 7,
         "hebrew": "תְּשִׂימֵנוּ מָדוֹן לִשְׁכֵנֵינוּ וְאֹיְבֵינוּ יִלְעֲגוּ לָמוֹ׃",
         "transliteration": "tesimenu madoon lishejeneynu veoyeveynu ile'agvlamoo",
-        "spanish": "Oh Dios de los ejércitos, haznos tornar; Y haz resplandecer tu rostro, y seremos salvos."
+        "spanish": "Pusístenos por contienda á nuestros vecinos: Y nuestros enemigos se burlan entre sí."
       },
       {
         "verse": 8,
         "hebrew": "אֱלֹהִים צְבָאוֹת הֲשִׁיבֵנוּ וְהָאֵר פָּנֶיךָ וְנִוָּשֵׁעָה׃",
         "transliteration": "Elohim tsevaoot hashivenu vehaer paneyja venivashe'ah",
-        "spanish": "Hiciste venir una vid de Egipto: Echaste las gentes, y plantástela."
+        "spanish": "Oh Dios de los ejércitos, haznos tornar; Y haz resplandecer tu rostro, y seremos salvos."
       },
       {
         "verse": 9,
         "hebrew": "גֶּפֶן מִמִּצְרַיִם תַּסִּיעַ תְּגָרֵשׁ גּוֹיִם וַתִּטָּעֶהָ׃",
         "transliteration": "gefen mimitseraim tasi'a tegaresh gooim vatita'eha",
-        "spanish": "Limpiaste sitio delante de ella, E hiciste arraigar sus raíces, y llenó la tierra."
+        "spanish": "Hiciste venir una vid de Egipto: Echaste las gentes, y plantástela."
       },
       {
         "verse": 10,
         "hebrew": "פִּנִּיתָ לְפָנֶיהָ וַתַּשְׁרֵשׁ שׇׁרָשֶׁיהָ וַתְּמַלֵּא אָרֶץ׃",
         "transliteration": "pinita lefaneyha vatasheresh shrasheyha vatemalearets",
-        "spanish": "Los montes fueron cubiertos de su sombra; Y sus sarmientos como cedros de Dios."
+        "spanish": "Limpiaste sitio delante de ella, E hiciste arraigar sus raíces, y llenó la tierra."
       },
       {
         "verse": 11,
         "hebrew": "כׇּסּוּ הָרִים צִלָּהּ וַעֲנָפֶיהָ אַרְזֵי אֵל׃",
         "transliteration": "ksu harim tsilah va'anafeyha arezeyel",
-        "spanish": "Extendió sus vástagos hasta la mar, Y hasta el río sus mugrones."
+        "spanish": "Los montes fueron cubiertos de su sombra; Y sus sarmientos como cedros de Dios."
       },
       {
         "verse": 12,
         "hebrew": "תְּשַׁלַּח קְצִירֶהָ עַד יָם וְאֶל נָהָר יוֹנְקוֹתֶיהָ׃",
         "transliteration": "teshalaj ketsireha 'adyam veelnahar yoonekooteyha",
-        "spanish": "¿Por qué aportillaste sus vallados, Y la vendimian todos los que pasan por el camino?"
+        "spanish": "Extendió sus vástagos hasta la mar, Y hasta el río sus mugrones."
       },
       {
         "verse": 13,
         "hebrew": "לָמָּה פָּרַצְתָּ גְדֵרֶיהָ וְאָרוּהָ כׇּל עֹבְרֵי דָרֶךְ׃",
         "transliteration": "lamah paratseta gedereyha vearuha kl'overey dareje",
-        "spanish": "Estropeóla el puerco montés, Y pacióla la bestia del campo."
+        "spanish": "¿Por qué aportillaste sus vallados, Y la vendimian todos los que pasan por el camino?"
       },
       {
         "verse": 14,
         "hebrew": "יְכַרְסְמֶנָּה חֲזִיר מִיָּעַר וְזִיז שָׂדַי יִרְעֶנָּה׃",
         "transliteration": "yejaresemenah jazir mia'ar veziz saday ire'enah",
-        "spanish": "Oh Dios de los ejércitos, vuelve ahora: Mira desde el cielo, y considera, y visita esta viña,"
+        "spanish": "Estropeóla el puerco montés, Y pacióla la bestia del campo."
       },
       {
         "verse": 15,
         "hebrew": "אֱלֹהִים צְבָאוֹת שׁוּב נָא הַבֵּט מִשָּׁמַיִם וּרְאֵה וּפְקֹד גֶּפֶן זֹאת׃",
         "transliteration": "Elohim tsevaoot shuvna habet mishamaim ureeh ufekod gefen zot",
-        "spanish": "Y la planta que plantó tu diestra, Y el renuevo que para ti corroboraste."
+        "spanish": "Oh Dios de los ejércitos, vuelve ahora: Mira desde el cielo, y considera, y visita esta viña,"
       },
       {
         "verse": 16,
         "hebrew": "וְכַנָּה אֲשֶׁר נָטְעָה יְמִינֶךָ וְעַל בֵּן אִמַּצְתָּה לָּךְ׃",
         "transliteration": "vejanah ashernate'ah yemineja ve'alben imatsetah laje",
-        "spanish": "Quemada á fuego está, asolada: Perezcan por la reprensión de tu rostro."
+        "spanish": "Y la planta que plantó tu diestra, Y el renuevo que para ti corroboraste."
       },
       {
         "verse": 17,
         "hebrew": "שְׂרֻפָה בָאֵשׁ כְּסוּחָה מִגַּעֲרַת פָּנֶיךָ יֹאבֵדוּ׃",
         "transliteration": "serufah vaesh kesujah miga'arat paneyja yovedv",
-        "spanish": "Sea tu mano sobre el varón de tu diestra, Sobre el hijo del hombre que para ti corroboraste."
+        "spanish": "Quemada á fuego está, asolada: Perezcan por la reprensión de tu rostro."
       },
       {
         "verse": 18,
         "hebrew": "תְּהִי יָדְךָ עַל אִישׁ יְמִינֶךָ עַל בֶּן אָדָם אִמַּצְתָּ לָּךְ׃",
         "transliteration": "tehiyadeja 'alish yemineja 'albenadam imatseta laje",
-        "spanish": "Así no nos volveremos de ti: Vida nos darás, é invocaremos tu nombre."
+        "spanish": "Sea tu mano sobre el varón de tu diestra, Sobre el hijo del hombre que para ti corroboraste."
       },
       {
         "verse": 19,
         "hebrew": "וְלֹא נָסוֹג מִמֶּךָּ תְּחַיֵּנוּ וּבְשִׁמְךָ נִקְרָא׃",
         "transliteration": "velonasoog mimeka tejayenu uveshimeja nikera",
-        "spanish": "Oh YHVH, Dios de los ejércitos, haznos tornar; Haz resplandecer tu rostro, y seremos salvos."
+        "spanish": "Así no nos volveremos de ti: Vida nos darás, é invocaremos tu nombre."
       },
       {
         "verse": 20,
         "hebrew": "יְהֹוָה אֱלֹהִים צְבָאוֹת הֲשִׁיבֵנוּ הָאֵר פָּנֶיךָ וְנִוָּשֵׁעָה׃ ",
         "transliteration": "Adonai Elohim tsevaoot hashivenu haer paneyja venivashe'ah ",
-        "spanish": "..."
+        "spanish": "Oh YHVH, Dios de los ejércitos, haznos tornar; Haz resplandecer tu rostro, y seremos salvos."
       }
     ]
   },
@@ -8739,103 +8739,103 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ עַל הַגִּתִּית לְאָסָף׃",
         "transliteration": "lamenatseja 'alhagitit leasaf",
-        "spanish": "CANTAD a Dios, fortaleza nuestra: Al Dios de Jacob celebrad con júbilo."
+        "spanish": "Al Músico principal; sobre Gitit. Salmo de Asaf."
       },
       {
         "verse": 2,
         "hebrew": "הַרְנִינוּ לֵאלֹהִים עוּזֵּנוּ הָרִיעוּ לֵאלֹהֵי יַעֲקֹב׃",
         "transliteration": "hareninu lelohim 'uzenu hari'u lelohey ya'akov",
-        "spanish": "Tomad la canción, y tañed el adufe, El arpa deliciosa con el salterio."
+        "spanish": "CANTAD a Dios, fortaleza nuestra: Al Dios de Jacob celebrad con júbilo."
       },
       {
         "verse": 3,
         "hebrew": "שְׂאוּ זִמְרָה וּתְנוּ תֹף כִּנּוֹר נָעִים עִם נָבֶל׃",
         "transliteration": "sevzimerah utenvtof kinoor na'im 'imnavel",
-        "spanish": "Tocad la trompeta en la nueva luna, En el día señalado, en el día de nuestra solemnidad."
+        "spanish": "Tomad la canción, y tañed el adufe, El arpa deliciosa con el salterio."
       },
       {
         "verse": 4,
         "hebrew": "תִּקְעוּ בַחֹדֶשׁ שׁוֹפָר בַּכֵּסֶה לְיוֹם חַגֵּנוּ׃",
         "transliteration": "tike'u vajodesh shoofar bakeseh leyoom jagenv",
-        "spanish": "Porque estatuto es de Israel, Ordenanza del Dios de Jacob."
+        "spanish": "Tocad la trompeta en la nueva luna, En el día señalado, en el día de nuestra solemnidad."
       },
       {
         "verse": 5,
         "hebrew": "כִּי חֹק לְיִשְׂרָאֵל הוּא מִשְׁפָּט לֵאלֹהֵי יַעֲקֹב׃",
         "transliteration": "ki jok leiserael hu mishepat lelohey ya'akov",
-        "spanish": "Por testimonio en José lo ha constituído, Cuando salió por la tierra de Egipto; Donde oí lenguaje que no entendía."
+        "spanish": "Porque estatuto es de Israel, Ordenanza del Dios de Jacob."
       },
       {
         "verse": 6,
         "hebrew": "עֵדוּת בִּיהוֹסֵף שָׂמוֹ בְּצֵאתוֹ עַל אֶרֶץ מִצְרָיִם שְׂפַת לֹא יָדַעְתִּי אֶשְׁמָע׃",
         "transliteration": "'edut bihoosef samoo betsetoo 'alerets mitseraim sefat loyada'eti eshema'",
-        "spanish": "Aparté su hombro de debajo de la carga; Sus manos se quitaron de vasijas de barro."
+        "spanish": "Por testimonio en José lo ha constituído, Cuando salió por la tierra de Egipto; Donde oí lenguaje que no entendía."
       },
       {
         "verse": 7,
         "hebrew": "הֲסִירוֹתִי מִסֵּבֶל שִׁכְמוֹ כַּפָּיו מִדּוּד תַּעֲבֹרְנָה׃",
         "transliteration": "hasirooti misevel shijemoo kapayv midud ta'avurenah",
-        "spanish": "En la calamidad clamaste, y yo te libré: Te respondí en el secreto del trueno; Te probé sobre las aguas de Meriba. (Sélah)"
+        "spanish": "Aparté su hombro de debajo de la carga; Sus manos se quitaron de vasijas de barro."
       },
       {
         "verse": 8,
         "hebrew": "בַּצָּרָה קָרָאתָ וָאֲחַלְּצֶךָּ אֶעֶנְךָ בְּסֵתֶר רַעַם אֶבְחׇנְךָ עַל מֵי מְרִיבָה סֶלָה׃",
         "transliteration": "batsarah karata vaajaletseka e'eneja beseter ra'am evejneja 'almey merivah selah",
-        "spanish": "Oye, pueblo mío y te protestaré. Israel, si me oyeres,"
+        "spanish": "En la calamidad clamaste, y yo te libré: Te respondí en el secreto del trueno; Te probé sobre las aguas de Meriba. (Sélah)"
       },
       {
         "verse": 9,
         "hebrew": "שְׁמַע עַמִּי וְאָעִידָה בָּךְ יִשְׂרָאֵל אִם תִּשְׁמַע לִי׃",
         "transliteration": "shema' 'ami vea'idah baje iserael imtishema'li",
-        "spanish": "No habrá en ti dios ajeno, Ni te encorvarás á dios extraño."
+        "spanish": "Oye, pueblo mío y te protestaré. Israel, si me oyeres,"
       },
       {
         "verse": 10,
         "hebrew": "לֹא יִהְיֶה בְךָ אֵל זָר וְלֹא תִשְׁתַּחֲוֶה לְאֵל נֵכָר׃",
         "transliteration": "loiheyeh veja el zar velo tishetajaveh leel nejar",
-        "spanish": "Yo soy YHVH tu Dios, Que te hice subir de la tierra de Egipto: Ensancha tu boca, y henchirla he."
+        "spanish": "No habrá en ti dios ajeno, Ni te encorvarás á dios extraño."
       },
       {
         "verse": 11,
         "hebrew": "אָנֹכִי יְהֹוָה אֱלֹהֶיךָ הַמַּעַלְךָ מֵאֶרֶץ מִצְרָיִם הַרְחֶב פִּיךָ וַאֲמַלְאֵהוּ׃",
         "transliteration": "anoji Adonai eloheyja hama'aleja meerets mitseraim harejevpija vaamaleehv",
-        "spanish": "Mas mi pueblo no oyó mi voz, E Israel no me quiso á mí."
+        "spanish": "Yo soy YHVH tu Dios, Que te hice subir de la tierra de Egipto: Ensancha tu boca, y henchirla he."
       },
       {
         "verse": 12,
         "hebrew": "וְלֹא שָׁמַע עַמִּי לְקוֹלִי וְיִשְׂרָאֵל לֹא אָבָה לִי׃",
         "transliteration": "veloshama' 'ami lekooli veiserael loavah li",
-        "spanish": "Dejélos por tanto á la dureza de su corazón: Caminaron en sus consejos."
+        "spanish": "Mas mi pueblo no oyó mi voz, E Israel no me quiso á mí."
       },
       {
         "verse": 13,
         "hebrew": "וָאֲשַׁלְּחֵהוּ בִּשְׁרִירוּת לִבָּם יֵלְכוּ בְּמוֹעֲצוֹתֵיהֶם׃",
         "transliteration": "vaashalejehu bisherirut libam yeleju bemoo'atsooteyhem",
-        "spanish": "¡Oh, si me hubiera oído mi pueblo, Si en mis caminos hubiera Israel andado!"
+        "spanish": "Dejélos por tanto á la dureza de su corazón: Caminaron en sus consejos."
       },
       {
         "verse": 14,
         "hebrew": "לוּ עַמִּי שֹׁמֵעַ לִי יִשְׂרָאֵל בִּדְרָכַי יְהַלֵּכוּ׃",
         "transliteration": "lu 'ami shome'a li iserael biderajay yehalejv",
-        "spanish": "En una nada habría yo derribado sus enemigos, Y vuelto mi mano sobre sus adversarios."
+        "spanish": "¡Oh, si me hubiera oído mi pueblo, Si en mis caminos hubiera Israel andado!"
       },
       {
         "verse": 15,
         "hebrew": "כִּמְעַט אוֹיְבֵיהֶם אַכְנִיעַ וְעַל צָרֵיהֶם אָשִׁיב יָדִי׃",
         "transliteration": "kime'at ooyeveyhem ajeni'a ve'al tsareyhem ashiv yadi",
-        "spanish": "Los aborrecedores de YHVH se le hubieran sometido; Y el tiempo de ellos fuera para siempre."
+        "spanish": "En una nada habría yo derribado sus enemigos, Y vuelto mi mano sobre sus adversarios."
       },
       {
         "verse": 16,
         "hebrew": "מְשַׂנְאֵי יְהֹוָה יְכַחֲשׁוּ לוֹ וִיהִי עִתָּם לְעוֹלָם׃",
         "transliteration": "mesaneey Adonai yejajashvloo vihi 'itam le'oolam",
-        "spanish": "Y Dios lo hubiera mantenido de grosura de trigo: Y de miel de la piedra te hubiera saciado."
+        "spanish": "Los aborrecedores de YHVH se le hubieran sometido; Y el tiempo de ellos fuera para siempre."
       },
       {
         "verse": 17,
         "hebrew": "וַיַּאֲכִילֵהוּ מֵחֵלֶב חִטָּה וּמִצּוּר דְּבַשׁ אַשְׂבִּיעֶךָ׃ ",
         "transliteration": "vayaajilehu mejelev jitah umitsur devash asebi'eja ",
-        "spanish": "..."
+        "spanish": "Y Dios lo hubiera mantenido de grosura de trigo: Y de miel de la piedra te hubiera saciado."
       }
     ]
   },
@@ -8907,115 +8907,115 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "שִׁיר מִזְמוֹר לְאָסָף׃",
         "transliteration": "shir mizemoor leasaf",
-        "spanish": "OH Dios no tengas silencio: No calles, oh Dios, ni te estés quieto."
+        "spanish": "Cántico; Salmo de Asaf."
       },
       {
         "verse": 2,
         "hebrew": "אֱלֹהִים אַל דֳּמִי לָךְ אַל תֶּחֱרַשׁ וְאַל תִּשְׁקֹט אֵל׃",
         "transliteration": "Elohim aldomilaje altejerash vealtishekot el",
-        "spanish": "Porque he aquí que braman tus enemigos; Y tus aborrecedores han alzado cabeza."
+        "spanish": "OH Dios no tengas silencio: No calles, oh Dios, ni te estés quieto."
       },
       {
         "verse": 3,
         "hebrew": "כִּי הִנֵּה אוֹיְבֶיךָ יֶהֱמָיוּן וּמְשַׂנְאֶיךָ נָשְׂאוּ רֹאשׁ׃",
         "transliteration": "kihineh ooyeveyja yehemayun umesaneeyja naseu rosh",
-        "spanish": "Sobre tu pueblo han consultado astuta y secretamente, Y han entrado en consejo contra tus escondidos."
+        "spanish": "Porque he aquí que braman tus enemigos; Y tus aborrecedores han alzado cabeza."
       },
       {
         "verse": 4,
         "hebrew": "עַל עַמְּךָ יַעֲרִימוּ סוֹד וְיִתְיָעֲצוּ עַל צְפוּנֶיךָ׃",
         "transliteration": "'al'ameja ya'arimu sood veiteya'atsu 'altsefuneyja",
-        "spanish": "Han dicho: Venid, y cortémoslos de ser pueblo, Y no haya más memoria del nombre de Israel."
+        "spanish": "Sobre tu pueblo han consultado astuta y secretamente, Y han entrado en consejo contra tus escondidos."
       },
       {
         "verse": 5,
         "hebrew": "אָמְרוּ לְכוּ וְנַכְחִידֵם מִגּוֹי וְלֹא יִזָּכֵר שֵׁם יִשְׂרָאֵל עוֹד׃",
         "transliteration": "ameru leju venajejidem migooy veloizajer shemiserael 'ood",
-        "spanish": "Por esto han conspirado de corazón á una, Contra ti han hecho liga;"
+        "spanish": "Han dicho: Venid, y cortémoslos de ser pueblo, Y no haya más memoria del nombre de Israel."
       },
       {
         "verse": 6,
         "hebrew": "כִּי נוֹעֲצוּ לֵב יַחְדָּו עָלֶיךָ בְּרִית יִכְרֹתוּ׃",
         "transliteration": "ki noo'atsu lev yajedav 'aleyja berit ijerotv",
-        "spanish": "Los pabellones de los Idumeos y de los Ismaelitas, Moab y los Agarenos;"
+        "spanish": "Por esto han conspirado de corazón á una, Contra ti han hecho liga;"
       },
       {
         "verse": 7,
         "hebrew": "אׇהֳלֵי אֱדוֹם וְיִשְׁמְעֵאלִים מוֹאָב וְהַגְרִים׃",
         "transliteration": "holey edoom veisheme'elim mooav vehagerim",
-        "spanish": "Gebal, y Ammón, y Amalec; Los Filisteos con los habitadores de Tiro."
+        "spanish": "Los pabellones de los Idumeos y de los Ismaelitas, Moab y los Agarenos;"
       },
       {
         "verse": 8,
         "hebrew": "גְּבָל וְעַמּוֹן וַעֲמָלֵק פְּלֶשֶׁת עִם יֹשְׁבֵי צוֹר׃",
         "transliteration": "geval ve'amoon va'amalek peleshet 'imyoshevey tsoor",
-        "spanish": "También el Assur se ha juntado con ellos: Son por brazo a los hijos de Lot. (Sélah)"
+        "spanish": "Gebal, y Ammón, y Amalec; Los Filisteos con los habitadores de Tiro."
       },
       {
         "verse": 9,
         "hebrew": "גַּם אַשּׁוּר נִלְוָה עִמָּם הָיוּ זְרוֹעַ לִבְנֵי לוֹט סֶלָה׃",
         "transliteration": "gamashur nilevah 'imam hayvzeroo'a liveneyloot selah",
-        "spanish": "Hazles como á Madián; Como á Sísara, como á Jabín en el arroyo de Cisón;"
+        "spanish": "También el Assur se ha juntado con ellos: Son por brazo a los hijos de Lot. (Sélah)"
       },
       {
         "verse": 10,
         "hebrew": "עֲשֵׂה לָהֶם כְּמִדְיָן כְּסִיסְרָא כְיָבִין בְּנַחַל קִישׁוֹן׃",
         "transliteration": "'asehlahem kemideyan kesisera jeyavin benajal kishoon",
-        "spanish": "Que perecieron en Endor, Fueron hechos muladar de la tierra."
+        "spanish": "Hazles como á Madián; Como á Sísara, como á Jabín en el arroyo de Cisón;"
       },
       {
         "verse": 11,
         "hebrew": "נִשְׁמְדוּ בְעֵין דֹּאר הָיוּ דֹמֶן לָאֲדָמָה׃",
         "transliteration": "nishemedu ve'eyndor hayu domen laadamah",
-        "spanish": "Pon a ellos y á sus capitanes como á Oreb y como á Zeeb; Y como á Zeba y como á Zalmunna, a todos sus príncipes;"
+        "spanish": "Que perecieron en Endor, Fueron hechos muladar de la tierra."
       },
       {
         "verse": 12,
         "hebrew": "שִׁיתֵמוֹ נְדִיבֵימוֹ כְּעֹרֵב וְכִזְאֵב וּכְזֶבַח וּכְצַלְמֻנָּע כׇּל נְסִיכֵימוֹ׃",
         "transliteration": "shitemoo nediveymoo ke'orev vejizeev ujezevaj ujetsalemuna' klnesijeymoo",
-        "spanish": "Que han dicho: Heredemos para nosotros Las moradas de Dios."
+        "spanish": "Pon a ellos y á sus capitanes como á Oreb y como á Zeeb; Y como á Zeba y como á Zalmunna, a todos sus príncipes;"
       },
       {
         "verse": 13,
         "hebrew": "אֲשֶׁר אָמְרוּ נִירְשָׁה לָּנוּ אֵת נְאוֹת אֱלֹהִים׃",
         "transliteration": "asher ameru nireshah lanu et neoot Elohim",
-        "spanish": "Dios mío, ponlos como á torbellinos; Como á hojarascas delante del viento."
+        "spanish": "Que han dicho: Heredemos para nosotros Las moradas de Dios."
       },
       {
         "verse": 14,
         "hebrew": "אֱלֹהַי שִׁיתֵמוֹ כַגַּלְגַּל כְּקַשׁ לִפְנֵי רוּחַ׃",
         "transliteration": "elohay shitemoo jagalegal kekash lifeneyruja",
-        "spanish": "Como fuego que quema el monte, Como llama que abrasa las breñas."
+        "spanish": "Dios mío, ponlos como á torbellinos; Como á hojarascas delante del viento."
       },
       {
         "verse": 15,
         "hebrew": "כְּאֵשׁ תִּבְעַר יָעַר וּכְלֶהָבָה תְּלַהֵט הָרִים׃",
         "transliteration": "keesh tive'arya'ar ujelehavah telahet harim",
-        "spanish": "Persíguelos así con tu tempestad, Y asómbralos con tu torbellino."
+        "spanish": "Como fuego que quema el monte, Como llama que abrasa las breñas."
       },
       {
         "verse": 16,
         "hebrew": "כֵּן תִּרְדְּפֵם בְּסַעֲרֶךָ וּבְסוּפָתְךָ תְבַהֲלֵם׃",
         "transliteration": "ken tiredefem besa'areja uvesufateja tevahalem",
-        "spanish": "Llena sus rostros de vergüenza; Y busquen tu nombre, oh YHVH."
+        "spanish": "Persíguelos así con tu tempestad, Y asómbralos con tu torbellino."
       },
       {
         "verse": 17,
         "hebrew": "מַלֵּא פְנֵיהֶם קָלוֹן וִיבַקְשׁוּ שִׁמְךָ יְהֹוָה׃",
         "transliteration": "male feneyhem kaloon vivakeshu shimeja Adonai",
-        "spanish": "Sean afrentados y turbados para siempre; Y sean deshonrados, y perezcan."
+        "spanish": "Llena sus rostros de vergüenza; Y busquen tu nombre, oh YHVH."
       },
       {
         "verse": 18,
         "hebrew": "יֵבֹשׁוּ וְיִבָּהֲלוּ עֲדֵי עַד וְיַחְפְּרוּ וְיֹאבֵדוּ׃",
         "transliteration": "yevushu veibahalu 'adey'ad veyajeperu veyovedv",
-        "spanish": "Y conozcan que tu nombre es YHVH; Tú solo Elyón sobre toda la tierra."
+        "spanish": "Sean afrentados y turbados para siempre; Y sean deshonrados, y perezcan."
       },
       {
         "verse": 19,
         "hebrew": "וְיֵדְעוּ כִּי אַתָּה שִׁמְךָ יְהֹוָה לְבַדֶּךָ עֶלְיוֹן עַל כׇּל הָאָרֶץ׃ ",
         "transliteration": "veyede'u kiatah shimeja Adonai levadeja 'eleyoon 'alklhaarets ",
-        "spanish": "..."
+        "spanish": "Y conozcan que tu nombre es YHVH; Tú solo Elyón sobre toda la tierra."
       }
     ]
   },
@@ -9030,79 +9030,79 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ עַל הַגִּתִּית לִבְנֵי קֹרַח מִזְמוֹר׃",
         "transliteration": "lamenatseja 'alhagitit liveneykoraj mizemoor",
-        "spanish": "¡CUAN amables son tus moradas, oh YHVH Tzevaot!"
+        "spanish": "Al Músico principal; sobre Gitit. Para los hijos de Coré. Salmo."
       },
       {
         "verse": 2,
         "hebrew": "מַה יְּדִידוֹת מִשְׁכְּנוֹתֶיךָ יְהֹוָה צְבָאוֹת׃",
         "transliteration": "mahyedidoot mishekenooteyja Adonai tsevaoot",
-        "spanish": "Codicia y aun ardientemente desea mi alma los atrios de YHVH: Mi corazón y mi carne cantan al Dios vivo."
+        "spanish": "¡CUAN amables son tus moradas, oh YHVH Tzevaot!"
       },
       {
         "verse": 3,
         "hebrew": "נִכְסְפָה וְגַם כָּלְתָה נַפְשִׁי לְחַצְרוֹת יְהֹוָה לִבִּי וּבְשָׂרִי יְרַנְּנוּ אֶל אֵל חָי׃",
         "transliteration": "nijesefah vegamkaletah nafeshi lejatseroot Adonai libi uvesari yeranenu el eljay",
-        "spanish": "Aun el gorrión halla casa, Y la golondrina nido para sí, donde ponga sus pollos En tus altares, oh YHVH Tzevaot, Rey mío, y Dios mío."
+        "spanish": "Codicia y aun ardientemente desea mi alma los atrios de YHVH: Mi corazón y mi carne cantan al Dios vivo."
       },
       {
         "verse": 4,
         "hebrew": "גַּם צִפּוֹר מָצְאָה בַיִת וּדְרוֹר קֵן לָהּ אֲשֶׁר שָׁתָה אֶפְרֹחֶיהָ אֶת מִזְבְּחוֹתֶיךָ יְהֹוָה צְבָאוֹת מַלְכִּי וֵאלֹהָי׃",
         "transliteration": "gamtsipoor matseah vait uderoor ken lah ashershatah eferojeyha etmizebejooteyja Adonai tsevaoot maleki velohay",
-        "spanish": "Bienaventurados los que habitan en tu casa: Perpetuamente te alabarán (Sélah)"
+        "spanish": "Aun el gorrión halla casa, Y la golondrina nido para sí, donde ponga sus pollos En tus altares, oh YHVH Tzevaot, Rey mío, y Dios mío."
       },
       {
         "verse": 5,
         "hebrew": "אַשְׁרֵי יוֹשְׁבֵי בֵיתֶךָ עוֹד יְהַלְלוּךָ סֶּלָה׃",
         "transliteration": "asherey yooshevey veyteja 'ood yehaleluja selah",
-        "spanish": "Bienaventurado el hombre que tiene su fortaleza en ti; En cuyo corazón están tus caminos."
+        "spanish": "Bienaventurados los que habitan en tu casa: Perpetuamente te alabarán (Sélah)"
       },
       {
         "verse": 6,
         "hebrew": "אַשְׁרֵי אָדָם עוֹז לוֹ בָךְ מְסִלּוֹת בִּלְבָבָם׃",
         "transliteration": "asherey adam 'oozloo vaje mesiloot bilevavam",
-        "spanish": "Atravesando el valle de Baca pónenle por fuente, Cuando la lluvia llena los estanques."
+        "spanish": "Bienaventurado el hombre que tiene su fortaleza en ti; En cuyo corazón están tus caminos."
       },
       {
         "verse": 7,
         "hebrew": "עֹבְרֵי בְּעֵמֶק הַבָּכָא מַעְיָן יְשִׁיתוּהוּ גַּם בְּרָכוֹת יַעְטֶה מוֹרֶה׃",
         "transliteration": "'overey be'emek habaja ma'eyan yeshituhu gamberajoot ya'eteh mooreh",
-        "spanish": "Irán de fortaleza en fortaleza, Verán a Dios en Sión."
+        "spanish": "Atravesando el valle de Baca pónenle por fuente, Cuando la lluvia llena los estanques."
       },
       {
         "verse": 8,
         "hebrew": "יֵלְכוּ מֵחַיִל אֶל חָיִל יֵרָאֶה אֶל אֱלֹהִים בְּצִיּוֹן׃",
         "transliteration": "yeleju mejail eljail yeraeh elElohim betsioon",
-        "spanish": "YHVH Dios de los ejércitos, oye mi oración: Escucha, oh Dios de Jacob (Sélah)"
+        "spanish": "Irán de fortaleza en fortaleza, Verán a Dios en Sión."
       },
       {
         "verse": 9,
         "hebrew": "יְהֹוָה אֱלֹהִים צְבָאוֹת שִׁמְעָה תְפִלָּתִי הַאֲזִינָה אֱלֹהֵי יַעֲקֹב סֶלָה׃",
         "transliteration": "Adonai Elohim tsevaoot shime'ah tefilati haazinah elohey ya'akov selah",
-        "spanish": "Mira, oh Dios, escudo nuestro, Y pon los ojos en el rostro de Tu Mashíaj."
+        "spanish": "YHVH Dios de los ejércitos, oye mi oración: Escucha, oh Dios de Jacob (Sélah)"
       },
       {
         "verse": 10,
         "hebrew": "מָגִנֵּנוּ רְאֵה אֱלֹהִים וְהַבֵּט פְּנֵי מְשִׁיחֶךָ׃",
         "transliteration": "maginenu reeh Elohim vehabet peney meshijeja",
-        "spanish": "Porque mejor es un día en tus atrios que mil fuera de ellos: Escogería antes estar á la puerta de la casa de mi Dios, Que habitar en las moradas de maldad."
+        "spanish": "Mira, oh Dios, escudo nuestro, Y pon los ojos en el rostro de Tu Mashíaj."
       },
       {
         "verse": 11,
         "hebrew": "כִּי טוֹב יוֹם בַּחֲצֵרֶיךָ מֵאָלֶף בָּחַרְתִּי הִסְתּוֹפֵף בְּבֵית אֱלֹהַי מִדּוּר בְּאׇהֳלֵי רֶשַׁע׃",
         "transliteration": "ki toovyoom bajatsereyja mealef bajareti hisetoofef beveyt elohay midur beholeyresha'",
-        "spanish": "Porque sol y escudo es YHVH Dios: Gracia y gloria dará YHVH: No quitará el bien a los que en integridad andan."
+        "spanish": "Porque mejor es un día en tus atrios que mil fuera de ellos: Escogería antes estar á la puerta de la casa de mi Dios, Que habitar en las moradas de maldad."
       },
       {
         "verse": 12,
         "hebrew": "כִּי שֶׁמֶשׁ וּמָגֵן יְהֹוָה אֱלֹהִים חֵן וְכָבוֹד יִתֵּן יְהֹוָה לֹא יִמְנַע טוֹב לַהֹלְכִים בְּתָמִים׃",
         "transliteration": "ki shemesh umagen Adonai Elohim jen vejavuod iten Adonai lo imena'toov laholejim betamim",
-        "spanish": "YHVH Tzevaot, Dichoso el hombre que en ti confía."
+        "spanish": "Porque sol y escudo es YHVH Dios: Gracia y gloria dará YHVH: No quitará el bien a los que en integridad andan."
       },
       {
         "verse": 13,
         "hebrew": "יְהֹוָה צְבָאוֹת אַשְׁרֵי אָדָם בֹּטֵחַ בָּךְ׃ ",
         "transliteration": "Adonai tsevaoot asherey adam boteja baje ",
-        "spanish": "..."
+        "spanish": "YHVH Tzevaot, Dichoso el hombre que en ti confía."
       }
     ]
   },
@@ -9117,85 +9117,85 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ לִבְנֵי קֹרַח מִזְמוֹר׃",
         "transliteration": "lamenatseja liveneykoraj mizemoor",
-        "spanish": "FUISTE propicio á tu tierra, oh YHVH: Volviste la cautividad de Jacob."
+        "spanish": "Al Músico principal; para los hijos de Coré. Salmo."
       },
       {
         "verse": 2,
         "hebrew": "רָצִיתָ יְהֹוָה אַרְצֶךָ שַׁבְתָּ (שבות) [שְׁבִית] יַעֲקֹב׃",
         "transliteration": "ratsita Adonai aretseja shaveta (shvvt) [shevit] ya'akov",
-        "spanish": "Perdonaste la iniquidad de tu pueblo; Todos los pecados de ellos cubriste. (Sélah)"
+        "spanish": "FUISTE propicio á tu tierra, oh YHVH: Volviste la cautividad de Jacob."
       },
       {
         "verse": 3,
         "hebrew": "נָשָׂאתָ עֲוֺן עַמֶּךָ כִּסִּיתָ כׇל חַטָּאתָם סֶלָה׃",
         "transliteration": "nasata 'avn 'ameja kisita jljatatam selah",
-        "spanish": "Dejaste toda tu saña: Te volviste de la ira de tu furor."
+        "spanish": "Perdonaste la iniquidad de tu pueblo; Todos los pecados de ellos cubriste. (Sélah)"
       },
       {
         "verse": 4,
         "hebrew": "אָסַפְתָּ כׇל עֶבְרָתֶךָ הֱשִׁיבוֹתָ מֵחֲרוֹן אַפֶּךָ׃",
         "transliteration": "asafeta jl'everateja heshivuota mejaroon apeja",
-        "spanish": "Vuélvenos, oh Dios, salud nuestra, Y haz cesar tu ira de sobre nosotros."
+        "spanish": "Dejaste toda tu saña: Te volviste de la ira de tu furor."
       },
       {
         "verse": 5,
         "hebrew": "שׁוּבֵנוּ אֱלֹהֵי יִשְׁעֵנוּ וְהָפֵר כַּעַסְךָ עִמָּנוּ׃",
         "transliteration": "shuvenu elohey ishe'enu vehafer ka'aseja 'imanv",
-        "spanish": "¿Estarás enojado contra nosotros para siempre? ¿Extenderás tu ira de generación en generación?"
+        "spanish": "Vuélvenos, oh Dios, salud nuestra, Y haz cesar tu ira de sobre nosotros."
       },
       {
         "verse": 6,
         "hebrew": "הַלְעוֹלָם תֶּאֱנַף בָּנוּ תִּמְשֹׁךְ אַפְּךָ לְדֹר וָדֹר׃",
         "transliteration": "hale'oolam teenafbanu timeshoje apeja ledor vador",
-        "spanish": "¿No volverás tú á darnos vida, Y tu pueblo se alegrará en ti?"
+        "spanish": "¿Estarás enojado contra nosotros para siempre? ¿Extenderás tu ira de generación en generación?"
       },
       {
         "verse": 7,
         "hebrew": "הֲלֹא אַתָּה תָּשׁוּב תְּחַיֵּנוּ וְעַמְּךָ יִשְׂמְחוּ בָךְ׃",
         "transliteration": "haloatah tashuv tejayenu ve'ameja isemejvvaje",
-        "spanish": "Muéstranos, oh YHVH, Tu Jésed, Y danos tu salud."
+        "spanish": "¿No volverás tú á darnos vida, Y tu pueblo se alegrará en ti?"
       },
       {
         "verse": 8,
         "hebrew": "הַרְאֵנוּ יְהֹוָה חַסְדֶּךָ וְיֶשְׁעֲךָ תִּתֶּן לָנוּ׃",
         "transliteration": "hareenu Adonai jasedeja veyeshe'aja titenlanv",
-        "spanish": "Escucharé lo que hablará el Dios YHVH: Porque hablará paz á su pueblo y á sus santos, Para que no se conviertan á la locura."
+        "spanish": "Muéstranos, oh YHVH, Tu Jésed, Y danos tu salud."
       },
       {
         "verse": 9,
         "hebrew": "אֶשְׁמְעָה מַה יְדַבֵּר הָאֵל יְהֹוָה כִּי יְדַבֵּר שָׁלוֹם אֶל עַמּוֹ וְאֶל חֲסִידָיו וְאַל יָשׁוּבוּ לְכִסְלָה׃",
         "transliteration": "esheme'ah mahyedaber hael Adonai ki yedaber shaloom el'amoo veeljasidayv vealyashuvu lejiselah",
-        "spanish": "Ciertamente cercana está su salud a los que le temen; Para que habite la gloria en nuestra tierra."
+        "spanish": "Escucharé lo que hablará el Dios YHVH: Porque hablará paz á su pueblo y á sus santos, Para que no se conviertan á la locura."
       },
       {
         "verse": 10,
         "hebrew": "אַךְ קָרוֹב לִירֵאָיו יִשְׁעוֹ לִשְׁכֹּן כָּבוֹד בְּאַרְצֵנוּ׃",
         "transliteration": "aje karoov lireayv ishe'oo lishekon kavuod bearetsenv",
-        "spanish": "El Jésed y la verdad se encontraron: La justicia y la paz se besaron."
+        "spanish": "Ciertamente cercana está su salud a los que le temen; Para que habite la gloria en nuestra tierra."
       },
       {
         "verse": 11,
         "hebrew": "חֶסֶד וֶאֱמֶת נִפְגָּשׁוּ צֶדֶק וְשָׁלוֹם נָשָׁקוּ׃",
         "transliteration": "jesedveemet nifegashu tsedek veshaloom nashakv",
-        "spanish": "La verdad brotará de la tierra; Y la justicia mirará desde los cielos."
+        "spanish": "El Jésed y la verdad se encontraron: La justicia y la paz se besaron."
       },
       {
         "verse": 12,
         "hebrew": "אֱמֶת מֵאֶרֶץ תִּצְמָח וְצֶדֶק מִשָּׁמַיִם נִשְׁקָף׃",
         "transliteration": "emet meerets titsemaj vetsedek mishamaim nishekaf",
-        "spanish": "YHVH dará también el bien; Y nuestra tierra dará su fruto."
+        "spanish": "La verdad brotará de la tierra; Y la justicia mirará desde los cielos."
       },
       {
         "verse": 13,
         "hebrew": "גַּם יְהֹוָה יִתֵּן הַטּוֹב וְאַרְצֵנוּ תִּתֵּן יְבוּלָהּ׃",
         "transliteration": "gamAdonai iten hatoov vearetsenu titen yevulah",
-        "spanish": "La justicia irá delante de él; Y sus pasos pondrá en camino."
+        "spanish": "YHVH dará también el bien; Y nuestra tierra dará su fruto."
       },
       {
         "verse": 14,
         "hebrew": "צֶדֶק לְפָנָיו יְהַלֵּךְ וְיָשֵׂם לְדֶרֶךְ פְּעָמָיו׃ ",
         "transliteration": "tsedek lefanayv yehaleje veyasem ledereje pe'amayv ",
-        "spanish": "..."
+        "spanish": "La justicia irá delante de él; Y sus pasos pondrá en camino."
       }
     ]
   },
@@ -9372,115 +9372,115 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "שִׁיר מִזְמוֹר לִבְנֵי קֹרַח לַמְנַצֵּחַ עַל מָחֲלַת לְעַנּוֹת מַשְׂכִּיל לְהֵימָן הָאֶזְרָחִי׃",
         "transliteration": "shir mizemoor liveneykoraj lamenatseja 'almajalat le'anoot masekil leheyman haezeraji",
-        "spanish": "OH YHVH, Dios de mi salud, Día y noche clamo delante de ti."
+        "spanish": "Cántico; Salmo para los hijos de Coré. Al Músico principal; sobre Mahalat-leanot. Masquil de Hemán el ezraíta."
       },
       {
         "verse": 2,
         "hebrew": "יְהֹוָה אֱלֹהֵי יְשׁוּעָתִי יוֹם צָעַקְתִּי בַלַּיְלָה נֶגְדֶּךָ׃",
         "transliteration": "Adonai elohey yeshu'ati yoomtsa'aketi valayelah negedeja",
-        "spanish": "Entre mi oración en tu presencia: Inclina tu oído a mí clamor."
+        "spanish": "OH YHVH, Dios de mi salud, Día y noche clamo delante de ti."
       },
       {
         "verse": 3,
         "hebrew": "תָּבוֹא לְפָנֶיךָ תְּפִלָּתִי הַטֵּה אׇזְנְךָ לְרִנָּתִי׃",
         "transliteration": "tavuo lefaneyja tefilati hateh zeneja lerinati",
-        "spanish": "Porque mi alma está harta de males, Y mi vida cercana al sepulcro."
+        "spanish": "Entre mi oración en tu presencia: Inclina tu oído a mí clamor."
       },
       {
         "verse": 4,
         "hebrew": "כִּי שָׂבְעָה בְרָעוֹת נַפְשִׁי וְחַיַּי לִשְׁאוֹל הִגִּיעוּ׃",
         "transliteration": "kisave'ah vera'oot nafeshi vejayay lisheool higi'v",
-        "spanish": "Soy contado con los que descienden al hoyo, Soy como hombre sin fuerza:"
+        "spanish": "Porque mi alma está harta de males, Y mi vida cercana al sepulcro."
       },
       {
         "verse": 5,
         "hebrew": "נֶחְשַׁבְתִּי עִם יוֹרְדֵי בוֹר הָיִיתִי כְּגֶבֶר אֵין אֱיָל׃",
         "transliteration": "nejeshaveti 'imyooredey vuor haiti kegever eyneyal",
-        "spanish": "Libre entre los muertos, Como los matados que yacen en el sepulcro, Que no te acuerdas más de ellos, Y que son cortados de tu mano."
+        "spanish": "Soy contado con los que descienden al hoyo, Soy como hombre sin fuerza:"
       },
       {
         "verse": 6,
         "hebrew": "בַּמֵּתִים חׇפְשִׁי כְּמוֹ חֲלָלִים שֹׁכְבֵי קֶבֶר אֲשֶׁר לֹא זְכַרְתָּם עוֹד וְהֵמָּה מִיָּדְךָ נִגְזָרוּ׃",
         "transliteration": "bametim jfeshi kemoo jalalim shojevey kever asher lo zejaretam 'ood vehemah miadeja nigezarv",
-        "spanish": "Hasme puesto en el hoyo profundo, En tinieblas, en honduras."
+        "spanish": "Libre entre los muertos, Como los matados que yacen en el sepulcro, Que no te acuerdas más de ellos, Y que son cortados de tu mano."
       },
       {
         "verse": 7,
         "hebrew": "שַׁתַּנִי בְּבוֹר תַּחְתִּיּוֹת בְּמַחֲשַׁכִּים בִּמְצֹלוֹת׃",
         "transliteration": "shatani bevuor tajetioot bemajashakim bimetsoloot",
-        "spanish": "Sobre mí se ha acostado tu ira, Y me has afligido con todas tus ondas. (Sélah)"
+        "spanish": "Hasme puesto en el hoyo profundo, En tinieblas, en honduras."
       },
       {
         "verse": 8,
         "hebrew": "עָלַי סָמְכָה חֲמָתֶךָ וְכׇל מִשְׁבָּרֶיךָ עִנִּיתָ סֶּלָה׃",
         "transliteration": "'alay samejah jamateja vejlmishebareyja 'inita selah",
-        "spanish": "Has alejado de mí mis conocidos: Hasme puesto por abominación a ellos: Encerrado estoy, y no puedo salir."
+        "spanish": "Sobre mí se ha acostado tu ira, Y me has afligido con todas tus ondas. (Sélah)"
       },
       {
         "verse": 9,
         "hebrew": "הִרְחַקְתָּ מְיֻדָּעַי מִמֶּנִּי שַׁתַּנִי תוֹעֵבוֹת לָמוֹ כָּלֻא וְלֹא אֵצֵא׃",
         "transliteration": "hirejaketa meyuda'ay mimeni shatani too'evuot lamoo kalu velo etse",
-        "spanish": "Mis ojos enfermaron á causa de mi aflicción: Hete llamado, oh YHVH, cada día; He extendido a ti mis manos."
+        "spanish": "Has alejado de mí mis conocidos: Hasme puesto por abominación a ellos: Encerrado estoy, y no puedo salir."
       },
       {
         "verse": 10,
         "hebrew": "עֵינִי דָאֲבָה מִנִּי עֹנִי קְרָאתִיךָ יְהֹוָה בְּכׇל יוֹם שִׁטַּחְתִּי אֵלֶיךָ כַפָּי׃",
         "transliteration": "'eyni daavah mini'oni keratija Adonai bejlyoom shitajeti eleyja japay",
-        "spanish": "¿Harás tú milagro a los muertos? ¿Levantaránse los muertos para alabarte? (Sélah)"
+        "spanish": "Mis ojos enfermaron á causa de mi aflicción: Hete llamado, oh YHVH, cada día; He extendido a ti mis manos."
       },
       {
         "verse": 11,
         "hebrew": "הֲלַמֵּתִים תַּעֲשֶׂה פֶּלֶא אִם רְפָאִים יָקוּמוּ יוֹדוּךָ סֶּלָה׃",
         "transliteration": "halametim ta'asehpele imrefaim yakumu yooduja selah",
-        "spanish": "¿Será contada en el sepulcro Tu Jésed, O tu verdad en la perdición?"
+        "spanish": "¿Harás tú milagro a los muertos? ¿Levantaránse los muertos para alabarte? (Sélah)"
       },
       {
         "verse": 12,
         "hebrew": "הַיְסֻפַּר בַּקֶּבֶר חַסְדֶּךָ אֱמוּנָתְךָ בָּאֲבַדּוֹן׃",
         "transliteration": "hayesupar bakever jasedeja emunateja baavadoon",
-        "spanish": "¿Será conocida en las tinieblas tu maravilla, Ni tu justicia en la tierra del olvido?"
+        "spanish": "¿Será contada en el sepulcro Tu Jésed, O tu verdad en la perdición?"
       },
       {
         "verse": 13,
         "hebrew": "הֲיִוָּדַע בַּחֹשֶׁךְ פִּלְאֶךָ וְצִדְקָתְךָ בְּאֶרֶץ נְשִׁיָּה׃",
         "transliteration": "haivada' bajosheje pileeja vetsidekateja beerets neshiah",
-        "spanish": "Mas yo a ti he clamado, oh YHVH; Y de mañana mi oración te previno."
+        "spanish": "¿Será conocida en las tinieblas tu maravilla, Ni tu justicia en la tierra del olvido?"
       },
       {
         "verse": 14,
         "hebrew": "וַאֲנִי אֵלֶיךָ יְהֹוָה שִׁוַּעְתִּי וּבַבֹּקֶר תְּפִלָּתִי תְקַדְּמֶךָּ׃",
         "transliteration": "vaani eleyja Adonai shiva'eti uvaboker tefilati tekademeka",
-        "spanish": "¿Por qué, oh YHVH, desechas mi alma? ¿Por qué escondes de mí tu rostro?"
+        "spanish": "Mas yo a ti he clamado, oh YHVH; Y de mañana mi oración te previno."
       },
       {
         "verse": 15,
         "hebrew": "לָמָה יְהֹוָה תִּזְנַח נַפְשִׁי תַּסְתִּיר פָּנֶיךָ מִמֶּנִּי׃",
         "transliteration": "lamah Adonai tizenaj nafeshi tasetir paneyja mimeni",
-        "spanish": "Yo soy afligido y menesteroso: Desde la mocedad he llevado tus terrores, he estado medroso."
+        "spanish": "¿Por qué, oh YHVH, desechas mi alma? ¿Por qué escondes de mí tu rostro?"
       },
       {
         "verse": 16,
         "hebrew": "עָנִי אֲנִי וְגֹוֵעַ מִנֹּעַר נָשָׂאתִי אֵמֶיךָ אָפוּנָה׃",
         "transliteration": "'ani ani vegove'a mino'ar nasati emeyja afunah",
-        "spanish": "Sobre mí han pasado tus iras; Tus espantos me han cortado."
+        "spanish": "Yo soy afligido y menesteroso: Desde la mocedad he llevado tus terrores, he estado medroso."
       },
       {
         "verse": 17,
         "hebrew": "עָלַי עָבְרוּ חֲרוֹנֶיךָ בִּעוּתֶיךָ צִמְּתוּתֻנִי׃",
         "transliteration": "'alay 'averu jarooneyja bi'uteyja tsimetutuni",
-        "spanish": "Hanme rodeado como aguas de continuo; Hanme cercado á una."
+        "spanish": "Sobre mí han pasado tus iras; Tus espantos me han cortado."
       },
       {
         "verse": 18,
         "hebrew": "סַבּוּנִי כַמַּיִם כׇּל הַיּוֹם הִקִּיפוּ עָלַי יָחַד׃",
         "transliteration": "sabuni jamaim klhayoom hikifu 'alay yajad",
-        "spanish": "Has alejado de mí el enemigo y el compañero; Y mis conocidos se esconden en la tiniebla."
+        "spanish": "Hanme rodeado como aguas de continuo; Hanme cercado á una."
       },
       {
         "verse": 19,
         "hebrew": "הִרְחַקְתָּ מִמֶּנִּי אֹהֵב וָרֵעַ מְיֻדָּעַי מַחְשָׁךְ׃ ",
         "transliteration": "hirejaketa mimeni ohev vare'a meyuda'ay majeshaje ",
-        "spanish": "..."
+        "spanish": "Has alejado de mí el enemigo y el compañero; Y mis conocidos se esconden en la tiniebla."
       }
     ]
   },
@@ -9495,319 +9495,319 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "מַשְׂכִּיל לְאֵיתָן הָאֶזְרָחִי׃",
         "transliteration": "masekil leeytan haezeraji",
-        "spanish": "LAS jasadim de YHVH cantaré perpetuamente; En generación y generación haré notoria tu verdad con mi boca."
+        "spanish": "Masquil de Etán el ezraíta."
       },
       {
         "verse": 2,
         "hebrew": "חַסְדֵי יְהֹוָה עוֹלָם אָשִׁירָה לְדֹר וָדֹר אוֹדִיעַ אֱמוּנָתְךָ בְּפִי׃",
         "transliteration": "jasedey Adonai 'oolam ashirah ledor vador oodi'a emunateja befi",
-        "spanish": "Porque dije: Para siempre será edificada Jésed; En los mismos cielos apoyarás tu verdad."
+        "spanish": "LAS jasadim de YHVH cantaré perpetuamente; En generación y generación haré notoria tu verdad con mi boca."
       },
       {
         "verse": 3,
         "hebrew": "כִּי אָמַרְתִּי עוֹלָם חֶסֶד יִבָּנֶה שָׁמַיִם תָּכִן אֱמוּנָתְךָ בָהֶם׃",
         "transliteration": "kiamareti 'oolam jesed ibaneh shamaim tajin emunateja vahem",
-        "spanish": "Hice alianza con mi escogido; Juré a David mi siervo: diciendo."
+        "spanish": "Porque dije: Para siempre será edificada Jésed; En los mismos cielos apoyarás tu verdad."
       },
       {
         "verse": 4,
         "hebrew": "כָּרַתִּי בְרִית לִבְחִירִי נִשְׁבַּעְתִּי לְדָוִד עַבְדִּי׃",
         "transliteration": "karati verit livejiri nisheba'eti ledavid 'avedi",
-        "spanish": "Para siempre confirmaré tu simiente, Y edificaré tu trono por todas las generaciones. (Sélah)"
+        "spanish": "Hice alianza con mi escogido; Juré a David mi siervo: diciendo."
       },
       {
         "verse": 5,
         "hebrew": "עַד עוֹלָם אָכִין זַרְעֶךָ וּבָנִיתִי לְדֹר וָדוֹר כִּסְאֲךָ סֶלָה׃",
         "transliteration": "'ad'oolam ajin zare'eja uvaniti ledorvadoor kiseaja selah",
-        "spanish": "Y celebrarán los cielos tu maravilla, oh YHVH; Tu verdad también en la congregación de los santos."
+        "spanish": "Para siempre confirmaré tu simiente, Y edificaré tu trono por todas las generaciones. (Sélah)"
       },
       {
         "verse": 6,
         "hebrew": "וְיוֹדוּ שָׁמַיִם פִּלְאֲךָ יְהֹוָה אַף אֱמוּנָתְךָ בִּקְהַל קְדֹשִׁים׃",
         "transliteration": "veyoodu shamaim pileaja Adonai afemunateja bikehal kedoshim",
-        "spanish": "Porque ¿quién en los cielos se igualará con YHVH? ¿Quién será semejante a YHVH entre los hijos de los potentados?"
+        "spanish": "Y celebrarán los cielos tu maravilla, oh YHVH; Tu verdad también en la congregación de los santos."
       },
       {
         "verse": 7,
         "hebrew": "כִּי מִי בַשַּׁחַק יַעֲרֹךְ לַיהֹוָה יִדְמֶה לַיהֹוָה בִּבְנֵי אֵלִים׃",
         "transliteration": "ki mi vashajak ya'aroje layhovah idemeh layhovah biveney elim",
-        "spanish": "Dios terrible en la grande congregación de los santos, Y formidable sobre todos cuantos están alrededor suyo."
+        "spanish": "Porque ¿quién en los cielos se igualará con YHVH? ¿Quién será semejante a YHVH entre los hijos de los potentados?"
       },
       {
         "verse": 8,
         "hebrew": "אֵל נַעֲרָץ בְּסוֹד קְדֹשִׁים רַבָּה וְנוֹרָא עַל כׇּל סְבִיבָיו׃",
         "transliteration": "el na'arats besoodkedoshim rabah venoora 'alklsevivayv",
-        "spanish": "Oh YHVH, Dios de los ejércitos, ¿Quién como tú? Poderoso eres, YHVH, Y tu verdad está en torno de ti."
+        "spanish": "Dios terrible en la grande congregación de los santos, Y formidable sobre todos cuantos están alrededor suyo."
       },
       {
         "verse": 9,
         "hebrew": "יְהֹוָה אֱלֹהֵי צְבָאוֹת מִי כָמוֹךָ חֲסִין יָהּ וֶאֱמוּנָתְךָ סְבִיבוֹתֶיךָ׃",
         "transliteration": "Adonai elohey tsevaoot mijamooja jasin yah veemunateja sevivuoteyja",
-        "spanish": "Tú tienes dominio sobre la bravura de la mar: Cuando se levantan sus ondas, tú las sosiegas."
+        "spanish": "Oh YHVH, Dios de los ejércitos, ¿Quién como tú? Poderoso eres, YHVH, Y tu verdad está en torno de ti."
       },
       {
         "verse": 10,
         "hebrew": "אַתָּה מוֹשֵׁל בְּגֵאוּת הַיָּם בְּשׂוֹא גַלָּיו אַתָּה תְשַׁבְּחֵם׃",
         "transliteration": "atah mooshel begeut hayam besoo galayv atah teshabejem",
-        "spanish": "Tú quebrantaste á Rahab como á un muerto: Con el brazo de tu fortaleza esparciste á tus enemigos."
+        "spanish": "Tú tienes dominio sobre la bravura de la mar: Cuando se levantan sus ondas, tú las sosiegas."
       },
       {
         "verse": 11,
         "hebrew": "אַתָּה דִכִּאתָ כֶחָלָל רָהַב בִּזְרוֹעַ עֻזְּךָ פִּזַּרְתָּ אוֹיְבֶיךָ׃",
         "transliteration": "atah dikita jejalal rahav bizeroo'a 'uzeja pizareta ooyeveyja",
-        "spanish": "Tuyos los cielos, tuya también la tierra: El mundo y su plenitud, tú lo fundaste."
+        "spanish": "Tú quebrantaste á Rahab como á un muerto: Con el brazo de tu fortaleza esparciste á tus enemigos."
       },
       {
         "verse": 12,
         "hebrew": "לְךָ שָׁמַיִם אַף לְךָ אָרֶץ תֵּבֵל וּמְלֹאָהּ אַתָּה יְסַדְתָּם׃",
         "transliteration": "leja shamaim afleja arets tevel umeloah atah yesadetam",
-        "spanish": "Al aquilón y al austro tú los criaste: Tabor y Hermón cantarán en tu nombre."
+        "spanish": "Tuyos los cielos, tuya también la tierra: El mundo y su plenitud, tú lo fundaste."
       },
       {
         "verse": 13,
         "hebrew": "צָפוֹן וְיָמִין אַתָּה בְרָאתָם תָּבוֹר וְחֶרְמוֹן בְּשִׁמְךָ יְרַנֵּנוּ׃",
         "transliteration": "tsafoon veyamin atah veratam tavuor vejeremoon beshimeja yeranenv",
-        "spanish": "Tuyo el brazo con valentía; Fuerte es tu mano, ensalzada tu diestra."
+        "spanish": "Al aquilón y al austro tú los criaste: Tabor y Hermón cantarán en tu nombre."
       },
       {
         "verse": 14,
         "hebrew": "לְךָ זְרוֹעַ עִם גְּבוּרָה תָּעֹז יָדְךָ תָּרוּם יְמִינֶךָ׃",
         "transliteration": "leja zeroo'a 'imgevurah ta'oz yadeja tarum yemineja",
-        "spanish": "Justicia y juicio son el asiento de tu trono: Jésed y verdad van delante de tu rostro."
+        "spanish": "Tuyo el brazo con valentía; Fuerte es tu mano, ensalzada tu diestra."
       },
       {
         "verse": 15,
         "hebrew": "צֶדֶק וּמִשְׁפָּט מְכוֹן כִּסְאֶךָ חֶסֶד וֶאֱמֶת יְקַדְּמוּ פָנֶיךָ׃",
         "transliteration": "tsedek umishepat mejoon kiseeja jesed veemet yekademu faneyja",
-        "spanish": "Bienaventurado el pueblo que sabe aclamarte: Andarán, oh YHVH, á la luz de tu rostro."
+        "spanish": "Justicia y juicio son el asiento de tu trono: Jésed y verdad van delante de tu rostro."
       },
       {
         "verse": 16,
         "hebrew": "אַשְׁרֵי הָעָם יֹדְעֵי תְרוּעָה יְהֹוָה בְּאוֹר פָּנֶיךָ יְהַלֵּכוּן׃",
         "transliteration": "asherey ha'am yode'ey teru'ah Adonai beoorpaneyja yehalejun",
-        "spanish": "En tu nombre se alegrarán todo el día; Y en tu justicia serán ensalzados."
+        "spanish": "Bienaventurado el pueblo que sabe aclamarte: Andarán, oh YHVH, á la luz de tu rostro."
       },
       {
         "verse": 17,
         "hebrew": "בְּשִׁמְךָ יְגִילוּן כׇּל הַיּוֹם וּבְצִדְקָתְךָ יָרוּמוּ׃",
         "transliteration": "beshimeja yegilun klhayoom uvetsidekateja yarumv",
-        "spanish": "Porque tú eres la gloria de su fortaleza; Y por tu buena voluntad ensalzarás nuestro cuerno."
+        "spanish": "En tu nombre se alegrarán todo el día; Y en tu justicia serán ensalzados."
       },
       {
         "verse": 18,
         "hebrew": "כִּי תִפְאֶרֶת עֻזָּמוֹ אָתָּה וּבִרְצוֹנְךָ (תרים) [תָּרוּם] קַרְנֵינוּ׃",
         "transliteration": "kitifeeret 'uzamoo atah uviretsooneja (trym) [tarum] kareneynv",
-        "spanish": "Porque YHVH es nuestro escudo; Y nuestro rey es el Santo de Israel."
+        "spanish": "Porque tú eres la gloria de su fortaleza; Y por tu buena voluntad ensalzarás nuestro cuerno."
       },
       {
         "verse": 19,
         "hebrew": "כִּי לַיהֹוָה מָגִנֵּנוּ וְלִקְדוֹשׁ יִשְׂרָאֵל מַלְכֵּנוּ׃",
         "transliteration": "ki layhovah maginenu velikedoosh iserael malekenv",
-        "spanish": "Entonces hablaste en visión á tu santo, Y dijiste: Yo he puesto el socorro sobre valiente; He ensalzado un escogido de mi pueblo."
+        "spanish": "Porque YHVH es nuestro escudo; Y nuestro rey es el Santo de Israel."
       },
       {
         "verse": 20,
         "hebrew": "אָז דִּבַּרְתָּ בְחָזוֹן לַחֲסִידֶיךָ וַתֹּאמֶר שִׁוִּיתִי עֵזֶר עַל גִּבּוֹר הֲרִימוֹתִי בָחוּר מֵעָם׃",
         "transliteration": "az dibaretavejazoon lajasideyja vatomer shiviti 'ezer 'algiboor harimooti vajur me'am",
-        "spanish": "Hallé a David mi siervo; Ungílo con el aceite de mi santidad."
+        "spanish": "Entonces hablaste en visión á tu santo, Y dijiste: Yo he puesto el socorro sobre valiente; He ensalzado un escogido de mi pueblo."
       },
       {
         "verse": 21,
         "hebrew": "מָצָאתִי דָּוִד עַבְדִּי בְּשֶׁמֶן קׇדְשִׁי מְשַׁחְתִּיו׃",
         "transliteration": "matsati david 'avedi beshemen kdeshi meshajetiv",
-        "spanish": "Mi mano será firme con él, Mi brazo también lo fortificará."
+        "spanish": "Hallé a David mi siervo; Ungílo con el aceite de mi santidad."
       },
       {
         "verse": 22,
         "hebrew": "אֲשֶׁר יָדִי תִּכּוֹן עִמּוֹ אַף זְרוֹעִי תְאַמְּצֶנּוּ׃",
         "transliteration": "asher yadi tikoon 'imoo afzeroo'i teametsenv",
-        "spanish": "No lo avasallará enemigo, Ni hijo de iniquidad lo quebrantará."
+        "spanish": "Mi mano será firme con él, Mi brazo también lo fortificará."
       },
       {
         "verse": 23,
         "hebrew": "לֹא יַשִּׁיא אוֹיֵב בּוֹ וּבֶן עַוְלָה לֹא יְעַנֶּנּוּ׃",
         "transliteration": "loyashi ooyev boo uven'avelah lo ye'anenv",
-        "spanish": "Mas yo quebrantaré delante de él á sus enemigos, Y heriré á sus aborrecedores."
+        "spanish": "No lo avasallará enemigo, Ni hijo de iniquidad lo quebrantará."
       },
       {
         "verse": 24,
         "hebrew": "וְכַתּוֹתִי מִפָּנָיו צָרָיו וּמְשַׂנְאָיו אֶגּוֹף׃",
         "transliteration": "vejatooti mipanayv tsarayv umesaneayv egoof",
-        "spanish": "Y mi verdad y Mi Jésed serán con él; Y en mi nombre será ensalzado su cuerno."
+        "spanish": "Mas yo quebrantaré delante de él á sus enemigos, Y heriré á sus aborrecedores."
       },
       {
         "verse": 25,
         "hebrew": "וֶאֱמוּנָתִי וְחַסְדִּי עִמּוֹ וּבִשְׁמִי תָּרוּם קַרְנוֹ׃",
         "transliteration": "veemunati vejasedi 'imoo uvishemi tarum karenoo",
-        "spanish": "Asimismo pondré su mano en la mar, Y en los ríos su diestra."
+        "spanish": "Y mi verdad y Mi Jésed serán con él; Y en mi nombre será ensalzado su cuerno."
       },
       {
         "verse": 26,
         "hebrew": "וְשַׂמְתִּי בַיָּם יָדוֹ וּבַנְּהָרוֹת יְמִינוֹ׃",
         "transliteration": "vesameti vayam yadoo uvaneharoot yeminoo",
-        "spanish": "El me llamará: Mi padre eres tú, Mi Dios, y la roca de mi salud."
+        "spanish": "Asimismo pondré su mano en la mar, Y en los ríos su diestra."
       },
       {
         "verse": 27,
         "hebrew": "הוּא יִקְרָאֵנִי אָבִי אָתָּה אֵלִי וְצוּר יְשׁוּעָתִי׃",
         "transliteration": "hu ikeraeni avi atah eli vetsur yeshu'ati",
-        "spanish": "Yo también le pondré por primogénito, Alto sobre los reyes de la tierra."
+        "spanish": "El me llamará: Mi padre eres tú, Mi Dios, y la roca de mi salud."
       },
       {
         "verse": 28,
         "hebrew": "אַף אָנִי בְּכוֹר אֶתְּנֵהוּ עֶלְיוֹן לְמַלְכֵי אָרֶץ׃",
         "transliteration": "afani bejoor etenehu 'eleyoon lemalejeyarets",
-        "spanish": "Para siempre le conservaré Mi Jésed; Y mi alianza será firme con él."
+        "spanish": "Yo también le pondré por primogénito, Alto sobre los reyes de la tierra."
       },
       {
         "verse": 29,
         "hebrew": "לְעוֹלָם (אשמור) [אֶשְׁמׇר ]לוֹ חַסְדִּי וּבְרִיתִי נֶאֱמֶנֶת לוֹ׃",
         "transliteration": "le'oolam (shmvr) [eshemr]loo jasedi uveriti neemenet loo",
-        "spanish": "Y pondré su simiente para siempre, Y su trono como los días de los cielos."
+        "spanish": "Para siempre le conservaré Mi Jésed; Y mi alianza será firme con él."
       },
       {
         "verse": 30,
         "hebrew": "וְשַׂמְתִּי לָעַד זַרְעוֹ וְכִסְאוֹ כִּימֵי שָׁמָיִם׃",
         "transliteration": "vesameti la'ad zare'oo vejiseoo kimey shamaim",
-        "spanish": "Si dejaren sus hijos Mi Torá, Y no anduvieren en mis juicios;"
+        "spanish": "Y pondré su simiente para siempre, Y su trono como los días de los cielos."
       },
       {
         "verse": 31,
         "hebrew": "אִם יַעַזְבוּ בָנָיו תּוֹרָתִי וּבְמִשְׁפָּטַי לֹא יֵלֵכוּן׃",
         "transliteration": "imya'azevu vanayv toorati uvemishepatay lo yelejun",
-        "spanish": "Si profanaren mis estatutos, Y no guardaren mis mandamientos;"
+        "spanish": "Si dejaren sus hijos Mi Torá, Y no anduvieren en mis juicios;"
       },
       {
         "verse": 32,
         "hebrew": "אִם חֻקֹּתַי יְחַלֵּלוּ וּמִצְוֺתַי לֹא יִשְׁמֹרוּ׃",
         "transliteration": "imjukotay yejalelu umitsevtay lo ishemorv",
-        "spanish": "Entonces visitaré con vara su rebelión, Y con azotes sus iniquidades."
+        "spanish": "Si profanaren mis estatutos, Y no guardaren mis mandamientos;"
       },
       {
         "verse": 33,
         "hebrew": "וּפָקַדְתִּי בְשֵׁבֶט פִּשְׁעָם וּבִנְגָעִים עֲוֺנָם׃",
         "transliteration": "ufakadeti veshevet pishe'am uvinega'im 'avnam",
-        "spanish": "Mas no quitaré de él Mi Jésed, Ni falsearé mi verdad."
+        "spanish": "Entonces visitaré con vara su rebelión, Y con azotes sus iniquidades."
       },
       {
         "verse": 34,
         "hebrew": "וְחַסְדִּי לֹא אָפִיר מֵעִמּוֹ וְלֹא אֲשַׁקֵּר בֶּאֱמוּנָתִי׃",
         "transliteration": "vejasedi loafir me'imoo veloashaker beemunati",
-        "spanish": "No olvidaré mi pacto, Ni mudaré lo que ha salido de mis labios."
+        "spanish": "Mas no quitaré de él Mi Jésed, Ni falsearé mi verdad."
       },
       {
         "verse": 35,
         "hebrew": "לֹא אֲחַלֵּל בְּרִיתִי וּמוֹצָא שְׂפָתַי לֹא אֲשַׁנֶּה׃",
         "transliteration": "loajalel beriti umootsa sefatay lo ashaneh",
-        "spanish": "Una vez he jurado por mi santidad, Que no mentiré a David."
+        "spanish": "No olvidaré mi pacto, Ni mudaré lo que ha salido de mis labios."
       },
       {
         "verse": 36,
         "hebrew": "אַחַת נִשְׁבַּעְתִּי בְקׇדְשִׁי אִם לְדָוִד אֲכַזֵּב׃",
         "transliteration": "ajat nisheba'eti vekdeshi imledavid ajazev",
-        "spanish": "Su simiente será para siempre, Y su trono como el sol delante de mí."
+        "spanish": "Una vez he jurado por mi santidad, Que no mentiré a David."
       },
       {
         "verse": 37,
         "hebrew": "זַרְעוֹ לְעוֹלָם יִהְיֶה וְכִסְאוֹ כַשֶּׁמֶשׁ נֶגְדִּי׃",
         "transliteration": "zare'oo le'oolam iheyeh vejiseoo jashemesh negedi",
-        "spanish": "Como la luna será firme para siempre, Y como un testigo fiel en el cielo. (Sélah)"
+        "spanish": "Su simiente será para siempre, Y su trono como el sol delante de mí."
       },
       {
         "verse": 38,
         "hebrew": "כְּיָרֵחַ יִכּוֹן עוֹלָם וְעֵד בַּשַּׁחַק נֶאֱמָן סֶלָה׃",
         "transliteration": "keyareja ikoon 'oolam ve'ed bashajak neeman selah",
-        "spanish": "Mas tú desechaste y menospreciaste a Tu Mashíaj; Y te has airado con él."
+        "spanish": "Como la luna será firme para siempre, Y como un testigo fiel en el cielo. (Sélah)"
       },
       {
         "verse": 39,
         "hebrew": "וְאַתָּה זָנַחְתָּ וַתִּמְאָס הִתְעַבַּרְתָּ עִם מְשִׁיחֶךָ׃",
         "transliteration": "veatah zanajeta vatimeas hite'abareta 'immeshijeja",
-        "spanish": "Rompiste el pacto de tu siervo; Has profanado su corona hasta la tierra."
+        "spanish": "Mas tú desechaste y menospreciaste a Tu Mashíaj; Y te has airado con él."
       },
       {
         "verse": 40,
         "hebrew": "נֵאַרְתָּה בְּרִית עַבְדֶּךָ חִלַּלְתָּ לָאָרֶץ נִזְרוֹ׃",
         "transliteration": "nearetah berit 'avedeja jilaleta laarets nizeroo",
-        "spanish": "Aportillaste todos sus vallados; Has quebrantado sus fortalezas."
+        "spanish": "Rompiste el pacto de tu siervo; Has profanado su corona hasta la tierra."
       },
       {
         "verse": 41,
         "hebrew": "פָּרַצְתָּ כׇל גְּדֵרֹתָיו שַׂמְתָּ מִבְצָרָיו מְחִתָּה׃",
         "transliteration": "paratseta jlgederotayv sameta mivetsarayv mejitah",
-        "spanish": "Menoscabáronle todos los que pasaron por el camino: Es oprobio á sus vecinos."
+        "spanish": "Aportillaste todos sus vallados; Has quebrantado sus fortalezas."
       },
       {
         "verse": 42,
         "hebrew": "שַׁסֻּהוּ כׇּל עֹבְרֵי דָרֶךְ הָיָה חֶרְפָּה לִשְׁכֵנָיו׃",
         "transliteration": "shasuhu kl'overey dareje hayah jerepah lishejenayv",
-        "spanish": "Has ensalzado la diestra de sus enemigos; Has alegrado a todos sus adversarios."
+        "spanish": "Menoscabáronle todos los que pasaron por el camino: Es oprobio á sus vecinos."
       },
       {
         "verse": 43,
         "hebrew": "הֲרִימוֹתָ יְמִין צָרָיו הִשְׂמַחְתָּ כׇּל אוֹיְבָיו׃",
         "transliteration": "harimoota yemin tsarayv hisemajeta klooyevayv",
-        "spanish": "Embotaste asimismo el filo de su espada, Y no lo levantaste en la batalla."
+        "spanish": "Has ensalzado la diestra de sus enemigos; Has alegrado a todos sus adversarios."
       },
       {
         "verse": 44,
         "hebrew": "אַף תָּשִׁיב צוּר חַרְבּוֹ וְלֹא הֲקֵימֹתוֹ בַּמִּלְחָמָה׃",
         "transliteration": "aftashiv tsur jareboo velo hakeymotoo bamilejamah",
-        "spanish": "Hiciste cesar su brillo, Y echaste su trono por tierra."
+        "spanish": "Embotaste asimismo el filo de su espada, Y no lo levantaste en la batalla."
       },
       {
         "verse": 45,
         "hebrew": "הִשְׁבַּתָּ מִטְּהָרוֹ וְכִסְאוֹ לָאָרֶץ מִגַּרְתָּה׃",
         "transliteration": "hishebata miteharoo vejiseoo laarets migaretah",
-        "spanish": "Has acortado los días de su juventud; Hasle cubierto de afrenta. (Sélah)"
+        "spanish": "Hiciste cesar su brillo, Y echaste su trono por tierra."
       },
       {
         "verse": 46,
         "hebrew": "הִקְצַרְתָּ יְמֵי עֲלוּמָיו הֶעֱטִיתָ עָלָיו בּוּשָׁה סֶלָה׃",
         "transliteration": "hiketsareta yemey 'alumayv he'etita 'alayv bushah selah",
-        "spanish": "¿Hasta cuándo, oh YHVH? ¿te esconderás para siempre? ¿Arderá tu ira como el fuego?"
+        "spanish": "Has acortado los días de su juventud; Hasle cubierto de afrenta. (Sélah)"
       },
       {
         "verse": 47,
         "hebrew": "עַד מָה יְהֹוָה תִּסָּתֵר לָנֶצַח תִּבְעַר כְּמוֹ אֵשׁ חֲמָתֶךָ׃",
         "transliteration": "'admah Adonai tisater lanetsaj tive'ar kemooesh jamateja",
-        "spanish": "Acuérdate de cuán corto sea mi tiempo: ¿Por qué habrás criado en vano a todos los hijos del hombre?"
+        "spanish": "¿Hasta cuándo, oh YHVH? ¿te esconderás para siempre? ¿Arderá tu ira como el fuego?"
       },
       {
         "verse": 48,
         "hebrew": "זְכׇר אֲנִי מֶה חָלֶד עַל מַה שָּׁוְא בָּרָאתָ כׇל בְּנֵי אָדָם׃",
         "transliteration": "zejrani mehjaled 'almahshave barata jlbeneyadam",
-        "spanish": "¿Qué hombre vivirá y no verá muerte? ¿Librarás su vida del poder del Sheol? (Sélah)"
+        "spanish": "Acuérdate de cuán corto sea mi tiempo: ¿Por qué habrás criado en vano a todos los hijos del hombre?"
       },
       {
         "verse": 49,
         "hebrew": "מִי גֶבֶר יִחְיֶה וְלֹא יִרְאֶה מָּוֶת יְמַלֵּט נַפְשׁוֹ מִיַּד שְׁאוֹל סֶלָה׃",
         "transliteration": "mi gever ijeyeh velo ireehmavet yemalet nafeshoo miadsheool selah",
-        "spanish": "Señor, ¿dónde están tus antiguas jasadim, Que juraste a David por tu verdad?"
+        "spanish": "¿Qué hombre vivirá y no verá muerte? ¿Librarás su vida del poder del Sheol? (Sélah)"
       },
       {
         "verse": 50,
         "hebrew": "אַיֵּה חֲסָדֶיךָ הָרִאשֹׁנִים אֲדֹנָי נִשְׁבַּעְתָּ לְדָוִד בֶּאֱמוּנָתֶךָ׃",
         "transliteration": "ayeh jasadeyja harishonim adonay nisheba'eta ledavid beemunateja",
-        "spanish": "Señor, acuérdate del oprobio de tus siervos; Oprobio que llevo yo en mi seno de muchos pueblos."
+        "spanish": "Señor, ¿dónde están tus antiguas jasadim, Que juraste a David por tu verdad?"
       },
       {
         "verse": 51,
         "hebrew": "זְכֹר אֲדֹנָי חֶרְפַּת עֲבָדֶיךָ שְׂאֵתִי בְחֵיקִי כׇּל רַבִּים עַמִּים׃",
         "transliteration": "zejor adonay jerepat 'avadeyja seeti vejeyki klrabim 'amim",
-        "spanish": "Porque tus enemigos, oh YHVH, han deshonrado, Porque tus enemigos han deshonrado los pasos de Tu Mashíaj."
+        "spanish": "Señor, acuérdate del oprobio de tus siervos; Oprobio que llevo yo en mi seno de muchos pueblos."
       },
       {
         "verse": 52,
         "hebrew": "אֲשֶׁר חֵרְפוּ אוֹיְבֶיךָ יְהֹוָה אֲשֶׁר חֵרְפוּ עִקְּבוֹת מְשִׁיחֶךָ׃",
         "transliteration": "asher jerefu ooyeveyja Adonai asher jerefu 'ikevuot meshijeja",
-        "spanish": "Bendito YHVH para siempre. Amén, y Amén."
+        "spanish": "Porque tus enemigos, oh YHVH, han deshonrado, Porque tus enemigos han deshonrado los pasos de Tu Mashíaj."
       },
       {
         "verse": 53,
         "hebrew": "בָּרוּךְ יְהֹוָה לְעוֹלָם אָמֵן וְאָמֵן׃",
         "transliteration": "baruje Adonai le'oolam amen veamen",
-        "spanish": "..."
+        "spanish": "Bendito YHVH para siempre. Amén, y Amén."
       }
     ]
   },
@@ -10040,97 +10040,97 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "מִזְמוֹר שִׁיר לְיוֹם הַשַּׁבָּת׃",
         "transliteration": "mizemoor shir leyoom hashabat",
-        "spanish": "BUENO es alabar a YHVH, Y cantar mizmór á tu nombre, oh Elyón;"
+        "spanish": "Salmo; Cántico para el día de reposo (Shabat)."
       },
       {
         "verse": 2,
         "hebrew": "טוֹב לְהֹדוֹת לַיהֹוָה וּלְזַמֵּר לְשִׁמְךָ עֶלְיוֹן׃",
         "transliteration": "toov lehodoot layhovah ulezamer leshimeja 'eleyoon",
-        "spanish": "Anunciar por la mañana Tu Jésed, Y tu verdad en las noches,"
+        "spanish": "BUENO es alabar a YHVH, Y cantar mizmór á tu nombre, oh Elyón;"
       },
       {
         "verse": 3,
         "hebrew": "לְהַגִּיד בַּבֹּקֶר חַסְדֶּךָ וֶאֱמוּנָתְךָ בַּלֵּילוֹת׃",
         "transliteration": "lehagid baboker jasedeja veemunateja baleyloot",
-        "spanish": "En el decacordio y en el salterio, En tono suave con el arpa."
+        "spanish": "Anunciar por la mañana Tu Jésed, Y tu verdad en las noches,"
       },
       {
         "verse": 4,
         "hebrew": "עֲלֵי עָשׂוֹר וַעֲלֵי נָבֶל עֲלֵי הִגָּיוֹן בְּכִנּוֹר׃",
         "transliteration": "'aley'asoor va'aleynavel 'aley higayoon bejinoor",
-        "spanish": "Por cuanto me has alegrado, oh YHVH, con tus obras; En las obras de tus manos me gozo."
+        "spanish": "En el decacordio y en el salterio, En tono suave con el arpa."
       },
       {
         "verse": 5,
         "hebrew": "כִּי שִׂמַּחְתַּנִי יְהֹוָה בְּפׇעֳלֶךָ בְּמַעֲשֵׂי יָדֶיךָ אֲרַנֵּן׃",
         "transliteration": "ki simajetani Adonai bef'oleja bema'asey yadeyja aranen",
-        "spanish": "¡Cuán grandes son tus obras, oh YHVH! Muy profundos son tus pensamientos."
+        "spanish": "Por cuanto me has alegrado, oh YHVH, con tus obras; En las obras de tus manos me gozo."
       },
       {
         "verse": 6,
         "hebrew": "מַה גָּדְלוּ מַעֲשֶׂיךָ יְהֹוָה מְאֹד עָמְקוּ מַחְשְׁבֹתֶיךָ׃",
         "transliteration": "mahgadelu ma'aseyja Adonai meod 'ameku majeshevuteyja",
-        "spanish": "El hombre necio no sabe, Y el insensato no entiende esto:"
+        "spanish": "¡Cuán grandes son tus obras, oh YHVH! Muy profundos son tus pensamientos."
       },
       {
         "verse": 7,
         "hebrew": "אִישׁ בַּעַר לֹא יֵדָע וּכְסִיל לֹא יָבִין אֶת זֹאת׃",
         "transliteration": "ishba'ar lo yeda' ujesil loyavin etzot",
-        "spanish": "Que brotan los impíos como la hierba, Y florecen todos los que obran iniquidad, Para ser destruídos para siempre."
+        "spanish": "El hombre necio no sabe, Y el insensato no entiende esto:"
       },
       {
         "verse": 8,
         "hebrew": "בִּפְרֹחַ רְשָׁעִים כְּמוֹ עֵשֶׂב וַיָּצִיצוּ כׇּל פֹּעֲלֵי אָוֶן לְהִשָּׁמְדָם עֲדֵי עַד׃",
         "transliteration": "biferoja resha'im kemoo'esev vayatsitsu klpo'aley aven lehishamedam 'adey'ad",
-        "spanish": "Mas tú, YHVH, para siempre eres Elyón."
+        "spanish": "Que brotan los impíos como la hierba, Y florecen todos los que obran iniquidad, Para ser destruídos para siempre."
       },
       {
         "verse": 9,
         "hebrew": "וְאַתָּה מָרוֹם לְעֹלָם יְהֹוָה׃",
         "transliteration": "veatah maroom le'olam Adonai",
-        "spanish": "Porque he aquí tus enemigos, oh YHVH, Porque he aquí, perecerán tus enemigos; Serán disipados todos los que obran maldad."
+        "spanish": "Mas tú, YHVH, para siempre eres Elyón."
       },
       {
         "verse": 10,
         "hebrew": "כִּי הִנֵּה אֹיְבֶיךָ יְהֹוָה כִּי הִנֵּה אֹיְבֶיךָ יֹאבֵדוּ יִתְפָּרְדוּ כׇּל פֹּעֲלֵי אָוֶן׃",
         "transliteration": "ki hineh oyeveyja Adonai kihineh oyeveyja yovedu iteparedu klpo'aley aven",
-        "spanish": "Empero tú ensalzarás mi cuerno como el de unicornio: Seré ungido con aceite fresco."
+        "spanish": "Porque he aquí tus enemigos, oh YHVH, Porque he aquí, perecerán tus enemigos; Serán disipados todos los que obran maldad."
       },
       {
         "verse": 11,
         "hebrew": "וַתָּרֶם כִּרְאֵים קַרְנִי בַּלֹּתִי בְּשֶׁמֶן רַעֲנָן׃",
         "transliteration": "vatarem kireeym kareni baloti beshemen ra'anan",
-        "spanish": "Y mirarán mis ojos sobre mis enemigos: Oirán mis oídos de los que se levantaron contra mí, de los malignos."
+        "spanish": "Empero tú ensalzarás mi cuerno como el de unicornio: Seré ungido con aceite fresco."
       },
       {
         "verse": 12,
         "hebrew": "וַתַּבֵּט עֵינִי בְּשׁוּרָי בַּקָּמִים עָלַי מְרֵעִים תִּשְׁמַעְנָה אׇזְנָי׃",
         "transliteration": "vatabet 'eyni beshuray bakamim 'alay mere'im tishema'enah zenay",
-        "spanish": "El justo florecerá como la palma: Crecerá como cedro en el Líbano."
+        "spanish": "Y mirarán mis ojos sobre mis enemigos: Oirán mis oídos de los que se levantaron contra mí, de los malignos."
       },
       {
         "verse": 13,
         "hebrew": "צַדִּיק כַּתָּמָר יִפְרָח כְּאֶרֶז בַּלְּבָנוֹן יִשְׂגֶּה׃",
         "transliteration": "tsadik katamar iferaj keerez balevanoon isegeh",
-        "spanish": "Plantados en la casa de YHVH, En los atrios de nuestro Dios florecerán."
+        "spanish": "El justo florecerá como la palma: Crecerá como cedro en el Líbano."
       },
       {
         "verse": 14,
         "hebrew": "שְׁתוּלִים בְּבֵית יְהֹוָה בְּחַצְרוֹת אֱלֹהֵינוּ יַפְרִיחוּ׃",
         "transliteration": "shetulim beveyt Adonai bejatseroot Eloheinu yaferijv",
-        "spanish": "Aun en la vejez fructificarán; Estarán vigorosos y verdes;"
+        "spanish": "Plantados en la casa de YHVH, En los atrios de nuestro Dios florecerán."
       },
       {
         "verse": 15,
         "hebrew": "עוֹד יְנוּבוּן בְּשֵׂיבָה דְּשֵׁנִים וְרַעֲנַנִּים יִהְיוּ׃",
         "transliteration": "'ood yenuvun beseyvah deshenim vera'ananim iheyv",
-        "spanish": "Para anunciar que YHVH mi fortaleza es recto. Y que en él no hay injusticia."
+        "spanish": "Aun en la vejez fructificarán; Estarán vigorosos y verdes;"
       },
       {
         "verse": 16,
         "hebrew": "לְהַגִּיד כִּי יָשָׁר יְהֹוָה צוּרִי וְלֹא [עַוְלָתָה] (עלתה) בּוֹ׃ ",
         "transliteration": "lehagid kiyashar Adonai tsuri velo['avelatah] ('lth) boo ",
-        "spanish": "..."
+        "spanish": "Para anunciar que YHVH mi fortaleza es recto. Y que en él no hay injusticia."
       }
     ]
   },
@@ -10797,175 +10797,175 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "תְּפִלָּה לְעָנִי כִי יַעֲטֹף וְלִפְנֵי יְהֹוָה יִשְׁפֹּךְ שִׂיחוֹ׃",
         "transliteration": "tefilah le'ani jiya'atof velifeney Adonai ishepoje sijoo",
-        "spanish": "YHVH, oye mi oración, Y venga mi clamor a ti."
+        "spanish": "Oración del afligido, cuando está desanimado, y delante de YHVH derrama su lamento."
       },
       {
         "verse": 2,
         "hebrew": "יְהֹוָה שִׁמְעָה תְפִלָּתִי וְשַׁוְעָתִי אֵלֶיךָ תָבוֹא׃",
         "transliteration": "Adonai shime'ah tefilati veshave'ati eleyja tavuo",
-        "spanish": "No escondas de mí tu rostro: en el día de mi angustia Inclina á mí tu oído; El día que te invocare, apresúrate á responderme."
+        "spanish": "YHVH, oye mi oración, Y venga mi clamor a ti."
       },
       {
         "verse": 3,
         "hebrew": "אַל תַּסְתֵּר פָּנֶיךָ מִמֶּנִּי בְּיוֹם צַר לִי הַטֵּה אֵלַי אׇזְנֶךָ בְּיוֹם אֶקְרָא מַהֵר עֲנֵנִי׃",
         "transliteration": "altaseter paneyja mimeni beyoom tsarli hatehelay zeneja beyoom ekera maher 'aneni",
-        "spanish": "Porque mis días se han consumido como humo; Y mis huesos cual tizón están quemados."
+        "spanish": "No escondas de mí tu rostro: en el día de mi angustia Inclina á mí tu oído; El día que te invocare, apresúrate á responderme."
       },
       {
         "verse": 4,
         "hebrew": "כִּי כָלוּ בְעָשָׁן יָמָי וְעַצְמוֹתַי כְּמוֹקֵד נִחָרוּ׃",
         "transliteration": "kijalu ve'ashan yamay ve'atsemootay kemooked nijarv",
-        "spanish": "Mi corazón fué herido, y secóse como la hierba; Por lo cual me olvidé de comer mi pan."
+        "spanish": "Porque mis días se han consumido como humo; Y mis huesos cual tizón están quemados."
       },
       {
         "verse": 5,
         "hebrew": "הוּכָּה כָעֵשֶׂב וַיִּבַשׁ לִבִּי כִּי שָׁכַחְתִּי מֵאֲכֹל לַחְמִי׃",
         "transliteration": "hukahja'esev vaivash libi kishajajeti meajol lajemi",
-        "spanish": "Por la voz de mi gemido Mis huesos se han pegado a mí carne."
+        "spanish": "Mi corazón fué herido, y secóse como la hierba; Por lo cual me olvidé de comer mi pan."
       },
       {
         "verse": 6,
         "hebrew": "מִקּוֹל אַנְחָתִי דָּבְקָה עַצְמִי לִבְשָׂרִי׃",
         "transliteration": "mikool anejati davekah 'atsemi livesari",
-        "spanish": "Soy semejante al pelícano del desierto; Soy como el buho de las soledades."
+        "spanish": "Por la voz de mi gemido Mis huesos se han pegado a mí carne."
       },
       {
         "verse": 7,
         "hebrew": "דָּמִיתִי לִקְאַת מִדְבָּר הָיִיתִי כְּכוֹס חֳרָבוֹת׃",
         "transliteration": "damiti likeat midebar haiti kejoos joravuot",
-        "spanish": "Velo, y soy Como el pájaro solitario sobre el tejado."
+        "spanish": "Soy semejante al pelícano del desierto; Soy como el buho de las soledades."
       },
       {
         "verse": 8,
         "hebrew": "שָׁקַדְתִּי וָאֶהְיֶה כְּצִפּוֹר בּוֹדֵד עַל גָּג׃",
         "transliteration": "shakadeti vaeheyeh ketsipoor booded 'algag",
-        "spanish": "Cada día me afrentan mis enemigos; Los que se enfurecen contra mí, hanse contra mí conjurado."
+        "spanish": "Velo, y soy Como el pájaro solitario sobre el tejado."
       },
       {
         "verse": 9,
         "hebrew": "כׇּל הַיּוֹם חֵרְפוּנִי אוֹיְבָי מְהוֹלָלַי בִּי נִשְׁבָּעוּ׃",
         "transliteration": "klhayoom jerefuni ooyevay mehoolalay bi nisheba'v",
-        "spanish": "Por lo que como la ceniza á manera de pan, Y mi bebida mezclo con lloro,"
+        "spanish": "Cada día me afrentan mis enemigos; Los que se enfurecen contra mí, hanse contra mí conjurado."
       },
       {
         "verse": 10,
         "hebrew": "כִּי אֵפֶר כַּלֶּחֶם אָכָלְתִּי וְשִׁקֻּוַי בִּבְכִי מָסָכְתִּי׃",
         "transliteration": "kiefer kalejem ajaleti veshikuvay biveji masajeti",
-        "spanish": "A causa de tu enojo y de tu ira; Pues me alzaste, y me has arrojado."
+        "spanish": "Por lo que como la ceniza á manera de pan, Y mi bebida mezclo con lloro,"
       },
       {
         "verse": 11,
         "hebrew": "מִפְּנֵי זַעַמְךָ וְקִצְפֶּךָ כִּי נְשָׂאתַנִי וַתַּשְׁלִיכֵנִי׃",
         "transliteration": "mipeneyza'ameja vekitsepeja ki nesatani vatashelijeni",
-        "spanish": "Mis días son como la sombra que se va; Y heme secado como la hierba."
+        "spanish": "A causa de tu enojo y de tu ira; Pues me alzaste, y me has arrojado."
       },
       {
         "verse": 12,
         "hebrew": "יָמַי כְּצֵל נָטוּי וַאֲנִי כָּעֵשֶׂב אִיבָשׁ׃",
         "transliteration": "yamay ketsel natuy vaani ka'esev ivash",
-        "spanish": "Mas tú, YHVH, permanecerás para siempre, Y tu memoria para generación y generación."
+        "spanish": "Mis días son como la sombra que se va; Y heme secado como la hierba."
       },
       {
         "verse": 13,
         "hebrew": "וְאַתָּה יְהֹוָה לְעוֹלָם תֵּשֵׁב וְזִכְרְךָ לְדֹר וָדֹר׃",
         "transliteration": "veatah Adonai le'oolam teshev vezijereja ledor vador",
-        "spanish": "Tú levantándote, tendrás Jésed de Sión; Porque el tiempo de tener Jésed de ella, porque el plazo es llegado."
+        "spanish": "Mas tú, YHVH, permanecerás para siempre, Y tu memoria para generación y generación."
       },
       {
         "verse": 14,
         "hebrew": "אַתָּה תָקוּם תְּרַחֵם צִיּוֹן כִּי עֵת לְחֶנְנָהּ כִּי בָא מוֹעֵד׃",
         "transliteration": "atah takum terajem tsioon ki'et lejenenah kiva moo'ed",
-        "spanish": "Porque tus siervos aman sus piedras, Y del polvo de ella tienen compasión."
+        "spanish": "Tú levantándote, tendrás Jésed de Sión; Porque el tiempo de tener Jésed de ella, porque el plazo es llegado."
       },
       {
         "verse": 15,
         "hebrew": "כִּי רָצוּ עֲבָדֶיךָ אֶת אֲבָנֶיהָ וְאֶת עֲפָרָהּ יְחֹנֵנוּ׃",
         "transliteration": "kiratsu 'avadeyja etavaneyha veet'afarah yejonenv",
-        "spanish": "Entonces temerán las gentes el nombre de YHVH, Y todos los reyes de la tierra tu gloria;"
+        "spanish": "Porque tus siervos aman sus piedras, Y del polvo de ella tienen compasión."
       },
       {
         "verse": 16,
         "hebrew": "וְיִירְאוּ גוֹיִם אֶת שֵׁם יְהֹוָה וְכׇל מַלְכֵי הָאָרֶץ אֶת כְּבוֹדֶךָ׃",
         "transliteration": "veireu gooim etshem Adonai vejlmalejey haarets etkevuodeja",
-        "spanish": "Por cuanto YHVH habrá edificado á Sión, Y en su gloria será visto;"
+        "spanish": "Entonces temerán las gentes el nombre de YHVH, Y todos los reyes de la tierra tu gloria;"
       },
       {
         "verse": 17,
         "hebrew": "כִּי בָנָה יְהֹוָה צִיּוֹן נִרְאָה בִּכְבוֹדוֹ׃",
         "transliteration": "kivanah Adonai tsioon nireah bijevuodoo",
-        "spanish": "Habrá mirado á la oración de los solitarios, Y no habrá desechado el ruego de ellos."
+        "spanish": "Por cuanto YHVH habrá edificado á Sión, Y en su gloria será visto;"
       },
       {
         "verse": 18,
         "hebrew": "פָּנָה אֶל תְּפִלַּת הָעַרְעָר וְלֹא בָזָה אֶת תְּפִלָּתָם׃",
         "transliteration": "panah eltefilat ha'are'ar velovazah ettefilatam",
-        "spanish": "Escribirse ha esto para la generación venidera: Y el pueblo que se criará, alabará á Yah."
+        "spanish": "Habrá mirado á la oración de los solitarios, Y no habrá desechado el ruego de ellos."
       },
       {
         "verse": 19,
         "hebrew": "תִּכָּתֶב זֹאת לְדוֹר אַחֲרוֹן וְעַם נִבְרָא יְהַלֶּל יָהּ׃",
         "transliteration": "tikatev zot ledoor ajaroon ve'am nivera yehalelyah",
-        "spanish": "Porque miró de lo alto de su santuario; YHVH miró de los cielos á la tierra,"
+        "spanish": "Escribirse ha esto para la generación venidera: Y el pueblo que se criará, alabará á Yah."
       },
       {
         "verse": 20,
         "hebrew": "כִּי הִשְׁקִיף מִמְּרוֹם קׇדְשׁוֹ יְהֹוָה מִשָּׁמַיִם אֶל אֶרֶץ הִבִּיט׃",
         "transliteration": "kihishekif mimeroom kdeshoo Adonai mishamaim elerets hibit",
-        "spanish": "Para oir el gemido de los presos, Para soltar a los sentenciados á muerte;"
+        "spanish": "Porque miró de lo alto de su santuario; YHVH miró de los cielos á la tierra,"
       },
       {
         "verse": 21,
         "hebrew": "לִשְׁמֹעַ אֶנְקַת אָסִיר לְפַתֵּחַ בְּנֵי תְמוּתָה׃",
         "transliteration": "lishemo'a enekat asir lefateja beney temutah",
-        "spanish": "Porque cuenten en Sión el nombre de YHVH, Y su alabanza en Jerusalem,"
+        "spanish": "Para oir el gemido de los presos, Para soltar a los sentenciados á muerte;"
       },
       {
         "verse": 22,
         "hebrew": "לְסַפֵּר בְּצִיּוֹן שֵׁם יְהֹוָה וּתְהִלָּתוֹ בִּירוּשָׁלָ͏ִם׃",
         "transliteration": "lesaper betsioon shem Adonai utehilatoo birushala͏im",
-        "spanish": "Cuando los pueblos se congregaren en uno, Y los reinos, para servir a YHVH."
+        "spanish": "Porque cuenten en Sión el nombre de YHVH, Y su alabanza en Jerusalem,"
       },
       {
         "verse": 23,
         "hebrew": "בְּהִקָּבֵץ עַמִּים יַחְדָּו וּמַמְלָכוֹת לַעֲבֹד אֶת יְהֹוָה׃",
         "transliteration": "behikavets 'amim yajedav umamelajoot la'avud etAdonai",
-        "spanish": "El afligió mi fuerza en el camino; Acortó mis días."
+        "spanish": "Cuando los pueblos se congregaren en uno, Y los reinos, para servir a YHVH."
       },
       {
         "verse": 24,
         "hebrew": "עִנָּה בַדֶּרֶךְ (כחו) [כֹּחִי] קִצַּר יָמָי׃",
         "transliteration": "'inah vadereje (jjv) [koji] kitsar yamay",
-        "spanish": "Dije: Dios mío, no me cortes en el medio de mis días: Por generación de generaciones son tus años."
+        "spanish": "El afligió mi fuerza en el camino; Acortó mis días."
       },
       {
         "verse": 25,
         "hebrew": "אֹמַר אֵלִי אַל תַּעֲלֵנִי בַּחֲצִי יָמָי בְּדוֹר דּוֹרִים שְׁנוֹתֶיךָ׃",
         "transliteration": "omar eli alta'aleni bajatsi yamay bedoor doorim shenooteyja",
-        "spanish": "Tú fundaste la tierra antiguamente, Y los cielos son obra de tus manos."
+        "spanish": "Dije: Dios mío, no me cortes en el medio de mis días: Por generación de generaciones son tus años."
       },
       {
         "verse": 26,
         "hebrew": "לְפָנִים הָאָרֶץ יָסַדְתָּ וּמַעֲשֵׂה יָדֶיךָ שָׁמָיִם׃",
         "transliteration": "lefanim haarets yasadeta uma'aseh yadeyja shamaim",
-        "spanish": "Ellos perecerán, y tú permanecerás; Y todos ellos como un vestido se envejecerán; Como una ropa de vestir los mudarás, y serán mudados:"
+        "spanish": "Tú fundaste la tierra antiguamente, Y los cielos son obra de tus manos."
       },
       {
         "verse": 27,
         "hebrew": "הֵמָּה יֹאבֵדוּ וְאַתָּה תַעֲמֹד וְכֻלָּם כַּבֶּגֶד יִבְלוּ כַּלְּבוּשׁ תַּחֲלִיפֵם וְיַחֲלֹפוּ׃",
         "transliteration": "hemah yovedu veatah ta'amod vejulam kabeged ivelu kalevush tajalifem veyajalofv",
-        "spanish": "Mas tú eres el mismo, Y tus años no se acabarán."
+        "spanish": "Ellos perecerán, y tú permanecerás; Y todos ellos como un vestido se envejecerán; Como una ropa de vestir los mudarás, y serán mudados:"
       },
       {
         "verse": 28,
         "hebrew": "וְאַתָּה הוּא וּשְׁנוֹתֶיךָ לֹא יִתָּמּוּ׃",
         "transliteration": "veatahhu ushenooteyja lo itamv",
-        "spanish": "Los hijos de tus siervos habitarán, Y su simiente será afirmada delante de ti."
+        "spanish": "Mas tú eres el mismo, Y tus años no se acabarán."
       },
       {
         "verse": 29,
         "hebrew": "בְּנֵי עֲבָדֶיךָ יִשְׁכּוֹנוּ וְזַרְעָם לְפָנֶיךָ יִכּוֹן׃ ",
         "transliteration": "beney'avadeyja ishekoonu vezare'am lefaneyja ikoon ",
-        "spanish": "..."
+        "spanish": "Los hijos de tus siervos habitarán, Y su simiente será afirmada delante de ti."
       }
     ]
   },
@@ -12184,85 +12184,85 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "שִׁיר מִזְמוֹר לְדָוִד׃",
         "transliteration": "shir mizemoor ledavid",
-        "spanish": "MI corazón está dispuesto, oh Dios; Cantaré y salmearé todavía en mi gloria."
+        "spanish": "Cántico; Salmo de David."
       },
       {
         "verse": 2,
         "hebrew": "נָכוֹן לִבִּי אֱלֹהִים אָשִׁירָה וַאֲזַמְּרָה אַף כְּבוֹדִי׃",
         "transliteration": "najoon libi Elohim ashirah vaazamerah afkevuodi",
-        "spanish": "Despiértate, salterio y arpa: Despertaré al alba."
+        "spanish": "MI corazón está dispuesto, oh Dios; Cantaré y salmearé todavía en mi gloria."
       },
       {
         "verse": 3,
         "hebrew": "עוּרָה הַנֵּבֶל וְכִנּוֹר אָעִירָה שָּׁחַר׃",
         "transliteration": "'urah hanevel vejinoor a'irah shajar",
-        "spanish": "Te alabaré, oh YHVH, entre los pueblos; A ti cantaré mizmór entre las naciones."
+        "spanish": "Despiértate, salterio y arpa: Despertaré al alba."
       },
       {
         "verse": 4,
         "hebrew": "אוֹדְךָ בָעַמִּים יְהֹוָה וַאֲזַמֶּרְךָ בַּלְאֻמִּים׃",
         "transliteration": "oodeja va'amim Adonai vaazamereja baleumim",
-        "spanish": "Porque grande más que los cielos es Tu Jésed, Y hasta los cielos tu verdad."
+        "spanish": "Te alabaré, oh YHVH, entre los pueblos; A ti cantaré mizmór entre las naciones."
       },
       {
         "verse": 5,
         "hebrew": "כִּי גָדוֹל מֵעַל שָׁמַיִם חַסְדֶּךָ וְעַד שְׁחָקִים אֲמִתֶּךָ׃",
         "transliteration": "kigadool me'alshamaim jasedeja ve'adshejakim amiteja",
-        "spanish": "Ensálzate, oh Dios, sobre los cielos; Y sobre toda la tierra tu gloria."
+        "spanish": "Porque grande más que los cielos es Tu Jésed, Y hasta los cielos tu verdad."
       },
       {
         "verse": 6,
         "hebrew": "רוּמָה עַל שָׁמַיִם אֱלֹהִים וְעַל כׇּל הָאָרֶץ כְּבוֹדֶךָ׃",
         "transliteration": "rumah 'alshamaim Elohim ve'al klhaarets kevuodeja",
-        "spanish": "Para que sean librados tus amados, Salva con tu diestra y respóndeme."
+        "spanish": "Ensálzate, oh Dios, sobre los cielos; Y sobre toda la tierra tu gloria."
       },
       {
         "verse": 7,
         "hebrew": "לְמַעַן יֵחָלְצוּן יְדִידֶיךָ הוֹשִׁיעָה יְמִינְךָ וַעֲנֵנִי׃",
         "transliteration": "lema'an yejaletsun yedideyja hooshi'ah yemineja va'aneni",
-        "spanish": "Dios habló por su santuario: alegraréme, Repartiré á Sichêm, y mediré el valle de Succoth."
+        "spanish": "Para que sean librados tus amados, Salva con tu diestra y respóndeme."
       },
       {
         "verse": 8,
         "hebrew": "אֱלֹהִים דִּבֶּר בְּקׇדְשׁוֹ אֶעְלֹזָה אֲחַלְּקָה שְׁכֶם וְעֵמֶק סֻכּוֹת אֲמַדֵּד׃",
         "transliteration": "Elohim diber bekdeshoo e'elozah ajalekah shejem ve'emek sukoot amaded",
-        "spanish": "Mío es Galaad, mío es Manasés; Y Eprhaim es la fortaleza de mi cabeza; Judá es mi legislador;"
+        "spanish": "Dios habló por su santuario: alegraréme, Repartiré á Sichêm, y mediré el valle de Succoth."
       },
       {
         "verse": 9,
         "hebrew": "לִי גִלְעָד לִי מְנַשֶּׁה וְאֶפְרַיִם מָעוֹז רֹאשִׁי יְהוּדָה מְחֹקְקִי׃",
         "transliteration": "li gile'ad li menasheh veeferaim ma'ooz roshi yehudah mejokeki",
-        "spanish": "Moab, la vasija de mi lavatorio: Sobre Edom echaré mi calzado; Regocijaréme sobre Palestina."
+        "spanish": "Mío es Galaad, mío es Manasés; Y Eprhaim es la fortaleza de mi cabeza; Judá es mi legislador;"
       },
       {
         "verse": 10,
         "hebrew": "מוֹאָב סִיר רַחְצִי עַל אֱדוֹם אַשְׁלִיךְ נַעֲלִי עֲלֵי פְלֶשֶׁת אֶתְרוֹעָע׃",
         "transliteration": "mooav sir rajetsi 'aledoom ashelije na'ali 'aleyfeleshet eteroo'a'",
-        "spanish": "¿Quién me guiará á la ciudad fortalecida? ¿Quién me guiará hasta Idumea?"
+        "spanish": "Moab, la vasija de mi lavatorio: Sobre Edom echaré mi calzado; Regocijaréme sobre Palestina."
       },
       {
         "verse": 11,
         "hebrew": "מִי יֹבִלֵנִי עִיר מִבְצָר מִי נָחַנִי עַד אֱדוֹם׃",
         "transliteration": "mi yovileni 'ir mivetsar mi najani 'adedoom",
-        "spanish": "Ciertamente tú, oh Dios, que nos habías desechado; Y no salías, oh Dios, con nuestros ejércitos."
+        "spanish": "¿Quién me guiará á la ciudad fortalecida? ¿Quién me guiará hasta Idumea?"
       },
       {
         "verse": 12,
         "hebrew": "הֲלֹא אֱלֹהִים זְנַחְתָּנוּ וְלֹא תֵצֵא אֱלֹהִים בְּצִבְאֹתֵינוּ׃",
         "transliteration": "haloElohim zenajetanu velotetse Elohim betsiveoteynv",
-        "spanish": "Danos socorro en la angustia: Porque mentirosa es la salud del hombre."
+        "spanish": "Ciertamente tú, oh Dios, que nos habías desechado; Y no salías, oh Dios, con nuestros ejércitos."
       },
       {
         "verse": 13,
         "hebrew": "הָבָה לָּנוּ עֶזְרָת מִצָּר וְשָׁוְא תְּשׁוּעַת אָדָם׃",
         "transliteration": "havahlanu 'ezerat mitsar veshave teshu'at adam",
-        "spanish": "En Dios haremos proezas; Y él hollará nuestros enemigos."
+        "spanish": "Danos socorro en la angustia: Porque mentirosa es la salud del hombre."
       },
       {
         "verse": 14,
         "hebrew": "בֵּאלֹהִים נַעֲשֶׂה חָיִל וְהוּא יָבוּס צָרֵינוּ׃ ",
         "transliteration": "belohim na'asehjail vehu yavus tsareynv ",
-        "spanish": "..."
+        "spanish": "En Dios haremos proezas; Y él hollará nuestros enemigos."
       }
     ]
   },
@@ -15620,85 +15620,85 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "לַמְנַצֵּחַ מִזְמוֹר לְדָוִד׃",
         "transliteration": "lamenatseja mizemoor ledavid",
-        "spanish": "LIBRAME, oh YHVH, de hombre malo: Guárdame de hombre violento;"
+        "spanish": "Al Músico principal. Salmo de David."
       },
       {
         "verse": 2,
         "hebrew": "חַלְּצֵנִי יְהֹוָה מֵאָדָם רָע מֵאִישׁ חֲמָסִים תִּנְצְרֵנִי׃",
         "transliteration": "jaletseni Adonai meadam ra' meish jamasim tinetsereni",
-        "spanish": "Los cuales maquinan males en el corazón, Cada día urden contiendas."
+        "spanish": "LIBRAME, oh YHVH, de hombre malo: Guárdame de hombre violento;"
       },
       {
         "verse": 3,
         "hebrew": "אֲשֶׁר חָשְׁבוּ רָעוֹת בְּלֵב כׇּל יוֹם יָגוּרוּ מִלְחָמוֹת׃",
         "transliteration": "asher jashevu ra'oot belev klyoom yaguru milejamoot",
-        "spanish": "Aguzaron su lengua como la serpiente; Veneno de áspid hay debajo de sus labios. (Sélah)"
+        "spanish": "Los cuales maquinan males en el corazón, Cada día urden contiendas."
       },
       {
         "verse": 4,
         "hebrew": "שָׁנְנוּ לְשׁוֹנָם כְּמוֹ נָחָשׁ חֲמַת עַכְשׁוּב תַּחַת שְׂפָתֵימוֹ סֶלָה׃",
         "transliteration": "shanenu leshoonam kemoonajash jamat 'ajeshuv tajat sefateymoo selah",
-        "spanish": "Guárdame, oh YHVH, de manos del impío, Presérvame del hombre injurioso; Que han pensado de trastornar mis pasos."
+        "spanish": "Aguzaron su lengua como la serpiente; Veneno de áspid hay debajo de sus labios. (Sélah)"
       },
       {
         "verse": 5,
         "hebrew": "שׇׁמְרֵנִי יְהֹוָה מִידֵי רָשָׁע מֵאִישׁ חֲמָסִים תִּנְצְרֵנִי אֲשֶׁר חָשְׁבוּ לִדְחוֹת פְּעָמָי׃",
         "transliteration": "shmereni Adonai midey rasha' meish jamasim tinetsereni asher jashevu lidejoot pe'amay",
-        "spanish": "Hanme escondido lazo y cuerdas los soberbios; Han tendido red junto á la senda; Me han puesto lazos. (Sélah)"
+        "spanish": "Guárdame, oh YHVH, de manos del impío, Presérvame del hombre injurioso; Que han pensado de trastornar mis pasos."
       },
       {
         "verse": 6,
         "hebrew": "טָמְנוּ גֵאִים פַּח לִי וַחֲבָלִים פָּרְשׂוּ רֶשֶׁת לְיַד מַעְגָּל מֹקְשִׁים שָׁתוּ לִי סֶלָה׃",
         "transliteration": "tamenvgeim paj li vajavalim paresu reshet leyadma'egal mokeshim shatvli selah",
-        "spanish": "He dicho a YHVH: Dios mío eres tú; Escucha, oh YHVH, la voz de mis ruegos."
+        "spanish": "Hanme escondido lazo y cuerdas los soberbios; Han tendido red junto á la senda; Me han puesto lazos. (Sélah)"
       },
       {
         "verse": 7,
         "hebrew": "אָמַרְתִּי לַיהֹוָה אֵלִי אָתָּה הַאֲזִינָה יְהֹוָה קוֹל תַּחֲנוּנָי׃",
         "transliteration": "amareti layhovah eli atah haazinah Adonai kool tajanunay",
-        "spanish": "YHVH Señor, fortaleza de mi salud, Tú pusiste á cubierto mi cabeza el día de las armas."
+        "spanish": "He dicho a YHVH: Dios mío eres tú; Escucha, oh YHVH, la voz de mis ruegos."
       },
       {
         "verse": 8,
         "hebrew": "יֱהֹוִה אֲדֹנָי עֹז יְשׁוּעָתִי סַכֹּתָה לְרֹאשִׁי בְּיוֹם נָשֶׁק׃",
         "transliteration": "yehovih adonay 'oz yeshu'ati sakotah leroshi beyoom nashek",
-        "spanish": "No des, oh YHVH, al impío sus deseos; No saques adelante su pensamiento, que no se ensoberbezca. (Sélah)"
+        "spanish": "YHVH Señor, fortaleza de mi salud, Tú pusiste á cubierto mi cabeza el día de las armas."
       },
       {
         "verse": 9,
         "hebrew": "אַל תִּתֵּן יְהֹוָה מַאֲוַיֵּי רָשָׁע זְמָמוֹ אַל תָּפֵק יָרוּמוּ סֶלָה׃",
         "transliteration": "altiten Adonai maavayey rasha' zemamoo altafek yarumu selah",
-        "spanish": "En cuanto a los que por todas partes me rodean, La maldad de sus propios labios cubrirá su cabeza."
+        "spanish": "No des, oh YHVH, al impío sus deseos; No saques adelante su pensamiento, que no se ensoberbezca. (Sélah)"
       },
       {
         "verse": 10,
         "hebrew": "רֹאשׁ מְסִבָּי עֲמַל שְׂפָתֵימוֹ (יכסומו) [יְכַסֵּימוֹ]׃",
         "transliteration": "rosh mesibay 'amal sefateymoo (yjsvmv) [yejaseymoo]",
-        "spanish": "Caerán sobre ellos brasas; Dios los hará caer en el fuego, En profundos hoyos de donde no salgan."
+        "spanish": "En cuanto a los que por todas partes me rodean, La maldad de sus propios labios cubrirá su cabeza."
       },
       {
         "verse": 11,
         "hebrew": "(ימיטו) [יִמּוֹטוּ] עֲלֵיהֶם גֶּחָלִים בָּאֵשׁ יַפִּלֵם בְּמַהֲמֹרוֹת בַּל יָקוּמוּ׃",
         "transliteration": "(ymytv) [imootu] 'aleyhem gejalim baesh yapilem bemahamoroot balyakumv",
-        "spanish": "El hombre deslenguado no será firme en la tierra: El mal cazará al hombre injusto para derribarle."
+        "spanish": "Caerán sobre ellos brasas; Dios los hará caer en el fuego, En profundos hoyos de donde no salgan."
       },
       {
         "verse": 12,
         "hebrew": "אִישׁ לָשׁוֹן בַּל יִכּוֹן בָּאָרֶץ אִישׁ חָמָס רָע יְצוּדֶנּוּ לְמַדְחֵפֹת׃",
         "transliteration": "ish lashoon balikoon baarets ishjamas ra' yetsudenu lemadejefot",
-        "spanish": "Yo sé que hará YHVH el juicio del afligido, El juicio de los menesterosos."
+        "spanish": "El hombre deslenguado no será firme en la tierra: El mal cazará al hombre injusto para derribarle."
       },
       {
         "verse": 13,
         "hebrew": "(ידעת) [יָדַעְתִּי] כִּי יַעֲשֶׂה יְהֹוָה דִּין עָנִי מִשְׁפַּט אֶבְיֹנִים׃",
         "transliteration": "(yd't) [yada'eti] kiya'aseh Adonai din 'ani mishepat eveyonim",
-        "spanish": "Ciertamente los justos alabarán tu nombre; Los rectos morarán en tu presencia."
+        "spanish": "Yo sé que hará YHVH el juicio del afligido, El juicio de los menesterosos."
       },
       {
         "verse": 14,
         "hebrew": "אַךְ צַדִּיקִים יוֹדוּ לִשְׁמֶךָ יֵשְׁבוּ יְשָׁרִים אֶת פָּנֶיךָ׃ ",
         "transliteration": "aje tsadikim yoodu lishemeja yeshevu yesharim etpaneyja ",
-        "spanish": "..."
+        "spanish": "Ciertamente los justos alabarán tu nombre; Los rectos morarán en tu presencia."
       }
     ]
   },
@@ -15782,49 +15782,49 @@ export const TEHILIM_PSALMS: Psalm[] = [
         "verse": 1,
         "hebrew": "מַשְׂכִּיל לְדָוִד בִּהְיוֹתוֹ בַמְּעָרָה תְפִלָּה׃",
         "transliteration": "masekil ledavid biheyootoo vame'arah tefilah",
-        "spanish": "CON mi voz clamaré a YHVH, Con mi voz pediré a YHVH Jésed."
+        "spanish": "Masquil de David; Oración cuando estaba en la cueva."
       },
       {
         "verse": 2,
         "hebrew": "קוֹלִי אֶל יְהֹוָה אֶזְעָק קוֹלִי אֶל יְהֹוָה אֶתְחַנָּן׃",
         "transliteration": "kooli elAdonai eze'ak kooli elAdonai etejanan",
-        "spanish": "Delante de él derramaré mi querella; Delante de él denunciaré mi angustia."
+        "spanish": "CON mi voz clamaré a YHVH, Con mi voz pediré a YHVH Jésed."
       },
       {
         "verse": 3,
         "hebrew": "אֶשְׁפֹּךְ לְפָנָיו שִׂיחִי צָרָתִי לְפָנָיו אַגִּיד׃",
         "transliteration": "eshepoje lefanayv siji tsarati lefanayv agid",
-        "spanish": "Cuando mi espíritu se angustiaba dentro de mí, tú conociste mi senda. En el camino en que andaba, me escondieron lazo."
+        "spanish": "Delante de él derramaré mi querella; Delante de él denunciaré mi angustia."
       },
       {
         "verse": 4,
         "hebrew": "בְּהִתְעַטֵּף עָלַי רוּחִי וְאַתָּה יָדַעְתָּ נְתִיבָתִי בְּאֹרַח זוּ אֲהַלֵּךְ טָמְנוּ פַח לִי׃",
         "transliteration": "behite'atef 'alay ruji veatah yada'eta netivati beorajzu ahaleje tamenu faj li",
-        "spanish": "Miraba á la mano derecha, y observaba; mas no había quien me conociese; No tuve refugio, no había quien volviese por mi vida."
+        "spanish": "Cuando mi espíritu se angustiaba dentro de mí, tú conociste mi senda. En el camino en que andaba, me escondieron lazo."
       },
       {
         "verse": 5,
         "hebrew": "הַבֵּיט יָמִין וּרְאֵה וְאֵין לִי מַכִּיר אָבַד מָנוֹס מִמֶּנִּי אֵין דּוֹרֵשׁ לְנַפְשִׁי׃",
         "transliteration": "habeyt yamin ureeh veeynli makir avad manoos mimeni eyn dooresh lenafeshi",
-        "spanish": "Clamé a ti, oh YHVH, Dije: Tú eres mi esperanza, Y mi porción en la tierra de los vivientes."
+        "spanish": "Miraba á la mano derecha, y observaba; mas no había quien me conociese; No tuve refugio, no había quien volviese por mi vida."
       },
       {
         "verse": 6,
         "hebrew": "זָעַקְתִּי אֵלֶיךָ יְהֹוָה אָמַרְתִּי אַתָּה מַחְסִי חֶלְקִי בְּאֶרֶץ הַחַיִּים׃",
         "transliteration": "za'aketi eleyja Adonai amareti atah majesi jeleki beerets hajaim",
-        "spanish": "Escucha mi clamor, que estoy muy afligido; Líbrame de los que me persiguen, porque son más fuertes que yo."
+        "spanish": "Clamé a ti, oh YHVH, Dije: Tú eres mi esperanza, Y mi porción en la tierra de los vivientes."
       },
       {
         "verse": 7,
         "hebrew": "הַקְשִׁיבָה אֶל רִנָּתִי כִּי דַלּוֹתִי מְאֹד הַצִּילֵנִי מֵרֹדְפַי כִּי אָמְצוּ מִמֶּנִּי׃",
         "transliteration": "hakeshivah elrinati kidalooti meod hatsileni merodefay ki ametsu mimeni",
-        "spanish": "Saca mi alma de la cárcel para que alabe tu nombre: Me rodearán los justos, Porque tú me serás propicio."
+        "spanish": "Escucha mi clamor, que estoy muy afligido; Líbrame de los que me persiguen, porque son más fuertes que yo."
       },
       {
         "verse": 8,
         "hebrew": "הוֹצִיאָה מִמַּסְגֵּר נַפְשִׁי לְהוֹדוֹת אֶת שְׁמֶךָ בִּי יַכְתִּרוּ צַדִּיקִים כִּי תִגְמֹל עָלָי׃ ",
         "transliteration": "hootsiah mimaseger nafeshi lehoodoot etshemeja bi yajetiru tsadikim ki tigemol 'alay ",
-        "spanish": "..."
+        "spanish": "Saca mi alma de la cárcel para que alabe tu nombre: Me rodearán los justos, Porque tú me serás propicio."
       }
     ]
   },

@@ -1,0 +1,27 @@
+name: Scheduled News Ingestion Worker
+
+on:
+  schedule:
+    # Ejecutar cada 3 horas automáticamente
+    - cron: '0 */3 * * *'
+  workflow_dispatch: # Permite ejecución manual desde GitHub Actions
+
+jobs:
+  ingest-news:
+    name: Fetch RSS & Update Supabase News
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run Ingest Worker
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL || 'https://phczdxbtquxwfqnrakcz.supabase.co' }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBoY3pkeGJ0cXV4d2ZxbnJha2N6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4OTg2MjY5MCwiZXhwIjoyMTA1NDM4NjkwfQ.YLQUYNKf6e85IoiZP4O3BCF4dgUzRYtQ5i7GOzdY-qw' }}
+        run: |
+          python backend/worker/ingest_news.py

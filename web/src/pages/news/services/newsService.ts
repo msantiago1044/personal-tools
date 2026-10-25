@@ -224,6 +224,65 @@ export const INITIAL_PAPERS_AND_TECH: NewsArticle[] = [
 ];
 
 /**
+ * Genera clusters dinámicos y balanceados en tiempo real a partir de artículos recientes si la base de datos no tiene clusters precalculados.
+ */
+export function buildDynamicClustersFromArticles(articles: NewsArticle[]): NewsCluster[] {
+  const colombia = articles.filter((a) => a.category === 'colombia');
+  const world = articles.filter((a) => a.category === 'world');
+  const result: NewsCluster[] = [];
+
+  if (colombia.length >= 2) {
+    const leftArts = colombia.filter((a) => a.bias === 'left');
+    const centerArts = colombia.filter((a) => a.bias === 'center');
+    const rightArts = colombia.filter((a) => a.bias === 'right');
+    const group = [...leftArts.slice(0, 2), ...centerArts.slice(0, 2), ...rightArts.slice(0, 2)];
+    const clusterArts = group.length >= 2 ? group : colombia.slice(0, 4);
+
+    const leftPct = clusterArts.filter((a) => a.bias === 'left').length;
+    const centerPct = clusterArts.filter((a) => a.bias === 'center').length;
+    const rightPct = clusterArts.filter((a) => a.bias === 'right').length;
+    const total = clusterArts.length;
+
+    result.push({
+      id: 'dynamic-colombia-recent',
+      headline: clusterArts[0]?.title || 'Cobertura y Debate Nacional en Colombia',
+      topic: 'Actualidad Nacional y Opinión',
+      category: 'colombia',
+      lastUpdated: clusterArts[0]?.publishedAt || new Date().toISOString(),
+      coverage: {
+        leftPercent: total ? Math.round((leftPct / total) * 100) : 33,
+        centerPercent: total ? Math.round((centerPct / total) * 100) : 34,
+        rightPercent: total ? Math.round((rightPct / total) * 100) : 33,
+        totalArticles: total,
+      },
+      blindspot: leftPct === 0 && rightPct > 0 ? 'left' : rightPct === 0 && leftPct > 0 ? 'right' : null,
+      articles: clusterArts,
+    });
+  }
+
+  if (world.length >= 2) {
+    const clusterArts = world.slice(0, 4);
+    result.push({
+      id: 'dynamic-world-recent',
+      headline: clusterArts[0]?.title || 'Panorama Global y Geopolítica',
+      topic: 'Cobertura Internacional',
+      category: 'world',
+      lastUpdated: clusterArts[0]?.publishedAt || new Date().toISOString(),
+      coverage: {
+        leftPercent: 33,
+        centerPercent: 34,
+        rightPercent: 33,
+        totalArticles: clusterArts.length,
+      },
+      blindspot: null,
+      articles: clusterArts,
+    });
+  }
+
+  return result;
+}
+
+/**
  * Consulta noticias y clusters desde Supabase con fallback automático
  */
 export async function fetchNewsDataFromSupabase(): Promise<{
@@ -245,7 +304,7 @@ export async function fetchNewsDataFromSupabase(): Promise<{
       .from('news_articles')
       .select('*, news_sources(*)')
       .order('published_at', { ascending: false })
-      .limit(60);
+      .limit(100);
 
     if (clusterErr || articleErr || !dbArticles || dbArticles.length === 0) {
       return { clusters: INITIAL_CLUSTERS, articles: INITIAL_PAPERS_AND_TECH };
@@ -284,14 +343,17 @@ export async function fetchNewsDataFromSupabase(): Promise<{
       };
     });
 
-    // Artículos que no pertenecen a clusters (papers, tech standalone)
-    const standalone = mappedArticles.filter((a) => !a.clusterId);
-
     // Mapear clusters conectando sus artículos
     let clusters: NewsCluster[] = [];
     if (dbClusters && dbClusters.length > 0) {
       clusters = dbClusters.map((c: any) => {
-        const clusterArticles = mappedArticles.filter((a) => a.clusterId === c.id);
+        let clusterArticles = mappedArticles.filter((a) => a.clusterId === c.id);
+        
+        // Si no hay artículos con cluster_id explícito, buscar por categoría coincidente
+        if (clusterArticles.length === 0) {
+          clusterArticles = mappedArticles.filter((a) => a.category === c.category).slice(0, 3);
+        }
+
         return {
           id: c.id,
           headline: c.headline,
@@ -305,14 +367,27 @@ export async function fetchNewsDataFromSupabase(): Promise<{
             totalArticles: clusterArticles.length || c.total_articles || 1,
           },
           blindspot: c.blindspot,
-          articles: clusterArticles.length > 0 ? clusterArticles : [],
+          articles: clusterArticles,
         };
       });
     }
 
-    // Si no hay clusters en la base de datos pero sí en los iniciales, combinar
-    const finalClusters = clusters.length > 0 ? clusters : INITIAL_CLUSTERS;
-    const finalArticles = standalone.length > 0 ? standalone : INITIAL_PAPERS_AND_TECH;
+    // Filtrar clusters que tengan artículos asociados
+    const validClusters = clusters.filter((c) => c.articles && c.articles.length > 0);
+
+    // Si no hay clusters válidos en BD pero sí artículos reales, generar dinámicos
+    let finalClusters: NewsCluster[] = [];
+    if (validClusters.length > 0) {
+      finalClusters = validClusters;
+    } else if (mappedArticles.length > 0) {
+      finalClusters = buildDynamicClustersFromArticles(mappedArticles);
+    } else {
+      finalClusters = INITIAL_CLUSTERS;
+    }
+
+    // Artículos individuales (todos los que no están en clusters o la lista completa)
+    const standalone = mappedArticles.filter((a) => !a.clusterId);
+    const finalArticles = standalone.length > 0 ? standalone : mappedArticles;
 
     return { clusters: finalClusters, articles: finalArticles };
   } catch (err) {

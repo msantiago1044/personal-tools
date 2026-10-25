@@ -7,6 +7,9 @@ interface NewsHeaderProps {
   isLiveActive: boolean;
   incomingCount: number;
   onApplyIncoming: () => void;
+  onRefresh?: () => void;
+  isRefreshing?: boolean;
+  lastRefreshedAt?: Date;
   theme: ThemeMode;
   onThemeChange: (theme: ThemeMode) => void;
 }
@@ -16,6 +19,9 @@ export const NewsHeader: React.FC<NewsHeaderProps> = ({
   isLiveActive,
   incomingCount,
   onApplyIncoming,
+  onRefresh,
+  isRefreshing = false,
+  lastRefreshedAt,
   theme,
   onThemeChange,
 }) => {
@@ -49,7 +55,7 @@ export const NewsHeader: React.FC<NewsHeaderProps> = ({
           </div>
         </div>
 
-        {/* Lado derecho: Notificación de noticias nuevas y Theme Toggle */}
+        {/* Lado derecho: Notificación de noticias nuevas, botón refrescar y Theme Toggle */}
         <div className="flex items-center gap-2">
           {incomingCount > 0 && (
             <button
@@ -58,6 +64,18 @@ export const NewsHeader: React.FC<NewsHeaderProps> = ({
             >
               <RefreshCw className="w-3.5 h-3.5" />
               <span>{incomingCount} {incomingCount === 1 ? 'nueva noticia' : 'nuevas noticias'}</span>
+            </button>
+          )}
+
+          {onRefresh && (
+            <button
+              onClick={onRefresh}
+              disabled={isRefreshing}
+              className="px-2.5 py-1.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all flex items-center gap-1.5 text-xs font-medium border border-slate-200 dark:border-slate-700/80 disabled:opacity-60"
+              title={lastRefreshedAt ? `Última sincronización: ${lastRefreshedAt.toLocaleTimeString()}` : 'Actualizar noticias'}
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-blue-600 dark:text-blue-400' : ''}`} />
+              <span className="hidden sm:inline">{isRefreshing ? 'Actualizando...' : 'Actualizar'}</span>
             </button>
           )}
 
