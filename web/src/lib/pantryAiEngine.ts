@@ -222,11 +222,13 @@ export const SAMPLE_RECEIPTS: Array<{ label: string; data: ExtractedReceiptData 
 // ============================================================================
 // 2. PARSER OCR DE FACTURAS CON GEMINI VISION (MODELOS GRATUITOS FLASH-LITE)
 // ============================================================================
-// Modelos de Google Gemini optimizados para visión y OCR
+// Modelos de Google Gemini optimizados para visión y OCR (Versiones vigentes 2026)
 export const FREE_TIER_MODELS = [
-  'gemini-2.0-flash',       // Modelo estándar de alta velocidad y visión multimodal
-  'gemini-1.5-flash',       // Respaldo de alta cuota y estabilidad
-  'gemini-2.0-flash-lite',  // Respaldo ultraligero
+  'gemini-3.5-flash-lite',    // Modelo actual estándar ultraligero y alta velocidad con visión multimodal
+  'gemini-3.1-flash-lite',    // Respaldo ultrarrápido y alta cuota
+  'gemini-flash-lite-latest', // Alias dinámico al modelo Flash-Lite más reciente
+  'gemini-3.5-flash',         // Respaldo de alta capacidad
+  'gemini-3.8-flash',         // Modelo insignia de última generación
 ];
 
 export async function parseReceiptWithGemini(
@@ -352,16 +354,18 @@ Debes responder ÚNICAMENTE con un JSON válido sin texto previo o markdown fuer
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);
-        lastError = new Error(
-          errorData?.error?.message || `Error en el modelo ${model} (Código ${response.status})`
-        );
-        // Si el modelo está sobrecargado (503/429) o no disponible (404), intentamos el siguiente modelo gratuito
-        if (response.status === 503 || response.status === 429 || response.status === 404) {
-          console.warn(`Modelo ${model} no disponible (${response.status}), probando siguiente modelo gratuito...`);
-          continue;
-        } else {
-          throw lastError;
+        const errorMsg =
+          errorData?.error?.message || `Error en el modelo ${model} (Código ${response.status})`;
+        lastError = new Error(errorMsg);
+
+        // Si es error de credenciales/autenticación, lanzar de inmediato con explicación clara
+        if (response.status === 401 || response.status === 403) {
+          throw new Error('Tu Gemini API Key es inválida o no tiene permisos. Por favor verifica tu clave en la configuración.');
         }
+
+        // Si el modelo está sobrecargado (503/429), no disponible/deprecado (404/400) o falla el servidor (500), intentamos el siguiente modelo
+        console.warn(`Modelo ${model} devolvió ${response.status}: ${errorMsg}. Probando siguiente modelo de respaldo...`);
+        continue;
       }
 
       const jsonRes = await response.json();

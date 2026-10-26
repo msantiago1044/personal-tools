@@ -3493,7 +3493,7 @@ export const PantryModule: React.FC<PantryModuleProps> = ({ user, onBackToHub })
             <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl flex items-start gap-2.5">
               <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
               <div className="text-[11px] text-emerald-800 dark:text-emerald-300">
-                <span className="font-bold">Modelo activo sin costo:</span> Gemini Flash-Lite (Google AI). Consumo mínimo de tokens, respuesta instantánea y soporte multimodal para lectura de facturas.
+                <span className="font-bold">Modelo activo sin costo:</span> Gemini 3.5 Flash-Lite (Google AI). Consumo mínimo de tokens, respuesta instantánea y soporte multimodal para lectura de facturas.
               </div>
             </div>
 

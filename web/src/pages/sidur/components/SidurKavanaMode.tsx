@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { SidurSegment } from '../../../../../packages/shared/src/types';
 import { SidurDisplayPreferences } from '../types/sidur.types';
 import { ThemeMode } from '../../../lib/theme';
@@ -8,7 +8,7 @@ import {
   isSegmentRequiringMinian,
 } from '../services/sidurService';
 import { PostureBadge } from './PostureBadge';
-import { ChevronLeft, ChevronRight, Minimize2, MoveHorizontal } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Minimize2, MoveHorizontal, Check } from 'lucide-react';
 
 interface SidurKavanaModeProps {
   segments: SidurSegment[];
@@ -26,6 +26,7 @@ export const SidurKavanaMode: React.FC<SidurKavanaModeProps> = ({
   onClose,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const scrollContainerRef = useRef<HTMLElement>(null);
 
   // Detección del tema activo (claro u oscuro)
   const isDark =
@@ -33,6 +34,29 @@ export const SidurKavanaMode: React.FC<SidurKavanaModeProps> = ({
     (theme === 'system' &&
       typeof window !== 'undefined' &&
       window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+  const isLastSegment = currentIndex >= segments.length - 1;
+
+  // Navegación hacia adelante: avanza al siguiente rezo o cierra el modo Kavaná si es el último
+  const handleNext = () => {
+    if (isLastSegment) {
+      onClose();
+    } else {
+      setCurrentIndex((prev) => prev + 1);
+    }
+  };
+
+  // Navegación hacia atrás
+  const handlePrev = () => {
+    setCurrentIndex((prev) => Math.max(prev - 1, 0));
+  };
+
+  // Cada vez que cambia el segmento, hacer scroll al inicio para que el texto superior nunca se corte
+  useEffect(() => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = 0;
+    }
+  }, [currentIndex]);
 
   // Soporte para gestos táctiles (Swipe con el dedo para pasar hojas)
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
@@ -51,31 +75,32 @@ export const SidurKavanaMode: React.FC<SidurKavanaModeProps> = ({
     // Se valida que el desplazamiento horizontal sea dominante y supere el umbral
     if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 40) {
       if (deltaX < 0) {
-        // Deslizar hacia la izquierda -> Siguiente hoja/oración
-        setCurrentIndex((prev) => Math.min(prev + 1, segments.length - 1));
+        // Deslizar hacia la izquierda -> Siguiente hoja/oración (o finalizar al final)
+        handleNext();
       } else {
         // Deslizar hacia la derecha -> Hoja/oración anterior
-        setCurrentIndex((prev) => Math.max(prev - 1, 0));
+        handlePrev();
       }
     }
     setTouchStartX(null);
     setTouchStartY(null);
   };
 
-  const currentSegment = segments[currentIndex] || segments[0];
-
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-      else if (e.key === 'ArrowRight' || e.key === 'PageDown') {
-        setCurrentIndex((prev) => Math.min(prev + 1, segments.length - 1));
+      if (e.key === 'Escape') {
+        onClose();
+      } else if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+        handleNext();
       } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
-        setCurrentIndex((prev) => Math.max(prev - 1, 0));
+        handlePrev();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [segments.length, onClose]);
+  }, [currentIndex, isLastSegment, onClose]);
+
+  const currentSegment = segments[currentIndex] || segments[0];
 
   if (!currentSegment) return null;
 
@@ -83,6 +108,37 @@ export const SidurKavanaMode: React.FC<SidurKavanaModeProps> = ({
   const translit = getRenderedTransliteration(currentSegment, 'YHVH');
   const spanish = getRenderedSpanish(currentSegment, 'YHVH');
   const requiresMinian = isSegmentRequiringMinian(currentSegment);
+
+  // Tamaños de fuente proporcionales respetando preferencias
+  const getHebrewFontSize = () => {
+    switch (preferences.fontSize) {
+      case 'sm':
+        return 'text-xl sm:text-2xl md:text-3xl leading-relaxed';
+      case 'base':
+        return 'text-2xl sm:text-3xl md:text-4xl leading-relaxed sm:leading-loose';
+      case 'lg':
+        return 'text-3xl sm:text-4xl md:text-5xl leading-relaxed sm:leading-loose';
+      case 'xl':
+        return 'text-4xl sm:text-5xl md:text-6xl leading-relaxed sm:leading-loose';
+      default:
+        return 'text-2xl sm:text-3xl md:text-4xl leading-relaxed sm:leading-loose';
+    }
+  };
+
+  const getSubFontSize = () => {
+    switch (preferences.fontSize) {
+      case 'sm':
+        return 'text-sm sm:text-base';
+      case 'base':
+        return 'text-base sm:text-lg';
+      case 'lg':
+        return 'text-lg sm:text-xl';
+      case 'xl':
+        return 'text-xl sm:text-2xl';
+      default:
+        return 'text-base sm:text-lg';
+    }
+  };
 
   return (
     <div
@@ -122,7 +178,7 @@ export const SidurKavanaMode: React.FC<SidurKavanaModeProps> = ({
         <div className="flex items-center gap-3">
           <PostureBadge posture={currentSegment.posture} isSilent={currentSegment.isSilent} />
 
-          <span className={`text-xs font-mono ${isDark ? 'text-slate-400' : 'text-stone-500'}`}>
+          <span className={`text-xs font-mono font-semibold ${isDark ? 'text-slate-400' : 'text-stone-600'}`}>
             {currentIndex + 1} / {segments.length}
           </span>
 
@@ -141,60 +197,68 @@ export const SidurKavanaMode: React.FC<SidurKavanaModeProps> = ({
       </header>
 
       {/* Contenido Central: Gran texto litúrgico tipo hoja de libro */}
-      <main className="flex-1 flex flex-col justify-center max-w-4xl mx-auto w-full py-6 sm:py-8 overflow-y-auto px-4">
-        {currentSegment.moroccanNote && (
-          <div
-            className={`mb-6 p-3.5 rounded-xl text-xs ${
-              isDark
-                ? 'bg-amber-950/40 border border-amber-800/60 text-amber-200'
-                : 'bg-amber-100/90 border border-amber-300/80 text-amber-950'
-            }`}
-          >
-            <span className="font-bold">🇲🇦 Costumbre Marroquí:</span> {currentSegment.moroccanNote}
+      {/* Se usa estructura con min-h-full y my-auto para que los textos largos comiencen exactamente en la parte superior y nunca se corten */}
+      <main
+        ref={scrollContainerRef}
+        className="flex-1 overflow-y-auto max-w-4xl mx-auto w-full py-4 sm:py-6 px-3 sm:px-4"
+      >
+        <div className="min-h-full flex flex-col justify-start">
+          <div className="my-auto w-full py-2">
+            {currentSegment.moroccanNote && (
+              <div
+                className={`mb-6 p-3.5 rounded-xl text-xs ${
+                  isDark
+                    ? 'bg-amber-950/40 border border-amber-800/60 text-amber-200'
+                    : 'bg-amber-100/90 border border-amber-300/80 text-amber-950'
+                }`}
+              >
+                <span className="font-bold">🇲🇦 Costumbre Marroquí:</span> {currentSegment.moroccanNote}
+              </div>
+            )}
+
+            {/* Hebreo Masorético con Niqqud */}
+            {preferences.showHebrew && (
+              <p
+                dir="rtl"
+                className={`font-serif text-center mb-8 tracking-wide ${getHebrewFontSize()} ${
+                  isDark ? 'text-white' : 'text-stone-950'
+                }`}
+                style={{ fontFamily: '"Noto Serif Hebrew", "Frank Ruehl CLM", serif' }}
+              >
+                {currentSegment.hebrew}
+              </p>
+            )}
+
+            {/* Fonética Masorética (con YHVH) */}
+            {preferences.showTranslit && translit && (
+              <p
+                className={`font-serif italic text-center mb-6 leading-relaxed ${getSubFontSize()} ${
+                  isDark ? 'text-amber-300/90' : 'text-amber-900 font-medium'
+                }`}
+              >
+                {translit}
+              </p>
+            )}
+
+            {/* Traducción al Español (con YHVH) */}
+            {preferences.showSpanish && spanish && (
+              <p
+                className={`font-sans text-center max-w-3xl mx-auto leading-relaxed pt-4 border-t ${getSubFontSize()} ${
+                  isDark
+                    ? 'text-slate-400 border-slate-800/80'
+                    : 'text-stone-700 border-amber-900/15'
+                }`}
+              >
+                {spanish}
+              </p>
+            )}
+
+            {/* Indicador táctil de pasar hojas */}
+            <div className="flex items-center justify-center gap-1.5 mt-8 text-[11px] opacity-60 text-center">
+              <MoveHorizontal className="w-3.5 h-3.5" />
+              <span>Desliza hacia un lado para pasar las hojas</span>
+            </div>
           </div>
-        )}
-
-        {/* Hebreo Masorético con Niqqud */}
-        {preferences.showHebrew && (
-          <p
-            dir="rtl"
-            className={`font-serif text-3xl sm:text-4xl md:text-5xl leading-relaxed sm:leading-loose text-center mb-8 tracking-wide ${
-              isDark ? 'text-white' : 'text-stone-950'
-            }`}
-            style={{ fontFamily: '"Noto Serif Hebrew", "Frank Ruehl CLM", serif' }}
-          >
-            {currentSegment.hebrew}
-          </p>
-        )}
-
-        {/* Fonética Masorética (con YHVH) */}
-        {preferences.showTranslit && translit && (
-          <p
-            className={`font-serif text-base sm:text-lg md:text-xl italic text-center mb-6 leading-relaxed ${
-              isDark ? 'text-amber-300/90' : 'text-amber-900 font-medium'
-            }`}
-          >
-            {translit}
-          </p>
-        )}
-
-        {/* Traducción al Español (con YHVH) */}
-        {preferences.showSpanish && spanish && (
-          <p
-            className={`font-sans text-sm sm:text-base md:text-lg text-center max-w-3xl mx-auto leading-relaxed pt-4 border-t ${
-              isDark
-                ? 'text-slate-400 border-slate-800/80'
-                : 'text-stone-700 border-amber-900/15'
-            }`}
-          >
-            {spanish}
-          </p>
-        )}
-
-        {/* Indicador táctil de pasar hojas */}
-        <div className="flex items-center justify-center gap-1.5 mt-6 text-[11px] opacity-60 text-center">
-          <MoveHorizontal className="w-3.5 h-3.5" />
-          <span>Desliza hacia un lado para pasar las hojas</span>
         </div>
       </main>
 
@@ -205,7 +269,7 @@ export const SidurKavanaMode: React.FC<SidurKavanaModeProps> = ({
         }`}
       >
         <button
-          onClick={() => setCurrentIndex((prev) => Math.max(prev - 1, 0))}
+          onClick={handlePrev}
           disabled={currentIndex === 0}
           className={`flex items-center gap-2 px-5 py-2.5 rounded-xl disabled:opacity-30 disabled:pointer-events-none text-sm font-semibold transition-colors ${
             isDark
@@ -224,7 +288,9 @@ export const SidurKavanaMode: React.FC<SidurKavanaModeProps> = ({
               key={i}
               className={`h-1.5 rounded-full transition-all ${
                 i === currentIndex
-                  ? isDark
+                  ? isLastSegment
+                    ? 'w-6 bg-emerald-500'
+                    : isDark
                     ? 'w-6 bg-amber-400'
                     : 'w-6 bg-amber-600'
                   : isDark
@@ -236,16 +302,18 @@ export const SidurKavanaMode: React.FC<SidurKavanaModeProps> = ({
         </div>
 
         <button
-          onClick={() => setCurrentIndex((prev) => Math.min(prev + 1, segments.length - 1))}
-          disabled={currentIndex === segments.length - 1}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-colors ${
-            isDark
+          onClick={handleNext}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm active:scale-95 ${
+            isLastSegment
+              ? 'bg-emerald-600 hover:bg-emerald-500 text-white'
+              : isDark
               ? 'bg-amber-500 hover:bg-amber-400 text-slate-950'
               : 'bg-amber-600 hover:bg-amber-700 text-white'
           }`}
+          title={isLastSegment ? 'Finalizar rezo y salir del Modo Kavaná' : 'Pasar a la siguiente oración'}
         >
-          <span>Siguiente</span>
-          <ChevronRight className="w-5 h-5" />
+          <span>{isLastSegment ? 'Finalizar' : 'Siguiente'}</span>
+          {isLastSegment ? <Check className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
         </button>
       </footer>
     </div>
