@@ -7,6 +7,7 @@ import {
 } from '../types/note.types';
 import { ColorPalettePicker } from './ColorPalettePicker';
 import { generateId } from '../services/notesService';
+import { useModalBackHandler } from '../../../lib/useModalBackHandler';
 import {
   Pin,
   Archive,
@@ -80,6 +81,12 @@ export const NoteEditorModal: React.FC<NoteEditorModalProps> = ({
     onClose();
   };
 
+  useModalBackHandler({
+    isOpen,
+    onClose: handleSaveAndClose,
+    modalId: `note_${note.id}`,
+  });
+
   const handleAddItem = () => {
     setChecklistItems((prev) => [
       ...prev,
@@ -135,19 +142,24 @@ export const NoteEditorModal: React.FC<NoteEditorModalProps> = ({
   const colorConfig = NOTE_COLORS[color];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
       <div
         className="fixed inset-0"
         onClick={handleSaveAndClose}
       />
 
       <div
-        className={`relative w-full max-w-xl max-h-[90vh] flex flex-col rounded-3xl p-5 sm:p-6 shadow-2xl border transition-all duration-200 z-10 ${
+        className={`relative w-full max-w-xl h-[94dvh] sm:h-auto max-h-[94dvh] sm:max-h-[90vh] flex flex-col rounded-t-3xl sm:rounded-3xl p-5 sm:p-6 shadow-2xl border transition-all duration-200 z-10 overflow-hidden ${
           colorConfig.bgLight
         } ${colorConfig.bgDark} ${colorConfig.borderLight} ${colorConfig.borderDark}`}
       >
+        {/* Indicador táctil superior para celulares (Drag Handle) */}
+        <div className="w-full flex justify-center -mt-2 pb-2.5 sm:hidden">
+          <div className="w-10 h-1 rounded-full bg-black/20 dark:bg-white/20" />
+        </div>
+
         {/* Cabecera del modal: Título y Botón Pin */}
-        <div className="flex items-center justify-between gap-3 pb-2 border-b border-black/5 dark:border-white/5">
+        <div className="flex items-center justify-between gap-3 pb-2 border-b border-black/5 dark:border-white/5 shrink-0">
           <input
             type="text"
             value={title}
@@ -287,7 +299,7 @@ export const NoteEditorModal: React.FC<NoteEditorModalProps> = ({
         </div>
 
         {/* Pie del modal: Barra de Herramientas */}
-        <div className="pt-3 border-t border-black/5 dark:border-white/5 flex items-center justify-between gap-2">
+        <div className="pt-3 border-t border-black/5 dark:border-white/5 flex items-center justify-between gap-2 shrink-0 safe-bottom">
           <div className="flex items-center gap-1">
             <ColorPalettePicker
               selectedColor={color}
@@ -363,7 +375,7 @@ export const NoteEditorModal: React.FC<NoteEditorModalProps> = ({
           <button
             type="button"
             onClick={handleSaveAndClose}
-            className="px-5 py-2 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs sm:text-sm font-semibold hover:opacity-90 transition shadow-sm"
+            className="px-5 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs sm:text-sm font-semibold hover:opacity-90 transition shadow-sm min-h-[44px] flex items-center justify-center active:scale-95"
           >
             Listo
           </button>

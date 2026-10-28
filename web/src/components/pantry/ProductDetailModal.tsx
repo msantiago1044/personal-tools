@@ -25,6 +25,7 @@ import {
   Check,
 } from 'lucide-react';
 import { PantryItem } from '../../../../packages/shared/src/types';
+import { useModalBackHandler } from '../../lib/useModalBackHandler';
 import {
   getFoodIntelligence,
   FoodIntelligenceData,
@@ -62,6 +63,13 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
 }) => {
   const [currentItem, setCurrentItem] = useState<PantryItem>(item);
   const [activeSubTab, setActiveSubTab] = useState<'balance' | 'nutrition' | 'isa' | 'economics'>('balance');
+
+  // Integración con botón Atrás del celular, Escape y scroll lock
+  useModalBackHandler({
+    isOpen: true,
+    onClose,
+    modalId: `product_${item.id || 'detail'}`,
+  });
 
   // Helper robusto para admitir decimales con punto (.) o coma (,)
   const parseDecimal = (val: string | number): number => {
@@ -471,17 +479,22 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-sm animate-in fade-in"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/70 backdrop-blur-sm animate-in fade-in"
       onClick={onClose}
     >
       <div
-        className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 sm:p-6 max-w-3xl w-full shadow-2xl max-h-[92vh] overflow-y-auto space-y-6 animate-in zoom-in-95 relative"
+        className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-t-3xl sm:rounded-3xl max-w-4xl w-full shadow-2xl h-[94dvh] sm:h-auto max-h-[94dvh] sm:max-h-[88vh] flex flex-col overflow-hidden animate-in slide-in-from-bottom sm:slide-in-from-bottom-0 sm:zoom-in-95 relative"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Indicador táctil superior para celulares (Drag Handle) */}
+        <div className="w-full flex justify-center pt-2.5 pb-1 sm:hidden bg-slate-50 dark:bg-slate-900/90 border-b border-slate-100 dark:border-slate-800/60">
+          <div className="w-12 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700" />
+        </div>
+
         {/* ========================================================================= */}
-        {/* CABECERA DEL PRODUCTO                                                     */}
+        {/* CABECERA DEL PRODUCTO (FIJA)                                              */}
         {/* ========================================================================= */}
-        <div className="flex justify-between items-start border-b border-slate-100 dark:border-slate-800 pb-4">
+        <div className="sticky top-0 z-20 flex justify-between items-start border-b border-slate-100 dark:border-slate-800 p-4 sm:p-6 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shrink-0">
           <div className="space-y-1">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
@@ -546,7 +559,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
 
             <button
               onClick={onClose}
-              className="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+              className="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition min-w-[44px] min-h-[44px] flex items-center justify-center active:scale-95"
               title="Cerrar"
             >
               <X className="w-5 h-5" />
@@ -554,8 +567,12 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
           </div>
         </div>
 
-        {/* Notificación de guardado exitoso */}
-        {saveSuccessNotice && (
+        {/* ========================================================================= */}
+        {/* CUERPO DEL MODAL (CON SCROLL INDEPENDIENTE)                                */}
+        {/* ========================================================================= */}
+        <div className="flex-1 overflow-y-auto overscroll-contain p-4 sm:p-6 space-y-6 -webkit-overflow-scrolling-touch">
+          {/* Notificación de guardado exitoso */}
+          {saveSuccessNotice && (
           <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/30 rounded-2xl flex items-center gap-2 text-xs font-bold text-emerald-700 dark:text-emerald-300 animate-in fade-in">
             <Check className="w-4 h-4 text-emerald-500" />
             <span>¡Producto actualizado! Cantidad, unidad, precio e índices recalculados en tiempo real.</span>
@@ -1690,10 +1707,12 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
           </div>
         )}
 
+        </div>
+
         {/* ========================================================================= */}
-        {/* PIE DEL MODAL CON ACCIONES RÁPIDAS DE DESPENSA                            */}
+        {/* PIE DEL MODAL CON ACCIONES RÁPIDAS (FIJO & ACCESIBLE EN CELULAR)          */}
         {/* ========================================================================= */}
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+        <div className="sticky bottom-0 z-20 flex flex-col sm:flex-row justify-between items-center gap-3 p-4 sm:px-6 sm:py-3.5 bg-slate-50/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-100 dark:border-slate-800 shrink-0 safe-bottom">
           <div className="text-xs text-slate-400">
             Stock actual: <strong className="text-slate-800 dark:text-slate-200">{currentItem.quantity} {currentItem.unit}</strong>
             {Number(currentItem.unit_price) > 0 && (

@@ -20,6 +20,7 @@ import {
   ProductPriceHistory,
 } from '../../../../packages/shared/src/types';
 import { normalizeItemComparablePrice } from '../../lib/pantryAiEngine';
+import { useModalBackHandler } from '../../lib/useModalBackHandler';
 
 interface PriceEvolutionModalProps {
   productTrend: ProductPriceHistory;
@@ -47,6 +48,12 @@ export const PriceEvolutionModal: React.FC<PriceEvolutionModalProps> = ({
   onClose,
 }) => {
   const [hoveredPointIndex, setHoveredPointIndex] = useState<number | null>(null);
+
+  useModalBackHandler({
+    isOpen: true,
+    onClose,
+    modalId: `price_trend_${productTrend.product_name}`,
+  });
 
   // 1. Recopilar y organizar cronológicamente todas las compras de este producto
   const purchases: PurchasePoint[] = useMemo(() => {
@@ -190,15 +197,20 @@ export const PriceEvolutionModal: React.FC<PriceEvolutionModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-in fade-in"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/70 backdrop-blur-sm animate-in fade-in"
       onClick={onClose}
     >
       <div
-        className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 max-w-3xl w-full shadow-2xl max-h-[92vh] overflow-y-auto space-y-6 animate-in zoom-in-95 relative"
+        className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-t-3xl sm:rounded-3xl max-w-3xl w-full shadow-2xl h-[92dvh] sm:h-auto max-h-[92dvh] sm:max-h-[88vh] flex flex-col overflow-hidden animate-in slide-in-from-bottom sm:slide-in-from-bottom-0 sm:zoom-in-95 relative"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Cabecera del Modal */}
-        <div className="flex justify-between items-start border-b border-slate-100 dark:border-slate-800 pb-4">
+        {/* Indicador táctil superior para celulares (Drag Handle) */}
+        <div className="w-full flex justify-center pt-2.5 pb-1 sm:hidden bg-slate-50 dark:bg-slate-900/90 border-b border-slate-100 dark:border-slate-800/60">
+          <div className="w-12 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700" />
+        </div>
+
+        {/* Cabecera del Modal Fija */}
+        <div className="sticky top-0 z-20 flex justify-between items-start border-b border-slate-100 dark:border-slate-800 p-4 sm:p-6 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shrink-0">
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
@@ -208,7 +220,7 @@ export const PriceEvolutionModal: React.FC<PriceEvolutionModalProps> = ({
                 {purchases.length} {purchases.length === 1 ? 'compra registrada' : 'compras registradas'}
               </span>
             </div>
-            <h3 className="text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+            <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2">
               <span>{productTrend.product_name}</span>
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
@@ -218,12 +230,15 @@ export const PriceEvolutionModal: React.FC<PriceEvolutionModalProps> = ({
 
           <button
             onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+            className="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition min-w-[44px] min-h-[44px] flex items-center justify-center -mr-1 -mt-1 active:scale-95"
             title="Cerrar ventana"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
+
+        {/* Cuerpo Scrolleable */}
+        <div className="flex-1 overflow-y-auto overscroll-contain p-4 sm:p-6 space-y-6 -webkit-overflow-scrolling-touch">
 
         {/* Tarjetas KPI de Evolución de Precios */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -573,12 +588,13 @@ export const PriceEvolutionModal: React.FC<PriceEvolutionModalProps> = ({
             </table>
           </div>
         </div>
+        </div>
 
-        {/* Botón de cierre inferior */}
-        <div className="flex justify-end pt-2">
+        {/* Botón de cierre inferior (Sticky Footer) */}
+        <div className="sticky bottom-0 z-20 flex justify-end p-4 sm:px-6 sm:py-3.5 bg-slate-50/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-100 dark:border-slate-800 shrink-0 safe-bottom">
           <button
             onClick={onClose}
-            className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 font-bold text-xs transition shadow-sm"
+            className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 font-bold text-xs transition shadow-sm min-h-[44px]"
           >
             Cerrar Ventana
           </button>

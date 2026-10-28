@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { Account, Category, TransactionType } from '../../../../packages/shared/src/types';
+import { ResponsiveModal } from '../common/ResponsiveModal';
 
 interface TransactionModalProps {
   isOpen: boolean;
@@ -100,18 +101,34 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 dark:bg-black/75 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-      <div className="w-full max-w-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl text-slate-900 dark:text-slate-100 transition-colors">
-        {/* Cabecera */}
-        <div className="flex justify-between items-center pb-4 border-b border-slate-200 dark:border-slate-800">
-          <h2 className="text-lg font-bold text-slate-900 dark:text-white">Nuevo Movimiento</h2>
+    <ResponsiveModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Nuevo Movimiento"
+      subtitle="Registra un gasto, ingreso o transferencia"
+      modalId="transaction_modal"
+      maxWidth="lg"
+      footer={
+        <div className="flex items-center justify-end gap-2.5">
           <button
+            type="button"
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-700 dark:hover:text-white p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+            className="px-4 py-2.5 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition min-h-[44px]"
           >
-            ✕
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            form="transaction-form"
+            disabled={isLoading}
+            className="px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white font-bold text-xs shadow-xs disabled:opacity-50 transition min-h-[44px]"
+          >
+            {isLoading ? 'Guardando...' : 'Guardar'}
           </button>
         </div>
+      }
+    >
+      <div className="space-y-4">
 
         {/* Selector de Tipo (Gasto, Ingreso, Transferencia) */}
         <div className="grid grid-cols-3 gap-1.5 mt-4 p-1 bg-slate-100 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800">
@@ -166,7 +183,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
         )}
 
         {/* Formulario */}
-        <form onSubmit={handleSubmit} className="mt-4 space-y-3.5">
+        <form id="transaction-form" onSubmit={handleSubmit} className="mt-4 space-y-3.5">
           {/* Monto */}
           <div>
             <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Monto</label>
@@ -276,26 +293,9 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
               className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-2.5 text-xs text-slate-900 dark:text-slate-100 focus:outline-hidden focus:border-emerald-500 transition"
             />
           </div>
-
-          {/* Botones de acción */}
-          <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-200 dark:border-slate-800">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-3.5 py-2 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition"
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs shadow-xs disabled:opacity-50 transition"
-            >
-              {isLoading ? 'Guardando...' : 'Guardar'}
-            </button>
-          </div>
         </form>
       </div>
-    </div>
+    </ResponsiveModal>
   );
 };
+

@@ -3,6 +3,7 @@ import { BookOpen, Sparkles, X, Sun, ChevronRight, Clock } from 'lucide-react';
 import { PirkeiAvotBookmark } from '../../../../packages/shared/src/types';
 import { PIRKEI_AVOT_DATA } from '../../../../packages/shared/src/data/pirkeiAvotData';
 import { markPirkeiAvotPromptDismissed } from '../../lib/pirkeiAvot';
+import { useModalBackHandler } from '../../lib/useModalBackHandler';
 
 interface PirkeiAvotPromptModalProps {
   isOpen: boolean;
@@ -21,15 +22,21 @@ export const PirkeiAvotPromptModal: React.FC<PirkeiAvotPromptModalProps> = ({
   onReadNow,
   onViewAllChapters,
 }) => {
-  if (!isOpen) return null;
-
-  const currentChapter = PIRKEI_AVOT_DATA.find((c) => c.chapter === bookmark.chapter) || PIRKEI_AVOT_DATA[0];
-  const currentMishna = currentChapter.mishnayot.find((m) => m.mishna === bookmark.mishna) || currentChapter.mishnayot[0];
-
   const handleDismiss = () => {
     markPirkeiAvotPromptDismissed();
     onClose();
   };
+
+  useModalBackHandler({
+    isOpen,
+    onClose: handleDismiss,
+    modalId: 'pirkei_avot_prompt',
+  });
+
+  if (!isOpen) return null;
+
+  const currentChapter = PIRKEI_AVOT_DATA.find((c) => c.chapter === bookmark.chapter) || PIRKEI_AVOT_DATA[0];
+  const currentMishna = currentChapter.mishnayot.find((m) => m.mishna === bookmark.mishna) || currentChapter.mishnayot[0];
 
   const handleContinue = () => {
     markPirkeiAvotPromptDismissed();
@@ -42,8 +49,12 @@ export const PirkeiAvotPromptModal: React.FC<PirkeiAvotPromptModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 dark:bg-black/75 backdrop-blur-xs p-4 animate-in fade-in duration-200">
-      <div className="w-full max-w-md bg-white dark:bg-slate-900 border border-amber-200/60 dark:border-amber-900/40 rounded-3xl p-6 shadow-2xl text-slate-900 dark:text-slate-100 transition-all duration-200 relative overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-950/60 dark:bg-black/75 backdrop-blur-xs p-0 sm:p-4 animate-in fade-in duration-200">
+      <div className="w-full max-w-md bg-white dark:bg-slate-900 border border-amber-200/60 dark:border-amber-900/40 rounded-t-3xl sm:rounded-3xl p-5 sm:p-6 shadow-2xl text-slate-900 dark:text-slate-100 transition-all duration-200 relative overflow-hidden max-h-[92dvh] sm:max-h-[90vh] overflow-y-auto safe-bottom">
+        {/* Indicador táctil superior para celulares (Drag Handle) */}
+        <div className="w-full flex justify-center -mt-2 pb-2.5 sm:hidden">
+          <div className="w-10 h-1.5 rounded-full bg-amber-300 dark:bg-amber-700" />
+        </div>
         {/* Glow decorativo sutil ámbar / dorado */}
         <div className="absolute -top-10 -right-10 w-36 h-36 bg-amber-500/15 dark:bg-amber-400/10 rounded-full blur-2xl pointer-events-none" />
         <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-emerald-500/10 dark:bg-emerald-400/10 rounded-full blur-2xl pointer-events-none" />

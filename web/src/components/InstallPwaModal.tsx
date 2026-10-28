@@ -6,6 +6,7 @@ import {
   promptPwaInstall,
   subscribePwaInstall,
 } from '../lib/pwa';
+import { useModalBackHandler } from '../lib/useModalBackHandler';
 import {
   Download,
   Smartphone,
@@ -31,6 +32,12 @@ export const InstallPwaModal: React.FC<InstallPwaModalProps> = ({ isOpen, onClos
   const [isAndroid, setIsAndroid] = useState(false);
   const [installing, setInstalling] = useState(false);
   const [installedSuccess, setInstalledSuccess] = useState(false);
+
+  useModalBackHandler({
+    isOpen,
+    onClose,
+    modalId: 'install_pwa_prompt',
+  });
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -61,8 +68,12 @@ export const InstallPwaModal: React.FC<InstallPwaModalProps> = ({ isOpen, onClos
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 dark:bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-      <div className="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl text-slate-900 dark:text-slate-100 transition-colors relative overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-950/60 dark:bg-black/80 backdrop-blur-sm p-0 sm:p-4 animate-in fade-in duration-200">
+      <div className="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-t-3xl sm:rounded-3xl p-5 sm:p-6 shadow-2xl text-slate-900 dark:text-slate-100 transition-colors relative overflow-hidden max-h-[92dvh] sm:max-h-[90vh] overflow-y-auto safe-bottom">
+        {/* Indicador táctil superior para celulares (Drag Handle) */}
+        <div className="w-full flex justify-center -mt-2 pb-2.5 sm:hidden">
+          <div className="w-10 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700" />
+        </div>
         {/* Glow decorativo de fondo */}
         <div className="absolute -top-16 -right-16 w-36 h-36 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
 

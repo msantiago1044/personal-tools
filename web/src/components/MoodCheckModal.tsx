@@ -12,6 +12,7 @@ import {
   formatSleepDuration,
   SLEEP_QUALITY_CONFIG,
 } from '../lib/sleep';
+import { useModalBackHandler } from '../lib/useModalBackHandler';
 import { X, Sparkles, Check, MessageSquare, Moon, Sun, Clock } from 'lucide-react';
 
 interface MoodCheckModalProps {
@@ -165,11 +166,22 @@ export const MoodCheckModal: React.FC<MoodCheckModalProps> = ({
     onClose();
   };
 
+  useModalBackHandler({
+    isOpen,
+    onClose: handleDismiss,
+    modalId: 'mood_check_prompt',
+  });
+
   const firstName = userName ? userName.split(' ')[0] : null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 dark:bg-black/75 backdrop-blur-xs p-4 animate-in fade-in duration-200">
-      <div className={`w-full ${isSleepPromptActive ? 'max-w-md' : 'max-w-sm'} bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-2xl text-slate-900 dark:text-slate-100 transition-all duration-200 relative overflow-hidden max-h-[90vh] overflow-y-auto`}>
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-950/60 dark:bg-black/75 backdrop-blur-xs p-0 sm:p-4 animate-in fade-in duration-200">
+      <div className={`w-full ${isSleepPromptActive ? 'max-w-md' : 'max-w-sm'} bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-t-3xl sm:rounded-3xl p-5 sm:p-6 shadow-2xl text-slate-900 dark:text-slate-100 transition-all duration-200 relative overflow-hidden max-h-[92dvh] sm:max-h-[90vh] overflow-y-auto safe-bottom`}>
+        {/* Indicador táctil superior para celulares (Drag Handle) */}
+        <div className="w-full flex justify-center -mt-2 pb-2.5 sm:hidden">
+          <div className="w-10 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700" />
+        </div>
+
         {/* Glow decorativo sutil */}
         <div className="absolute -top-12 -right-12 w-32 h-32 bg-emerald-500/10 dark:bg-emerald-400/10 rounded-full blur-xl pointer-events-none" />
 
@@ -191,7 +203,7 @@ export const MoodCheckModal: React.FC<MoodCheckModalProps> = ({
           </div>
           <button
             onClick={handleDismiss}
-            className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+            className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition min-w-[44px] min-h-[44px] flex items-center justify-center -mr-2 -mt-2"
             title="Ahora no (preguntar más tarde)"
           >
             <X className="w-4 h-4" />

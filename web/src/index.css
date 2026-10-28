@@ -82,3 +82,45 @@ html.dark ::-webkit-scrollbar-thumb:hover {
     scroll-behavior: auto !important;
   }
 }
+
+/* ========================================================================= */
+/* UTILIDADES RESPONSIVAS PARA VENTANAS FLOTANTES & TABLAS (MOBILE FIRST)   */
+/* ========================================================================= */
+
+/* Contenedor responsivo para tablas de datos (evita romper maquetación en celular) */
+.table-responsive-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-gutter: stable;
+}
+
+/* Shell estándar para modales y ventanas flotantes */
+.modal-responsive-shell {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-height: 92dvh;
+}
+
+@media (min-width: 640px) {
+  .modal-responsive-shell {
+    max-height: 88vh;
+  }
+}
+
+/* Scroll elástico contenido para el cuerpo de modales */
+.modal-body-scrollable {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Zona táctil mínima recomendada para botones en celulares (WCAG / Mobile UX) */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+

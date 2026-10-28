@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Sparkles, AlertCircle, Info, Calendar, DollarSign, Tag, MapPin, Shield } from 'lucide-react';
 import { Asset, AssetCategory, DepreciationMethod } from '../../../../../packages/shared/src/types';
 import { getDefaultCategorySettings } from '../lib/depreciationEngine';
+import { ResponsiveModal } from '../../../components/common/ResponsiveModal';
 
 interface AssetFormModalProps {
   isOpen: boolean;
@@ -115,26 +116,35 @@ export const AssetFormModal: React.FC<AssetFormModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm overflow-y-auto">
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-xl w-full shadow-2xl overflow-hidden my-8">
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
-          <div className="flex items-center gap-2">
-            <span className="text-xl">🏛️</span>
-            <h3 className="font-semibold text-lg text-slate-800 dark:text-slate-100">
-              {assetToEdit ? 'Editar Bien o Activo' : 'Registrar Nuevo Bien o Activo'}
-            </h3>
-          </div>
+    <ResponsiveModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={assetToEdit ? 'Editar Bien o Activo' : 'Registrar Nuevo Bien o Activo'}
+      icon={<span className="text-xl">🏛️</span>}
+      modalId="asset_form_modal"
+      maxWidth="xl"
+      footer={
+        <div className="flex items-center justify-end gap-3">
           <button
+            type="button"
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="px-4 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors min-h-[44px]"
           >
-            <X className="w-5 h-5" />
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            form="asset-form"
+            disabled={saving || !name.trim()}
+            className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-medium text-sm shadow-md shadow-emerald-600/25 disabled:opacity-50 transition-all flex items-center gap-2 min-h-[44px]"
+          >
+            {saving ? 'Guardando...' : assetToEdit ? 'Actualizar Bien' : 'Guardar en Inventario'}
           </button>
         </div>
-
-        {/* Formulario */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-5 max-h-[80vh] overflow-y-auto">
+      }
+    >
+      {/* Formulario */}
+      <form id="asset-form" onSubmit={handleSubmit} className="space-y-5">
           {/* Selector de Categoría */}
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
@@ -334,25 +344,7 @@ export const AssetFormModal: React.FC<AssetFormModalProps> = ({
             </div>
           </div>
 
-          {/* Botones de acción */}
-          <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-200 dark:border-slate-800">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              disabled={saving || !name.trim()}
-              className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-sm shadow-lg shadow-emerald-600/25 disabled:opacity-50 transition-all flex items-center gap-2"
-            >
-              {saving ? 'Guardando...' : assetToEdit ? 'Actualizar Bien' : 'Guardar en Inventario'}
-            </button>
-          </div>
         </form>
-      </div>
-    </div>
+    </ResponsiveModal>
   );
 };

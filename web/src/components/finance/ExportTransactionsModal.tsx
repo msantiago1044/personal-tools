@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Account, Category, Transaction } from '../../../../packages/shared/src/types';
+import { useModalBackHandler } from '../../lib/useModalBackHandler';
 import {
   Download,
   FileSpreadsheet,
@@ -64,6 +65,12 @@ export const ExportTransactionsModal: React.FC<ExportTransactionsModalProps> = (
   const [searchFilter, setSearchFilter] = useState<string>(initialSearch);
   const [format, setFormat] = useState<ExportFormat>('csv');
   const [downloadSuccess, setDownloadSuccess] = useState<boolean>(false);
+
+  useModalBackHandler({
+    isOpen,
+    onClose,
+    modalId: 'export_transactions_modal',
+  });
 
   // Inicializar fechas según el preset por defecto si no venían prefijadas
   React.useEffect(() => {
@@ -295,10 +302,15 @@ export const ExportTransactionsModal: React.FC<ExportTransactionsModalProps> = (
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 dark:bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-      <div className="w-full max-w-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl text-slate-900 dark:text-slate-100 max-h-[92vh] overflow-y-auto transition-colors">
-        {/* Cabecera */}
-        <div className="flex justify-between items-start pb-4 border-b border-slate-100 dark:border-slate-800">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-900/60 dark:bg-black/80 backdrop-blur-sm p-0 sm:p-4 animate-in fade-in duration-200">
+      <div className="w-full max-w-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-t-3xl sm:rounded-3xl shadow-2xl text-slate-900 dark:text-slate-100 h-[92dvh] sm:h-auto max-h-[92dvh] sm:max-h-[88vh] flex flex-col overflow-hidden transition-colors">
+        {/* Indicador táctil superior para celulares (Drag Handle) */}
+        <div className="w-full flex justify-center pt-2.5 pb-1 sm:hidden bg-slate-50 dark:bg-slate-900/90 border-b border-slate-100 dark:border-slate-800/60">
+          <div className="w-12 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700" />
+        </div>
+
+        {/* Cabecera Fija */}
+        <div className="sticky top-0 z-20 flex justify-between items-start p-4 sm:p-6 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 shrink-0">
           <div className="flex items-center gap-2.5">
             <div className="p-2.5 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-2xl border border-emerald-100 dark:border-emerald-500/20">
               <Download className="w-5 h-5" />
@@ -314,22 +326,23 @@ export const ExportTransactionsModal: React.FC<ExportTransactionsModalProps> = (
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-700 dark:hover:text-white p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+            className="text-slate-400 hover:text-slate-700 dark:hover:text-white p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition min-w-[44px] min-h-[44px] flex items-center justify-center -mr-1 -mt-1 active:scale-95"
             title="Cerrar"
           >
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Notificación de éxito */}
-        {downloadSuccess && (
-          <div className="mt-4 p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-xs flex items-center gap-2 animate-in fade-in duration-200">
-            <Check className="w-4 h-4 shrink-0" />
-            <span>¡Archivo generado y descargado exitosamente en tu navegador!</span>
-          </div>
-        )}
+        {/* Cuerpo Scrolleable */}
+        <div className="flex-1 overflow-y-auto overscroll-contain p-4 sm:p-6 space-y-5 -webkit-overflow-scrolling-touch">
+          {/* Notificación de éxito */}
+          {downloadSuccess && (
+            <div className="p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-xs flex items-center gap-2 animate-in fade-in duration-200">
+              <Check className="w-4 h-4 shrink-0" />
+              <span>¡Archivo generado y descargado exitosamente en tu navegador!</span>
+            </div>
+          )}
 
-        <div className="mt-5 space-y-5">
           {/* 1. SELECCIÓN DE RANGO DE FECHAS */}
           <div className="space-y-2.5">
             <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
@@ -566,12 +579,12 @@ export const ExportTransactionsModal: React.FC<ExportTransactionsModalProps> = (
           </div>
         </div>
 
-        {/* Acciones */}
-        <div className="flex items-center justify-end gap-2.5 pt-5 mt-5 border-t border-slate-100 dark:border-slate-800">
+        {/* Acciones Fijas (Sticky Footer) */}
+        <div className="sticky bottom-0 z-20 flex items-center justify-end gap-2.5 p-4 sm:px-6 sm:py-3.5 bg-slate-50/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-100 dark:border-slate-800 shrink-0 safe-bottom">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+            className="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition min-h-[44px]"
           >
             Cancelar
           </button>
@@ -579,7 +592,7 @@ export const ExportTransactionsModal: React.FC<ExportTransactionsModalProps> = (
             type="button"
             onClick={handleExport}
             disabled={summary.count === 0}
-            className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition ${
+            className={`px-5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition min-h-[44px] ${
               summary.count > 0
                 ? 'bg-emerald-500 hover:bg-emerald-400 text-white dark:text-slate-950 active:scale-95'
                 : 'bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed'
