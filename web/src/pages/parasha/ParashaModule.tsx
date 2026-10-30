@@ -17,6 +17,8 @@ import {
 } from '../../lib/parashaService';
 import { transliterateHebrewToSpanish } from '../../lib/hebrewPhonetics';
 import { ThemeMode, getStoredTheme, applyTheme } from '../../lib/theme';
+import { recordModuleUsage } from '../../modules/moduleUsage';
+import { toast } from '../../lib/toast';
 import {
   ArrowLeft,
   BookOpen,
@@ -147,15 +149,20 @@ export const ParashaModule: React.FC<ParashaModuleProps> = ({
 
     runSync();
 
-    const handleUpdate = () => runSync();
+    const handleLocalProgressUpdate = () => {
+      if (!isCancelled && parasha?.id) {
+        setProgress(getParashaProgress(parasha.id, user?.id));
+      }
+    };
+    const handleFocus = () => runSync();
     const handleVisibility = () => {
       if (document.visibilityState === 'visible') {
         runSync();
       }
     };
 
-    window.addEventListener('parasha_progress_updated', handleUpdate);
-    window.addEventListener('focus', handleUpdate);
+    window.addEventListener('parasha_progress_updated', handleLocalProgressUpdate);
+    window.addEventListener('focus', handleFocus);
     document.addEventListener('visibilitychange', handleVisibility);
 
     let channel: any = null;
@@ -179,8 +186,8 @@ export const ParashaModule: React.FC<ParashaModuleProps> = ({
 
     return () => {
       isCancelled = true;
-      window.removeEventListener('parasha_progress_updated', handleUpdate);
-      window.removeEventListener('focus', handleUpdate);
+      window.removeEventListener('parasha_progress_updated', handleLocalProgressUpdate);
+      window.removeEventListener('focus', handleFocus);
       document.removeEventListener('visibilitychange', handleVisibility);
       if (channel) {
         supabase.removeChannel(channel);
@@ -195,14 +202,26 @@ export const ParashaModule: React.FC<ParashaModuleProps> = ({
 
   const handleMarkAsRead = async (aliyahNum: number) => {
     if (!parasha) return;
+    recordModuleUsage('parasha', user?.id);
+
+    const name = aliyahNum === 0 ? 'Parashá Completa' : `${aliyahNum}ª Aliyá`;
+    setCompletedSuccessMsg(
+      aliyahNum >= 1 && aliyahNum < 7
+        ? `¡${name} completada hoy! Puedes avanzar a la ${aliyahNum + 1}ª Aliyá arriba.`
+        : `¡${name} completada hoy! Se ha registrado en tu historial.`
+    );
+    toast.success(`${name} marcada como leída hoy`, 'Lectura completada');
+
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
     const updated = await markDailyAliyahCompletedToday(aliyahNum, parasha.id, user?.id);
     setProgress(updated);
 
-    const name = aliyahNum === 0 ? 'Parashá Completa' : `${aliyahNum}ª Aliyá`;
-    setCompletedSuccessMsg(`¡${name} marcada como leída! Se ha registrado en tu historial.`);
     setTimeout(() => {
       setCompletedSuccessMsg(null);
-    }, 4000);
+    }, 5500);
   };
 
   // Estadísticas acumuladas y ciclo
@@ -433,14 +452,31 @@ export const ParashaModule: React.FC<ParashaModuleProps> = ({
       {/* Notificación de éxito al marcar como leída */}
       {completedSuccessMsg && (
         <div className="max-w-4xl mx-auto px-4 mt-3">
-          <div className="bg-emerald-500 text-white text-xs sm:text-sm font-semibold px-4 py-2.5 rounded-xl shadow-md flex items-center justify-between animate-fadeIn">
+          <div className="bg-emerald-600 text-white text-xs sm:text-sm font-semibold px-4 py-3 rounded-xl shadow-md flex flex-wrap items-center justify-between gap-2 animate-fadeIn">
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-white" />
+              <CheckCircle2 className="w-4 h-4 text-white shrink-0" />
               <span>{completedSuccessMsg}</span>
             </div>
-            <button onClick={() => setCompletedSuccessMsg(null)} className="text-white/80 hover:text-white font-bold ml-2">
-              ✕
-            </button>
+            <div className="flex items-center gap-2 ml-auto">
+              {selectedAliyah >= 1 && selectedAliyah < 7 && (
+                <button
+                  onClick={() => {
+                    setSelectedAliyah(selectedAliyah + 1);
+                    setCompletedSuccessMsg(null);
+                  }}
+                  className="px-3 py-1 bg-white text-emerald-700 hover:bg-emerald-50 rounded-lg text-xs font-bold transition flex items-center gap-1 shadow-xs cursor-pointer"
+                >
+                  <span>Ir a {selectedAliyah + 1}ª Aliyá</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              )}
+              <button
+                onClick={() => setCompletedSuccessMsg(null)}
+                className="text-white/80 hover:text-white font-bold px-1.5 py-0.5 cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -640,10 +676,12 @@ export const ParashaModule: React.FC<ParashaModuleProps> = ({
             <CheckCircle2 className="w-4 h-4" />
             <span>
               {currentAliyahStats.isReadToday
-                ? `✓ Leída hoy (+1) • Total: ${currentAliyahStats.count}`
+                ? `✓ Leída hoy (x${currentAliyahStats.count})`
                 : currentAliyahStats.count > 0
-                ? `Marcar leída hoy (+1) • Total: ${currentAliyahStats.count}`
-                : 'Marcar como leída hoy (+1)'}
+                ? `Completar (+1) • x${currentAliyahStats.count}`
+                : selectedAliyah === 0
+                ? 'Completar Parashá'
+                : 'Completar Aliyá'}
             </span>
           </button>
         </div>
@@ -860,10 +898,13 @@ export const ParashaModule: React.FC<ParashaModuleProps> = ({
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-slate-200 dark:border-slate-800">
           <button
             onClick={() => {
-              if (selectedAliyah > 1) setSelectedAliyah(selectedAliyah - 1);
+              if (selectedAliyah > 1) {
+                setSelectedAliyah(selectedAliyah - 1);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
             }}
             disabled={selectedAliyah <= 1}
-            className="w-full sm:w-auto flex items-center justify-center gap-1 text-xs text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white disabled:opacity-30 disabled:cursor-not-allowed px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 transition"
+            className="w-full sm:w-auto flex items-center justify-center gap-1 text-xs text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white disabled:opacity-30 disabled:cursor-not-allowed px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 transition cursor-pointer"
           >
             <ChevronLeft className="w-4 h-4" />
             <span>Aliyá anterior</span>
@@ -871,18 +912,31 @@ export const ParashaModule: React.FC<ParashaModuleProps> = ({
 
           <button
             onClick={() => handleMarkAsRead(selectedAliyah)}
-            className="w-full sm:w-auto px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 shadow-xs transition"
+            className={`w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-xs transition cursor-pointer ${
+              currentAliyahStats.isReadToday
+                ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-2 border-emerald-400 dark:border-emerald-700 hover:bg-emerald-100'
+                : 'bg-emerald-600 hover:bg-emerald-700 text-white'
+            }`}
           >
             <CheckCircle2 className="w-4 h-4" />
-            <span>Marcar lectura como completada hoy</span>
+            <span>
+              {currentAliyahStats.isReadToday
+                ? `✓ ${selectedAliyah === 0 ? 'Parashá leída hoy' : 'Aliyá leída hoy'} (x${currentAliyahStats.count})`
+                : selectedAliyah === 0
+                ? 'Completar Parashá'
+                : 'Completar Aliyá'}
+            </span>
           </button>
 
           <button
             onClick={() => {
-              if (selectedAliyah < 7) setSelectedAliyah(selectedAliyah + 1);
+              if (selectedAliyah < 7) {
+                setSelectedAliyah(selectedAliyah + 1);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
             }}
             disabled={selectedAliyah >= 7}
-            className="w-full sm:w-auto flex items-center justify-center gap-1 text-xs text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white disabled:opacity-30 disabled:cursor-not-allowed px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 transition"
+            className="w-full sm:w-auto flex items-center justify-center gap-1 text-xs text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white disabled:opacity-30 disabled:cursor-not-allowed px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 transition cursor-pointer"
           >
             <span>Siguiente aliyá</span>
             <ChevronRight className="w-4 h-4" />

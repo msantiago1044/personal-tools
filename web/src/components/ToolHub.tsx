@@ -89,18 +89,44 @@ export const ToolHub: React.FC<ToolHubProps> = ({
       setAvotVersion((v) => v + 1);
     };
 
-    // Re-sincronizar cuando el usuario regrese a la pestaña (por si abrió algo en el celular)
+    const handleUsageUpdated = () => {
+      if (!isCancelled) {
+        setUsageStats(getModuleUsageStats(userKey));
+      }
+    };
+
+    // Re-sincronizar cuando el usuario regrese a la pestaña o reactive la PWA en el celular
     const handleFocus = () => {
+      handleUsageUpdated();
       runSync();
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        handleUsageUpdated();
+        runSync();
+      } else if (document.visibilityState === 'hidden') {
+        syncModuleUsageWithCloud(userKey).catch(() => {});
+      }
+    };
+
+    const handlePageHide = () => {
+      syncModuleUsageWithCloud(userKey).catch(() => {});
     };
 
     window.addEventListener('focus', handleFocus);
     window.addEventListener('pirkei_avot_updated', handleAvotUpdate);
+    window.addEventListener('module_usage_updated', handleUsageUpdated);
+    window.addEventListener('pagehide', handlePageHide);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
       isCancelled = true;
       window.removeEventListener('focus', handleFocus);
       window.removeEventListener('pirkei_avot_updated', handleAvotUpdate);
+      window.removeEventListener('module_usage_updated', handleUsageUpdated);
+      window.removeEventListener('pagehide', handlePageHide);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [userKey, userId]);
 
@@ -220,7 +246,11 @@ export const ToolHub: React.FC<ToolHubProps> = ({
         {/* Widget diario de Parashá de la semana (se oculta automáticamente si ya fue leída hoy) */}
         <ParashaDailyCard
           userId={userKey}
-          onOpenParasha={(aliyahNumber) => onSelectTool('/parasha')}
+          onOpenParasha={() => {
+            recordModuleUsage('parasha', userKey);
+            setUsageStats(getModuleUsageStats(userKey));
+            onSelectTool('/parasha');
+          }}
         />
 
         {/* Módulos según modo de visualización */}
@@ -577,4 +607,3 @@ export const ToolHub: React.FC<ToolHubProps> = ({
     </div>
   );
 };
-

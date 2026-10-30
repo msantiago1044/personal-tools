@@ -17,31 +17,222 @@ const STORAGE_PREFIX = 'pt_module_usage_';
 const SORT_PREF_KEY = 'pt_module_sort_preference';
 
 let syncDebounceTimer: ReturnType<typeof setTimeout> | null = null;
-let lastRecordedTime = 0;
-let lastRecordedModule = '';
+const lastRecordedTimeByModule: Record<string, number> = {};
 
-function resolveUserKey(userKey?: string): string {
-  if (userKey && userKey.trim() !== '') return userKey;
+let syncInFlightPromise: Promise<ModuleUsageMap> | null = null;
+let pendingSyncAfterInFlight = false;
+let pendingSyncUserKey: string | undefined = undefined;
+
+interface AuthTokenUserInfo {
+  id?: string;
+  email?: string;
+}
+
+function getAuthTokenUserInfo(): AuthTokenUserInfo {
+  if (typeof window === 'undefined') return {};
   try {
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (key && key.startsWith('sb-') && key.endsWith('-auth-token')) {
+      if (
+        key &&
+        ((key.startsWith('sb-') && key.endsWith('-auth-token')) ||
+          key === 'pt_supabase_session_backup_v1' ||
+          key === 'personal_tools_session_backup')
+      ) {
         const item = localStorage.getItem(key);
         if (item) {
           const parsed = JSON.parse(item);
-          const email = parsed?.user?.email || parsed?.user?.id;
-          if (email) return email;
+          const userObj = parsed?.user || parsed?.currentSession?.user;
+          const id = typeof userObj?.id === 'string' && userObj.id.trim() !== '' ? userObj.id.trim() : undefined;
+          const email =
+            typeof userObj?.email === 'string' && userObj.email.trim() !== '' ? userObj.email.trim() : undefined;
+          if (id || email) {
+            return { id, email };
+          }
         }
       }
     }
   } catch {}
-  return 'default';
+  return {};
+}
+
+function normalizeKeySegment(rawKey: string): string {
+  return rawKey.trim().toLowerCase().replace(/[^a-z0-9_.-]/g, '_');
+}
+
+function resolveUserKey(userKey?: string): string {
+  const { id, email } = getAuthTokenUserInfo();
+  const trimmed = userKey?.trim() || '';
+
+  // Preferir siempre el UUID del usuario autenticado como clave canónica (consistente con ToolHub)
+  if (id) {
+    if (!trimmed || trimmed.toLowerCase() === 'default') {
+      return id;
+    }
+    if (email && trimmed.toLowerCase() === email.toLowerCase()) {
+      return id;
+    }
+  }
+
+  if (trimmed && trimmed.toLowerCase() !== 'default') {
+    return trimmed;
+  }
+
+  return id || email || 'default';
 }
 
 function getStorageKey(userKey?: string): string {
   const resolved = resolveUserKey(userKey);
-  const normalized = resolved.trim().toLowerCase().replace(/[^a-z0-9_.-]/g, '_');
+  const normalized = normalizeKeySegment(resolved);
   return `${STORAGE_PREFIX}${normalized}`;
+}
+
+function dispatchUsageUpdatedEvent(): void {
+  if (typeof window !== 'undefined') {
+    try {
+      window.dispatchEvent(new CustomEvent('module_usage_updated'));
+    } catch {}
+  }
+}
+
+/**
+ * Migra y fusiona registros locales guardados bajo claves antiguas (email o 'default')
+ * hacia la clave canónica del usuario (UUID), preservando deltas no sincronizados e historial.
+ */
+function migrateAndMergeLegacyKeys(userKey?: string): void {
+  if (typeof window === 'undefined') return;
+  try {
+    const canonicalUserKey = resolveUserKey(userKey);
+    if (!canonicalUserKey || canonicalUserKey === 'default') return;
+
+    const canonicalStorageKey = `${STORAGE_PREFIX}${normalizeKeySegment(canonicalUserKey)}`;
+    const canonicalBaselineKey = `pt_module_usage_synced_${canonicalStorageKey}`;
+
+    const { id, email } = getAuthTokenUserInfo();
+    const candidateRawKeys = new Set<string>(['default']);
+    if (email) candidateRawKeys.add(email);
+    if (id && id !== canonicalUserKey) candidateRawKeys.add(id);
+    if (userKey && userKey.trim() !== '' && userKey.trim() !== canonicalUserKey) {
+      candidateRawKeys.add(userKey.trim());
+    }
+
+    const legacyStorageKeys: string[] = [];
+    for (const rawCandidate of candidateRawKeys) {
+      const candidateStorageKey = `${STORAGE_PREFIX}${normalizeKeySegment(rawCandidate)}`;
+      if (candidateStorageKey !== canonicalStorageKey && localStorage.getItem(candidateStorageKey)) {
+        legacyStorageKeys.push(candidateStorageKey);
+      }
+    }
+
+    if (legacyStorageKeys.length === 0) return;
+
+    let primaryStats: ModuleUsageMap = {};
+    let primaryBaseline: ModuleUsageMap = {};
+
+    try {
+      const rawPrim = localStorage.getItem(canonicalStorageKey);
+      if (rawPrim) {
+        const parsed = JSON.parse(rawPrim);
+        if (parsed && typeof parsed === 'object') primaryStats = parsed;
+      }
+    } catch {}
+
+    try {
+      const rawPrimBase = localStorage.getItem(canonicalBaselineKey);
+      if (rawPrimBase) {
+        const parsed = JSON.parse(rawPrimBase);
+        if (parsed && typeof parsed === 'object') primaryBaseline = parsed;
+      }
+    } catch {}
+
+    let didModify = false;
+
+    for (const legacyStorageKey of legacyStorageKeys) {
+      const legacyBaselineKey = `pt_module_usage_synced_${legacyStorageKey}`;
+      let legacyStats: ModuleUsageMap = {};
+      let legacyBaseline: ModuleUsageMap = {};
+
+      try {
+        const rawLeg = localStorage.getItem(legacyStorageKey);
+        if (rawLeg) {
+          const parsed = JSON.parse(rawLeg);
+          if (parsed && typeof parsed === 'object') legacyStats = parsed;
+        }
+      } catch {}
+
+      try {
+        const rawLegBase = localStorage.getItem(legacyBaselineKey);
+        if (rawLegBase) {
+          const parsed = JSON.parse(rawLegBase);
+          if (parsed && typeof parsed === 'object') legacyBaseline = parsed;
+        }
+      } catch {}
+
+      for (const [modId, legItem] of Object.entries(legacyStats)) {
+        if (!legItem || typeof legItem !== 'object') continue;
+        const primItem = primaryStats[modId] || { count: 0, lastOpened: 0, pinned: false };
+        const primBaseItem = primaryBaseline[modId] || { count: 0, lastOpened: 0 };
+        const legBaseItem = legacyBaseline[modId] || { count: 0, lastOpened: 0 };
+
+        const syncedBaseCount = Math.max(primBaseItem.count || 0, legBaseItem.count || 0);
+        const primUnsynced = Math.max(0, (primItem.count || 0) - (primBaseItem.count || 0));
+        const legUnsynced = Math.max(0, (legItem.count || 0) - (legBaseItem.count || 0));
+
+        const mergedHistory = Array.from(
+          new Set([...(primItem.history || []), ...(legItem.history || [])])
+        )
+          .sort((a, b) => a - b)
+          .slice(-100);
+
+        const mergedCount = Math.max(
+          syncedBaseCount + primUnsynced + legUnsynced,
+          primItem.count || 0,
+          legItem.count || 0,
+          mergedHistory.length
+        );
+
+        const mergedLastOpened = Math.max(primItem.lastOpened || 0, legItem.lastOpened || 0);
+
+        let mergedPinned = !!primItem.pinned;
+        if (primItem.pinnedUpdatedAt && legItem.pinnedUpdatedAt) {
+          mergedPinned =
+            primItem.pinnedUpdatedAt >= legItem.pinnedUpdatedAt ? !!primItem.pinned : !!legItem.pinned;
+        } else {
+          mergedPinned = !!primItem.pinned || !!legItem.pinned;
+        }
+        const mergedPinnedUpdatedAt = Math.max(primItem.pinnedUpdatedAt || 0, legItem.pinnedUpdatedAt || 0);
+
+        primaryStats[modId] = {
+          count: mergedCount,
+          lastOpened: mergedLastOpened,
+          pinned: mergedPinned,
+          ...(mergedPinnedUpdatedAt > 0 ? { pinnedUpdatedAt: mergedPinnedUpdatedAt } : {}),
+          history: mergedHistory,
+        };
+
+        if (syncedBaseCount > 0 || primBaseItem.lastOpened || legBaseItem.lastOpened) {
+          primaryBaseline[modId] = {
+            count: syncedBaseCount,
+            lastOpened: Math.max(primBaseItem.lastOpened || 0, legBaseItem.lastOpened || 0),
+          };
+        }
+
+        didModify = true;
+      }
+
+      localStorage.removeItem(legacyStorageKey);
+      localStorage.removeItem(legacyBaselineKey);
+    }
+
+    if (didModify) {
+      localStorage.setItem(canonicalStorageKey, JSON.stringify(primaryStats));
+      if (Object.keys(primaryBaseline).length > 0) {
+        localStorage.setItem(canonicalBaselineKey, JSON.stringify(primaryBaseline));
+      }
+    }
+  } catch (e) {
+    console.warn('Error migrando claves de estadísticas de módulos:', e);
+  }
 }
 
 /**
@@ -49,6 +240,7 @@ function getStorageKey(userKey?: string): string {
  */
 export function getModuleUsageStats(userKey?: string): ModuleUsageMap {
   try {
+    migrateAndMergeLegacyKeys(userKey);
     const raw = localStorage.getItem(getStorageKey(userKey));
     if (!raw) return {};
     const parsed = JSON.parse(raw);
@@ -76,14 +268,15 @@ function saveModuleUsageStats(stats: ModuleUsageMap, userKey?: string): void {
 export function recordModuleUsage(moduleId: string, userKey?: string): void {
   if (!moduleId || moduleId === 'hub') return;
   const now = Date.now();
-  // Evitar doble conteo si ToolHub y App disparan en milisegundos de diferencia
-  if (moduleId === lastRecordedModule && now - lastRecordedTime < 600) {
+  const lastTime = lastRecordedTimeByModule[moduleId] || 0;
+  // Evitar doble conteo del mismo módulo si ToolHub y App disparan en milisegundos de diferencia
+  if (now - lastTime < 600) {
     return;
   }
-  lastRecordedTime = now;
-  lastRecordedModule = moduleId;
+  lastRecordedTimeByModule[moduleId] = now;
 
-  const stats = getModuleUsageStats(userKey);
+  const resolvedKey = resolveUserKey(userKey);
+  const stats = getModuleUsageStats(resolvedKey);
   const current = stats[moduleId] || { count: 0, lastOpened: 0, pinned: false };
   const prevHistory = Array.isArray(current.history) ? current.history : [];
   // Almacenar el timestamp actual y conservar los últimos 100 accesos
@@ -96,8 +289,9 @@ export function recordModuleUsage(moduleId: string, userKey?: string): void {
     history: updatedHistory,
   };
 
-  saveModuleUsageStats(stats, userKey);
-  scheduleCloudSync(userKey);
+  saveModuleUsageStats(stats, resolvedKey);
+  dispatchUsageUpdatedEvent();
+  scheduleCloudSync(resolvedKey);
 }
 
 /**
@@ -105,7 +299,8 @@ export function recordModuleUsage(moduleId: string, userKey?: string): void {
  */
 export function togglePinModule(moduleId: string, userKey?: string): boolean {
   if (!moduleId) return false;
-  const stats = getModuleUsageStats(userKey);
+  const resolvedKey = resolveUserKey(userKey);
+  const stats = getModuleUsageStats(resolvedKey);
   const current = stats[moduleId] || { count: 0, lastOpened: 0, pinned: false };
   const newPinned = !current.pinned;
   const now = Date.now();
@@ -116,8 +311,9 @@ export function togglePinModule(moduleId: string, userKey?: string): boolean {
     pinnedUpdatedAt: now,
   };
 
-  saveModuleUsageStats(stats, userKey);
-  scheduleCloudSync(userKey);
+  saveModuleUsageStats(stats, resolvedKey);
+  dispatchUsageUpdatedEvent();
+  scheduleCloudSync(resolvedKey);
   return newPinned;
 }
 
@@ -153,24 +349,34 @@ export function setStoredSortPreference(mode: ModuleSortMode, userKey?: string):
  * Realiza una unión inteligente por deltas para sumar los usos realizados en móvil y en web
  * sin sobrescribir ni perder el historial de ningún dispositivo.
  */
-export async function syncModuleUsageWithCloud(userKey?: string): Promise<ModuleUsageMap> {
-  const resolvedKey = resolveUserKey(userKey);
-  const storageKey = getStorageKey(resolvedKey);
-  const baselineKey = `pt_module_usage_synced_${storageKey}`;
-
-  const localStats = getModuleUsageStats(resolvedKey);
-
-  let baselineStats: ModuleUsageMap = {};
-  try {
-    const rawBase = localStorage.getItem(baselineKey);
-    if (rawBase) baselineStats = JSON.parse(rawBase);
-  } catch {}
+async function performSyncModuleUsageWithCloud(userKey?: string): Promise<ModuleUsageMap> {
+  const initialResolvedKey = resolveUserKey(userKey);
 
   try {
-    const { data: { user }, error: authErr } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authErr,
+    } = await supabase.auth.getUser();
+
     if (authErr || !user) {
-      return localStats;
+      return getModuleUsageStats(initialResolvedKey);
     }
+
+    const resolvedKey = user.id || initialResolvedKey;
+    migrateAndMergeLegacyKeys(resolvedKey);
+
+    const storageKey = getStorageKey(resolvedKey);
+    const baselineKey = `pt_module_usage_synced_${storageKey}`;
+
+    // Leer localStats y baselineStats DESPUÉS de await getUser() para no sobrescribir
+    // aperturas de módulos ocurridas mientras getUser() estaba en vuelo por red
+    const snapshotLocalStats = getModuleUsageStats(resolvedKey);
+
+    let baselineStats: ModuleUsageMap = {};
+    try {
+      const rawBase = localStorage.getItem(baselineKey);
+      if (rawBase) baselineStats = JSON.parse(rawBase);
+    } catch {}
 
     const remoteStats: ModuleUsageMap = (user.user_metadata?.module_usage_stats as ModuleUsageMap) || {};
     const remoteSortPref = user.user_metadata?.module_sort_preference as ModuleSortMode | undefined;
@@ -183,22 +389,11 @@ export async function syncModuleUsageWithCloud(userKey?: string): Promise<Module
     let hasRemoteDifference = false;
 
     // 1. Integrar deltas locales de este dispositivo
-    for (const [modId, localItem] of Object.entries(localStats)) {
+    for (const [modId, localItem] of Object.entries(snapshotLocalStats)) {
       const baseItem = baselineStats[modId] || { count: 0, lastOpened: 0 };
       const deltaCount = Math.max(0, (localItem.count || 0) - (baseItem.count || 0));
 
       const remoteItem = merged[modId] || { count: 0, lastOpened: 0, pinned: false };
-      const newCount = (remoteItem.count || 0) + deltaCount;
-      const newLastOpened = Math.max(remoteItem.lastOpened || 0, localItem.lastOpened || 0);
-
-      let newPinned = !!remoteItem.pinned;
-      if (localItem.pinnedUpdatedAt && remoteItem.pinnedUpdatedAt) {
-        newPinned = localItem.pinnedUpdatedAt >= remoteItem.pinnedUpdatedAt ? !!localItem.pinned : !!remoteItem.pinned;
-      } else if (localItem.pinned !== undefined) {
-        newPinned = !!localItem.pinned || !!remoteItem.pinned;
-      }
-
-      const newPinnedUpdatedAt = Math.max(localItem.pinnedUpdatedAt || 0, remoteItem.pinnedUpdatedAt || 0);
 
       // Fusionar historial sin duplicados, cronológicamente y acotando a los últimos 100 registros
       const mergedHistory = Array.from(
@@ -206,6 +401,23 @@ export async function syncModuleUsageWithCloud(userKey?: string): Promise<Module
       )
         .sort((a, b) => a - b)
         .slice(-100);
+
+      const newCount = Math.max(
+        (remoteItem.count || 0) + deltaCount,
+        localItem.count || 0,
+        mergedHistory.length
+      );
+      const newLastOpened = Math.max(remoteItem.lastOpened || 0, localItem.lastOpened || 0);
+
+      let newPinned = !!remoteItem.pinned;
+      if (localItem.pinnedUpdatedAt && remoteItem.pinnedUpdatedAt) {
+        newPinned =
+          localItem.pinnedUpdatedAt >= remoteItem.pinnedUpdatedAt ? !!localItem.pinned : !!remoteItem.pinned;
+      } else if (localItem.pinned !== undefined) {
+        newPinned = !!localItem.pinned || !!remoteItem.pinned;
+      }
+
+      const newPinnedUpdatedAt = Math.max(localItem.pinnedUpdatedAt || 0, remoteItem.pinnedUpdatedAt || 0);
 
       const historyChanged =
         mergedHistory.length !== (remoteItem.history?.length || 0) ||
@@ -239,27 +451,107 @@ export async function syncModuleUsageWithCloud(userKey?: string): Promise<Module
       }
     }
 
-    // 3. Guardar en local y registrar nueva línea base de sincronización
-    saveModuleUsageStats(merged, resolvedKey);
-    try {
-      localStorage.setItem(baselineKey, JSON.stringify(merged));
-    } catch {}
-
-    // 4. Si hay usos locales nuevos o la nube estaba vacía, persistir en Supabase
+    // 3. Si hay usos locales nuevos o la nube estaba vacía, persistir en Supabase
+    let updateSucceeded = true;
     if (hasRemoteDifference || !user.user_metadata?.module_usage_stats) {
-      await supabase.auth.updateUser({
+      const { error: updateErr } = await supabase.auth.updateUser({
         data: {
           module_usage_stats: merged,
           module_sort_preference: getStoredSortPreference(),
         },
       });
+      if (updateErr) {
+        updateSucceeded = false;
+        console.warn('[moduleUsage] Error actualizando user_metadata en Supabase:', updateErr);
+      }
     }
 
-    return merged;
+    // 4. Re-leer el almacenamiento local por si el usuario abrió otro módulo mientras updateUser estaba en vuelo
+    const latestLocalStats = getModuleUsageStats(resolvedKey);
+    const finalLocalStats: ModuleUsageMap = { ...merged };
+    let hasMidFlightIncrement = false;
+
+    for (const [modId, latestItem] of Object.entries(latestLocalStats)) {
+      const snapItem = snapshotLocalStats[modId] || { count: 0, lastOpened: 0 };
+      const midFlightDelta = Math.max(0, (latestItem.count || 0) - (snapItem.count || 0));
+      const mergedItem = finalLocalStats[modId] || { count: 0, lastOpened: 0, pinned: false };
+
+      if (
+        midFlightDelta > 0 ||
+        (latestItem.lastOpened || 0) > (mergedItem.lastOpened || 0) ||
+        (latestItem.pinnedUpdatedAt || 0) > (mergedItem.pinnedUpdatedAt || 0)
+      ) {
+        if (midFlightDelta > 0) hasMidFlightIncrement = true;
+        const combinedHistory = Array.from(
+          new Set([...(mergedItem.history || []), ...(latestItem.history || [])])
+        )
+          .sort((a, b) => a - b)
+          .slice(-100);
+
+        const latestPinnedWins = (latestItem.pinnedUpdatedAt || 0) > (mergedItem.pinnedUpdatedAt || 0);
+
+        finalLocalStats[modId] = {
+          ...mergedItem,
+          count: Math.max((mergedItem.count || 0) + midFlightDelta, latestItem.count || 0),
+          lastOpened: Math.max(mergedItem.lastOpened || 0, latestItem.lastOpened || 0),
+          pinned: latestPinnedWins ? !!latestItem.pinned : !!mergedItem.pinned,
+          ...((latestPinnedWins ? latestItem.pinnedUpdatedAt : mergedItem.pinnedUpdatedAt)
+            ? { pinnedUpdatedAt: Math.max(mergedItem.pinnedUpdatedAt || 0, latestItem.pinnedUpdatedAt || 0) }
+            : {}),
+          history: combinedHistory,
+        };
+      }
+    }
+
+    saveModuleUsageStats(finalLocalStats, resolvedKey);
+
+    // Solo avanzar la línea base (baseline) si el guardado en Supabase fue exitoso
+    if (updateSucceeded) {
+      try {
+        localStorage.setItem(baselineKey, JSON.stringify(merged));
+      } catch {}
+    }
+
+    dispatchUsageUpdatedEvent();
+
+    if (hasMidFlightIncrement) {
+      scheduleCloudSync(resolvedKey);
+    }
+
+    return finalLocalStats;
   } catch (err) {
     console.warn('[moduleUsage] Error al sincronizar estadísticas en la nube:', err);
-    return localStats;
+    return getModuleUsageStats(initialResolvedKey);
   }
+}
+
+/**
+ * Sincroniza las estadísticas locales con la nube en Supabase Auth (user_metadata).
+ * Serializa peticiones concurrentes para evitar condiciones de carrera entre dispositivos/pestañas.
+ */
+export async function syncModuleUsageWithCloud(userKey?: string): Promise<ModuleUsageMap> {
+  if (syncInFlightPromise) {
+    pendingSyncAfterInFlight = true;
+    if (userKey) pendingSyncUserKey = userKey;
+    return syncInFlightPromise;
+  }
+
+  syncInFlightPromise = (async () => {
+    try {
+      let result = await performSyncModuleUsageWithCloud(userKey);
+      while (pendingSyncAfterInFlight) {
+        const nextKey = pendingSyncUserKey || userKey;
+        pendingSyncAfterInFlight = false;
+        pendingSyncUserKey = undefined;
+        result = await performSyncModuleUsageWithCloud(nextKey);
+      }
+      return result;
+    } finally {
+      syncInFlightPromise = null;
+    }
+  })();
+
+  return syncInFlightPromise;
 }
 
 /**
@@ -271,6 +563,7 @@ export function scheduleCloudSync(userKey?: string, delayMs = 1200): void {
     clearTimeout(syncDebounceTimer);
   }
   syncDebounceTimer = setTimeout(() => {
+    syncDebounceTimer = null;
     syncModuleUsageWithCloud(userKey).catch(() => {});
   }, delayMs);
 }

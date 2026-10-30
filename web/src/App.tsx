@@ -8,7 +8,7 @@ import { syncParashaWithCloud } from './lib/parashaService';
 import { PirkeiAvotBookmark } from '../../packages/shared/src/types';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { MODULE_REGISTRY, findModuleByHash, getModuleById, ModuleManifest } from './modules/moduleRegistry';
-import { recordModuleUsage } from './modules/moduleUsage';
+import { recordModuleUsage, syncModuleUsageWithCloud } from './modules/moduleUsage';
 import { ToastContainer } from './components/ToastContainer';
 
 // Modales globales cargados bajo demanda para mantener el Launcher ultra liviano
@@ -63,7 +63,7 @@ export default function App() {
     } else {
       const mod = getModuleById(viewId);
       if (mod) {
-        recordModuleUsage(mod.id, session?.user?.email || session?.user?.id);
+        recordModuleUsage(mod.id, session?.user?.id || session?.user?.email);
         window.location.hash = `#/${mod.hashAliases[0] || mod.id}`;
       }
     }
@@ -79,7 +79,7 @@ export default function App() {
         const matched = findModuleByHash(hash);
         if (matched) {
           setCurrentView(matched.id);
-          recordModuleUsage(matched.id, session?.user?.email || session?.user?.id);
+          recordModuleUsage(matched.id, session?.user?.id || session?.user?.email);
         }
       }
     };
@@ -199,11 +199,13 @@ export default function App() {
     };
 
     // Sincronizar en segundo plano inmediatamente
+    syncModuleUsageWithCloud(session.user.id);
     syncPirkeiAvotWithCloud(session.user.id);
     syncParashaWithCloud(session.user.id);
 
     const handleSyncAndPrompt = () => {
       checkAvotPrompt();
+      syncModuleUsageWithCloud(session.user.id);
       syncPirkeiAvotWithCloud(session.user.id);
       syncParashaWithCloud(session.user.id);
     };

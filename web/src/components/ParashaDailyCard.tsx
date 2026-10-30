@@ -5,6 +5,7 @@ import {
   markDailyAliyahCompletedToday,
   syncParashaWithCloud,
 } from '../lib/parashaService';
+import { recordModuleUsage } from '../modules/moduleUsage';
 import { BookOpen, CheckCircle2, ChevronRight, Sparkles } from 'lucide-react';
 
 interface ParashaDailyCardProps {
@@ -38,26 +39,30 @@ export const ParashaDailyCard: React.FC<ParashaDailyCardProps> = ({
 
     runSync();
 
-    const handleUpdate = () => {
+    const handleLocalUpdate = () => {
       setSchedule(getDiasporaDailySchedule());
       setIsReadToday(isDailyAliyahReadToday(userId));
+    };
+
+    const handleFocusAndSync = () => {
+      handleLocalUpdate();
       runSync();
     };
 
     const handleVisibility = () => {
       if (document.visibilityState === 'visible') {
-        handleUpdate();
+        handleFocusAndSync();
       }
     };
 
-    window.addEventListener('parasha_progress_updated', handleUpdate);
-    window.addEventListener('focus', handleUpdate);
+    window.addEventListener('parasha_progress_updated', handleLocalUpdate);
+    window.addEventListener('focus', handleFocusAndSync);
     document.addEventListener('visibilitychange', handleVisibility);
 
     return () => {
       isCancelled = true;
-      window.removeEventListener('parasha_progress_updated', handleUpdate);
-      window.removeEventListener('focus', handleUpdate);
+      window.removeEventListener('parasha_progress_updated', handleLocalUpdate);
+      window.removeEventListener('focus', handleFocusAndSync);
       document.removeEventListener('visibilitychange', handleVisibility);
     };
   }, [userId]);
@@ -70,6 +75,7 @@ export const ParashaDailyCard: React.FC<ParashaDailyCardProps> = ({
   const handleQuickMarkRead = async (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsDismissing(true);
+    recordModuleUsage('parasha', userId);
     await markDailyAliyahCompletedToday(
       schedule.targetAliyahNumber,
       schedule.parashaId || schedule.parashaName,

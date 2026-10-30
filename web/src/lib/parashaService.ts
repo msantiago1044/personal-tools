@@ -884,15 +884,47 @@ export async function syncParashaWithCloud(userId?: string): Promise<{
           new Set([...(localProg.completed_aliyot || []), ...(metaProgress.completed_aliyot || [])])
         ).sort((a, b) => a - b);
 
+        // Combinar conteos tomando siempre el máximo por cada Aliyá (nunca sobrescribir con un valor menor)
+        const mergedCounts: Record<number, number> = { ...(metaProgress.aliyot_counts || {}) };
+        for (const [k, v] of Object.entries(localProg.aliyot_counts || {})) {
+          const numKey = Number(k);
+          mergedCounts[numKey] = Math.max(mergedCounts[numKey] || 0, Number(v) || 0);
+        }
+
+        // Combinar fechas de última lectura conservando la más reciente por cada Aliyá
+        const mergedLastRead: Record<number, string> = { ...(metaProgress.aliyot_last_read || {}) };
+        for (const [k, v] of Object.entries(localProg.aliyot_last_read || {})) {
+          const numKey = Number(k);
+          const existing = mergedLastRead[numKey];
+          if (!existing || String(v) > String(existing)) {
+            mergedLastRead[numKey] = String(v);
+          }
+        }
+
+        // Combinar historial por años sin perder aliyot registradas localmente
+        const mergedYearsHistory: Record<string, number[]> = { ...(metaProgress.years_history || {}) };
+        for (const [yr, alList] of Object.entries(localProg.years_history || {})) {
+          const existingList = Array.isArray(mergedYearsHistory[yr]) ? mergedYearsHistory[yr] : [];
+          const nextList = Array.isArray(alList) ? alList : [];
+          mergedYearsHistory[yr] = Array.from(new Set([...existingList, ...nextList])).sort((a, b) => a - b);
+        }
+
+        const latestReadAt =
+          localProg.last_read_at && metaProgress.last_read_at
+            ? localProg.last_read_at > metaProgress.last_read_at
+              ? localProg.last_read_at
+              : metaProgress.last_read_at
+            : localProg.last_read_at || metaProgress.last_read_at;
+
         const mergedMetaProg: ParashaProgress = {
           parasha_id: canonicalId,
           completed_aliyot: combinedAliyot,
           full_parasha_completed: metaProgress.full_parasha_completed || localProg.full_parasha_completed,
           completed_count: Math.max(metaProgress.completed_count || 0, localProg.completed_count || 0),
-          last_read_at: metaProgress.last_read_at || localProg.last_read_at,
-          aliyot_counts: { ...(localProg.aliyot_counts || {}), ...(metaProgress.aliyot_counts || {}) },
-          aliyot_last_read: { ...(localProg.aliyot_last_read || {}), ...(metaProgress.aliyot_last_read || {}) },
-          years_history: { ...(localProg.years_history || {}), ...(metaProgress.years_history || {}) },
+          last_read_at: latestReadAt,
+          aliyot_counts: mergedCounts,
+          aliyot_last_read: mergedLastRead,
+          years_history: mergedYearsHistory,
         };
 
         const progressKey = `${PARASHA_PROGRESS_PREFIX}${canonicalId}_${userId || 'guest'}`;
@@ -1179,7 +1211,7 @@ export async function markDailyAliyahCompletedToday(
       );
 
       // Respaldo inmediato en user_metadata para replicación en caliente a todos los clientes (móvil y web)
-      supabase.auth.updateUser({
+      await supabase.auth.updateUser({
         data: {
           parasha_daily_read: record,
           [`parasha_progress_${canonicalId}`]: progress,
