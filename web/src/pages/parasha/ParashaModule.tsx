@@ -140,7 +140,7 @@ export const ParashaModule: React.FC<ParashaModuleProps> = ({
     let isCancelled = false;
 
     const runSync = () => {
-      syncParashaWithCloud(user?.id).then((res) => {
+      syncParashaWithCloud(user?.id, parasha?.id).then((res) => {
         if (!isCancelled && res.progress) {
           setProgress(res.progress);
         }

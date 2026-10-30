@@ -728,7 +728,149 @@ async function getCanonicalAuthUserId(userId?: string): Promise<string | undefin
       return data.user.id;
     }
   } catch {}
+  try {
+    const { data } = await supabase.auth.getSession();
+    if (data?.session?.user?.id && isUuid(data.session.user.id)) {
+      return data.session.user.id;
+    }
+  } catch {}
+  if (typeof window !== 'undefined') {
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && k.startsWith('sb-') && k.endsWith('-auth-token')) {
+          const raw = localStorage.getItem(k);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            const uid = parsed?.user?.id || parsed?.currentSession?.user?.id;
+            if (uid && isUuid(uid)) return uid;
+          }
+        }
+      }
+    } catch {}
+  }
   return undefined;
+}
+
+/**
+ * Une múltiples objetos de progreso de una misma Parashá de forma aditiva y sin pérdida,
+ * conservando la unión de aliyot leídas, el conteo máximo por aliyá y la fecha más reciente.
+ */
+function mergeParashaProgressObjects(
+  canonicalId: string,
+  ...sources: Array<Partial<ParashaProgress> | null | undefined>
+): ParashaProgress {
+  const currentYearStr = String(new Date().getFullYear());
+  const aliyotSet = new Set<number>();
+  let fullCompleted = false;
+  let maxCompletedCount = 0;
+  let latestReadAt: string | undefined = undefined;
+  const mergedCounts: Record<number, number> = {};
+  const mergedLastRead: Record<number, string> = {};
+  const mergedYearsHistory: Record<string, number[]> = {};
+
+  for (const src of sources) {
+    if (!src || typeof src !== 'object') continue;
+    if (src.parasha_id && getCanonicalParashaId(src.parasha_id) !== canonicalId) {
+      continue;
+    }
+
+    const isSrcFull = Boolean(src.full_parasha_completed || (src as any).is_completed);
+    if (isSrcFull) {
+      fullCompleted = true;
+      for (let a = 1; a <= 7; a++) aliyotSet.add(a);
+    }
+
+    if (Array.isArray(src.completed_aliyot)) {
+      for (const a of src.completed_aliyot) {
+        const num = Number(a);
+        if (num >= 1 && num <= 7) {
+          aliyotSet.add(num);
+        }
+      }
+    }
+
+    if (typeof src.completed_count === 'number' && src.completed_count > maxCompletedCount) {
+      maxCompletedCount = src.completed_count;
+    }
+
+    if (typeof src.last_read_at === 'string' && src.last_read_at) {
+      if (!latestReadAt || src.last_read_at > latestReadAt) {
+        latestReadAt = src.last_read_at;
+      }
+    }
+
+    if (src.aliyot_counts && typeof src.aliyot_counts === 'object') {
+      for (const [k, v] of Object.entries(src.aliyot_counts)) {
+        const alNum = Number(k);
+        const countVal = Number(v) || 0;
+        if (alNum >= 1 && alNum <= 7 && countVal > 0) {
+          aliyotSet.add(alNum);
+          mergedCounts[alNum] = Math.max(mergedCounts[alNum] || 0, countVal);
+        }
+      }
+    }
+
+    if (src.aliyot_last_read && typeof src.aliyot_last_read === 'object') {
+      for (const [k, v] of Object.entries(src.aliyot_last_read)) {
+        const alNum = Number(k);
+        if (alNum >= 1 && alNum <= 7 && typeof v === 'string' && v) {
+          const existing = mergedLastRead[alNum];
+          if (!existing || v > existing) {
+            mergedLastRead[alNum] = v;
+          }
+          if (!latestReadAt || v > latestReadAt) {
+            latestReadAt = v;
+          }
+        }
+      }
+    }
+
+    if (src.years_history && typeof src.years_history === 'object') {
+      for (const [yr, list] of Object.entries(src.years_history)) {
+        if (Array.isArray(list)) {
+          const prev = mergedYearsHistory[yr] || [];
+          const validNums = list.map(Number).filter((n) => n >= 1 && n <= 7);
+          mergedYearsHistory[yr] = Array.from(new Set([...prev, ...validNums])).sort((a, b) => a - b);
+        }
+      }
+    }
+  }
+
+  const combinedAliyot = Array.from(aliyotSet).sort((a, b) => a - b);
+  if (combinedAliyot.length >= 7) {
+    fullCompleted = true;
+  }
+  if (fullCompleted && maxCompletedCount < 1) {
+    maxCompletedCount = 1;
+  }
+
+  for (const al of combinedAliyot) {
+    if (!mergedCounts[al] || mergedCounts[al] < 1) {
+      mergedCounts[al] = 1;
+    }
+    if (!mergedLastRead[al] && latestReadAt) {
+      mergedLastRead[al] = latestReadAt;
+    }
+  }
+
+  if (combinedAliyot.length > 0) {
+    const currYrList = mergedYearsHistory[currentYearStr] || [];
+    mergedYearsHistory[currentYearStr] = Array.from(new Set([...currYrList, ...combinedAliyot])).sort(
+      (a, b) => a - b
+    );
+  }
+
+  return {
+    parasha_id: canonicalId,
+    completed_aliyot: combinedAliyot,
+    full_parasha_completed: fullCompleted,
+    completed_count: maxCompletedCount,
+    ...(latestReadAt ? { last_read_at: latestReadAt } : {}),
+    aliyot_counts: mergedCounts,
+    aliyot_last_read: mergedLastRead,
+    years_history: mergedYearsHistory,
+  };
 }
 
 /**
@@ -769,11 +911,6 @@ export function isDailyAliyahReadToday(userId?: string): boolean {
           if (recordParasha !== canonicalId) {
             continue;
           }
-          // Detectar si fue un falso positivo heredado en Vayerá
-          if (canonicalId === 'vayera' && !localStorage.getItem('parasha_vayera_verified_v1')) {
-            localStorage.removeItem(key);
-            continue;
-          }
           if (targetNum === 0) {
             if (record.completedFull === true || record.completedAliyah === 0) return true;
           } else {
@@ -787,12 +924,6 @@ export function isDailyAliyahReadToday(userId?: string): boolean {
   // 2. Comprobar si en el progreso guardado de la parashá actual ya figura leída hoy
   const prog = getParashaProgress(canonicalId, userId);
   if (prog && prog.parasha_id === canonicalId) {
-    // Si es Vayerá y no ha sido verificado como leído por el usuario, evitar falsos positivos heredados
-    if (canonicalId === 'vayera' && !localStorage.getItem('parasha_vayera_verified_v1')) {
-      if (prog.completed_count >= 2 || (prog.completed_aliyot && prog.completed_aliyot.length >= 7)) {
-        return false;
-      }
-    }
     if (prog.full_parasha_completed) {
       if (prog.last_read_at) {
         try {
@@ -820,12 +951,17 @@ export function isDailyAliyahReadToday(userId?: string): boolean {
  * Actualiza y fusiona (merge) inmediatamente para que celular y web (PC/Laptop)
  * compartan exactamente la misma información en tiempo real sin discrepancias.
  */
-export async function syncParashaWithCloud(userId?: string): Promise<{
+export async function syncParashaWithCloud(
+  userId?: string,
+  explicitParashaId?: string
+): Promise<{
   isReadToday: boolean;
   progress: ParashaProgress | null;
 }> {
   const schedule = getDiasporaDailySchedule();
-  const canonicalId = schedule.parashaId || getCanonicalParashaId(schedule.parashaName);
+  const canonicalId = explicitParashaId
+    ? getCanonicalParashaId(explicitParashaId)
+    : schedule.parashaId || getCanonicalParashaId(schedule.parashaName);
   const defaultRes = {
     isReadToday: isDailyAliyahReadToday(userId),
     progress: getParashaProgress(canonicalId, userId),
@@ -837,13 +973,37 @@ export async function syncParashaWithCloud(userId?: string): Promise<{
     const cloudUid = await getCanonicalAuthUserId(userId);
     const { data: authData } = await supabase.auth.getUser();
 
-    // 1. Respaldo rápido en user_metadata (sincronización instantánea entre pestañas/dispositivos)
+    // 1. Respaldo rápido en user_metadata (sincronización instantánea entre móvil y web)
+    let dailyReadProgFromMeta: Partial<ParashaProgress> | null = null;
     const metaDailyRead = authData?.user?.user_metadata?.parasha_daily_read;
-    if (metaDailyRead && metaDailyRead.dateKey === schedule.dateKey) {
-      const metaParashaId = metaDailyRead.parashaId ? getCanonicalParashaId(metaDailyRead.parashaId) : canonicalId;
+    if (metaDailyRead && typeof metaDailyRead === 'object') {
+      const metaParashaId = metaDailyRead.parashaId
+        ? getCanonicalParashaId(metaDailyRead.parashaId)
+        : canonicalId;
       if (metaParashaId === canonicalId) {
-        const isVayeraFp = canonicalId === 'vayera' && !localStorage.getItem('parasha_vayera_verified_v1');
-        if (!isVayeraFp) {
+        const readIso = metaDailyRead.timestamp
+          ? new Date(metaDailyRead.timestamp).toISOString()
+          : `${metaDailyRead.dateKey || schedule.dateKey}T12:00:00.000Z`;
+        const completedAl = Number(metaDailyRead.completedAliyah);
+        if (metaDailyRead.completedFull || completedAl === 0) {
+          dailyReadProgFromMeta = {
+            parasha_id: canonicalId,
+            completed_aliyot: [1, 2, 3, 4, 5, 6, 7],
+            full_parasha_completed: true,
+            completed_count: 1,
+            last_read_at: readIso,
+          };
+        } else if (completedAl >= 1 && completedAl <= 7) {
+          dailyReadProgFromMeta = {
+            parasha_id: canonicalId,
+            completed_aliyot: [completedAl],
+            last_read_at: readIso,
+            aliyot_counts: { [completedAl]: 1 },
+            aliyot_last_read: { [completedAl]: readIso },
+          };
+        }
+
+        if (metaDailyRead.dateKey === schedule.dateKey) {
           if (
             metaDailyRead.completedFull ||
             metaDailyRead.completedAliyah === schedule.targetAliyahNumber ||
@@ -851,6 +1011,7 @@ export async function syncParashaWithCloud(userId?: string): Promise<{
           ) {
             const storageKey = `${DAILY_READ_KEY}_${userId || 'guest'}`;
             localStorage.setItem(storageKey, JSON.stringify(metaDailyRead));
+            localStorage.setItem(`${DAILY_READ_KEY}_guest`, JSON.stringify(metaDailyRead));
             if (cloudUid && cloudUid !== userId) {
               localStorage.setItem(`${DAILY_READ_KEY}_${cloudUid}`, JSON.stringify(metaDailyRead));
             }
@@ -859,227 +1020,184 @@ export async function syncParashaWithCloud(userId?: string): Promise<{
       }
     }
 
-    // 1b. Progreso completo de Aliyot sincronizado a través de user_metadata (estrictamente por ID de parashá)
-    const metaProgress = authData?.user?.user_metadata?.[`parasha_progress_${canonicalId}`];
-
-    if (metaProgress && typeof metaProgress === 'object' && Array.isArray(metaProgress.completed_aliyot)) {
-      const metaCanonical = getCanonicalParashaId(metaProgress.parasha_id);
-      let isMetaContaminated = false;
-      if (metaProgress.parasha_id && metaCanonical !== canonicalId) {
-        isMetaContaminated = true;
-      }
-      if (canonicalId === 'vayera' && !localStorage.getItem('parasha_vayera_verified_v1')) {
-        if (
-          metaProgress.completed_count >= 2 ||
-          metaProgress.completed_aliyot.length >= 7 ||
-          metaProgress.aliyot_counts?.[7] === 2
-        ) {
-          isMetaContaminated = true;
-        }
-      }
-
-      if (!isMetaContaminated) {
-        const localProg = getParashaProgress(canonicalId, userId);
-        const combinedAliyot = Array.from(
-          new Set([...(localProg.completed_aliyot || []), ...(metaProgress.completed_aliyot || [])])
-        ).sort((a, b) => a - b);
-
-        // Combinar conteos tomando siempre el máximo por cada Aliyá (nunca sobrescribir con un valor menor)
-        const mergedCounts: Record<number, number> = { ...(metaProgress.aliyot_counts || {}) };
-        for (const [k, v] of Object.entries(localProg.aliyot_counts || {})) {
-          const numKey = Number(k);
-          mergedCounts[numKey] = Math.max(mergedCounts[numKey] || 0, Number(v) || 0);
-        }
-
-        // Combinar fechas de última lectura conservando la más reciente por cada Aliyá
-        const mergedLastRead: Record<number, string> = { ...(metaProgress.aliyot_last_read || {}) };
-        for (const [k, v] of Object.entries(localProg.aliyot_last_read || {})) {
-          const numKey = Number(k);
-          const existing = mergedLastRead[numKey];
-          if (!existing || String(v) > String(existing)) {
-            mergedLastRead[numKey] = String(v);
-          }
-        }
-
-        // Combinar historial por años sin perder aliyot registradas localmente
-        const mergedYearsHistory: Record<string, number[]> = { ...(metaProgress.years_history || {}) };
-        for (const [yr, alList] of Object.entries(localProg.years_history || {})) {
-          const existingList = Array.isArray(mergedYearsHistory[yr]) ? mergedYearsHistory[yr] : [];
-          const nextList = Array.isArray(alList) ? alList : [];
-          mergedYearsHistory[yr] = Array.from(new Set([...existingList, ...nextList])).sort((a, b) => a - b);
-        }
-
-        const latestReadAt =
-          localProg.last_read_at && metaProgress.last_read_at
-            ? localProg.last_read_at > metaProgress.last_read_at
-              ? localProg.last_read_at
-              : metaProgress.last_read_at
-            : localProg.last_read_at || metaProgress.last_read_at;
-
-        const mergedMetaProg: ParashaProgress = {
-          parasha_id: canonicalId,
-          completed_aliyot: combinedAliyot,
-          full_parasha_completed: metaProgress.full_parasha_completed || localProg.full_parasha_completed,
-          completed_count: Math.max(metaProgress.completed_count || 0, localProg.completed_count || 0),
-          last_read_at: latestReadAt,
-          aliyot_counts: mergedCounts,
-          aliyot_last_read: mergedLastRead,
-          years_history: mergedYearsHistory,
-        };
-
-        const progressKey = `${PARASHA_PROGRESS_PREFIX}${canonicalId}_${userId || 'guest'}`;
-        localStorage.setItem(progressKey, JSON.stringify(mergedMetaProg));
-        if (cloudUid && cloudUid !== userId) {
-          localStorage.setItem(`${PARASHA_PROGRESS_PREFIX}${canonicalId}_${cloudUid}`, JSON.stringify(mergedMetaProg));
-        }
+    // 1b. Progreso completo de Aliyot sincronizado a través de user_metadata
+    const rawMetaProgress = authData?.user?.user_metadata?.[`parasha_progress_${canonicalId}`];
+    let validMetaProgress: Partial<ParashaProgress> | null = null;
+    if (rawMetaProgress && typeof rawMetaProgress === 'object') {
+      const metaCanonical = rawMetaProgress.parasha_id
+        ? getCanonicalParashaId(rawMetaProgress.parasha_id)
+        : canonicalId;
+      if (metaCanonical === canonicalId) {
+        validMetaProgress = rawMetaProgress;
       }
     }
 
-    if (!cloudUid) return defaultRes;
+    // 2. Consultar tabla parasha_progress en Supabase si hay usuario autenticado
+    let matchingRow: any = null;
+    if (cloudUid) {
+      const { data: remoteRows, error } = await supabase
+        .from('parasha_progress')
+        .select('*')
+        .eq('user_id', cloudUid);
 
-    // 2. Consultar tabla parasha_progress en Supabase
-    const { data: remoteRows, error } = await supabase
-      .from('parasha_progress')
-      .select('*')
-      .eq('user_id', cloudUid);
+      if (!error && Array.isArray(remoteRows) && remoteRows.length > 0) {
+        matchingRow = remoteRows.find((r: any) => getCanonicalParashaId(r.parasha_id) === canonicalId) || null;
+      }
+    }
 
-    if (!error && remoteRows && remoteRows.length > 0) {
-      // Buscar ÚNICAMENTE la fila correspondiente a la parashá actual (nunca heredar de otra parashá)
-      const matchingRow = remoteRows.find((r: any) => getCanonicalParashaId(r.parasha_id) === canonicalId);
+    const rowProgress: Partial<ParashaProgress> | null = matchingRow
+      ? {
+          parasha_id: canonicalId,
+          completed_aliyot: Array.isArray(matchingRow.completed_aliyot) ? matchingRow.completed_aliyot : [],
+          full_parasha_completed: Boolean(matchingRow.is_completed),
+          completed_count: Number(matchingRow.completed_count) || (matchingRow.is_completed ? 1 : 0),
+          last_read_at: matchingRow.last_read_at || undefined,
+          aliyot_counts:
+            matchingRow.aliyot_counts && typeof matchingRow.aliyot_counts === 'object'
+              ? matchingRow.aliyot_counts
+              : {},
+          aliyot_last_read:
+            matchingRow.aliyot_last_read && typeof matchingRow.aliyot_last_read === 'object'
+              ? matchingRow.aliyot_last_read
+              : {},
+          years_history:
+            matchingRow.years_history && typeof matchingRow.years_history === 'object'
+              ? matchingRow.years_history
+              : {},
+        }
+      : null;
 
-      if (matchingRow) {
-        // Si es Vayerá y tiene datos contaminados en Supabase, eliminarlos para sanear
-        if (canonicalId === 'vayera' && !localStorage.getItem('parasha_vayera_verified_v1')) {
-          if (matchingRow.is_completed || (matchingRow.completed_aliyot && matchingRow.completed_aliyot.length >= 7)) {
-            try {
-              await supabase.from('parasha_progress').delete().eq('user_id', cloudUid).eq('parasha_id', canonicalId);
-            } catch {}
-            const emptyProg: ParashaProgress = {
+    // 3. Unificar progreso local + user_metadata + tabla parasha_progress sin pérdida
+    const localProg = getParashaProgress(canonicalId, cloudUid || userId);
+    const mergedProg = mergeParashaProgressObjects(
+      canonicalId,
+      localProg,
+      validMetaProgress,
+      rowProgress,
+      dailyReadProgFromMeta
+    );
+
+    // Guardar progreso combinado en todas las claves locales relevantes del usuario
+    const primaryProgressKey = `${PARASHA_PROGRESS_PREFIX}${canonicalId}_${userId || 'guest'}`;
+    localStorage.setItem(primaryProgressKey, JSON.stringify(mergedProg));
+    localStorage.setItem(`${PARASHA_PROGRESS_PREFIX}${canonicalId}_guest`, JSON.stringify(mergedProg));
+    if (cloudUid) {
+      localStorage.setItem(`${PARASHA_PROGRESS_PREFIX}${canonicalId}_${cloudUid}`, JSON.stringify(mergedProg));
+    }
+
+    // 4. Sincronización bidireccional: si el progreso fusionado supera a la tabla o a user_metadata, subirlo
+    if (cloudUid && mergedProg.completed_aliyot.length > 0) {
+      const rowAliyotLen = Array.isArray(matchingRow?.completed_aliyot)
+        ? matchingRow.completed_aliyot.length
+        : 0;
+      const metaAliyotLen = Array.isArray(validMetaProgress?.completed_aliyot)
+        ? validMetaProgress.completed_aliyot.length
+        : 0;
+      const rowCountsJson = JSON.stringify(matchingRow?.aliyot_counts || {});
+      const metaCountsJson = JSON.stringify(validMetaProgress?.aliyot_counts || {});
+      const mergedCountsJson = JSON.stringify(mergedProg.aliyot_counts || {});
+
+      if (!matchingRow || mergedProg.completed_aliyot.length > rowAliyotLen || rowCountsJson !== mergedCountsJson) {
+        try {
+          const { error: richUpsertErr } = await supabase.from('parasha_progress').upsert(
+            {
+              user_id: cloudUid,
               parasha_id: canonicalId,
-              completed_aliyot: [],
-              full_parasha_completed: false,
-              completed_count: 0,
-              aliyot_counts: {},
-              aliyot_last_read: {},
-              years_history: {},
-            };
-            const progressKey = `${PARASHA_PROGRESS_PREFIX}${canonicalId}_${userId || 'guest'}`;
-            localStorage.setItem(progressKey, JSON.stringify(emptyProg));
-            return {
-              isReadToday: false,
-              progress: emptyProg,
-            };
+              completed_aliyot: mergedProg.completed_aliyot,
+              is_completed: mergedProg.full_parasha_completed,
+              completed_count: mergedProg.completed_count,
+              aliyot_counts: mergedProg.aliyot_counts,
+              aliyot_last_read: mergedProg.aliyot_last_read,
+              years_history: mergedProg.years_history,
+              last_read_at: mergedProg.last_read_at || new Date().toISOString(),
+              date_key: matchingRow?.date_key || schedule.dateKey,
+            },
+            { onConflict: 'user_id,parasha_id' }
+          );
+          if (richUpsertErr) {
+            await supabase.from('parasha_progress').upsert(
+              {
+                user_id: cloudUid,
+                parasha_id: canonicalId,
+                completed_aliyot: mergedProg.completed_aliyot,
+                is_completed: mergedProg.full_parasha_completed,
+                last_read_at: mergedProg.last_read_at || new Date().toISOString(),
+                date_key: matchingRow?.date_key || schedule.dateKey,
+              },
+              { onConflict: 'user_id,parasha_id' }
+            );
           }
-        }
+        } catch {}
+      }
 
-        const localProg = getParashaProgress(canonicalId, userId);
-        const combinedAliyot = Array.from(
-          new Set([...(localProg.completed_aliyot || []), ...(matchingRow.completed_aliyot || [])])
-        ).sort((a, b) => a - b);
-
-        const alCounts = { ...(localProg.aliyot_counts || {}) };
-        combinedAliyot.forEach((al) => {
-          if (!alCounts[al] || alCounts[al] === 0) {
-            alCounts[al] = 1;
-          }
-        });
-
-        const currentYearStr = String(new Date().getFullYear());
-        const yHistory = { ...(localProg.years_history || {}) };
-        yHistory[currentYearStr] = Array.from(
-          new Set([...(yHistory[currentYearStr] || []), ...combinedAliyot])
-        ).sort((a, b) => a - b);
-
-        const mergedProg: ParashaProgress = {
-          parasha_id: canonicalId,
-          completed_aliyot: combinedAliyot,
-          full_parasha_completed: matchingRow.is_completed || localProg.full_parasha_completed || combinedAliyot.length >= 7,
-          completed_count: Math.max(matchingRow.is_completed ? 1 : 0, localProg.completed_count || 0),
-          last_read_at: matchingRow.last_read_at || localProg.last_read_at,
-          aliyot_counts: alCounts,
-          aliyot_last_read: localProg.aliyot_last_read || {},
-          years_history: yHistory,
-        };
-
-        // Guardar progreso combinado localmente
-        const progressKey = `${PARASHA_PROGRESS_PREFIX}${canonicalId}_${userId || 'guest'}`;
-        localStorage.setItem(progressKey, JSON.stringify(mergedProg));
-        if (cloudUid && cloudUid !== userId) {
-          localStorage.setItem(`${PARASHA_PROGRESS_PREFIX}${canonicalId}_${cloudUid}`, JSON.stringify(mergedProg));
-        }
-
-        // Evaluar si la aliyá de hoy fue leída hoy en el celular u otro dispositivo
-        let readToday = false;
-        if (matchingRow.date_key === schedule.dateKey) {
-          if (schedule.targetAliyahNumber === 0) {
-            readToday = mergedProg.full_parasha_completed;
-          } else {
-            readToday =
-              mergedProg.completed_aliyot.includes(schedule.targetAliyahNumber) ||
-              mergedProg.full_parasha_completed;
-          }
-        }
-
-        if (!readToday && schedule.targetAliyahNumber > 0) {
-          const aliyahTime = mergedProg.aliyot_last_read?.[schedule.targetAliyahNumber];
-          if (aliyahTime) {
-            try {
-              if (new Date(aliyahTime).toISOString().split('T')[0] === schedule.dateKey) {
-                readToday = true;
-              }
-            } catch {}
-          }
-        }
-
-        if (!readToday && mergedProg.last_read_at && mergedProg.completed_aliyot.includes(schedule.targetAliyahNumber)) {
-          try {
-            if (new Date(mergedProg.last_read_at).toISOString().split('T')[0] === schedule.dateKey) {
-              readToday = true;
-            }
-          } catch {}
-        }
-
-        if (readToday) {
-          const record = {
-            dateKey: schedule.dateKey,
-            parashaId: canonicalId,
-            completedAliyah: schedule.targetAliyahNumber,
-            completedFull: mergedProg.full_parasha_completed,
-            timestamp: Date.now(),
-          };
-          const storageKey = `${DAILY_READ_KEY}_${userId || 'guest'}`;
-          localStorage.setItem(storageKey, JSON.stringify(record));
-          if (cloudUid && cloudUid !== userId) {
-            localStorage.setItem(`${DAILY_READ_KEY}_${cloudUid}`, JSON.stringify(record));
-          }
-        }
-
-        window.dispatchEvent(new CustomEvent('parasha_progress_updated'));
-
-        return {
-          isReadToday: readToday || isDailyAliyahReadToday(userId),
-          progress: mergedProg,
-        };
-      } else {
-        // No hay fila en Supabase para esta parashá: si es Vayerá y no está verificada, purgar contaminación local previa
-        if (canonicalId === 'vayera' && !localStorage.getItem('parasha_vayera_verified_v1')) {
-          for (let i = localStorage.length - 1; i >= 0; i--) {
-            const k = localStorage.key(i);
-            if (k && (k.includes('parasha_progress_vayera') || k.includes('parasha_daily_read'))) {
-              try {
-                const raw = localStorage.getItem(k);
-                if (raw) {
-                  const val = JSON.parse(raw);
-                  if (val.completed_count >= 2 || (val.completed_aliyot && val.completed_aliyot.length >= 7) || val.completedFull) {
-                    localStorage.removeItem(k);
-                  }
-                }
-              } catch {}
-            }
-          }
-        }
+      if (
+        authData?.user &&
+        (!validMetaProgress ||
+          mergedProg.completed_aliyot.length > metaAliyotLen ||
+          metaCountsJson !== mergedCountsJson)
+      ) {
+        try {
+          await supabase.auth.updateUser({
+            data: {
+              [`parasha_progress_${canonicalId}`]: mergedProg,
+            },
+          });
+        } catch {}
       }
     }
+
+    // 5. Evaluar si la aliyá objetivo de hoy ya fue leída en el móvil o en la web
+    let readToday = false;
+    if (matchingRow?.date_key === schedule.dateKey) {
+      if (schedule.targetAliyahNumber === 0) {
+        readToday = mergedProg.full_parasha_completed;
+      } else {
+        readToday =
+          mergedProg.completed_aliyot.includes(schedule.targetAliyahNumber) ||
+          mergedProg.full_parasha_completed;
+      }
+    }
+
+    if (!readToday && schedule.targetAliyahNumber > 0) {
+      const aliyahTime = mergedProg.aliyot_last_read?.[schedule.targetAliyahNumber];
+      if (aliyahTime) {
+        try {
+          if (new Date(aliyahTime).toISOString().split('T')[0] === schedule.dateKey) {
+            readToday = true;
+          }
+        } catch {}
+      }
+    }
+
+    if (!readToday && mergedProg.last_read_at && mergedProg.completed_aliyot.includes(schedule.targetAliyahNumber)) {
+      try {
+        if (new Date(mergedProg.last_read_at).toISOString().split('T')[0] === schedule.dateKey) {
+          readToday = true;
+        }
+      } catch {}
+    }
+
+    if (readToday) {
+      const record = {
+        dateKey: schedule.dateKey,
+        parashaId: canonicalId,
+        completedAliyah: schedule.targetAliyahNumber,
+        completedFull: mergedProg.full_parasha_completed,
+        timestamp: Date.now(),
+      };
+      localStorage.setItem(`${DAILY_READ_KEY}_${userId || 'guest'}`, JSON.stringify(record));
+      localStorage.setItem(`${DAILY_READ_KEY}_guest`, JSON.stringify(record));
+      if (cloudUid) {
+        localStorage.setItem(`${DAILY_READ_KEY}_${cloudUid}`, JSON.stringify(record));
+      }
+    }
+
+    window.dispatchEvent(new CustomEvent('parasha_progress_updated'));
+
+    return {
+      isReadToday: readToday || isDailyAliyahReadToday(cloudUid || userId),
+      progress: mergedProg,
+    };
   } catch (err) {
     console.warn('[Parashá] Error sincronizando con la nube:', err);
   }
@@ -1108,10 +1226,6 @@ export async function markDailyAliyahCompletedToday(
   const currentYearStr = String(now.getFullYear());
   const storageKey = `${DAILY_READ_KEY}_${userId || 'guest'}`;
 
-  if (canonicalId === 'vayera') {
-    localStorage.setItem('parasha_vayera_verified_v1', 'true');
-  }
-
   // 1. Guardar récord diario para ocultar el widget en ToolHub
   const record = {
     dateKey: schedule.dateKey,
@@ -1126,27 +1240,15 @@ export async function markDailyAliyahCompletedToday(
     localStorage.setItem(`${DAILY_READ_KEY}_guest`, JSON.stringify(record));
   }
 
-  // 2. Actualizar el mapa general de progreso de la Parashá con conteo multi-año
+  // 2. Partir del progreso unificado existente de la Parashá para nunca perder aliyot previas
   const progressKey = `${PARASHA_PROGRESS_PREFIX}${canonicalId}_${userId || 'guest'}`;
-  let progress: ParashaProgress = {
+  const existingProgress = getParashaProgress(canonicalId, userId);
+  const progress: ParashaProgress = {
+    ...existingProgress,
     parasha_id: canonicalId,
-    completed_aliyot: [],
-    full_parasha_completed: false,
-    completed_count: 0,
+    completed_aliyot: [...(existingProgress.completed_aliyot || [])],
     last_read_at: nowISO,
-    aliyot_counts: {},
-    aliyot_last_read: {},
-    years_history: {},
   };
-
-  if (typeof window !== 'undefined') {
-    const cachedProg = localStorage.getItem(progressKey);
-    if (cachedProg) {
-      try {
-        progress = { ...progress, ...JSON.parse(cachedProg) };
-      } catch {}
-    }
-  }
 
   const aliyotCounts = { ...(progress.aliyot_counts || {}) };
   const aliyotLastRead = { ...(progress.aliyot_last_read || {}) };
@@ -1175,7 +1277,7 @@ export async function markDailyAliyahCompletedToday(
 
     if (progress.completed_aliyot.length >= 7) {
       progress.full_parasha_completed = true;
-      progress.completed_count = (progress.completed_count || 0) + 1;
+      progress.completed_count = Math.max(progress.completed_count || 0, 1);
     }
   }
 
@@ -1187,6 +1289,7 @@ export async function markDailyAliyahCompletedToday(
 
   if (typeof window !== 'undefined') {
     localStorage.setItem(progressKey, JSON.stringify(progress));
+    localStorage.setItem(`${PARASHA_PROGRESS_PREFIX}${canonicalId}_guest`, JSON.stringify(progress));
   }
 
   // 3. Sincronizar en Supabase (Base de datos y metadata de Auth para disponibilidad inmediata)
@@ -1198,17 +1301,35 @@ export async function markDailyAliyahCompletedToday(
     }
 
     try {
-      await supabase.from('parasha_progress').upsert(
+      const { error: richUpsertErr } = await supabase.from('parasha_progress').upsert(
         {
           user_id: cloudUid,
           parasha_id: canonicalId,
           completed_aliyot: progress.completed_aliyot,
           is_completed: progress.full_parasha_completed,
+          completed_count: progress.completed_count,
+          aliyot_counts: progress.aliyot_counts,
+          aliyot_last_read: progress.aliyot_last_read,
+          years_history: progress.years_history,
           last_read_at: progress.last_read_at,
           date_key: schedule.dateKey,
         },
         { onConflict: 'user_id,parasha_id' }
       );
+
+      if (richUpsertErr) {
+        await supabase.from('parasha_progress').upsert(
+          {
+            user_id: cloudUid,
+            parasha_id: canonicalId,
+            completed_aliyot: progress.completed_aliyot,
+            is_completed: progress.full_parasha_completed,
+            last_read_at: progress.last_read_at,
+            date_key: schedule.dateKey,
+          },
+          { onConflict: 'user_id,parasha_id' }
+        );
+      }
 
       // Respaldo inmediato en user_metadata para replicación en caliente a todos los clientes (móvil y web)
       await supabase.auth.updateUser({
@@ -1231,57 +1352,47 @@ export async function markDailyAliyahCompletedToday(
 }
 
 /**
- * Obtiene el progreso general de la parashá actual
+ * Obtiene el progreso general de la parashá actual combinando todas las claves locales
+ * asociadas a esta parashá (usuario, UUID o guest) sin pérdida de datos.
  */
 export function getParashaProgress(parashaId: string, userId?: string): ParashaProgress {
   const canonicalId = getCanonicalParashaId(parashaId);
-  const defaultProg: ParashaProgress = {
-    parasha_id: canonicalId,
-    completed_aliyot: [],
-    full_parasha_completed: false,
-    completed_count: 0,
-    aliyot_counts: {},
-    aliyot_last_read: {},
-    years_history: {},
-  };
 
-  if (typeof window !== 'undefined') {
-    const candidateKeys = [
-      `${PARASHA_PROGRESS_PREFIX}${canonicalId}_${userId || 'guest'}`,
-      `${PARASHA_PROGRESS_PREFIX}${parashaId}_${userId || 'guest'}`,
-      `${PARASHA_PROGRESS_PREFIX}${canonicalId}_guest`,
-    ];
-
-    for (const key of candidateKeys) {
-      const stored = localStorage.getItem(key);
-      if (stored) {
-        try {
-          const parsed = JSON.parse(stored);
-          if (parsed) {
-            // Verificar que no sea un registro de otra parashá copiado
-            if (parsed.parasha_id && getCanonicalParashaId(parsed.parasha_id) !== canonicalId) {
-              continue;
-            }
-            // DETECTAR Y CORREGIR CONTAMINACIÓN CRUZADA DE PARASHOT:
-            // Si Vayerá tiene progreso copiado de Lej-Lejá (7 aliyot completas o 10 lecturas previas):
-            if (canonicalId === 'vayera' && !localStorage.getItem('parasha_vayera_verified_v1')) {
-              const hasInheritedLechLecha =
-                parsed.completed_count >= 2 ||
-                (parsed.completed_aliyot && parsed.completed_aliyot.length >= 7) ||
-                parsed.aliyot_counts?.[7] === 2;
-              if (hasInheritedLechLecha) {
-                console.warn('[Parashá] Purgando progreso contaminado heredado en Vayerá');
-                localStorage.removeItem(key);
-                continue;
-              }
-            }
-            return { ...defaultProg, ...parsed, parasha_id: canonicalId };
-          }
-        } catch {}
-      }
-    }
+  if (typeof window === 'undefined') {
+    return mergeParashaProgressObjects(canonicalId);
   }
 
-  return defaultProg;
+  const candidateKeys = new Set<string>([
+    `${PARASHA_PROGRESS_PREFIX}${canonicalId}_${userId || 'guest'}`,
+    `${PARASHA_PROGRESS_PREFIX}${parashaId}_${userId || 'guest'}`,
+    `${PARASHA_PROGRESS_PREFIX}${canonicalId}_guest`,
+  ]);
+
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith(`${PARASHA_PROGRESS_PREFIX}${canonicalId}_`)) {
+        candidateKeys.add(k);
+      }
+    }
+  } catch {}
+
+  const foundObjects: Partial<ParashaProgress>[] = [];
+  for (const key of candidateKeys) {
+    try {
+      const stored = localStorage.getItem(key);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed && typeof parsed === 'object') {
+          if (parsed.parasha_id && getCanonicalParashaId(parsed.parasha_id) !== canonicalId) {
+            continue;
+          }
+          foundObjects.push(parsed);
+        }
+      }
+    } catch {}
+  }
+
+  return mergeParashaProgressObjects(canonicalId, ...foundObjects);
 }
 
