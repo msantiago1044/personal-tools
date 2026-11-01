@@ -36,6 +36,7 @@ export const EmocionesModule: React.FC<EmocionesModuleProps> = ({ user, onBackTo
   const [showAddModal, setShowAddModal] = useState(false);
   const [filterEmotion, setFilterEmotion] = useState<string>('all');
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [chartRange, setChartRange] = useState<7 | 14 | 30>(7);
 
   const handleThemeChange = (newTheme: ThemeMode) => {
     setTheme(newTheme);
@@ -113,6 +114,67 @@ export const EmocionesModule: React.FC<EmocionesModuleProps> = ({ user, onBackTo
     if (filterEmotion === 'all') return records;
     return records.filter((r) => r.emotion === filterEmotion);
   }, [records, filterEmotion]);
+
+  // Días para la gráfica de tendencias emocionales según el rango seleccionado
+  const chartDays = useMemo(() => {
+    const list = [];
+    for (let i = chartRange - 1; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
+      // Filtrar registros que coincidan con la fecha local del usuario
+      const dayRecords = records.filter((r) => {
+        try {
+          const recordDate = new Date(r.created_at);
+          const recordDateStr = `${recordDate.getFullYear()}-${String(recordDate.getMonth() + 1).padStart(2, '0')}-${String(recordDate.getDate()).padStart(2, '0')}`;
+          return recordDateStr === dateStr;
+        } catch {
+          return false;
+        }
+      });
+
+      const dayName = d.toLocaleDateString('es-ES', { weekday: 'short' });
+      const dayNum = d.getDate();
+      const monthShort = d.toLocaleDateString('es-ES', { month: 'short' });
+
+      let avgScore = 0;
+      let dominantEmotion: EmotionKey | null = null;
+
+      if (dayRecords.length > 0) {
+        const totalScore = dayRecords.reduce((acc, r) => acc + (r.score || 0), 0);
+        avgScore = totalScore / dayRecords.length;
+
+        // Emoción más frecuente o más reciente del día
+        const counts: Partial<Record<EmotionKey, number>> = {};
+        dayRecords.forEach((r) => {
+          counts[r.emotion] = (counts[r.emotion] || 0) + 1;
+        });
+        let maxCount = 0;
+        (Object.keys(counts) as EmotionKey[]).forEach((key) => {
+          if ((counts[key] || 0) > maxCount) {
+            maxCount = counts[key] || 0;
+            dominantEmotion = key;
+          }
+        });
+        if (!dominantEmotion) {
+          dominantEmotion = dayRecords[dayRecords.length - 1].emotion;
+        }
+      }
+
+      list.push({
+        dateStr,
+        dayName: dayName.charAt(0).toUpperCase() + dayName.slice(1, 3),
+        dayNum,
+        monthShort,
+        formattedDate: `${dayName} ${dayNum} ${monthShort}`,
+        recordsCount: dayRecords.length,
+        avgScore,
+        dominantEmotion,
+      });
+    }
+    return list;
+  }, [records, chartRange]);
 
   const formatTimestamp = (isoDate: string) => {
     try {
@@ -270,6 +332,117 @@ export const EmocionesModule: React.FC<EmocionesModuleProps> = ({ user, onBackTo
                 Historial guardado
               </p>
             </div>
+          </div>
+        </div>
+
+        {/* Gráfica de Tendencia de Estados de Ánimo */}
+        <div className="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <BarChart2 className="w-4 h-4 text-emerald-500" />
+                Tendencia de los Últimos {chartRange} Días
+              </h3>
+              <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                Nivel de bienestar y estado emocional diario (1 al 5)
+              </p>
+            </div>
+            <div className="flex items-center gap-3 self-start sm:self-auto flex-wrap">
+              {/* Selector de Rango */}
+              <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-xl border border-slate-200/60 dark:border-slate-700/60">
+                {([7, 14, 30] as const).map((days) => (
+                  <button
+                    key={days}
+                    onClick={() => setChartRange(days)}
+                    className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition ${
+                      chartRange === days
+                        ? 'bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-xs'
+                        : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                    }`}
+                  >
+                    {days}
+                    <span className="hidden sm:inline"> días</span>
+                    <span className="sm:hidden">d</span>
+                  </button>
+                ))}
+              </div>
+
+              <span className="text-xs font-medium text-slate-400 flex items-center gap-1 shrink-0">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                Meta: Bienestar (4+)
+              </span>
+            </div>
+          </div>
+
+          {/* Barras de la gráfica */}
+          <div
+            className={`pt-6 pb-2 items-end min-h-[160px] ${
+              chartRange === 7
+                ? 'grid grid-cols-7 gap-2'
+                : 'flex items-end gap-1.5 sm:gap-2 overflow-x-auto pb-2 scrollbar-thin'
+            }`}
+          >
+            {chartDays.map((day) => {
+              // Altura porcentual relativa a 5 puntos máx
+              const heightPercent = day.avgScore > 0 ? Math.min(Math.round((day.avgScore / 5) * 100), 100) : 0;
+              const emotionConfig = day.dominantEmotion ? EMOTIONS_CONFIG[day.dominantEmotion] : null;
+
+              return (
+                <div
+                  key={day.dateStr}
+                  className={`flex flex-col items-center gap-1.5 sm:gap-2 h-full justify-end group ${
+                    chartRange > 7 ? 'min-w-[32px] sm:min-w-[40px] flex-1' : ''
+                  }`}
+                >
+                  <div className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 group-hover:scale-110 transition-transform">
+                    {day.avgScore > 0 ? day.avgScore.toFixed(1) : '--'}
+                  </div>
+
+                  {/* Contenedor de barra */}
+                  <div className="w-full max-w-[36px] bg-slate-100 dark:bg-slate-800 rounded-xl h-28 flex items-end p-1 relative overflow-hidden">
+                    {/* Línea guía de Meta: 4 (80%) */}
+                    <div className="absolute top-[20%] left-0 right-0 border-b border-dashed border-slate-300 dark:border-slate-700 pointer-events-none" />
+
+                    {day.avgScore > 0 && (
+                      <div
+                        style={{ height: `${heightPercent}%` }}
+                        className={`w-full rounded-lg transition-all duration-300 flex items-center justify-center ${
+                          day.avgScore >= 4
+                            ? 'bg-gradient-to-t from-emerald-600 to-teal-400'
+                            : day.avgScore >= 3
+                            ? 'bg-gradient-to-t from-indigo-600 to-sky-400'
+                            : 'bg-gradient-to-t from-amber-600 to-rose-400'
+                        }`}
+                        title={
+                          day.avgScore > 0
+                            ? `${day.formattedDate}: Promedio ${day.avgScore.toFixed(1)}/5 (${day.recordsCount} ${
+                                day.recordsCount === 1 ? 'registro' : 'registros'
+                              }) - ${emotionConfig?.label || ''}`
+                            : `${day.formattedDate}: Sin registros de ánimo`
+                        }
+                      >
+                        {day.avgScore > 0 && (
+                          <span className="text-[10px] filter drop-shadow-xs">
+                            {emotionConfig?.emoji || '✨'}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col items-center leading-tight">
+                    <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
+                      {day.dayName}
+                    </span>
+                    {chartRange > 7 && (
+                      <span className="text-[9px] text-slate-400 dark:text-slate-500 font-medium">
+                        {day.dayNum}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
