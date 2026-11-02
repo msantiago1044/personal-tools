@@ -13,7 +13,6 @@ import {
   SLEEP_QUALITY_CONFIG,
 } from '../lib/sleep';
 import { useModalBackHandler } from '../lib/useModalBackHandler';
-import { recordModuleUsage } from '../modules/moduleUsage';
 import { X, Sparkles, Check, MessageSquare, Moon, Sun, Clock } from 'lucide-react';
 
 interface MoodCheckModalProps {
@@ -103,9 +102,8 @@ export const MoodCheckModal: React.FC<MoodCheckModalProps> = ({
   const performSave = async (emotionKey: EmotionKey, customNote?: string, saveSleep: boolean = false) => {
     setSaving(true);
     try {
-      // 1. Guardar emoción siempre y contabilizar uso del módulo de emociones
+      // 1. Guardar emoción siempre
       await saveEmotionRecord(userId, emotionKey, customNote);
-      recordModuleUsage('emotions', userId);
 
       // 2. Si corresponde al sueño y el usuario decidió guardarlo
       if (needsSleepPrompt && saveSleep && durationMinutes > 0) {
@@ -130,7 +128,6 @@ export const MoodCheckModal: React.FC<MoodCheckModalProps> = ({
           quality_score: sleepQuality,
           notes: customNote ? `Ánimo matutino: ${emotionKey}. ${customNote}` : `Ánimo matutino: ${emotionKey}`,
         });
-        recordModuleUsage('sleep', userId);
       }
 
       setSavedSuccess(true);
