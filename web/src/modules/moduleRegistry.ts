@@ -79,6 +79,18 @@ const SidurModule = React.lazy(() =>
   import('../pages/sidur/SidurModule').then((m) => ({ default: m.SidurModule }))
 );
 
+const WaterModule = React.lazy(() =>
+  import('../pages/water/WaterModule').then((m) => ({ default: m.WaterModule }))
+);
+
+const WeatherModule = React.lazy(() =>
+  import('../pages/weather/WeatherModule').then((m) => ({ default: m.WeatherModule }))
+);
+
+const FoodModule = React.lazy(() =>
+  import('../pages/food/FoodModule').then((m) => ({ default: m.FoodModule }))
+);
+
 
 /**
  * Registro Central Desacoplado de Módulos (Architecture RFC - OCP)
@@ -264,6 +276,45 @@ export const MODULE_REGISTRY: ModuleManifest[] = [
     status: 'active',
     badge: 'En Vivo',
     component: NewsModule,
+  },
+  {
+    id: 'water',
+    name: 'Agua & Hidratación',
+    shortName: 'Agua',
+    description: 'Consumo diario de agua, vasos tomados, meta diaria de hidratación y racha.',
+    emoji: '💧',
+    icon: 'droplet',
+    route: '/water',
+    hashAliases: ['water', 'agua', 'hidratacion', 'hydration'],
+    status: 'active',
+    badge: 'Bienestar',
+    component: WaterModule,
+  },
+  {
+    id: 'weather',
+    name: 'Clima & Entorno',
+    shortName: 'Clima',
+    description: 'Registro de condiciones climáticas del día, temperatura, sensación térmica e impacto.',
+    emoji: '🌤️',
+    icon: 'cloud-sun',
+    route: '/weather',
+    hashAliases: ['weather', 'clima', 'tiempo', 'temperatura'],
+    status: 'active',
+    badge: 'Entorno',
+    component: WeatherModule,
+  },
+  {
+    id: 'food',
+    name: 'Alimentación & Comidas',
+    shortName: 'Alimentación',
+    description: 'Registro diario de qué comiste: desayuno, almuerzo, cena, snacks y balance nutricional.',
+    emoji: '🥗',
+    icon: 'utensils',
+    route: '/food',
+    hashAliases: ['food', 'comida', 'comidas', 'alimentacion', 'dieta', 'nutricion'],
+    status: 'active',
+    badge: 'Salud',
+    component: FoodModule,
   },
 ];
 

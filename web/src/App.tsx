@@ -3,6 +3,7 @@ import { supabase, signOut, saveSessionBackup, tryRestoreSessionBackup } from '.
 import { LoginPage } from './pages/LoginPage';
 import { ToolHub } from './components/ToolHub';
 import { shouldPromptMoodCheck, shouldPromptMoodCheckAsync } from './lib/emotions';
+import { shouldPromptEveningCheck, shouldPromptEveningCheckAsync } from './lib/eveningCheck';
 import { shouldPromptPirkeiAvotAsync, getStoredPirkeiAvotBookmark, syncPirkeiAvotWithCloud } from './lib/pirkeiAvot';
 import { syncParashaWithCloud } from './lib/parashaService';
 import { PirkeiAvotBookmark } from '../../packages/shared/src/types';
@@ -14,6 +15,9 @@ import { ToastContainer } from './components/ToastContainer';
 // Modales globales cargados bajo demanda para mantener el Launcher ultra liviano
 const MoodCheckModal = React.lazy(() =>
   import('./components/MoodCheckModal').then((m) => ({ default: m.MoodCheckModal }))
+);
+const EveningCheckModal = React.lazy(() =>
+  import('./components/EveningCheckModal').then((m) => ({ default: m.EveningCheckModal }))
 );
 const PirkeiAvotPromptModal = React.lazy(() =>
   import('./components/pirkei_avot/PirkeiAvotPromptModal').then((m) => ({ default: m.PirkeiAvotPromptModal }))
@@ -37,6 +41,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [currentView, setCurrentView] = useState<string>('hub');
   const [showMoodPrompt, setShowMoodPrompt] = useState(false);
+  const [showEveningPrompt, setShowEveningPrompt] = useState(false);
   const [showAvotPrompt, setShowAvotPrompt] = useState(false);
   const [avotBookmark, setAvotBookmark] = useState<PirkeiAvotBookmark>(() => getStoredPirkeiAvotBookmark());
   const [avotGreeting, setAvotGreeting] = useState<string>('Pausa de Mediodía');
@@ -179,6 +184,42 @@ export default function App() {
     };
   }, [session, showMoodPrompt]);
 
+  // Chequeo de la tarde a las 7:00 PM (19:00 hrs) para Agua, Clima y Comidas
+  useEffect(() => {
+    if (!session?.user) return;
+
+    let isMounted = true;
+    let isChecking = false;
+
+    const checkEveningPrompt = async () => {
+      if (isChecking || showEveningPrompt || showMoodPrompt) return;
+
+      // Verificación rápida local de hora (>= 19:00) y si ya se contestó/descartó hoy
+      if (!shouldPromptEveningCheck()) return;
+
+      isChecking = true;
+      try {
+        const should = await shouldPromptEveningCheckAsync(session.user.id);
+        if (isMounted && should) {
+          setShowEveningPrompt(true);
+        }
+      } catch (err) {
+        console.warn('Error verificando chequeo de la tarde en la nube:', err);
+      } finally {
+        isChecking = false;
+      }
+    };
+
+    const timer = setTimeout(checkEveningPrompt, 1500);
+    window.addEventListener('focus', checkEveningPrompt);
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+      window.removeEventListener('focus', checkEveningPrompt);
+    };
+  }, [session, showEveningPrompt, showMoodPrompt]);
+
   // Sugerencia de lectura de Pirkei Avot a mediodía o en la tarde (12:00 a 19:30)
   // Sincroniza previamente con la nube para que reconozca lecturas hechas en laptop u otro dispositivo
   useEffect(() => {
@@ -287,6 +328,18 @@ export default function App() {
             userName={session.user.user_metadata?.full_name}
             isOpen={showMoodPrompt}
             onClose={() => setShowMoodPrompt(false)}
+          />
+        </Suspense>
+      )}
+
+      {/* Ventana flotante de chequeo de la tarde a las 7:00 PM (Cargada bajo demanda) */}
+      {showEveningPrompt && (
+        <Suspense fallback={null}>
+          <EveningCheckModal
+            userId={session.user.id}
+            userName={session.user.user_metadata?.full_name}
+            isOpen={showEveningPrompt}
+            onClose={() => setShowEveningPrompt(false)}
           />
         </Suspense>
       )}
