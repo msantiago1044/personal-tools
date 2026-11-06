@@ -54,49 +54,21 @@ export const EveningCheckDailyCard: React.FC<EveningCheckDailyCardProps> = ({
     };
   }, [userId]);
 
-  // Si ya se completó el check-in de hoy
-  if (isCompleted) {
-    return (
-      <div className="relative mb-6 rounded-2xl p-3.5 sm:p-4 transition-all duration-300 border bg-slate-50/80 dark:bg-slate-900/40 border-slate-200/80 dark:border-slate-800/80 flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center text-lg shrink-0">
-            <CheckCircle2 className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
-                Check-in de las 7:00 PM completado
-              </span>
-              <span className="text-[10px] font-semibold px-2 py-0.2 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400">
-                Al día
-              </span>
-            </div>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400">
-              Registraste agua, clima y alimentación de hoy.
-            </p>
-          </div>
-        </div>
-
-        <button
-          type="button"
-          onClick={onOpenCheck}
-          className="text-xs font-semibold px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition shrink-0"
-        >
-          Ver / Editar
-        </button>
-      </div>
-    );
+  // 1. Antes de las 7:00 PM, no mostrar nada: el día aún está transcurriendo y no corresponde preguntar
+  if (!isEvening) {
+    return null;
   }
 
-  // Si está pendiente (especialmente visible y destacado después de las 7:00 PM)
+  // 2. Si ya se completó el check-in de hoy, ocultar el banner para mantener el Hub limpio
+  if (isCompleted) {
+    return null;
+  }
+
+  // 3. Si son las 7:00 PM en adelante y está pendiente, mostrar el banner destacado
   return (
     <div
       onClick={onOpenCheck}
-      className={`relative mb-6 rounded-2xl p-4 sm:p-5 transition-all duration-300 shadow-xs border cursor-pointer group ${
-        isEvening
-          ? 'bg-gradient-to-r from-amber-500/15 via-rose-500/10 to-sky-500/10 dark:from-amber-950/40 dark:via-rose-950/25 dark:to-sky-950/25 border-amber-500/40 dark:border-amber-700/50 hover:border-amber-500/70'
-          : 'bg-gradient-to-r from-slate-100/80 to-slate-50 dark:from-slate-900/60 dark:to-slate-900/30 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
-      }`}
+      className="relative mb-6 rounded-2xl p-4 sm:p-5 transition-all duration-300 shadow-xs border cursor-pointer group bg-gradient-to-r from-amber-500/15 via-rose-500/10 to-sky-500/10 dark:from-amber-950/40 dark:via-rose-950/25 dark:to-sky-950/25 border-amber-500/40 dark:border-amber-700/50 hover:border-amber-500/70"
     >
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-start gap-3.5">
