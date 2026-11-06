@@ -5,6 +5,7 @@ import { MODULE_REGISTRY, ModuleManifest } from '../modules/moduleRegistry';
 import { isStandaloneMode } from '../lib/pwa';
 import { InstallPwaModal } from './InstallPwaModal';
 import { ParashaDailyCard } from './ParashaDailyCard';
+import { EveningCheckDailyCard } from './EveningCheckDailyCard';
 import { syncParashaWithCloud } from '../lib/parashaService';
 import { hasReadPirkeiAvotToday, getStoredPirkeiAvotBookmark, syncPirkeiAvotWithCloud } from '../lib/pirkeiAvot';
 import {
@@ -30,6 +31,7 @@ interface ToolHubProps {
   avatarUrl?: string;
   onSelectTool: (route: string) => void;
   onLogout: () => void;
+  onOpenEveningCheck?: () => void;
 }
 
 export const ToolHub: React.FC<ToolHubProps> = ({
@@ -39,6 +41,7 @@ export const ToolHub: React.FC<ToolHubProps> = ({
   avatarUrl,
   onSelectTool,
   onLogout,
+  onOpenEveningCheck,
 }) => {
   const [theme, setTheme] = useState<ThemeMode>(getStoredTheme());
   const [showInstallModal, setShowInstallModal] = useState(false);
@@ -252,6 +255,14 @@ export const ToolHub: React.FC<ToolHubProps> = ({
             onSelectTool('/parasha');
           }}
         />
+
+        {/* Widget diario de Check-in de las 7:00 PM (Agua, Clima, Comidas) */}
+        {onOpenEveningCheck && (
+          <EveningCheckDailyCard
+            userId={userKey}
+            onOpenCheck={onOpenEveningCheck}
+          />
+        )}
 
         {/* Módulos según modo de visualización */}
         {layoutMode === 'grid' ? (

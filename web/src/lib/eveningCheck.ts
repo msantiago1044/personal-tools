@@ -6,35 +6,53 @@ import { hasFoodRecordedForDate } from './food';
 
 const LAST_EVENING_PROMPT_KEY = 'last_evening_prompt_time';
 const LAST_EVENING_COMPLETED_DATE_KEY = 'last_evening_completed_date';
-const NINETY_MINUTES_MS = 90 * 60 * 1000;
+// Posponer por 20 minutos si el usuario hace clic en "Recordar más tarde"
+const TWENTY_MINUTES_MS = 20 * 60 * 1000;
 
 /**
- * Comprueba de forma síncrona si corresponde preguntar el chequeo de las 7:00 PM (19:00 hrs)
+ * Indica si actualmente estamos en horario nocturno / tarde (a partir de las 19:00 hrs)
+ */
+export function isEveningCheckTime(): boolean {
+  if (typeof window === 'undefined') return false;
+  const now = new Date();
+  const currentHour = now.getHours();
+  // Desde las 7:00 PM (19:00 hrs) hasta la medianoche y primeras horas de la madrugada (03:59)
+  return currentHour >= 19 || currentHour < 4;
+}
+
+/**
+ * Comprueba de forma síncrona si el usuario ya completó el check-in de hoy
+ */
+export function isEveningCheckCompletedToday(): boolean {
+  if (typeof window === 'undefined') return false;
+  const todayStr = getLocalDateString();
+  const completedDate = localStorage.getItem(LAST_EVENING_COMPLETED_DATE_KEY);
+  return completedDate === todayStr;
+}
+
+/**
+ * Comprueba de forma síncrona si corresponde abrir la ventana de chequeo de las 7:00 PM:
+ * 1. Es la hora estipulada (>= 19:00 hrs).
+ * 2. No se ha completado hoy.
+ * 3. No fue descartado hace menos de 20 minutos en este dispositivo.
  */
 export function shouldPromptEveningCheck(): boolean {
   if (typeof window === 'undefined') return false;
 
-  const now = new Date();
-  const currentHour = now.getHours();
-
-  // Solo se activa a partir de las 7 de la tarde (19:00) hasta la medianoche (23:59)
-  if (currentHour < 19) {
+  if (!isEveningCheckTime()) {
     return false;
   }
-
-  const todayStr = getLocalDateString(now);
 
   // Si ya se completó el chequeo para el día de hoy, no volver a preguntar
-  const completedDate = localStorage.getItem(LAST_EVENING_COMPLETED_DATE_KEY);
-  if (completedDate === todayStr) {
+  if (isEveningCheckCompletedToday()) {
     return false;
   }
 
-  // Si se descartó recientemente (menos de 90 minutos), no molestar
+  // Si se pospuso recientemente (menos de 20 minutos), no molestar todavía
   const lastPrompt = localStorage.getItem(LAST_EVENING_PROMPT_KEY);
   if (lastPrompt) {
     const lastTime = parseInt(lastPrompt, 10);
-    if (!isNaN(lastTime) && Date.now() - lastTime < NINETY_MINUTES_MS) {
+    if (!isNaN(lastTime) && Date.now() - lastTime < TWENTY_MINUTES_MS) {
       return false;
     }
   }
@@ -82,7 +100,7 @@ export async function shouldPromptEveningCheckAsync(userId: string): Promise<boo
 }
 
 /**
- * Marca el chequeo de la tarde como descartado temporalmente (posponer)
+ * Marca el chequeo de la tarde como pospuesto temporalmente (20 minutos)
  */
 export function markEveningCheckDismissed(userId?: string): void {
   if (typeof window === 'undefined') return;
@@ -98,6 +116,8 @@ export function markEveningCheckDismissed(userId?: string): void {
       }).catch(() => {});
     } catch {}
   }
+
+  window.dispatchEvent(new CustomEvent('evening_check_updated'));
 }
 
 /**
@@ -117,5 +137,6 @@ export function markEveningCheckCompleted(userId?: string): void {
       }).catch(() => {});
     } catch {}
   }
-}
 
+  window.dispatchEvent(new CustomEvent('evening_check_updated'));
+}

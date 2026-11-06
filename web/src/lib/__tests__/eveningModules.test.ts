@@ -200,15 +200,15 @@ describe('Módulos de la Tarde: Agua, Clima y Alimentación', () => {
       vi.useRealTimers();
     });
 
-    it('no debe activarse si fue descartado hace menos de 90 minutos', () => {
+    it('no debe activarse si fue pospuesto hace menos de 20 minutos', () => {
       vi.useFakeTimers();
       vi.setSystemTime(new Date('2026-11-05T19:00:00'));
 
       markEveningCheckDismissed(testUserId);
       expect(shouldPromptEveningCheck()).toBe(false);
 
-      // Avanzar 91 minutos
-      vi.setSystemTime(new Date('2026-11-05T20:31:00'));
+      // Avanzar 21 minutos
+      vi.setSystemTime(new Date('2026-11-05T19:21:00'));
       expect(shouldPromptEveningCheck()).toBe(true);
       vi.useRealTimers();
     });

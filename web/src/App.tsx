@@ -154,7 +154,10 @@ export default function App() {
     let isChecking = false;
 
     const checkPrompt = async () => {
-      if (isChecking || showMoodPrompt) return;
+      if (isChecking || showMoodPrompt || showEveningPrompt) return;
+
+      // Si es horario de la tarde (>= 19:00 hrs) y el chequeo de cierre está pendiente, priorizarlo y no interrumpir con ánimo simple
+      if (shouldPromptEveningCheck()) return;
 
       // Verificación rápida local: si ya se preguntó o registró hace menos de 1 hora en este navegador, salir
       if (!shouldPromptMoodCheck()) return;
@@ -186,13 +189,13 @@ export default function App() {
 
   // Chequeo de la tarde a las 7:00 PM (19:00 hrs) para Agua, Clima y Comidas
   useEffect(() => {
-    if (!session?.user) return;
+    if (!session?.user?.id) return;
 
     let isMounted = true;
     let isChecking = false;
 
     const checkEveningPrompt = async () => {
-      if (isChecking || showEveningPrompt || showMoodPrompt) return;
+      if (isChecking || showEveningPrompt) return;
 
       // Verificación rápida local de hora (>= 19:00) y si ya se contestó/descartó hoy
       if (!shouldPromptEveningCheck()) return;
@@ -210,13 +213,27 @@ export default function App() {
       }
     };
 
-    const timer = setTimeout(checkEveningPrompt, 1500);
-    window.addEventListener('focus', checkEveningPrompt);
+    // Prioridad rápida (500ms tras montar sesión)
+    const timer = setTimeout(checkEveningPrompt, 500);
+
+    // Revisar periódicamente cada 30 segundos por si el usuario tiene la aplicación abierta al dar las 7:00 PM
+    const interval = setInterval(checkEveningPrompt, 30000);
+
+    const handleFocusOrVisibility = () => {
+      if (typeof document === 'undefined' || document.visibilityState === 'visible') {
+        checkEveningPrompt();
+      }
+    };
+
+    window.addEventListener('focus', handleFocusOrVisibility);
+    document.addEventListener('visibilitychange', handleFocusOrVisibility);
 
     return () => {
       isMounted = false;
       clearTimeout(timer);
-      window.removeEventListener('focus', checkEveningPrompt);
+      clearInterval(interval);
+      window.removeEventListener('focus', handleFocusOrVisibility);
+      document.removeEventListener('visibilitychange', handleFocusOrVisibility);
     };
   }, [session, showEveningPrompt, showMoodPrompt]);
 
@@ -305,6 +322,7 @@ export default function App() {
           userEmail={session.user.email}
           userName={session.user.user_metadata?.full_name}
           avatarUrl={session.user.user_metadata?.avatar_url}
+          onOpenEveningCheck={() => setShowEveningPrompt(true)}
           onSelectTool={(route) => {
             const matched = MODULE_REGISTRY.find(
               (m) => route.startsWith(m.route) || m.hashAliases.some((alias) => route.includes(alias))
