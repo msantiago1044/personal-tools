@@ -911,34 +911,51 @@ export function isDailyAliyahReadToday(userId?: string): boolean {
           if (recordParasha !== canonicalId) {
             continue;
           }
+          if (record.completedFull === true) return true;
+          if (Array.isArray(record.completedAliyot)) {
+            if (targetNum === 0 && record.completedAliyot.length >= 7) return true;
+            if (targetNum > 0 && record.completedAliyot.includes(targetNum)) return true;
+          }
           if (targetNum === 0) {
-            if (record.completedFull === true || record.completedAliyah === 0) return true;
+            if (record.completedAliyah === 0) return true;
           } else {
-            if (record.completedAliyah === targetNum || record.completedFull === true) return true;
+            if (record.completedAliyah === targetNum || record.completedAliyah >= targetNum) return true;
           }
         }
       }
     } catch {}
   }
 
-  // 2. Comprobar si en el progreso guardado de la parashá actual ya figura leída hoy
+  // 2. Comprobar si en el progreso guardado de la parashá actual ya figura leída en este ciclo semanal
   const prog = getParashaProgress(canonicalId, userId);
   if (prog && prog.parasha_id === canonicalId) {
-    if (prog.full_parasha_completed) {
-      if (prog.last_read_at) {
-        try {
-          const readDateKey = new Date(prog.last_read_at).toISOString().split('T')[0];
-          if (readDateKey === schedule.dateKey) return true;
-        } catch {}
+    const FOURTEEN_DAYS_MS = 14 * 24 * 60 * 60 * 1000;
+    const nowMs = Date.now();
+    const isRecentCycle = (dateStr?: string) => {
+      if (!dateStr) return true; // Si no hay timestamp explícito pero está en el progreso local, pertenece al ciclo activo
+      const ms = new Date(dateStr).getTime();
+      return !isNaN(ms) && (nowMs - ms) <= FOURTEEN_DAYS_MS;
+    };
+
+    // 2a. Si la parashá completa ya fue completada (o tiene las 7 aliyot leídas)
+    if (prog.full_parasha_completed || (Array.isArray(prog.completed_aliyot) && prog.completed_aliyot.length >= 7)) {
+      if (isRecentCycle(prog.last_read_at)) {
+        return true;
       }
     }
-    if (targetNum > 0 && prog.completed_aliyot?.includes(targetNum)) {
+
+    // 2b. Si hoy es Shabat mañana (targetNum === 0)
+    if (targetNum === 0) {
+      if (prog.full_parasha_completed && isRecentCycle(prog.last_read_at)) {
+        return true;
+      }
+    }
+
+    // 2c. Si la aliyá objetivo de hoy (1 a 7) ya fue leída durante el ciclo de esta Parashá
+    if (targetNum > 0 && Array.isArray(prog.completed_aliyot) && prog.completed_aliyot.includes(targetNum)) {
       const aliyahLastRead = prog.aliyot_last_read?.[targetNum] || prog.last_read_at;
-      if (aliyahLastRead) {
-        try {
-          const readDateKey = new Date(aliyahLastRead).toISOString().split('T')[0];
-          if (readDateKey === schedule.dateKey) return true;
-        } catch {}
+      if (isRecentCycle(aliyahLastRead)) {
+        return true;
       }
     }
   }
@@ -1004,9 +1021,13 @@ export async function syncParashaWithCloud(
         }
 
         if (metaDailyRead.dateKey === schedule.dateKey) {
+          const completedAl = Number(metaDailyRead.completedAliyah);
+          const metaAliyot = Array.isArray(metaDailyRead.completedAliyot) ? metaDailyRead.completedAliyot : [];
           if (
             metaDailyRead.completedFull ||
-            metaDailyRead.completedAliyah === schedule.targetAliyahNumber ||
+            completedAl === schedule.targetAliyahNumber ||
+            metaAliyot.includes(schedule.targetAliyahNumber) ||
+            (completedAl >= schedule.targetAliyahNumber && schedule.targetAliyahNumber > 0) ||
             schedule.targetAliyahNumber === 0
           ) {
             const storageKey = `${DAILY_READ_KEY}_${userId || 'guest'}`;
@@ -1148,33 +1169,32 @@ export async function syncParashaWithCloud(
 
     // 5. Evaluar si la aliyá objetivo de hoy ya fue leída en el móvil o en la web
     let readToday = false;
-    if (matchingRow?.date_key === schedule.dateKey) {
-      if (schedule.targetAliyahNumber === 0) {
-        readToday = mergedProg.full_parasha_completed;
-      } else {
-        readToday =
-          mergedProg.completed_aliyot.includes(schedule.targetAliyahNumber) ||
-          mergedProg.full_parasha_completed;
+    const targetNum = schedule.targetAliyahNumber;
+    const FOURTEEN_DAYS_MS = 14 * 24 * 60 * 60 * 1000;
+    const nowMs = Date.now();
+    const isRecentCycle = (dateStr?: string) => {
+      if (!dateStr) return true;
+      const ms = new Date(dateStr).getTime();
+      return !isNaN(ms) && (nowMs - ms) <= FOURTEEN_DAYS_MS;
+    };
+
+    if (mergedProg.full_parasha_completed || (Array.isArray(mergedProg.completed_aliyot) && mergedProg.completed_aliyot.length >= 7)) {
+      if (isRecentCycle(mergedProg.last_read_at)) {
+        readToday = true;
+      }
+    } else if (targetNum === 0) {
+      if (mergedProg.full_parasha_completed && isRecentCycle(mergedProg.last_read_at)) {
+        readToday = true;
+      }
+    } else if (targetNum > 0 && Array.isArray(mergedProg.completed_aliyot) && mergedProg.completed_aliyot.includes(targetNum)) {
+      const aliyahTime = mergedProg.aliyot_last_read?.[targetNum] || mergedProg.last_read_at;
+      if (isRecentCycle(aliyahTime)) {
+        readToday = true;
       }
     }
 
-    if (!readToday && schedule.targetAliyahNumber > 0) {
-      const aliyahTime = mergedProg.aliyot_last_read?.[schedule.targetAliyahNumber];
-      if (aliyahTime) {
-        try {
-          if (new Date(aliyahTime).toISOString().split('T')[0] === schedule.dateKey) {
-            readToday = true;
-          }
-        } catch {}
-      }
-    }
-
-    if (!readToday && mergedProg.last_read_at && mergedProg.completed_aliyot.includes(schedule.targetAliyahNumber)) {
-      try {
-        if (new Date(mergedProg.last_read_at).toISOString().split('T')[0] === schedule.dateKey) {
-          readToday = true;
-        }
-      } catch {}
+    if (!readToday && matchingRow?.date_key === schedule.dateKey) {
+      readToday = true;
     }
 
     if (readToday) {
@@ -1182,6 +1202,7 @@ export async function syncParashaWithCloud(
         dateKey: schedule.dateKey,
         parashaId: canonicalId,
         completedAliyah: schedule.targetAliyahNumber,
+        completedAliyot: mergedProg.completed_aliyot,
         completedFull: mergedProg.full_parasha_completed,
         timestamp: Date.now(),
       };
@@ -1226,21 +1247,6 @@ export async function markDailyAliyahCompletedToday(
   const currentYearStr = String(now.getFullYear());
   const storageKey = `${DAILY_READ_KEY}_${userId || 'guest'}`;
 
-  // 1. Guardar récord diario para ocultar el widget en ToolHub
-  const record = {
-    dateKey: schedule.dateKey,
-    parashaId: canonicalId,
-    completedAliyah: aliyahNumber,
-    completedFull: aliyahNumber === 0,
-    timestamp: Date.now(),
-  };
-
-  if (typeof window !== 'undefined') {
-    localStorage.setItem(storageKey, JSON.stringify(record));
-    localStorage.setItem(`${DAILY_READ_KEY}_guest`, JSON.stringify(record));
-  }
-
-  // 2. Partir del progreso unificado existente de la Parashá para nunca perder aliyot previas
   const progressKey = `${PARASHA_PROGRESS_PREFIX}${canonicalId}_${userId || 'guest'}`;
   const existingProgress = getParashaProgress(canonicalId, userId);
   const progress: ParashaProgress = {
@@ -1287,9 +1293,22 @@ export async function markDailyAliyahCompletedToday(
   progress.years_history = yearsHistory;
   progress.last_read_at = nowISO;
 
+  // 1. Guardar récord diario enriquecido con todas las aliyot completadas
+  const record = {
+    dateKey: schedule.dateKey,
+    parashaId: canonicalId,
+    completedAliyah: aliyahNumber,
+    completedAliyot: progress.completed_aliyot,
+    completedFull: progress.full_parasha_completed,
+    timestamp: Date.now(),
+  };
+
   if (typeof window !== 'undefined') {
+    localStorage.setItem(storageKey, JSON.stringify(record));
+    localStorage.setItem(`${DAILY_READ_KEY}_guest`, JSON.stringify(record));
     localStorage.setItem(progressKey, JSON.stringify(progress));
     localStorage.setItem(`${PARASHA_PROGRESS_PREFIX}${canonicalId}_guest`, JSON.stringify(progress));
+    window.dispatchEvent(new CustomEvent('parasha_progress_updated'));
   }
 
   // 3. Sincronizar en Supabase (Base de datos y metadata de Auth para disponibilidad inmediata)
