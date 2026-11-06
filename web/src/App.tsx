@@ -154,10 +154,8 @@ export default function App() {
     let isChecking = false;
 
     const checkPrompt = async () => {
+      // Si alguna ventana modal ya está abierta, esperar sin solaparse
       if (isChecking || showMoodPrompt || showEveningPrompt) return;
-
-      // Si es horario de la tarde (>= 19:00 hrs) y el chequeo de cierre está pendiente, priorizarlo y no interrumpir con ánimo simple
-      if (shouldPromptEveningCheck()) return;
 
       // Verificación rápida local: si ya se preguntó o registró hace menos de 1 hora en este navegador, salir
       if (!shouldPromptMoodCheck()) return;
@@ -175,7 +173,7 @@ export default function App() {
       }
     };
 
-    const timer = setTimeout(checkPrompt, 600);
+    const timer = setTimeout(checkPrompt, 1200);
 
     // Al volver a la pestaña/app durante el día, comprobar si corresponde preguntar
     window.addEventListener('focus', checkPrompt);
@@ -185,7 +183,7 @@ export default function App() {
       clearTimeout(timer);
       window.removeEventListener('focus', checkPrompt);
     };
-  }, [session, showMoodPrompt]);
+  }, [session, showMoodPrompt, showEveningPrompt]);
 
   // Chequeo de la tarde a las 7:00 PM (19:00 hrs) para Agua, Clima y Comidas
   useEffect(() => {

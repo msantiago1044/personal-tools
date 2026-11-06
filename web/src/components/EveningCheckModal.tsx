@@ -14,6 +14,11 @@ import {
   FOOD_QUALITY_CONFIG,
 } from '../lib/food';
 import {
+  EMOTIONS_CONFIG,
+  EmotionKey,
+  saveEmotionRecord,
+} from '../lib/emotions';
+import {
   markEveningCheckDismissed,
   markEveningCheckCompleted,
 } from '../lib/eveningCheck';
@@ -30,6 +35,7 @@ import {
   Minus,
   Sunset,
   ArrowRight,
+  Smile,
 } from 'lucide-react';
 
 interface EveningCheckModalProps {
@@ -63,6 +69,9 @@ export const EveningCheckModal: React.FC<EveningCheckModalProps> = ({
   const [lunch, setLunch] = useState<string>('');
   const [dinner, setDinner] = useState<string>('');
   const [foodQuality, setFoodQuality] = useState<number>(4);
+
+  // 4. Estado Emociones
+  const [selectedEmotion, setSelectedEmotion] = useState<EmotionKey | null>(null);
 
   // Estados UI
   const [saving, setSaving] = useState(false);
@@ -120,6 +129,15 @@ export const EveningCheckModal: React.FC<EveningCheckModalProps> = ({
         quality_score: foodQuality,
         notes: !showDetailedMeals && foodSummary ? foodSummary : undefined,
       });
+
+      // 4. Guardar Emoción de la tarde/noche si el usuario la seleccionó
+      if (selectedEmotion) {
+        await saveEmotionRecord(
+          userId,
+          selectedEmotion,
+          'Registrado en check-in de cierre de las 7:00 PM'
+        );
+      }
 
       // Marcar chequeo de las 7:00 PM completado para hoy
       markEveningCheckCompleted(userId);
@@ -370,6 +388,46 @@ export const EveningCheckModal: React.FC<EveningCheckModalProps> = ({
                     );
                   })}
                 </div>
+              </div>
+            </div>
+
+            {/* 4. SECCIÓN: EMOCIONES / ÁNIMO AL CERRAR EL DÍA */}
+            <div className="p-3.5 rounded-2xl bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/30 space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-indigo-600 dark:text-indigo-400">
+                  <Smile className="w-4 h-4" />
+                  <span>4. ¿Cómo te sientes al cerrar el día? (opcional)</span>
+                </div>
+                {selectedEmotion && (
+                  <span className="text-xs font-bold text-indigo-700 dark:text-indigo-300">
+                    {EMOTIONS_CONFIG[selectedEmotion]?.emoji} {EMOTIONS_CONFIG[selectedEmotion]?.label}
+                  </span>
+                )}
+              </div>
+
+              <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5 pt-1">
+                {(Object.keys(EMOTIONS_CONFIG) as EmotionKey[]).map((key) => {
+                  const cfg = EMOTIONS_CONFIG[key];
+                  const isSelected = selectedEmotion === key;
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => setSelectedEmotion(isSelected ? null : key)}
+                      className={`flex flex-col items-center justify-center py-2 px-1 rounded-xl border transition-all duration-150 ${
+                        isSelected
+                          ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/60 ring-2 ring-indigo-500/20 shadow-xs'
+                          : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800'
+                      }`}
+                      title={cfg.label}
+                    >
+                      <span className="text-xl leading-none mb-1">{cfg.emoji}</span>
+                      <span className="text-[10px] font-semibold text-slate-700 dark:text-slate-200 leading-tight truncate max-w-full">
+                        {cfg.label}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
