@@ -931,6 +931,9 @@ export const ParashaModule: React.FC<ParashaModuleProps> = ({
           <button
             onClick={() => {
               if (selectedAliyah < 7) {
+                if (!currentAliyahStats.isReadToday) {
+                  markDailyAliyahCompletedToday(selectedAliyah, parasha?.id || schedule.parashaId, user?.id);
+                }
                 setSelectedAliyah(selectedAliyah + 1);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }

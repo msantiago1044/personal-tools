@@ -53,6 +53,7 @@ import {
   isDailyAliyahReadToday,
   markDailyAliyahCompletedToday,
   getParashaProgress,
+  getCanonicalParashaId,
 } from '../parashaService';
 
 describe('Parashá Reading & Multiple Aliyot Tracking', () => {
@@ -60,7 +61,49 @@ describe('Parashá Reading & Multiple Aliyot Tracking', () => {
     store = {};
   });
 
+  it('normalizes toldot and toledot to the same canonical ID toldot', () => {
+    expect(getCanonicalParashaId('toldot')).toBe('toldot');
+    expect(getCanonicalParashaId('toledot')).toBe('toldot');
+    expect(getCanonicalParashaId('Toldot')).toBe('toldot');
+    expect(getCanonicalParashaId('vayeilech')).toBe('vayeilech');
+    expect(getCanonicalParashaId('lechlecha')).toBe('lechlecha');
+  });
+
   it('recognizes today reading when marking the scheduled aliyá', async () => {
+    const schedule = getDiasporaDailySchedule();
+    expect(isDailyAliyahReadToday('test_user')).toBe(false);
+
+    await markDailyAliyahCompletedToday(
+      schedule.targetAliyahNumber,
+      schedule.parashaId || schedule.parashaName,
+      'test_user'
+    );
+
+    expect(isDailyAliyahReadToday('test_user')).toBe(true);
+  });
+
+  it('recognizes reading saved under toledot as read for toldot', async () => {
+    const schedule = getDiasporaDailySchedule();
+    // Simular que se guardó bajo la clave toledot
+    const record = {
+      dateKey: schedule.dateKey,
+      parashaId: 'toledot',
+      completedAliyah: schedule.targetAliyahNumber,
+      completedAliyot: [schedule.targetAliyahNumber],
+      completedFull: false,
+      timestamp: Date.now(),
+    };
+    store[`parasha_daily_read_record_legacy_user`] = JSON.stringify(record);
+    store[`parasha_progress_toledot_legacy_user`] = JSON.stringify({
+      parasha_id: 'toledot',
+      completed_aliyot: [schedule.targetAliyahNumber],
+      last_read_at: new Date().toISOString(),
+    });
+
+    expect(isDailyAliyahReadToday('legacy_user')).toBe(true);
+  });
+
+  it('accumulates multiple aliyot in one day and keeps isDailyAliyahReadToday true', async () => {
     const schedule = getDiasporaDailySchedule();
     expect(isDailyAliyahReadToday('test_user')).toBe(false);
 

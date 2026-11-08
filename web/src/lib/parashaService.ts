@@ -690,7 +690,7 @@ export function getAliyahStats(progress: ParashaProgress | undefined, aliyahNumb
 export function getCanonicalParashaId(input?: string): string {
   if (!input) {
     const sched = getDiasporaDailySchedule();
-    return sched.parashaId || 'vayera';
+    return getCanonicalParashaId(sched.parashaId || sched.parashaName || 'toldot');
   }
   const clean = input
     .toLowerCase()
@@ -699,11 +699,12 @@ export function getCanonicalParashaId(input?: string): string {
     .replace(/[^a-z0-9]/g, '');
 
   if (clean.includes('vayera') || clean.includes('wayera') || clean === 'vaye' || clean === 'parashatvayera') return 'vayera';
-  if (clean.includes('lech') || clean.includes('leja') || clean.includes('lej')) return 'lechlecha';
+  if (clean.includes('vayeilech') || clean.includes('vayelech')) return 'vayeilech';
+  if (clean.includes('lechlecha') || clean.includes('lejleja') || clean === 'lech' || clean === 'lej') return 'lechlecha';
   if (clean.includes('noa') || clean.includes('noah')) return 'noach';
   if (clean.includes('bereshit')) return 'bereshit';
   if (clean.includes('chayeisara') || clean.includes('jayeisara') || clean.includes('hayesarah')) return 'chayeisara';
-  if (clean.includes('toledot') || clean.includes('toldot')) return 'toledot';
+  if (clean.includes('toledot') || clean.includes('toldot')) return 'toldot';
   if (clean.includes('vayetzei') || clean.includes('vayece')) return 'vayetzei';
   if (clean.includes('vayishlach') || clean.includes('vayislaj')) return 'vayishlach';
   if (clean.includes('vayeshev')) return 'vayeshev';
@@ -882,7 +883,7 @@ export function isDailyAliyahReadToday(userId?: string): boolean {
   if (typeof window === 'undefined') return false;
 
   const schedule = getDiasporaDailySchedule();
-  const canonicalId = schedule.parashaId || getCanonicalParashaId(schedule.parashaName);
+  const canonicalId = getCanonicalParashaId(schedule.parashaId || schedule.parashaName);
   const targetNum = schedule.targetAliyahNumber;
 
   // 1. Comprobar registros de lectura diaria guardados en localStorage
@@ -976,9 +977,9 @@ export async function syncParashaWithCloud(
   progress: ParashaProgress | null;
 }> {
   const schedule = getDiasporaDailySchedule();
-  const canonicalId = explicitParashaId
-    ? getCanonicalParashaId(explicitParashaId)
-    : schedule.parashaId || getCanonicalParashaId(schedule.parashaName);
+  const canonicalId = getCanonicalParashaId(
+    explicitParashaId || schedule.parashaId || schedule.parashaName
+  );
   const defaultRes = {
     isReadToday: isDailyAliyahReadToday(userId),
     progress: getParashaProgress(canonicalId, userId),
@@ -1042,7 +1043,8 @@ export async function syncParashaWithCloud(
     }
 
     // 1b. Progreso completo de Aliyot sincronizado a través de user_metadata
-    const rawMetaProgress = authData?.user?.user_metadata?.[`parasha_progress_${canonicalId}`];
+    const rawMetaProgress = authData?.user?.user_metadata?.[`parasha_progress_${canonicalId}`] ||
+      (canonicalId === 'toldot' ? authData?.user?.user_metadata?.['parasha_progress_toledot'] : null);
     let validMetaProgress: Partial<ParashaProgress> | null = null;
     if (rawMetaProgress && typeof rawMetaProgress === 'object') {
       const metaCanonical = rawMetaProgress.parasha_id
@@ -1308,6 +1310,12 @@ export async function markDailyAliyahCompletedToday(
     localStorage.setItem(`${DAILY_READ_KEY}_guest`, JSON.stringify(record));
     localStorage.setItem(progressKey, JSON.stringify(progress));
     localStorage.setItem(`${PARASHA_PROGRESS_PREFIX}${canonicalId}_guest`, JSON.stringify(progress));
+    if (canonicalId === 'toldot') {
+      localStorage.setItem(`${PARASHA_PROGRESS_PREFIX}toledot_guest`, JSON.stringify(progress));
+      if (userId) {
+        localStorage.setItem(`${PARASHA_PROGRESS_PREFIX}toledot_${userId}`, JSON.stringify(progress));
+      }
+    }
     window.dispatchEvent(new CustomEvent('parasha_progress_updated'));
   }
 
@@ -1387,11 +1395,20 @@ export function getParashaProgress(parashaId: string, userId?: string): ParashaP
     `${PARASHA_PROGRESS_PREFIX}${canonicalId}_guest`,
   ]);
 
+  if (canonicalId === 'toldot') {
+    candidateKeys.add(`${PARASHA_PROGRESS_PREFIX}toledot_${userId || 'guest'}`);
+    candidateKeys.add(`${PARASHA_PROGRESS_PREFIX}toledot_guest`);
+  }
+
   try {
     for (let i = 0; i < localStorage.length; i++) {
       const k = localStorage.key(i);
-      if (k && k.startsWith(`${PARASHA_PROGRESS_PREFIX}${canonicalId}_`)) {
-        candidateKeys.add(k);
+      if (k && k.startsWith(PARASHA_PROGRESS_PREFIX)) {
+        const keySuffix = k.substring(PARASHA_PROGRESS_PREFIX.length);
+        const keyParasha = keySuffix.split('_')[0];
+        if (keyParasha && getCanonicalParashaId(keyParasha) === canonicalId) {
+          candidateKeys.add(k);
+        }
       }
     }
   } catch {}
