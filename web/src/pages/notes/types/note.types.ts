@@ -142,6 +142,8 @@ export interface Note {
   is_trashed: boolean;
   tags: string[];
   reminder?: string | null;
+  is_dream?: boolean;
+  audio_url?: string | null;
   created_at: string;
   updated_at: string;
 }

@@ -7,7 +7,7 @@ import { NotesHeader } from './components/NotesHeader';
 import { QuickNoteCreator } from './components/QuickNoteCreator';
 import { NoteCard } from './components/NoteCard';
 import { NoteEditorModal } from './components/NoteEditorModal';
-import { StickyNote, Archive, Trash2, Pin } from 'lucide-react';
+import { StickyNote, Archive, Trash2, Pin, Moon } from 'lucide-react';
 
 export const NotesModule: React.FC<ModuleProps> = ({ user, onBackToHub }) => {
   const userId = user?.id || 'local_user';
@@ -29,6 +29,7 @@ export const NotesModule: React.FC<ModuleProps> = ({ user, onBackToHub }) => {
     setSelectedColor,
     allTags,
     pinnedNotes,
+    dreamNotes,
     otherNotes,
     filteredNotes,
     handleCreateNote,
@@ -147,7 +148,7 @@ export const NotesModule: React.FC<ModuleProps> = ({ user, onBackToHub }) => {
             </p>
           </div>
         ) : activeTab === 'notes' ? (
-          /* Pestaña Principal: Notas Fijadas y Otras */
+          /* Pestaña Principal: Notas Fijadas, Sueños y Otras */
           <div className="space-y-8 mt-2">
             {pinnedNotes.length > 0 && (
               <section>
@@ -159,9 +160,19 @@ export const NotesModule: React.FC<ModuleProps> = ({ user, onBackToHub }) => {
               </section>
             )}
 
+            {dreamNotes.length > 0 && (
+              <section>
+                <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400 mb-3 px-1">
+                  <Moon className="w-3.5 h-3.5 fill-purple-500/20 text-purple-500" />
+                  <span>Sueños ({dreamNotes.length})</span>
+                </div>
+                {renderGridOrList(dreamNotes)}
+              </section>
+            )}
+
             {otherNotes.length > 0 && (
               <section>
-                {pinnedNotes.length > 0 && (
+                {(pinnedNotes.length > 0 || dreamNotes.length > 0) && (
                   <div className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-3 px-1">
                     <span>Otras ({otherNotes.length})</span>
                   </div>

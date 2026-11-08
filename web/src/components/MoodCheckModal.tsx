@@ -12,6 +12,8 @@ import {
   formatSleepDuration,
   SLEEP_QUALITY_CONFIG,
 } from '../lib/sleep';
+import { saveNote } from '../pages/notes/services/notesService';
+import { DreamCheckSection } from './DreamCheckSection';
 import { useModalBackHandler } from '../lib/useModalBackHandler';
 import { X, Sparkles, Check, MessageSquare, Moon, Sun, Clock } from 'lucide-react';
 
@@ -48,6 +50,11 @@ export const MoodCheckModal: React.FC<MoodCheckModalProps> = ({
     return `${h}:${m}`;
   });
   const [sleepQuality, setSleepQuality] = useState<number>(4);
+
+  // Estados para el registro opcional de sueños
+  const [hadDream, setHadDream] = useState<boolean | null>(null);
+  const [dreamText, setDreamText] = useState('');
+  const [dreamAudioUrl, setDreamAudioUrl] = useState<string | null>(null);
 
   // Verificar si es la primera entrada del día (sin registro de sueño para hoy)
   useEffect(() => {
@@ -128,6 +135,33 @@ export const MoodCheckModal: React.FC<MoodCheckModalProps> = ({
           quality_score: sleepQuality,
           notes: customNote ? `Ánimo matutino: ${emotionKey}. ${customNote}` : `Ánimo matutino: ${emotionKey}`,
         });
+
+        // 3. Si tuvo un sueño y registró texto o audio, guardarlo automáticamente en Notas
+        if (hadDream && (dreamText.trim() || dreamAudioUrl)) {
+          try {
+            const dayName = now.toLocaleDateString('es-ES', { weekday: 'long' });
+            const dayNameCap = dayName.charAt(0).toUpperCase() + dayName.slice(1);
+            const dateStr = now.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+            const dreamTitle = `Sueño · ${dayNameCap}, ${dateStr}`;
+
+            await saveNote(userId, {
+              title: dreamTitle,
+              content: dreamText.trim() || (dreamAudioUrl ? '🎙️ Nota de voz del sueño grabada' : ''),
+              is_checklist: false,
+              checklist_items: [],
+              color: 'dusk',
+              is_pinned: false,
+              is_archived: false,
+              is_trashed: false,
+              tags: ['sueño', 'sueños'],
+              reminder: null,
+              is_dream: true,
+              audio_url: dreamAudioUrl || null,
+            });
+          } catch (dreamErr) {
+            console.error('[MoodCheckModal] Error al guardar nota de sueño:', dreamErr);
+          }
+        }
       }
 
       setSavedSuccess(true);
@@ -137,6 +171,9 @@ export const MoodCheckModal: React.FC<MoodCheckModalProps> = ({
         setNote('');
         setShowNoteInput(false);
         setWantsSleepRecord(true);
+        setHadDream(null);
+        setDreamText('');
+        setDreamAudioUrl(null);
         onSaved?.();
         onClose();
       }, 750);
@@ -163,6 +200,9 @@ export const MoodCheckModal: React.FC<MoodCheckModalProps> = ({
 
   const handleDismiss = () => {
     markMoodPromptDismissed(userId);
+    setHadDream(null);
+    setDreamText('');
+    setDreamAudioUrl(null);
     onClose();
   };
 
@@ -304,6 +344,16 @@ export const MoodCheckModal: React.FC<MoodCheckModalProps> = ({
                       })}
                     </div>
                   </div>
+
+                  {/* Pregunta y registro de sueños de la noche anterior */}
+                  <DreamCheckSection
+                    hadDream={hadDream}
+                    onSelectHadDream={setHadDream}
+                    dreamText={dreamText}
+                    onChangeDreamText={setDreamText}
+                    dreamAudioUrl={dreamAudioUrl}
+                    onChangeDreamAudioUrl={setDreamAudioUrl}
+                  />
 
                   {/* Opción para omitir registro de sueño si tiene prisa */}
                   <div className="flex justify-between items-center pt-1 border-t border-slate-200/60 dark:border-slate-700/60">

@@ -21,6 +21,8 @@ import {
   CheckSquare,
   Square,
   Clock,
+  Moon,
+  Volume2,
 } from 'lucide-react';
 
 interface NoteEditorModalProps {
@@ -235,6 +237,17 @@ export const NoteEditorModal: React.FC<NoteEditorModalProps> = ({
               >
                 <Plus className="w-4 h-4" /> Añadir elemento
               </button>
+            </div>
+          )}
+
+          {/* Reproductor de nota de voz si existe */}
+          {note.audio_url && (
+            <div className="p-3 rounded-2xl bg-purple-50/80 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800/60 my-2">
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-purple-700 dark:text-purple-300 mb-2">
+                <Volume2 className="w-4 h-4 text-purple-500" />
+                <span>Nota de voz adjunta</span>
+              </div>
+              <audio src={note.audio_url} controls className="w-full h-9" />
             </div>
           )}
 

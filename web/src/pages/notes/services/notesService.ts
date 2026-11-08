@@ -61,6 +61,11 @@ export async function fetchNotes(userId: string): Promise<Note[]> {
         is_trashed: Boolean(row.is_trashed),
         tags: Array.isArray(row.tags) ? row.tags : [],
         reminder: row.reminder || null,
+        is_dream: Boolean(
+          row.is_dream ||
+          (Array.isArray(row.tags) && row.tags.some((t: string) => t.toLowerCase() === 'sueño' || t.toLowerCase() === 'sueños'))
+        ),
+        audio_url: row.audio_url || null,
         created_at: row.created_at || new Date().toISOString(),
         updated_at: row.updated_at || new Date().toISOString(),
       }));
@@ -85,10 +90,16 @@ export async function fetchNotes(userId: string): Promise<Note[]> {
             is_trashed: n.is_trashed,
             tags: n.tags,
             reminder: n.reminder,
+            is_dream: n.is_dream,
+            audio_url: n.audio_url,
             created_at: n.created_at,
             updated_at: n.updated_at,
           }));
-          await supabase.from('user_notes').upsert(payload, { onConflict: 'id' });
+          const { error: upsertErr } = await supabase.from('user_notes').upsert(payload, { onConflict: 'id' });
+          if (upsertErr) {
+            const fallbackPayload = payload.map(({ is_dream, audio_url, ...rest }: any) => rest);
+            await supabase.from('user_notes').upsert(fallbackPayload, { onConflict: 'id' });
+          }
         } catch (uploadErr) {
           console.warn('[NotesService] Error sincronizando notas locales pendientes a Supabase:', uploadErr);
         }
@@ -163,7 +174,7 @@ export async function fetchNotes(userId: string): Promise<Note[]> {
  */
 export async function saveNote(
   userId: string,
-  noteData: Omit<Note, 'id' | 'user_id' | 'created_at' | 'updated_at'> & { id?: string }
+  noteData: Partial<Omit<Note, 'id' | 'user_id' | 'created_at' | 'updated_at'>> & { id?: string }
 ): Promise<Note> {
   const now = new Date().toISOString();
   const id = noteData.id || generateId();
@@ -181,6 +192,11 @@ export async function saveNote(
     is_trashed: Boolean(noteData.is_trashed),
     tags: noteData.tags || [],
     reminder: noteData.reminder || null,
+    is_dream: Boolean(
+      noteData.is_dream ||
+      (Array.isArray(noteData.tags) && noteData.tags.some((t) => t.toLowerCase() === 'sueño' || t.toLowerCase() === 'sueños'))
+    ),
+    audio_url: noteData.audio_url || null,
     created_at: now,
     updated_at: now,
   };
@@ -198,9 +214,13 @@ export async function saveNote(
   }
   setCachedNotes(userId, updatedList);
 
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('user_notes_updated'));
+  }
+
   // 2. Sincronización asíncrona con Supabase
   try {
-    const payload = {
+    const richPayload: any = {
       id: noteToSave.id,
       user_id: userId,
       title: noteToSave.title,
@@ -214,9 +234,18 @@ export async function saveNote(
       tags: noteToSave.tags,
       reminder: noteToSave.reminder,
       updated_at: noteToSave.updated_at,
+      is_dream: noteToSave.is_dream,
+      audio_url: noteToSave.audio_url,
     };
 
-    await supabase.from('user_notes').upsert(payload, { onConflict: 'id' });
+    const { error: upsertErr } = await supabase.from('user_notes').upsert(richPayload, { onConflict: 'id' });
+    if (upsertErr) {
+      // Fallback si la tabla remota aún no tiene las columnas is_dream y audio_url
+      const basicPayload = { ...richPayload };
+      delete basicPayload.is_dream;
+      delete basicPayload.audio_url;
+      await supabase.from('user_notes').upsert(basicPayload, { onConflict: 'id' });
+    }
   } catch (err) {
     console.warn('[NotesService] Sincronización remota postergada:', err);
   }

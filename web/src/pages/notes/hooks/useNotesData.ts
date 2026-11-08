@@ -37,9 +37,17 @@ export function useNotesData(userId: string) {
   useEffect(() => {
     refreshNotes();
 
+    const handleLocalUpdate = () => {
+      refreshNotes();
+    };
+    if (typeof window !== 'undefined') {
+      window.addEventListener('user_notes_updated', handleLocalUpdate);
+    }
+
     // Suscripción Realtime a cambios en Supabase (sincronización instantánea Desktop <-> Celular)
+    let channel: any = null;
     if (userId && userId !== 'local_user') {
-      const channel = supabase
+      channel = supabase
         .channel(`user_notes_channel_${userId}`)
         .on(
           'postgres_changes',
@@ -55,11 +63,16 @@ export function useNotesData(userId: string) {
           }
         )
         .subscribe();
-
-      return () => {
-        supabase.removeChannel(channel);
-      };
     }
+
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('user_notes_updated', handleLocalUpdate);
+      }
+      if (channel) {
+        supabase.removeChannel(channel);
+      }
+    };
   }, [userId, refreshNotes]);
 
   // Colección de todas las etiquetas únicas existentes en notas no enviadas a papelera
@@ -117,18 +130,28 @@ export function useNotesData(userId: string) {
     });
   }, [notes, activeTab, selectedTag, selectedColor, searchQuery]);
 
-  // División entre fijadas (pinned) y otras notas (para la pestaña principal)
-  const { pinnedNotes, otherNotes } = useMemo(() => {
+  // División entre fijadas, sueños y otras notas (para la pestaña principal)
+  const { pinnedNotes, dreamNotes, otherNotes } = useMemo(() => {
     if (activeTab !== 'notes') {
-      return { pinnedNotes: [], otherNotes: filteredNotes };
+      return { pinnedNotes: [], dreamNotes: [], otherNotes: filteredNotes };
     }
     const pinned: Note[] = [];
+    const dreams: Note[] = [];
     const other: Note[] = [];
     filteredNotes.forEach((n) => {
-      if (n.is_pinned) pinned.push(n);
-      else other.push(n);
+      const isDream = Boolean(
+        n.is_dream ||
+        (Array.isArray(n.tags) && n.tags.some((t) => t.toLowerCase() === 'sueño' || t.toLowerCase() === 'sueños'))
+      );
+      if (n.is_pinned) {
+        pinned.push(n);
+      } else if (isDream) {
+        dreams.push(n);
+      } else {
+        other.push(n);
+      }
     });
-    return { pinnedNotes: pinned, otherNotes: other };
+    return { pinnedNotes: pinned, dreamNotes: dreams, otherNotes: other };
   }, [filteredNotes, activeTab]);
 
   // Acciones
@@ -239,6 +262,7 @@ export function useNotesData(userId: string) {
     setSelectedColor,
     allTags,
     pinnedNotes,
+    dreamNotes,
     otherNotes,
     filteredNotes,
     refreshNotes,

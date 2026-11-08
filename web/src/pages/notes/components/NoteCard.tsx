@@ -15,6 +15,8 @@ import {
   CheckSquare,
   Square,
   Check,
+  Moon,
+  Volume2,
 } from 'lucide-react';
 
 interface NoteCardProps {
@@ -75,7 +77,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
     >
       <div>
         {/* Cabecera de la Tarjeta: Título y Pin */}
-        <div className="flex items-start justify-between gap-2 mb-2">
+        <div className="flex items-start justify-between gap-2 mb-1.5">
           {note.title ? (
             <h3 className="font-semibold text-sm sm:text-base text-slate-900 dark:text-white leading-tight break-words">
               {note.title}
@@ -102,6 +104,28 @@ export const NoteCard: React.FC<NoteCardProps> = ({
             </button>
           )}
         </div>
+
+        {/* Insignia si es un sueño */}
+        {(note.is_dream || (Array.isArray(note.tags) && note.tags.some((t) => t.toLowerCase() === 'sueño' || t.toLowerCase() === 'sueños'))) && (
+          <span className="text-[10px] font-bold text-purple-700 dark:text-purple-300 bg-purple-100/80 dark:bg-purple-950/60 px-2 py-0.5 rounded-md flex items-center gap-1 w-fit mb-2 border border-purple-200/50 dark:border-purple-800/40">
+            <Moon className="w-3 h-3 text-purple-500 fill-purple-500/30" />
+            <span>Sueño</span>
+          </span>
+        )}
+
+        {/* Reproductor de audio si tiene nota de voz */}
+        {note.audio_url && (
+          <div
+            className="my-2 p-2 rounded-xl bg-purple-500/10 dark:bg-purple-950/40 border border-purple-300/50 dark:border-purple-800/50"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-1.5 text-[10px] font-semibold text-purple-700 dark:text-purple-300 mb-1">
+              <Volume2 className="w-3 h-3 text-purple-500" />
+              <span>Nota de voz grabada</span>
+            </div>
+            <audio src={note.audio_url} controls className="w-full h-8" />
+          </div>
+        )}
 
         {/* Contenido de la Tarjeta */}
         {note.is_checklist ? (
